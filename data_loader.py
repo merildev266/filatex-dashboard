@@ -71,6 +71,15 @@ SITE_CONFIG = {
             "start": 6, "end": 7, "duration": 8, "incharge": 9,
         },
         "oil_rh_is_time": False,
+        # HFO daily report per-DG detail
+        "hfo_detail": {
+            "dg_header_row": 33,       # Row with DG1, DG2, … headers
+            "data_start_row": 35,      # Row with "Engine condition"
+            "desc_start_row": 13,      # First row with DG description (col 0 = "DG1 (…)")
+            "desc_end_row": 28,        # Last row to search for DG descriptions
+            "desc_col": 3,             # Column with description text
+            "time_format": False,      # Tamatave uses decimal floats
+        },
     },
     "diego": {
         "name": "Diego",
@@ -119,8 +128,22 @@ SITE_CONFIG = {
             "start": 6, "end": 7, "duration": None, "incharge": 8,
         },
         "oil_rh_is_time": True,
+        # HFO daily report per-DG detail
+        "hfo_detail": {
+            "dg_header_row": 27,       # Row with DG1, DG2, … headers
+            "data_start_row": 29,      # Row with "Engine condition"
+            "desc_start_row": 12,      # First row with DG description
+            "desc_end_row": 22,        # Last row to search
+            "desc_col": 3,             # Column with description text
+            "time_format": True,       # Diego uses time strings / timedelta
+        },
     },
 }
+
+# HFO density in kg/L for SFOC computation (liters → kg)
+HFO_DENSITY = 0.96
+# Lube oil density in kg/L for SLOC computation
+OIL_DENSITY = 0.90
 
 
 # ══════════════════════════════════════════════════════════════
@@ -190,13 +213,13 @@ def time_to_hours(v):
 
 def dg_status_to_code(s):
     s = str(s).lower().strip()
-    if s == "running":
+    if s in ("running", "working"):
         return "ok"
     elif s in ("stop", "stopped", "standby", "st/by", "standyby"):
         return "standby"
     elif s in ("maintenance",):
         return "warn"
-    elif s in ("breakdown", "br/do"):
+    elif s in ("breakdown", "br/do", "break down"):
         return "ko"
     else:
         return "ko"
@@ -205,17 +228,147 @@ def dg_status_to_code(s):
 def dg_condition(s):
     s = str(s).strip()
     sl = s.lower()
-    if sl == "running":
+    if sl in ("running", "working"):
         return "Running"
     elif sl == "maintenance":
         return "Maintenance"
-    elif sl in ("breakdown", "br/do"):
+    elif sl in ("breakdown", "br/do", "break down"):
         return "Breakdown"
     elif sl in ("standby", "st/by", "standyby"):
         return "Standby"
     elif sl in ("stop", "stopped"):
         return "Stopped"
     return s
+
+
+def parse_hfo_detail(xls, cfg):
+    """Extract per-DG detail from the latest HFO specific data sheet.
+
+    Returns a dict keyed by DG id (e.g. "DG1") with fields:
+        condition, description, h_cumul, hToday, hStandby,
+        arretForce, arretPlanifie, maxLoad, energieProd, consLVMV,
+        consoHFO, consoLFO, oilTopUp, oilConso, oilSumpLevel,
+        lubeOilPressure, fuelOilTemp
+    """
+    hfo_cfg = cfg.get("hfo_detail")
+    if not hfo_cfg:
+        return {}
+
+    # Find the latest HFO specific data sheet that has actual data.
+    # Sheets 01-31 exist as templates but only filled ones have useful data.
+    sheet_names = xls.sheet_names
+    data_start = hfo_cfg["data_start_row"]
+    latest_sheet = None
+    df = None
+    for day in range(31, 0, -1):
+        sn = f"HFO specific data {day:02d}"
+        if sn in sheet_names:
+            candidate = pd.read_excel(xls, sheet_name=sn, header=None)
+            # Check if the condition row (data_start_row) has any non-NaN
+            # values in columns 3+ (the DG data columns)
+            if data_start < len(candidate):
+                row_data = candidate.iloc[data_start, 3:]
+                if row_data.notna().any():
+                    latest_sheet = sn
+                    df = candidate
+                    break
+    if df is None:
+        return {}
+    use_time = hfo_cfg.get("time_format", False)
+
+    # ── Map DG columns from header row ──
+    header_row = hfo_cfg["dg_header_row"]
+    if header_row >= len(df):
+        return {}
+
+    dg_col_map = {}  # "DG1" → column index
+    for col_idx in range(df.shape[1]):
+        val = df.iloc[header_row, col_idx]
+        if pd.notna(val):
+            s = str(val).strip().upper()
+            # Match DG1, DG2, ..., DG13 (ignore TOTAL, CUMMINS, etc.)
+            if s.startswith("DG") and len(s) <= 5:
+                try:
+                    dg_num = int(s[2:])
+                    dg_id = f"DG{dg_num}"
+                    dg_col_map[dg_id] = col_idx
+                except ValueError:
+                    pass
+
+    if not dg_col_map:
+        return {}
+
+    # ── Data rows (offsets from data_start_row) ──
+    dr = hfo_cfg["data_start_row"]
+    ROW_OFFSETS = {
+        "condition":       0,
+        "h_cumul":         1,
+        "hToday":          2,
+        "hStandby":        3,
+        "arretForce":      4,
+        "arretPlanifie":   5,
+        "maxLoad":         6,
+        "energieProd":     7,
+        "consLVMV":        8,
+        "consoHFO":        9,
+        "consoLFO":        10,
+        "oilTopUp":        11,
+        "oilConso":        12,
+        "oilSumpLevel":    13,
+        "lubeOilPressure": 14,
+        "fuelOilTemp":     15,
+    }
+
+    # ── Parse DG descriptions ──
+    desc_map = {}  # "DG1" → "Running Normal: Fuel rack lubricate..."
+    desc_start = hfo_cfg.get("desc_start_row", 12)
+    desc_end = hfo_cfg.get("desc_end_row", 30)
+    desc_col = hfo_cfg.get("desc_col", 3)
+    for row_idx in range(desc_start, min(desc_end, len(df))):
+        cell0 = df.iloc[row_idx, 0]
+        if pd.notna(cell0):
+            s0 = str(cell0).strip()
+            # Match rows like "DG1 (9L20)", "DG2 (9L20)", etc.
+            if s0.upper().startswith("DG"):
+                # Extract DG number
+                parts = s0.split("(")[0].strip().split()
+                dg_label = parts[0].upper().replace(" ", "")
+                try:
+                    dg_num = int(dg_label[2:])
+                    dg_id = f"DG{dg_num}"
+                    desc_val = df.iloc[row_idx, desc_col]
+                    if pd.notna(desc_val):
+                        desc_map[dg_id] = str(desc_val).strip()
+                except (ValueError, IndexError):
+                    pass
+
+    # ── Build per-DG result ──
+    result = {}
+    for dg_id, col_idx in dg_col_map.items():
+        dg_data = {}
+
+        for field, offset in ROW_OFFSETS.items():
+            row_idx = dr + offset
+            if row_idx >= len(df) or col_idx >= df.shape[1]:
+                dg_data[field] = 0.0 if field != "condition" else "Unknown"
+                continue
+
+            val = df.iloc[row_idx, col_idx]
+
+            if field == "condition":
+                dg_data[field] = str(val).strip() if pd.notna(val) else "Unknown"
+            elif field in ("hToday", "hStandby", "arretForce", "arretPlanifie") and use_time:
+                # Diego uses time/timedelta format for hours
+                dg_data[field] = time_to_hours(val)
+            else:
+                dg_data[field] = safe_float(val)
+
+        # Add description
+        dg_data["description"] = desc_map.get(dg_id, "")
+
+        result[dg_id] = dg_data
+
+    return result
 
 
 def load_site_files(cfg):
@@ -274,7 +427,13 @@ def load_site_files(cfg):
     oil_df = pd.concat(all_oil, ignore_index=True) if all_oil else pd.DataFrame()
     blackout_df = pd.concat(all_blackout, ignore_index=True) if all_blackout else pd.DataFrame()
 
-    return daily_df, oil_df, blackout_df
+    # --- HFO per-DG detail from the latest xlsx file ---
+    hfo_detail = {}
+    if files:
+        latest_xls = pd.ExcelFile(files[-1])
+        hfo_detail = parse_hfo_detail(latest_xls, cfg)
+
+    return daily_df, oil_df, blackout_df, hfo_detail
 
 
 def build_site_data(site_key):
@@ -284,7 +443,7 @@ def build_site_data(site_key):
     if result is None:
         return None
 
-    daily_df, oil_df, blackout_df = result
+    daily_df, oil_df, blackout_df, hfo_detail = result
     dd = cfg["dd_cols"]
     num_eng = cfg["num_engines"]
 
@@ -346,31 +505,91 @@ def build_site_data(site_key):
                 statut = "standby"
                 condition = "Standby"
 
+        # ── Merge HFO daily report detail (richer data) ──
+        hd = hfo_detail.get(dg_id, {})
+
+        # Override status from HFO detail if available (more accurate)
+        if hd.get("condition"):
+            raw_cond = hd["condition"]
+            statut = dg_status_to_code(raw_cond)
+            condition = dg_condition(raw_cond)
+
+        # Hours and stoppages
+        h_cumul = hd.get("h_cumul", 0.0)
+        h_today = hd.get("hToday", oil_rh)
+        h_standby = hd.get("hStandby", 0.0)
+        arret_force = hd.get("arretForce", 24.0 if condition == "Breakdown" else 0.0)
+        arret_planifie = hd.get("arretPlanifie", 24.0 if condition == "Maintenance" else 0.0)
+
+        # Production & load
+        max_load = hd.get("maxLoad", 0.0)
+        energie_prod = hd.get("energieProd", 0.0)
+        cons_lvmv = hd.get("consLVMV", 0.0)
+
+        # Fuel
+        conso_hfo = hd.get("consoHFO", 0.0)
+        conso_lfo = hd.get("consoLFO", 0.0)
+
+        # Oil — prefer HFO detail, fall back to oil sheet
+        oil_topup = hd.get("oilTopUp", oil_conso)
+        oil_conso_val = hd.get("oilConso", oil_conso)
+        oil_sump = hd.get("oilSumpLevel", 0.0)
+        lube_pressure = hd.get("lubeOilPressure", 0.0)
+        fuel_temp = hd.get("fuelOilTemp", 0.0)
+
+        # Compute per-DG SFOC and SLOC
+        dg_sfoc = None
+        dg_sloc = None
+        if energie_prod > 0:
+            dg_sfoc = round((conso_hfo * HFO_DENSITY) / energie_prod * 1000, 1)
+            if oil_conso_val > 0:
+                dg_sloc = round((oil_conso_val * OIL_DENSITY) / energie_prod * 1000, 2)
+
+        # Description / maintenance note
+        desc = hd.get("description", "")
+        if desc:
+            maint_label = desc
+        elif condition != "Running":
+            maint_label = condition
+        else:
+            maint_label = "Running normal"
+
+        # ── Contradictory data detection ──
+        # Flag when status and operational data don't match:
+        #   - Says not-running but has significant runtime or production
+        #   - Says running but no runtime and no production
+        contradictory = False
+        if statut != "ok" and (h_today > 1 or energie_prod > 100):
+            contradictory = True  # labelled stopped/standby but actually producing
+        elif statut == "ok" and h_today == 0 and energie_prod == 0:
+            contradictory = True  # labelled running but no output
+
         groupe = {
             "id": dg_id,
             "model": eng["model"],
             "mw": eng["mw"],
             "statut": statut,
             "condition": condition,
+            "contradictory": contradictory,
             "jourArret": 0 if statut == "ok" else 1,
-            "h": 0,
-            "hToday": round(oil_rh, 1),
-            "hStandby": 0,
-            "arretForce": 24 if condition == "Breakdown" else 0,
-            "arretPlanifie": 24 if condition == "Maintenance" else 0,
-            "maxLoad": 0,
-            "energieProd": 0.0,
-            "consLVMV": 0,
-            "consoHFO": 0.0,
-            "consoLFO": 0,
-            "oilTopUp": round(oil_conso, 1),
-            "oilConso": round(oil_conso, 1),
-            "oilSumpLevel": 0,
-            "lubeOilPressure": 0,
-            "fuelOilTemp": 0,
-            "sfoc": None,
-            "sloc": None,
-            "maint": f"{condition}" if condition != "Running" else "Running normal",
+            "h": round(h_cumul, 1),
+            "hToday": round(h_today, 1),
+            "hStandby": round(h_standby, 1),
+            "arretForce": round(arret_force, 1),
+            "arretPlanifie": round(arret_planifie, 1),
+            "maxLoad": round(max_load),
+            "energieProd": round(energie_prod, 1),
+            "consLVMV": round(cons_lvmv),
+            "consoHFO": round(conso_hfo, 1),
+            "consoLFO": round(conso_lfo, 1),
+            "oilTopUp": round(oil_topup, 1),
+            "oilConso": round(oil_conso_val, 1),
+            "oilSumpLevel": round(oil_sump, 1),
+            "lubeOilPressure": round(lube_pressure, 1),
+            "fuelOilTemp": round(fuel_temp),
+            "sfoc": dg_sfoc,
+            "sloc": dg_sloc,
+            "maint": maint_label,
             "hourlyLoad": [0] * 24,
         }
         groupes.append(groupe)

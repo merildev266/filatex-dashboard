@@ -154,6 +154,7 @@ body::-webkit-scrollbar{display:none;}
 @keyframes pulse-ok   {0%,100%{box-shadow:0 0 4px 1px rgba(116,184,89,0.6)}50%{box-shadow:0 0 10px 3px rgba(116,184,89,0.9)}}
 @keyframes pulse-warn {0%,100%{box-shadow:0 0 4px 1px rgba(245,166,35,0.6)}50%{box-shadow:0 0 10px 3px rgba(245,166,35,0.9)}}
 @keyframes pulse-ko   {0%,100%{box-shadow:0 0 4px 1px rgba(224,92,92,0.6)}50%{box-shadow:0 0 10px 3px rgba(224,92,92,0.9)}}
+@keyframes pulse-check{0%,100%{box-shadow:0 0 5px 1px rgba(160,90,255,0.6)}50%{box-shadow:0 0 14px 4px rgba(160,90,255,0.95)}}
 @keyframes pulse-delay{0%,100%{box-shadow:0 0 3px 1px rgba(220,50,50,0.3),0 0 6px 1px rgba(220,50,50,0.1)}50%{box-shadow:0 0 8px 2px rgba(220,50,50,0.55),0 0 14px 4px rgba(220,50,50,0.18)}}
 
 .section-title{font-size:9px;font-weight:600;letter-spacing:0.35em;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;}
@@ -174,6 +175,7 @@ body::-webkit-scrollbar{display:none;}
 .status-ok  {background:#74b859;animation:pulse-ok   2.5s ease-in-out infinite;}
 .status-warn{background:#f5a623;animation:pulse-warn 1.8s ease-in-out infinite;}
 .status-ko  {background:#e05c5c;animation:pulse-ko   1.2s ease-in-out infinite;}
+.status-check{background:#a05aff;animation:pulse-check 1.4s ease-in-out infinite;}
 .status-construction{background:rgba(255,255,255,0.15);box-shadow:none;animation:none;}
 
 /* KPI rows inside card */
@@ -394,6 +396,7 @@ body::-webkit-scrollbar{display:none;}
 .gen-nav-dot.ok{background:#74b859;box-shadow:0 0 6px #74b85988;}
 .gen-nav-dot.warn{background:#f5a623;box-shadow:0 0 6px #f5a62388;}
 .gen-nav-dot.ko{background:#e05c5c;box-shadow:0 0 5px #e05c5c66;}
+.gen-nav-dot.check{background:#a05aff;box-shadow:0 0 8px #a05affaa;animation:pulse-check 1.4s ease-in-out infinite;}
 </style>
 </head>
 <body>
@@ -3155,8 +3158,12 @@ function renderDetail(id) {
 
   // ── SECTION 2 — GÉNÉRATEURS (filtrés) ──
   document.getElementById('detail-groups-tbody').innerHTML = s.groupes.map(g => {
-    const sc = g.statut==='ok'?'status-ok':g.statut==='warn'?'status-warn':'status-ko';
-    const sl = g.statut==='ok'?'En marche':g.statut==='warn'?'Attention':'Arrêt';
+    // Violet dot if contradictory data, otherwise normal status color
+    const isContra = g.contradictory === true;
+    const sc = isContra ? 'status-check' : g.statut==='ok'?'status-ok':g.statut==='warn'?'status-warn':'status-ko';
+    let sl;
+    if(isContra) sl = 'À vérifier';
+    else sl = g.statut==='ok'?'En marche':g.statut==='warn'?'Attention':'Arrêt';
     const gSfocColor = g.sfoc ? (g.sfoc<=250?'var(--energy)':'var(--red)') : 'var(--text-dim)';
     const gSlocColor = g.sloc ? (g.sloc<=1.0?'var(--energy)':'var(--red)') : 'var(--text-dim)';
     // Heures selon filtre
@@ -3169,14 +3176,14 @@ function renderDetail(id) {
     if(f === '24h')        prodVal = g.energieProd > 0 ? Math.round(g.energieProd/1000*10)/10 + ' MWh' : '—';
     else if(f === 'month') prodVal = g.energieProd > 0 ? Math.round(g.energieProd/1000) + ' MWh' : '—';
     else                   prodVal = g.energieProd > 0 ? Math.round(g.energieProd/1000 * 30) + ' MWh' : '—';
-    return `<tr style="cursor:pointer;" onclick="openGroupeDetail('${id}','${g.id}')">
-      <td style="font-weight:700;color:var(--text);">
+    return `<tr style="cursor:pointer;${isContra?'background:rgba(160,90,255,0.04);':''}" onclick="openGroupeDetail('${id}','${g.id}')">
+      <td style="font-weight:700;color:${isContra?'#a05aff':'var(--text)'};">
         ${g.id}
       </td>
       <td>${g.mw} MW</td>
       <td><span style="display:inline-flex;align-items:center;gap:6px;">
         <span class="status-dot ${sc}"></span>
-        <span style="font-size:11px;font-weight:600;">${sl}</span>
+        <span style="font-size:11px;font-weight:600;${isContra?'color:#a05aff;':''}">${sl}</span>
       </span></td>
       <td>${hVal}</td>
       <td style="color:var(--text-muted);font-weight:500;">${prodVal}</td>
@@ -3238,27 +3245,30 @@ function renderGroupeDetail(siteId, grpId) {
   const genNav = document.getElementById('gen-nav-strip');
   if(genNav) {
     genNav.innerHTML = s.groupes.map(gr => {
-      const dotClass = gr.statut === 'ok' ? 'ok' : gr.statut === 'warn' ? 'warn' : 'ko';
+      const dotClass = gr.contradictory ? 'check' : gr.statut === 'ok' ? 'ok' : gr.statut === 'warn' ? 'warn' : 'ko';
       const isActive = gr.id === grpId;
       return `<button class="gen-nav-btn${isActive?' active':''}" onclick="openGroupeDetail('${siteId}','${gr.id}')">` +
         `<span class="gen-nav-dot ${dotClass}"></span>${gr.id}</button>`;
     }).join('');
   }
 
+  const isContra = g.contradictory === true;
   const statMap = {
-    ok:   {label:'En marche',    bg:'rgba(116,184,89,0.12)',  color:'#74b859', dot:'status-ok'},
-    warn: {label:'Attention',    bg:'rgba(245,166,35,0.12)',  color:'#f5a623', dot:'status-warn'},
-    ko:   {label:'Hors service', bg:'rgba(224,92,92,0.12)',   color:'#e05c5c', dot:'status-ko'}
+    ok:    {label:'En marche',    bg:'rgba(116,184,89,0.12)',  color:'#74b859', dot:'status-ok'},
+    warn:  {label:'Attention',    bg:'rgba(245,166,35,0.12)',  color:'#f5a623', dot:'status-warn'},
+    ko:    {label:'Hors service', bg:'rgba(224,92,92,0.12)',   color:'#e05c5c', dot:'status-ko'},
+    check: {label:'À vérifier — Données contradictoires', bg:'rgba(160,90,255,0.12)', color:'#a05aff', dot:'status-check'}
   };
-  const st = statMap[g.statut] || statMap.ko;
+  const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko);
   document.getElementById('gd-status-wrap').innerHTML =
     '<span class="gd-status-badge" style="background:' + st.bg + ';color:' + st.color + ';border:1px solid ' + st.color + '44;">' +
     '<span class="status-dot ' + st.dot + '" style="width:8px;height:8px;min-width:8px;"></span>' + st.label + '</span>';
 
-  const isKO = g.statut === 'ko';
-  const bc   = isKO ? 'rgba(224,92,92,0.15)' : 'rgba(30,77,99,0.18)';
-  const lc   = isKO ? 'rgba(224,92,92,0.65)' : 'rgba(30,77,99,0.65)';
-  const bg   = isKO ? 'rgba(224,92,92,0.06)' : 'rgba(30,77,99,0.06)';
+  const isKO = g.statut === 'ko' && !isContra;
+  const isCheck = isContra;
+  const bc   = isCheck ? 'rgba(160,90,255,0.15)' : isKO ? 'rgba(224,92,92,0.15)' : 'rgba(30,77,99,0.18)';
+  const lc   = isCheck ? 'rgba(160,90,255,0.65)' : isKO ? 'rgba(224,92,92,0.65)' : 'rgba(30,77,99,0.65)';
+  const bg   = isCheck ? 'rgba(160,90,255,0.06)' : isKO ? 'rgba(224,92,92,0.06)' : 'rgba(30,77,99,0.06)';
 
   let html = '';
 
