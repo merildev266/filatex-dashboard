@@ -79,6 +79,10 @@ SITE_CONFIG = {
             "desc_end_row": 28,        # Last row to search for DG descriptions
             "desc_col": 3,             # Column with description text
             "time_format": False,      # Tamatave uses decimal floats
+            # Load table / chart (kW) section
+            "load_dg_header_row": 84,  # Row with DG1, DG2, … in load table
+            "load_data_start_row": 86, # First hourly data row (07:00)
+            "load_data_end_row": 109,  # Last hourly data row (06:00)
         },
     },
     "diego": {
@@ -136,6 +140,10 @@ SITE_CONFIG = {
             "desc_end_row": 22,        # Last row to search
             "desc_col": 3,             # Column with description text
             "time_format": True,       # Diego uses time strings / timedelta
+            # Load table / chart (kW) section
+            "load_dg_header_row": 68,  # Row with DG1, DG2, … in load table
+            "load_data_start_row": 70, # First hourly data row (07:00)
+            "load_data_end_row": 83,   # Last hourly data row (06:00)
         },
     },
 }
@@ -368,7 +376,122 @@ def parse_hfo_detail(xls, cfg):
 
         result[dg_id] = dg_data
 
+    # ── Parse hourly load data from the same sheet ──
+    hourly_loads = parse_hourly_load(df, hfo_cfg)
+    for dg_id, loads in hourly_loads.items():
+        if dg_id in result:
+            result[dg_id]["hourlyLoad"] = loads
+
     return result
+
+
+def parse_hourly_load(df, hfo_cfg):
+    """Extract per-DG hourly kW load from one HFO specific data sheet.
+
+    Returns dict of DG id -> 24-element list (index 0 = 07:00, index 23 = 06:00).
+    """
+    load_start = hfo_cfg.get("load_data_start_row")
+    load_end = hfo_cfg.get("load_data_end_row")
+    load_dg_row = hfo_cfg.get("load_dg_header_row")
+    if load_start is None or load_end is None or load_dg_row is None:
+        return {}
+    if load_dg_row >= len(df) or load_end >= len(df):
+        return {}
+
+    # Build DG column map from load table header row
+    dg_col_map = {}
+    for col_idx in range(df.shape[1]):
+        val = df.iloc[load_dg_row, col_idx]
+        if pd.notna(val):
+            s = str(val).strip().upper()
+            if s.startswith("DG") and len(s) <= 5:
+                try:
+                    dg_num = int(s[2:])
+                    dg_col_map[f"DG{dg_num}"] = col_idx
+                except ValueError:
+                    pass
+
+    if not dg_col_map:
+        return {}
+
+    result = {dg_id: [0.0] * 24 for dg_id in dg_col_map}
+
+    for row_idx in range(load_start, min(load_end + 1, len(df))):
+        time_val = df.iloc[row_idx, 0]
+        if pd.isna(time_val):
+            continue
+        s_val = str(time_val).strip().lower()
+        if s_val in ('max', 'maximum', 'total'):
+            continue
+
+        # Convert time to integer hour (0-23)
+        h = time_to_hours(time_val)
+        hour = int(h) % 24
+        # Map to chart index: 07h=0, 08h=1, ..., 23h=16, 00h=17, ..., 06h=23
+        idx = (hour - 7) % 24
+
+        for dg_id, col_idx in dg_col_map.items():
+            kw = safe_float(df.iloc[row_idx, col_idx])
+            result[dg_id][idx] = round(kw, 1)
+
+    return result
+
+
+def collect_daily_production(xls, cfg):
+    """Collect energieProd per DG per day from all HFO sheets in one xlsx file.
+
+    Returns (dict of DG id -> list of 31 daily production values, num_days).
+    """
+    hfo_cfg = cfg.get("hfo_detail")
+    if not hfo_cfg:
+        return {}, 0
+
+    dg_header_row = hfo_cfg["dg_header_row"]
+    data_start = hfo_cfg["data_start_row"]
+    ep_offset = 7  # energieProd is at data_start_row + 7
+
+    result = {}
+    dg_col_map = {}
+    num_days = 0
+
+    for day in range(1, 32):
+        sn = f"HFO specific data {day:02d}"
+        if sn not in xls.sheet_names:
+            continue
+        df = pd.read_excel(xls, sheet_name=sn, header=None)
+        ep_row = data_start + ep_offset
+        if ep_row >= len(df):
+            continue
+
+        # Build DG col map once from first valid sheet
+        if not dg_col_map:
+            for col_idx in range(df.shape[1]):
+                val = df.iloc[dg_header_row, col_idx] if dg_header_row < len(df) else None
+                if pd.notna(val):
+                    s = str(val).strip().upper()
+                    if s.startswith("DG") and len(s) <= 5:
+                        try:
+                            dg_num = int(s[2:])
+                            dg_col_map[f"DG{dg_num}"] = col_idx
+                            result[f"DG{dg_num}"] = [0.0] * 31
+                        except ValueError:
+                            pass
+            if not dg_col_map:
+                return {}, 0
+
+        # Check if day has actual data (condition row not empty)
+        cond_row = df.iloc[data_start] if data_start < len(df) else pd.Series()
+        if isinstance(cond_row, pd.Series) and not cond_row.iloc[3:].apply(
+            lambda x: pd.notna(x) and str(x).strip() != ''
+        ).any():
+            continue
+
+        num_days = max(num_days, day)
+        for dg_id, col_idx in dg_col_map.items():
+            val = safe_float(df.iloc[ep_row, col_idx])
+            result[dg_id][day - 1] = round(val, 1)
+
+    return result, num_days
 
 
 def load_site_files(cfg):
@@ -442,7 +565,22 @@ def load_site_files(cfg):
             print(f"  ⚠ HFO detail: fichier verrouillé, essai fichier précédent : {os.path.basename(fpath)}")
             continue
 
-    return daily_df, oil_df, blackout_df, hfo_detail
+    # --- Collect daily production per DG for each month (for charts) ---
+    monthly_dg_prod = {}  # {month_num: {DG_id: [31 daily kWh values]}}
+    for fpath in files:
+        try:
+            month_xls = pd.ExcelFile(fpath)
+            # Extract month from filename (e.g., "Diego_2026_03.xlsx" -> 3)
+            basename = os.path.basename(fpath)
+            parts = basename.replace('.xlsx', '').split('_')
+            month_num = int(parts[-1])
+            daily_prod, num_days = collect_daily_production(month_xls, cfg)
+            if daily_prod:
+                monthly_dg_prod[month_num] = daily_prod
+        except (PermissionError, ValueError, IndexError):
+            continue
+
+    return daily_df, oil_df, blackout_df, hfo_detail, monthly_dg_prod
 
 
 def build_site_data(site_key):
@@ -452,7 +590,7 @@ def build_site_data(site_key):
     if result is None:
         return None
 
-    daily_df, oil_df, blackout_df, hfo_detail = result
+    daily_df, oil_df, blackout_df, hfo_detail, monthly_dg_prod = result
     dd = cfg["dd_cols"]
     num_eng = cfg["num_engines"]
 
@@ -599,9 +737,28 @@ def build_site_data(site_key):
             "sfoc": dg_sfoc,
             "sloc": dg_sloc,
             "maint": maint_label,
-            "hourlyLoad": [0] * 24,
+            "hourlyLoad": hd.get("hourlyLoad", [0] * 24),
+            "dailyProd": [],   # filled below
+            "monthlyProd": [],  # filled below
         }
         groupes.append(groupe)
+
+    # --- Fill dailyProd (current month) and monthlyProd (year) per DG ---
+    # Determine which month is the latest (from the latest daily data date)
+    current_month = latest_date.month if pd.notna(latest_date) else None
+    for g in groupes:
+        dg_id = g["id"]
+        # Daily production for current month
+        if current_month and current_month in monthly_dg_prod:
+            g["dailyProd"] = monthly_dg_prod[current_month].get(dg_id, [0.0] * 31)
+        # Monthly totals for the year (sum each month's daily values)
+        month_totals = []
+        for m in range(1, 13):
+            if m in monthly_dg_prod and dg_id in monthly_dg_prod[m]:
+                month_totals.append(round(sum(monthly_dg_prod[m][dg_id]), 1))
+            else:
+                month_totals.append(0.0)
+        g["monthlyProd"] = month_totals
 
     # --- Compute KPIs ---
     def compute_kpi(df_slice, num_days):

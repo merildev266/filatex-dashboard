@@ -2905,6 +2905,7 @@ function setFilter(f, btn) {
   if(lbl) lbl.textContent = filterLabels[f] || '';
   renderSites(); renderConsolidated();
   if(currentSite) renderDetail(currentSite);
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
 }
 
 // ══ RENDER SITES ══
@@ -3311,51 +3312,89 @@ function renderGroupeDetail(siteId, grpId) {
   // ── Section 2 — Production & Énergie ──
   html += '<div class="gd-section">Production & Énergie</div>';
 
-  // Chart card
-  const hours = ['07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','00','01','02','03','04','05','06'];
-  const loads = g.hourlyLoad || Array(24).fill(0);
-  const maxLoad = Math.max(...loads, 1);
-  const totalKwh = loads.reduce((a,b) => a+b, 0);
+  // Chart card — filter-aware (24h: hourly kW, month: daily kWh, year: monthly kWh)
+  const f = currentFilter;
+  let chartData, chartLabels, chartTitle, chartUnit;
+
+  if (f === '24h') {
+    chartData = g.hourlyLoad || Array(24).fill(0);
+    chartLabels = ['07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','00','01','02','03','04','05','06'];
+    chartTitle = 'Profil de charge — 24h (07h → 06h)';
+    chartUnit = 'kW';
+  } else if (f === 'month') {
+    const raw = g.dailyProd || Array(31).fill(0);
+    // Show up to last day with data
+    let lastDay = raw.length;
+    while (lastDay > 0 && raw[lastDay - 1] === 0) lastDay--;
+    if (lastDay === 0) lastDay = new Date().getDate();
+    chartData = raw.slice(0, Math.max(lastDay, 1));
+    chartLabels = chartData.map((_, i) => String(i + 1));
+    chartTitle = 'Production journalière — Ce mois';
+    chartUnit = 'kWh';
+  } else { // year
+    chartData = g.monthlyProd || Array(12).fill(0);
+    chartLabels = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    chartTitle = 'Production mensuelle — Cette année';
+    chartUnit = 'kWh';
+  }
+
+  const barCount = chartData.length;
+  const maxChartVal = Math.max(...chartData, 1);
+  const totalChartVal = chartData.reduce((a, b) => a + b, 0);
 
   // SVG bar chart
-  const W = 960, H = 120, PAD_L = 40, PAD_R = 10, PAD_T = 10, PAD_B = 28;
+  const W = 960, H = 120, PAD_L = 48, PAD_R = 10, PAD_T = 10, PAD_B = 28;
   const chartW = W - PAD_L - PAD_R;
   const chartH = H - PAD_T - PAD_B;
-  const barW = Math.floor(chartW / 24) - 2;
-  const barGap = Math.floor(chartW / 24);
+  const barGap = Math.floor(chartW / barCount);
+  const barW = Math.max(2, barGap - (barCount > 24 ? 1 : 2));
 
   let bars = '', labels = '', gridLines = '';
 
   // Grid lines at 25%, 50%, 75%, 100%
   [0.25, 0.5, 0.75, 1.0].forEach(pct => {
     const y = PAD_T + chartH * (1 - pct);
-    const kw = Math.round(maxLoad * pct);
+    const v = Math.round(maxChartVal * pct);
     gridLines += '<line x1="' + PAD_L + '" y1="' + y + '" x2="' + (W - PAD_R) + '" y2="' + y + '" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
-    gridLines += '<text x="' + (PAD_L - 4) + '" y="' + (y + 4) + '" text-anchor="end" font-size="8" fill="rgba(255,255,255,0.2)">' + (kw >= 1000 ? (kw/1000).toFixed(1) + 'k' : kw) + '</text>';
+    const lbl = v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(1) + 'k' : v;
+    gridLines += '<text x="' + (PAD_L - 4) + '" y="' + (y + 4) + '" text-anchor="end" font-size="8" fill="rgba(255,255,255,0.2)">' + lbl + '</text>';
   });
 
-  loads.forEach((kw, i) => {
+  // Label frequency based on bar count
+  const labelFreq = barCount <= 12 ? 1 : barCount <= 24 ? 4 : 5;
+
+  chartData.forEach((val, i) => {
     const x = PAD_L + i * barGap;
-    const barH = kw > 0 ? Math.max(2, (kw / maxLoad) * chartH) : 0;
+    const barH = val > 0 ? Math.max(2, (val / maxChartVal) * chartH) : 0;
     const y = PAD_T + chartH - barH;
-    const isNight = i >= 15; // 22:00-06:00
-    const barColor = kw === 0 ? 'rgba(224,92,92,0.3)' : isNight ? 'rgba(30,77,99,0.7)' : 'rgba(91,163,196,0.75)';
-    bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" rx="2" fill="' + barColor + '"/>';
-    if(kw > 0) bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="2" rx="1" fill="rgba(91,163,196,0.9)"/>';
-    // Label every 4h
-    if(i % 4 === 0) {
-      labels += '<text x="' + (x + barW/2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)">' + hours[i] + 'h</text>';
+    let barColor;
+    if (f === '24h') {
+      const isNight = i >= 15; // 22:00-06:00
+      barColor = val === 0 ? 'rgba(255,255,255,0.03)' : isNight ? 'rgba(30,77,99,0.7)' : 'rgba(91,163,196,0.75)';
+    } else {
+      barColor = val === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(91,163,196,0.75)';
+    }
+    bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + Math.max(barH, 0) + '" rx="2" fill="' + barColor + '"/>';
+    if (val > 0) bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="2" rx="1" fill="rgba(91,163,196,0.9)"/>';
+    if (i % labelFreq === 0) {
+      labels += '<text x="' + (x + barW/2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)">' + chartLabels[i] + (f === '24h' ? 'h' : '') + '</text>';
     }
   });
 
   const svgChart = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">' +
     gridLines + bars + labels + '</svg>';
 
+  // Format summary values
   const prodColor = isKO ? 'var(--red)' : 'var(--energy)';
+  const peakVal = Math.max(...chartData);
+  const peakFmt = peakVal >= 1000 ? (peakVal/1000).toFixed(1) + ' MW' + (f !== '24h' ? 'h' : '') : peakVal.toFixed(1) + ' ' + chartUnit;
+  const totalFmt = totalChartVal >= 1000 ? (totalChartVal/1000).toFixed(1) + ' MWh' : totalChartVal.toFixed(1) + ' ' + chartUnit;
+  const peakLabel = f === '24h' ? 'Charge max' : 'Pic';
+
   html += '<div class="gd-chart-card">' +
     '<div class="gd-chart-title">' +
-      '<span>Profil de charge — 24h (07h → 06h)</span>' +
-      '<span class="gd-chart-peak">Charge max : <strong style="color:' + prodColor + ';">' + parseFloat(g.maxLoad).toFixed(1) + ' kW</strong> · Total : <strong style="color:' + prodColor + ';">' + parseFloat(totalKwh).toFixed(1) + ' kWh</strong></span>' +
+      '<span>' + chartTitle + '</span>' +
+      '<span class="gd-chart-peak">' + peakLabel + ' : <strong style="color:' + prodColor + ';">' + peakFmt + '</strong> · Total : <strong style="color:' + prodColor + ';">' + totalFmt + '</strong></span>' +
     '</div>' +
     svgChart +
     '</div>';
