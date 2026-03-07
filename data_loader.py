@@ -384,7 +384,11 @@ def load_site_files(cfg):
     all_blackout = []
 
     for fpath in files:
-        xls = pd.ExcelFile(fpath)
+        try:
+            xls = pd.ExcelFile(fpath)
+        except PermissionError:
+            print(f"  ⚠ Fichier verrouillé (ouvert dans Excel ?), ignoré : {os.path.basename(fpath)}")
+            continue
 
         # --- Daily Data ---
         dd = pd.read_excel(xls, sheet_name="Daily Data", header=None)
@@ -429,9 +433,14 @@ def load_site_files(cfg):
 
     # --- HFO per-DG detail from the latest xlsx file ---
     hfo_detail = {}
-    if files:
-        latest_xls = pd.ExcelFile(files[-1])
-        hfo_detail = parse_hfo_detail(latest_xls, cfg)
+    for fpath in reversed(files):
+        try:
+            latest_xls = pd.ExcelFile(fpath)
+            hfo_detail = parse_hfo_detail(latest_xls, cfg)
+            break
+        except PermissionError:
+            print(f"  ⚠ HFO detail: fichier verrouillé, essai fichier précédent : {os.path.basename(fpath)}")
+            continue
 
     return daily_df, oil_df, blackout_df, hfo_detail
 

@@ -2888,7 +2888,7 @@ if (typeof DIEGO_LIVE !== 'undefined') mergeLiveData(siteData.diego, DIEGO_LIVE)
 
 // ══ HELPERS ══
 function delta(a,b){const d=a-b,p=((d/Math.abs(b))*100).toFixed(1),s=d>0?'+':'',c=d>0?'delta-up':d<0?'delta-down':'delta-flat';return `<span class="kpi-delta ${c}">${s}${p}%</span>`;}
-function deltaInvRaw(a,b,u){const d=parseFloat((a-b).toFixed(3)),s=d>0?'+':'',c=d>0?'delta-inv-up':d<0?'delta-inv-down':'delta-inv-flat';return `<span class="${c}">${s}${d} ${u}</span>`;}
+function deltaInvRaw(a,b,u){const d=parseFloat((a-b).toFixed(1)),s=d>0?'+':'',c=d>0?'delta-inv-up':d<0?'delta-inv-down':'delta-inv-flat';return `<span class="${c}">${s}${d} ${u}</span>`;}
 function sfocClass(v){return v<=205?'inv-good':v<=215?'inv-warn':'inv-bad';}
 function sfocPct(v){return Math.min(100,Math.max(0,((v-180)/50)*100));}
 function slocClass(v){return v<=0.75?'inv-good':v<=0.90?'inv-warn':'inv-bad';}
@@ -2929,7 +2929,7 @@ function renderSites() {
         <div class="site-card construction" style="min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
           <span class="site-construction-badge">${badge}</span>
           <div style="font-size:10px;color:var(--text-dim);text-align:center;">${date}</div>
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600;">${s.mw} MW</div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600;">${parseFloat(s.mw).toFixed(1)} MW</div>
         </div>
       </div>`;
     }
@@ -2970,12 +2970,12 @@ function renderSites() {
     const sfocColor = sfocVal === null ? 'var(--text-dim)' : sfocVal <= 250 ? 'var(--energy)' : 'var(--red)';
     const sfocAbove = sfocVal !== null ? (sfocVal > 250 ? '+' + (sfocVal - 250) : '') : '';
     const sfocBelow = sfocVal !== null ? (sfocVal <= 250 ? '−' + (250 - sfocVal) : '') : '';
-    const sfocDiff  = sfocVal !== null ? (sfocVal <= 250 ? '−' + (250 - sfocVal) + ' vs limite' : '+' + (sfocVal - 250) + ' vs limite') : '';
+    const sfocDiff  = sfocVal !== null ? (sfocVal <= 250 ? '−' + (250 - sfocVal).toFixed(1) + ' vs limite' : '+' + (sfocVal - 250).toFixed(1) + ' vs limite') : '';
 
     // SLOC — seuil 1.00 : < 1 vert, > 1 rouge
     const slocVal   = k.sloc !== null && k.sloc > 0 ? k.sloc : null;
     const slocColor = slocVal === null ? 'var(--text-dim)' : slocVal <= 1.0 ? 'var(--energy)' : 'var(--red)';
-    const slocDiff  = slocVal !== null ? (slocVal <= 1.0 ? '−' + (1.0 - slocVal).toFixed(2) + ' vs limite' : '+' + (slocVal - 1.0).toFixed(2) + ' vs limite') : '';
+    const slocDiff  = slocVal !== null ? (slocVal <= 1.0 ? '−' + (1.0 - slocVal).toFixed(1) + ' vs limite' : '+' + (slocVal - 1.0).toFixed(1) + ' vs limite') : '';
 
     // ── Couleurs bordures selon état ──
     const borderCol = allKO ? 'rgba(224,92,92,0.25)' : 'rgba(30,77,99,0.2)';
@@ -2998,14 +2998,14 @@ function renderSites() {
           <div style="font-size:8px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:${labelCol};text-align:center;margin-bottom:8px;">Puissance dispo / Contrat</div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
             <div style="text-align:center;flex:1;">
-              <div style="font-size:20px;font-weight:800;color:${puissColor};letter-spacing:-0.5px;line-height:1;">${s.mw}<span style="font-size:9px;font-weight:400;color:var(--text-muted);margin-left:2px;">MW</span></div>
+              <div style="font-size:20px;font-weight:800;color:${puissColor};letter-spacing:-0.5px;line-height:1;">${parseFloat(s.mw).toFixed(1)}<span style="font-size:9px;font-weight:400;color:var(--text-muted);margin-left:2px;">MW</span></div>
               <div style="font-size:8px;color:var(--text-dim);margin-top:2px;">Dispo</div>
             </div>
             <div style="text-align:center;flex:0 0 38px;">
               <div style="font-size:13px;font-weight:800;color:${puissColor};">${puissPct}%</div>
             </div>
             <div style="text-align:center;flex:1;">
-              <div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.3);letter-spacing:-0.5px;line-height:1;">${s.contrat}<span style="font-size:9px;font-weight:400;color:var(--text-muted);margin-left:2px;">MW</span></div>
+              <div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.3);letter-spacing:-0.5px;line-height:1;">${parseFloat(s.contrat).toFixed(1)}<span style="font-size:9px;font-weight:400;color:var(--text-muted);margin-left:2px;">MW</span></div>
               <div style="font-size:8px;color:var(--text-dim);margin-top:2px;">Contrat</div>
             </div>
           </div>
@@ -3042,14 +3042,14 @@ function renderSites() {
         <div style="display:flex;gap:6px;">
           <div style="flex:1;background:${bgKpi};border-radius:8px;padding:7px 4px 5px;text-align:center;min-height:72px;display:flex;flex-direction:column;justify-content:center;">
             <div style="font-size:7px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${labelCol};margin-bottom:3px;">SFOC</div>
-            <div style="font-size:13px;font-weight:800;color:${sfocColor};line-height:1;">${sfocVal !== null ? sfocVal : '—'}</div>
+            <div style="font-size:13px;font-weight:800;color:${sfocColor};line-height:1;">${sfocVal !== null ? sfocVal.toFixed(1) : '—'}</div>
             <div style="font-size:7px;color:var(--text-dim);margin-top:1px;">g/kWh</div>
             <div style="font-size:7px;font-weight:600;color:${sfocColor};margin-top:3px;opacity:0.8;min-height:10px;">${sfocVal !== null ? sfocDiff : ''}</div>
             <div style="font-size:7px;color:rgba(255,255,255,0.2);margin-top:2px;">limite 250</div>
           </div>
           <div style="flex:1;background:${bgKpi};border-radius:8px;padding:7px 4px 5px;text-align:center;min-height:72px;display:flex;flex-direction:column;justify-content:center;">
             <div style="font-size:7px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${labelCol};margin-bottom:3px;">SLOC</div>
-            <div style="font-size:13px;font-weight:800;color:${slocColor};line-height:1;">${slocVal !== null ? slocVal.toFixed(2) : '—'}</div>
+            <div style="font-size:13px;font-weight:800;color:${slocColor};line-height:1;">${slocVal !== null ? slocVal.toFixed(1) : '—'}</div>
             <div style="font-size:7px;color:var(--text-dim);margin-top:1px;">g/kWh</div>
             <div style="font-size:7px;font-weight:600;color:${slocColor};margin-top:3px;opacity:0.8;min-height:10px;">${slocVal !== null ? slocDiff : ''}</div>
             <div style="font-size:7px;color:rgba(255,255,255,0.2);margin-top:2px;">limite 1.00</div>
@@ -3072,13 +3072,13 @@ function renderConsolidated() {
   const aDispo = kpis.reduce((s,k)=>s+k.dispo,0)/kpis.length, pDispo = prevs.reduce((s,k)=>s+k.dispo,0)/prevs.length;
   const aSfoc  = kpis.reduce((s,k)=>s+k.sfoc,0)/kpis.length,  pSfoc  = prevs.reduce((s,k)=>s+k.sfoc,0)/prevs.length;
   const aSloc  = kpis.reduce((s,k)=>s+k.sloc,0)/kpis.length,  pSloc  = prevs.reduce((s,k)=>s+k.sloc,0)/prevs.length;
-  const tMw = active.reduce((s,id)=>s+siteData[id].mw,0);
+  const tMw = parseFloat(active.reduce((s,id)=>s+siteData[id].mw,0).toFixed(1));
   const dc = aDispo>=95?'var(--energy)':aDispo>=85?'var(--orange)':'var(--red)';
   el.innerHTML = [
-    {lbl:'Production totale',  val:`${tProd.toFixed(currentFilter==='24h'?1:0)}<span class="kpi-unit">MWh</span>`, extra:delta(tProd,pProd)},
-    {lbl:'Puissance installée',val:`${tMw}<span class="kpi-unit">MW</span>`, extra:''},
+    {lbl:'Production totale',  val:`${tProd.toFixed(1)}<span class="kpi-unit">MWh</span>`, extra:delta(tProd,pProd)},
+    {lbl:'Puissance installée',val:`${tMw.toFixed(1)}<span class="kpi-unit">MW</span>`, extra:''},
     {lbl:'SFOC moyen',         val:`<span class="${sfocClass(aSfoc)}">${aSfoc.toFixed(1)}</span><span class="kpi-unit">g/kWh</span>`, extra:deltaInvRaw(aSfoc,pSfoc,'g/kWh')},
-    {lbl:'SLOC moyen',         val:`<span class="${slocClass(aSloc)}">${aSloc.toFixed(3)}</span><span class="kpi-unit">g/kWh</span>`, extra:deltaInvRaw(aSloc,pSloc,'g/kWh')},
+    {lbl:'SLOC moyen',         val:`<span class="${slocClass(aSloc)}">${aSloc.toFixed(1)}</span><span class="kpi-unit">g/kWh</span>`, extra:deltaInvRaw(aSloc,pSloc,'g/kWh')},
   ].map(k=>`<div class="kpi-box"><div class="kpi-label">${k.lbl}</div><div class="kpi-value">${k.val}</div>${k.extra?`<div style="margin-top:8px;text-align:center;">${k.extra}</div>`:''}</div>`).join('');
 }
 
@@ -3127,7 +3127,7 @@ function renderDetail(id) {
 
   const prodPct = k.prodObj ? Math.round((k.prod/k.prodObj)*100) : 0;
   const prodColor = prodPct>=95?'var(--energy)':prodPct>=85?'var(--orange)':'var(--red)';
-  document.getElementById('d-prod').innerHTML = `${k.prod||'—'} <span class="s1-card-unit">MWh</span>`;
+  document.getElementById('d-prod').innerHTML = `${k.prod != null ? parseFloat(k.prod).toFixed(1) : '—'} <span class="s1-card-unit">MWh</span>`;
   document.getElementById('d-prod-bar').style.width = prodPct+'%';
   document.getElementById('d-prod-bar').style.background = prodColor;
   document.getElementById('d-prod-obj').textContent = 'Obj. '+(k.prodObj||'—')+' MWh ('+prodPct+'%)';
@@ -3139,20 +3139,20 @@ function renderDetail(id) {
 
   const sfocColor = k.sfoc<220?'var(--energy)':k.sfoc<250?'var(--orange)':'var(--red)';
   const sfocPct = k.sfoc ? Math.min(100,Math.max(0,((k.sfoc-180)/70)*100)) : 0;
-  document.getElementById('d-sfoc').innerHTML = `${k.sfoc||'—'} <span class="s1-card-unit">g/kWh</span>`;
+  document.getElementById('d-sfoc').innerHTML = `${k.sfoc != null ? parseFloat(k.sfoc).toFixed(1) : '—'} <span class="s1-card-unit">g/kWh</span>`;
   document.getElementById('d-sfoc-bar').style.width = sfocPct+'%';
   document.getElementById('d-sfoc-bar').style.background = sfocColor;
 
   const slocColor = k.sloc<0.75?'var(--energy)':k.sloc<1.0?'var(--orange)':'var(--red)';
   const slocPct = k.sloc ? Math.min(100,Math.max(0,(k.sloc/2.0)*100)) : 0;
-  document.getElementById('d-sloc').innerHTML = `${k.sloc||'—'} <span class="s1-card-unit">g/kWh</span>`;
+  document.getElementById('d-sloc').innerHTML = `${k.sloc != null ? parseFloat(k.sloc).toFixed(1) : '—'} <span class="s1-card-unit">g/kWh</span>`;
   document.getElementById('d-sloc-bar').style.width = slocPct+'%';
   document.getElementById('d-sloc-bar').style.background = slocColor;
 
   const sfocDelta = p.sfoc ? parseFloat((k.sfoc - p.sfoc).toFixed(1)) : null;
   document.getElementById('d-sfoc-compare').innerHTML = sfocDelta !== null
     ? `<span class="${sfocDelta<=0?'delta-inv-down':'delta-inv-up'}">${sfocDelta>0?'+':''}${sfocDelta} g/kWh vs 2025</span>` : '—';
-  const slocDelta = p.sloc ? parseFloat((k.sloc - p.sloc).toFixed(3)) : null;
+  const slocDelta = p.sloc ? parseFloat((k.sloc - p.sloc).toFixed(1)) : null;
   document.getElementById('d-sloc-compare').innerHTML = slocDelta !== null
     ? `<span class="${slocDelta<=0?'delta-inv-down':'delta-inv-up'}">${slocDelta>0?'+':''}${slocDelta} g/kWh vs 2025</span>` : '—';
 
@@ -3168,27 +3168,27 @@ function renderDetail(id) {
     const gSlocColor = g.sloc ? (g.sloc<=1.0?'var(--energy)':'var(--red)') : 'var(--text-dim)';
     // Heures selon filtre
     let hVal;
-    if(f === '24h')   hVal = g.hToday > 0 ? g.hToday + ' h' : '—';
-    else if(f === 'month') hVal = g.h > 0 ? g.h.toLocaleString() + ' h' : '—';
-    else               hVal = g.h > 0 ? g.h.toLocaleString() + ' h' : '—';
+    if(f === '24h')   hVal = g.hToday > 0 ? parseFloat(g.hToday).toFixed(1) + ' h' : '—';
+    else if(f === 'month') hVal = g.h > 0 ? parseFloat(g.h).toFixed(1) + ' h' : '—';
+    else               hVal = g.h > 0 ? parseFloat(g.h).toFixed(1) + ' h' : '—';
     // Production selon filtre
     let prodVal;
-    if(f === '24h')        prodVal = g.energieProd > 0 ? Math.round(g.energieProd/1000*10)/10 + ' MWh' : '—';
-    else if(f === 'month') prodVal = g.energieProd > 0 ? Math.round(g.energieProd/1000) + ' MWh' : '—';
-    else                   prodVal = g.energieProd > 0 ? Math.round(g.energieProd/1000 * 30) + ' MWh' : '—';
+    if(f === '24h')        prodVal = g.energieProd > 0 ? (g.energieProd/1000).toFixed(1) + ' MWh' : '—';
+    else if(f === 'month') prodVal = g.energieProd > 0 ? (g.energieProd/1000).toFixed(1) + ' MWh' : '—';
+    else                   prodVal = g.energieProd > 0 ? (g.energieProd/1000 * 30).toFixed(1) + ' MWh' : '—';
     return `<tr style="cursor:pointer;${isContra?'background:rgba(160,90,255,0.04);':''}" onclick="openGroupeDetail('${id}','${g.id}')">
       <td style="font-weight:700;color:${isContra?'#a05aff':'var(--text)'};">
         ${g.id}
       </td>
-      <td>${g.mw} MW</td>
+      <td>${parseFloat(g.mw).toFixed(1)} MW</td>
       <td><span style="display:inline-flex;align-items:center;gap:6px;">
         <span class="status-dot ${sc}"></span>
         <span style="font-size:11px;font-weight:600;${isContra?'color:#a05aff;':''}">${sl}</span>
       </span></td>
       <td>${hVal}</td>
       <td style="color:var(--text-muted);font-weight:500;">${prodVal}</td>
-      <td style="color:${gSfocColor};font-weight:600;">${g.sfoc>0?g.sfoc+' g/kWh':'—'}</td>
-      <td style="color:${gSlocColor};font-weight:600;">${g.sloc>0?g.sloc.toFixed(2)+' g/kWh':'—'}</td>
+      <td style="color:${gSfocColor};font-weight:600;">${g.sfoc>0?parseFloat(g.sfoc).toFixed(1)+' g/kWh':'—'}</td>
+      <td style="color:${gSlocColor};font-weight:600;">${g.sloc>0?g.sloc.toFixed(1)+' g/kWh':'—'}</td>
       <td style="color:var(--text-dim);">${g.maint}</td>
     </tr>`;
   }).join('');
@@ -3284,8 +3284,8 @@ function renderGroupeDetail(siteId, grpId) {
       '</div>' +
       '<div style="margin-left:auto;text-align:right;">' +
         '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(224,92,92,0.5);margin-bottom:4px;">Arrêt forcé</div>' +
-        '<div style="font-size:22px;font-weight:800;color:#e05c5c;">' + (g.arretForce || 0) + '<span style="font-size:11px;font-weight:400;color:rgba(224,92,92,0.5);margin-left:3px;">h</span></div>' +
-        '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:6px;">Arrêt planifié : ' + (g.arretPlanifie || 0) + ' h</div>' +
+        '<div style="font-size:22px;font-weight:800;color:#e05c5c;">' + parseFloat(g.arretForce || 0).toFixed(1) + '<span style="font-size:11px;font-weight:400;color:rgba(224,92,92,0.5);margin-left:3px;">h</span></div>' +
+        '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:6px;">Arrêt planifié : ' + parseFloat(g.arretPlanifie || 0).toFixed(1) + ' h</div>' +
       '</div>' +
     '</div>';
   }
@@ -3293,10 +3293,10 @@ function renderGroupeDetail(siteId, grpId) {
   // ── Section 1 — Heures & Exploitation ──
   html += '<div class="gd-section">Heures de marche & Exploitation</div>';
   const kpiRow1 = [
-    { label:'Heures cumulées', value: g.h > 0 ? g.h.toLocaleString() : '0', unit:'h', sub:'Total depuis mise en service', color:null },
-    { label:'Marche aujourd\'hui', value: g.hToday, unit:'h', sub: g.hStandby > 0 ? 'Standby : ' + g.hStandby + ' h' : 'Arrêt : ' + (24 - g.hToday) + ' h', color: g.hToday >= 20 ? 'var(--energy)' : g.hToday > 0 ? 'var(--orange)' : 'var(--red)' },
-    { label:'Arrêt forcé',      value: g.arretForce,    unit:'h', sub:'Non planifié', color: g.arretForce > 0 ? 'var(--red)' : null },
-    { label:'Arrêt planifié',   value: g.arretPlanifie, unit:'h', sub:'Maintenance préventive', color: g.arretPlanifie > 0 ? 'var(--orange)' : null },
+    { label:'Heures cumulées', value: g.h > 0 ? parseFloat(g.h).toFixed(1) : '0', unit:'h', sub:'Total depuis mise en service', color:null },
+    { label:'Marche aujourd\'hui', value: parseFloat(g.hToday).toFixed(1), unit:'h', sub: g.hStandby > 0 ? 'Standby : ' + parseFloat(g.hStandby).toFixed(1) + ' h' : 'Arrêt : ' + parseFloat(24 - g.hToday).toFixed(1) + ' h', color: g.hToday >= 20 ? 'var(--energy)' : g.hToday > 0 ? 'var(--orange)' : 'var(--red)' },
+    { label:'Arrêt forcé',      value: parseFloat(g.arretForce).toFixed(1),    unit:'h', sub:'Non planifié', color: g.arretForce > 0 ? 'var(--red)' : null },
+    { label:'Arrêt planifié',   value: parseFloat(g.arretPlanifie).toFixed(1), unit:'h', sub:'Maintenance préventive', color: g.arretPlanifie > 0 ? 'var(--orange)' : null },
   ];
   html += '<div class="gd-kpi-grid">' + kpiRow1.map(c =>
     '<div class="gd-kpi-card" style="background:' + bg + ';border-color:' + bc + ';">' +
@@ -3355,17 +3355,17 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-chart-card">' +
     '<div class="gd-chart-title">' +
       '<span>Profil de charge — 24h (07h → 06h)</span>' +
-      '<span class="gd-chart-peak">Charge max : <strong style="color:' + prodColor + ';">' + g.maxLoad.toLocaleString() + ' kW</strong> · Total : <strong style="color:' + prodColor + ';">' + totalKwh.toLocaleString() + ' kWh</strong></span>' +
+      '<span class="gd-chart-peak">Charge max : <strong style="color:' + prodColor + ';">' + parseFloat(g.maxLoad).toFixed(1) + ' kW</strong> · Total : <strong style="color:' + prodColor + ';">' + parseFloat(totalKwh).toFixed(1) + ' kWh</strong></span>' +
     '</div>' +
     svgChart +
     '</div>';
 
   // Production KPIs
   const prodRow = [
-    { label:'Énergie produite',  value: g.energieProd > 0 ? g.energieProd.toLocaleString() : '0', unit:'kWh', sub:'Production 24h', color: isKO ? 'var(--red)' : null },
-    { label:'Charge max',        value: g.maxLoad.toLocaleString(), unit:'kW',  sub:'Puissance de pointe', color: isKO ? 'var(--red)' : null },
-    { label:'Conso LV/MV',       value: g.consLVMV > 0 ? g.consLVMV.toLocaleString() : '—', unit: g.consLVMV > 0 ? 'kWh' : '', sub:'Services auxiliaires', color: null },
-    { label:'Heures de marche',  value: g.hToday, unit:'h / 24', sub:'Taux : ' + Math.round(g.hToday/24*100) + '%', color: g.hToday >= 20 ? 'var(--energy)' : g.hToday > 0 ? 'var(--orange)' : 'var(--red)' },
+    { label:'Énergie produite',  value: g.energieProd > 0 ? parseFloat(g.energieProd).toFixed(1) : '0', unit:'kWh', sub:'Production 24h', color: isKO ? 'var(--red)' : null },
+    { label:'Charge max',        value: parseFloat(g.maxLoad).toFixed(1), unit:'kW',  sub:'Puissance de pointe', color: isKO ? 'var(--red)' : null },
+    { label:'Conso LV/MV',       value: g.consLVMV > 0 ? parseFloat(g.consLVMV).toFixed(1) : '—', unit: g.consLVMV > 0 ? 'kWh' : '', sub:'Services auxiliaires', color: null },
+    { label:'Heures de marche',  value: parseFloat(g.hToday).toFixed(1), unit:'h / 24', sub:'Taux : ' + Math.round(g.hToday/24*100) + '%', color: g.hToday >= 20 ? 'var(--energy)' : g.hToday > 0 ? 'var(--orange)' : 'var(--red)' },
   ];
   html += '<div class="gd-kpi-grid">' + prodRow.map(c =>
     '<div class="gd-kpi-card" style="background:' + bg + ';border-color:' + bc + ';">' +
@@ -3381,9 +3381,9 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-section">Combustible</div>';
   html += '<div class="gd-metrics-grid">';
   const fuelMetrics = [
-    { label:'Conso HFO',   icon:'🛢️', value: g.consoHFO > 0 ? g.consoHFO.toLocaleString() : '—', unit: g.consoHFO > 0 ? 'L' : '', sub:'Heavy Fuel Oil 24h' },
-    { label:'Conso LFO',   icon:'⛽',  value: g.consoLFO > 0 ? g.consoLFO.toLocaleString() : '0',  unit: 'L', sub:'Light Fuel Oil 24h' },
-    { label:'Temp. Fuel',  icon:'🌡️',  value: g.fuelOilTemp > 0 ? g.fuelOilTemp : '—', unit: g.fuelOilTemp > 0 ? '°C' : '', sub:'Température fuel oil',
+    { label:'Conso HFO',   icon:'🛢️', value: g.consoHFO > 0 ? parseFloat(g.consoHFO).toFixed(1) : '—', unit: g.consoHFO > 0 ? 'L' : '', sub:'Heavy Fuel Oil 24h' },
+    { label:'Conso LFO',   icon:'⛽',  value: g.consoLFO > 0 ? parseFloat(g.consoLFO).toFixed(1) : '0',  unit: 'L', sub:'Light Fuel Oil 24h' },
+    { label:'Temp. Fuel',  icon:'🌡️',  value: g.fuelOilTemp > 0 ? parseFloat(g.fuelOilTemp).toFixed(1) : '—', unit: g.fuelOilTemp > 0 ? '°C' : '', sub:'Température fuel oil',
       color: g.fuelOilTemp > 100 ? 'var(--red)' : g.fuelOilTemp > 90 ? 'var(--orange)' : (g.fuelOilTemp > 0 ? 'var(--energy)' : null) },
   ];
   fuelMetrics.forEach(m =>
@@ -3400,7 +3400,7 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-metrics-grid" style="grid-template-columns:repeat(4,1fr);">';
   const oilMetrics = [
     { label:'Consommation huile', icon:'🛢️', value: g.oilConso > 0 ? g.oilConso.toFixed(1) : '—', unit: g.oilConso > 0 ? 'L' : '', sub:'Conso 24h' },
-    { label:'Appoint huile',      icon:'➕',  value: g.oilTopUp > 0 ? g.oilTopUp : '0', unit:'L', sub:'Top-up 24h',
+    { label:'Appoint huile',      icon:'➕',  value: g.oilTopUp > 0 ? parseFloat(g.oilTopUp).toFixed(1) : '0', unit:'L', sub:'Top-up 24h',
       color: g.oilTopUp > 50 ? 'var(--orange)' : null },
     { label:'Niveau carter',      icon:'📊',  value: g.oilSumpLevel > 0 ? g.oilSumpLevel.toFixed(1) : '—', unit: g.oilSumpLevel > 0 ? 'cm' : '', sub:'Oil sump level',
       color: g.oilSumpLevel > 0 && g.oilSumpLevel < 10 ? 'var(--red)' : g.oilSumpLevel > 0 && g.oilSumpLevel < 12 ? 'var(--orange)' : null },
@@ -3424,20 +3424,20 @@ function renderGroupeDetail(siteId, grpId) {
   const sfocColor = sfocVal === null ? 'var(--text-dim)' : sfocVal <= 250 ? 'var(--energy)' : 'var(--red)';
   const sfocPct   = sfocVal !== null ? Math.min(100, Math.max(0, ((sfocVal - 150) / 200) * 100)) : 0;
   const sfocLimPct= ((250 - 150) / 200) * 100;
-  const sfocDiff  = sfocVal !== null ? (sfocVal <= 250 ? '−' + (250 - sfocVal) + ' g/kWh sous la limite' : '+' + (sfocVal - 250) + ' g/kWh au-dessus de la limite') : 'Pas de données — moteur à l\'arrêt';
+  const sfocDiff  = sfocVal !== null ? (sfocVal <= 250 ? '−' + (250 - sfocVal).toFixed(1) + ' g/kWh sous la limite' : '+' + (sfocVal - 250).toFixed(1) + ' g/kWh au-dessus de la limite') : 'Pas de données — moteur à l\'arrêt';
 
   const slocVal   = g.sloc > 0 ? g.sloc : null;
   const slocColor = slocVal === null ? 'var(--text-dim)' : slocVal <= 1.0 ? 'var(--energy)' : 'var(--red)';
   const slocPct   = slocVal !== null ? Math.min(100, Math.max(0, (slocVal / 2.0) * 100)) : 0;
   const slocLimPct= (1.0 / 2.0) * 100;
-  const slocDiff  = slocVal !== null ? (slocVal <= 1.0 ? '−' + (1.0 - slocVal).toFixed(2) + ' g/kWh sous la limite' : '+' + (slocVal - 1.0).toFixed(2) + ' g/kWh au-dessus de la limite') : 'Pas de données — moteur à l\'arrêt';
+  const slocDiff  = slocVal !== null ? (slocVal <= 1.0 ? '−' + (1.0 - slocVal).toFixed(1) + ' g/kWh sous la limite' : '+' + (slocVal - 1.0).toFixed(1) + ' g/kWh au-dessus de la limite') : 'Pas de données — moteur à l\'arrêt';
 
   const gaugeDefs = [
     { name:'SFOC', desc:'Specific Fuel Oil Consumption', norm:'Limite : 250 g/kWh',
-      val: sfocVal !== null ? sfocVal : '—', unit:'g/kWh', color:sfocColor,
+      val: sfocVal !== null ? sfocVal.toFixed(1) : '—', unit:'g/kWh', color:sfocColor,
       pct:sfocPct, limPct:sfocLimPct, lo:'150', hi:'350', limLabel:'250', diff:sfocDiff },
     { name:'SLOC', desc:'Specific Lube Oil Consumption', norm:'Limite : 1.00 g/kWh',
-      val: slocVal !== null ? slocVal.toFixed(2) : '—', unit:'g/kWh', color:slocColor,
+      val: slocVal !== null ? slocVal.toFixed(1) : '—', unit:'g/kWh', color:slocColor,
       pct:slocPct, limPct:slocLimPct, lo:'0', hi:'2.0', limLabel:'1.0', diff:slocDiff }
   ];
 
