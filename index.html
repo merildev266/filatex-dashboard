@@ -2543,7 +2543,7 @@ function renderProjectCard(p, color, colorRgb) {
 }
 </script>
 
-<script src="tamatave_data.js"></script>
+<script src="site_data.js"></script>
 <script>
 
 
@@ -2868,20 +2868,20 @@ const siteData = {
 const siteOrder = ['tamatave','tulear','diego','majunga','antsirabe','fihaonana'];
 
 // ══ LIVE DATA LOADER ══
-if (typeof TAMATAVE_LIVE !== 'undefined') {
-  const t = siteData.tamatave;
-  const d = TAMATAVE_LIVE;
-  t.name = d.name;
-  t.status = d.status;
-  t.mw = d.mw;
-  t.contrat = d.contrat;
-  t.groupes = d.groupes;
-  t.kpi = d.kpi;
-  if (d.prev2025) t.prev2025 = d.prev2025;
-  t.blackouts = d.blackouts || [];
-  t.dailyTrend = d.dailyTrend || [];
-  t.latestDate = d.latestDate || '';
+function mergeLiveData(target, source) {
+  target.name = source.name;
+  target.status = source.status;
+  target.mw = source.mw;
+  target.contrat = source.contrat;
+  target.groupes = source.groupes;
+  target.kpi = source.kpi;
+  if (source.prev2025) target.prev2025 = source.prev2025;
+  target.blackouts = source.blackouts || [];
+  target.dailyTrend = source.dailyTrend || [];
+  target.latestDate = source.latestDate || '';
 }
+if (typeof TAMATAVE_LIVE !== 'undefined') mergeLiveData(siteData.tamatave, TAMATAVE_LIVE);
+if (typeof DIEGO_LIVE !== 'undefined') mergeLiveData(siteData.diego, DIEGO_LIVE);
 
 // ══ HELPERS ══
 function delta(a,b){const d=a-b,p=((d/Math.abs(b))*100).toFixed(1),s=d>0?'+':'',c=d>0?'delta-up':d<0?'delta-down':'delta-flat';return `<span class="kpi-delta ${c}">${s}${p}%</span>`;}

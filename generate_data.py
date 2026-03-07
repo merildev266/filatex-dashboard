@@ -1,28 +1,36 @@
 """
-Reads Tamatave xlsx files and generates a tamatave_data.js file
+Reads Tamatave and Diego xlsx files and generates JS data files
 that the dashboard can load synchronously.
 """
 import json
-from data_loader import build_tamatave_data
+from data_loader import build_site_data
 
 
 def generate():
-    data = build_tamatave_data()
-    if data is None:
-        print("No data found in xlsx files")
-        return
+    sites = {
+        "tamatave": "TAMATAVE_LIVE",
+        "diego": "DIEGO_LIVE",
+    }
 
-    js = f"// Auto-generated from Tamatave xlsx files\nconst TAMATAVE_LIVE = {json.dumps(data, default=str)};\n"
+    all_js = "// Auto-generated from xlsx files\n"
 
-    with open("tamatave_data.js", "w", encoding="utf-8") as f:
-        f.write(js)
+    for site_key, js_var in sites.items():
+        data = build_site_data(site_key)
+        if data is None:
+            print(f"  {site_key}: No data found")
+            continue
 
-    print(f"Generated tamatave_data.js ({len(js)} bytes)")
-    print(f"  Latest date: {data['latestDate']}")
-    print(f"  Status: {data['status']}, MW: {data['mw']}")
-    print(f"  Engines: {len(data['groupes'])} ({sum(1 for g in data['groupes'] if g['statut'] == 'ok')} running)")
-    print(f"  Daily trend: {len(data['dailyTrend'])} days")
-    print(f"  Blackouts: {len(data['blackouts'])} events")
+        all_js += f"const {js_var} = {json.dumps(data, default=str)};\n"
+
+        running = sum(1 for g in data["groupes"] if g["statut"] == "ok")
+        print(f"  {site_key}: status={data['status']}, MW={data['mw']}, "
+              f"{len(data['groupes'])} engines ({running} running), "
+              f"{len(data['dailyTrend'])} days, {len(data['blackouts'])} blackouts")
+
+    with open("site_data.js", "w", encoding="utf-8") as f:
+        f.write(all_js)
+
+    print(f"\nGenerated site_data.js ({len(all_js)} bytes)")
 
 
 if __name__ == "__main__":
