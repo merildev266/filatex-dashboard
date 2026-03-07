@@ -136,12 +136,45 @@ def safe_float(v, default=0.0):
 
 
 def time_to_hours(v):
-    """Convert time-formatted values (HH:MM:SS or timedelta) to decimal hours."""
+    """Convert time-formatted values (HH:MM:SS, timedelta, datetime, time) to decimal hours.
+
+    Excel stores 24:00:00 as datetime(1900, 1, 1, 0, 0, 0) which we must
+    interpret as 24 hours.  Normal time objects like time(23, 54) are
+    converted directly.  timedelta objects are converted via total_seconds().
+    """
+    import datetime as _dt
+
     if pd.isna(v) or v == 0:
         return 0.0
+
+    # --- timedelta (e.g. timedelta(hours=23, minutes=54)) ---
+    if isinstance(v, (timedelta, pd.Timedelta)):
+        return v.total_seconds() / 3600
+
+    # --- datetime.time (e.g. time(23, 54)) ---
+    if isinstance(v, _dt.time):
+        return v.hour + v.minute / 60 + v.second / 3600
+
+    # --- datetime / Timestamp ---
+    # Excel represents 24:00:00 as 1900-01-01 00:00:00 (date = Jan 1, 1900)
+    # and normal times as 1899-12-30 HH:MM:SS
+    if isinstance(v, (datetime, pd.Timestamp)):
+        ts = pd.Timestamp(v)
+        if ts.year <= 1900:
+            # 1900-01-01 00:00:00 means 24:00 (midnight = 24 hours)
+            if ts.month == 1 and ts.day == 1 and ts.hour == 0 and ts.minute == 0:
+                return 24.0
+            # Otherwise extract time portion; for 1899-12-30 dates, just hours
+            return ts.hour + ts.minute / 60 + ts.second / 3600
+        # Modern datetime — just extract time part
+        return ts.hour + ts.minute / 60 + ts.second / 3600
+
+    # --- numeric ---
     if isinstance(v, (int, float)):
         f = float(v)
         return 0.0 if np.isnan(f) else f
+
+    # --- string fallback (e.g. "23:54:00") ---
     s = str(v).strip()
     if s in ("0", "00:00:00", "0:00:00"):
         return 0.0
@@ -212,12 +245,19 @@ def load_site_files(cfg):
         oil = pd.read_excel(xls, sheet_name="Specific data oil", header=None)
         oil_start = cfg["oil_data_start_row"]
         oil_data = oil.iloc[oil_start:].copy()
-        # Filter to actual data rows — dates can be Timestamps or day numbers
-        oil_data = oil_data[oil_data.iloc[:, 0].apply(
-            lambda x: isinstance(x, (datetime, pd.Timestamp)) or (
-                isinstance(x, (int, float)) and not np.isnan(x) if isinstance(x, float) else isinstance(x, int)
-            )
-        )]
+        # Filter to actual day rows only (1-31 or valid Timestamps).
+        # Excludes TOTAL/AVERAGE summary rows that have higher indices or text.
+        def _is_valid_oil_day(x):
+            if isinstance(x, (datetime, pd.Timestamp)):
+                return True
+            if isinstance(x, (int, float)):
+                try:
+                    n = int(x)
+                    return 1 <= n <= 31
+                except (ValueError, OverflowError):
+                    return False
+            return False
+        oil_data = oil_data[oil_data.iloc[:, 0].apply(_is_valid_oil_day)]
         all_oil.append(oil_data)
 
         # --- Blackout ---
