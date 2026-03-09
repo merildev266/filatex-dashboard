@@ -2643,18 +2643,382 @@ function closeDiegoDetail() {
   </div>
   <div class="inner-page-inner">
     <div style="max-width:1240px;margin:0 auto;">
-      <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(66,106,179,0.5);margin-bottom:18px;">Vue consolidée · Permis & études</div>
-      <div class="props-kpi-grid">
-        <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Projets en cours</div><div class="props-kpi-val" style="color:#426ab3;">—</div><div class="props-kpi-sub">Développement actif</div></div>
-        <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Permis obtenus</div><div class="props-kpi-val">—</div><div class="props-kpi-sub">vs demandes</div></div>
-        <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Budget Dev</div><div class="props-kpi-val" style="color:#426ab3;">— M$</div><div class="props-kpi-sub">Études & frais</div></div>
-        <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Délai moyen</div><div class="props-kpi-val" style="color:#f37056;">— j</div><div class="props-kpi-sub">Obtention permis</div></div>
-      </div>
-      <div class="props-placeholder" style="border-color:rgba(66,106,179,0.15);">📋 Liste des projets en développement — Données à intégrer</div>
-      <div class="props-placeholder" style="border-color:rgba(66,106,179,0.15);min-height:200px;">📊 Timeline permis / jalons — Espace réservé</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(66,106,179,0.5);margin-bottom:18px;">Vue consolidée · Permis & études · 7 projets</div>
+      <div class="props-kpi-grid" id="dev-kpi-grid"></div>
+      <!-- Alert banner for delayed projects -->
+      <div id="dev-alert-banner"></div>
+      <!-- Project cards -->
+      <div id="dev-projects-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-top:18px;"></div>
     </div>
   </div>
 </div>
+
+<!-- ═══ DEV PROJECT DETAIL PANEL (Gantt) ═══ -->
+<div id="panel-dev-project" style="position:fixed;inset:0;z-index:400;background:#0a0916;overflow-y:auto;scrollbar-width:none;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
+  <div class="sd-sticky-bar">
+    <div class="nav-back"><button class="back-btn" onclick="closePanelDevProject()" style="border-color:rgba(66,106,179,0.3);color:#426ab3;">Developpement</button></div>
+    <div class="sd-site-name" id="dev-proj-title" style="color:#426ab3;"></div>
+    <div class="nav-filter"></div>
+  </div>
+  <div class="inner-page-inner">
+    <div style="max-width:1240px;margin:0 auto;">
+      <div id="dev-proj-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;"></div>
+      <div id="dev-proj-comment" style="margin-bottom:18px;"></div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(66,106,179,0.5);margin-bottom:14px;">Planning Gantt</div>
+      <div id="dev-proj-gantt" style="overflow-x:auto;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const azur='#426ab3', terra='#f37056', vert='#00ab63', red='#ff5050', neonRed='#ff2040';
+  const today = new Date(2026,2,9);
+
+  const devProjects = [
+    { id:'casa-del-lago', name:'Casa Del Lago', duree:1308, debut:'2024-12-19', fin:'2029-12-24', glissMax:168,
+      tasks:[
+        {name:'GO du CSI',debut:'2024-12-19',fin:'2024-12-19',g:0},
+        {name:'Programme & architecte',debut:'2025-01-06',fin:'2025-03-28',g:0},
+        {name:'Conception sommaire',debut:'2025-04-28',fin:'2025-08-15',g:56},
+        {name:'Brochure',debut:'2025-08-18',fin:'2026-01-30',g:168},
+        {name:'Dossier APD et DCE',debut:'2025-08-18',fin:'2026-02-13',g:126},
+        {name:'Appel d\'offre',debut:'2026-02-16',fin:'2026-03-27',g:112},
+        {name:'Morcellement judiciaire',debut:'2025-09-01',fin:'2026-05-08',g:0},
+        {name:'Instruction permis construire',debut:'2025-09-09',fin:'2026-04-20',g:56},
+        {name:'Travaux',debut:'2026-04-21',fin:'2029-12-24',g:56}
+      ],
+      comment:'Brochure +168j. Vente terrains nus stand-by 1 mois. Problemes politiques sept/oct impact 1 mois.'
+    },
+    { id:'hermes', name:'Hermes', duree:948, debut:'2024-12-19', fin:'2028-08-15', glissMax:0,
+      tasks:[
+        {name:'GO du CSI',debut:'2024-12-19',fin:'2024-12-19',g:0},
+        {name:'Programme & architecte',debut:'2025-01-16',fin:'2025-03-03',g:0},
+        {name:'Process P2P',debut:'2025-03-03',fin:'2025-03-17',g:0},
+        {name:'Conception sommaire',debut:'2025-03-17',fin:'2025-08-15',g:0},
+        {name:'Brochure',debut:'2025-07-07',fin:'2025-12-15',g:0},
+        {name:'DCE et nego',debut:'2025-07-07',fin:'2026-02-13',g:0},
+        {name:'Instruction permis construire',debut:'2025-09-08',fin:'2026-06-15',g:0},
+        {name:'Travaux bloc B + C',debut:'2026-06-16',fin:'2028-08-15',g:0}
+      ],
+      comment:'Dans les temps. 2 blocs: extension (B) + renovation (C).'
+    },
+    { id:'hotel-tamatave', name:'Hotel Tamatave', duree:880, debut:'2025-01-15', fin:'2028-05-30', glissMax:230,
+      tasks:[
+        {name:'Esquisse Jordi',debut:'2025-01-15',fin:'2025-02-11',g:0},
+        {name:'Programme & architecte',debut:'2025-01-15',fin:'2025-03-11',g:0},
+        {name:'Conception',debut:'2025-03-12',fin:'2025-08-26',g:42},
+        {name:'DCE',debut:'2025-08-27',fin:'2026-02-13',g:129},
+        {name:'Appel d\'offre',debut:'2026-02-16',fin:'2026-03-13',g:115},
+        {name:'Contractualisation exploitant',debut:'2025-03-12',fin:'2025-11-18',g:140},
+        {name:'Depot financement bancaire',debut:'2026-03-02',fin:'2026-03-02',g:230},
+        {name:'Instruction permis construire',debut:'2025-09-24',fin:'2026-06-02',g:126},
+        {name:'Travaux',debut:'2026-06-03',fin:'2028-05-30',g:126}
+      ],
+      comment:'Retard important. Nego exploitant tres longue (+140j). Pb politiques sept/oct. Paiement bloque phase conception.'
+    },
+    { id:'ivatosoa', name:'Residence Ivatosoa', duree:1160, debut:'2026-02-27', fin:'2030-08-08', glissMax:0,
+      tasks:[
+        {name:'GO du CSI',debut:'2026-02-27',fin:'2026-02-27',g:0},
+        {name:'Calage plan masse',debut:'2026-02-27',fin:'2026-03-26',g:0},
+        {name:'DCE et permis construire',debut:'2026-03-27',fin:'2026-06-18',g:0},
+        {name:'Instruction permis',debut:'2026-06-19',fin:'2026-09-10',g:0},
+        {name:'AO et negociations',debut:'2026-06-19',fin:'2026-07-30',g:0},
+        {name:'Travaux villas temoins',debut:'2026-09-11',fin:'2026-12-31',g:0},
+        {name:'Commercialisation villas',debut:'2027-01-01',fin:'2027-03-25',g:0},
+        {name:'Dev projet complet',debut:'2027-03-26',fin:'2030-08-08',g:0}
+      ],
+      comment:'Nouveau projet. Phase 1 villas temoins puis developpement complet si succes.'
+    },
+    { id:'zf-colina', name:'ZF Colina', duree:807, debut:'2025-12-12', fin:'2029-01-15', glissMax:31,
+      tasks:[
+        {name:'GO du CSI',debut:'2025-12-12',fin:'2025-12-12',g:0},
+        {name:'Process P2P',debut:'2025-12-15',fin:'2026-02-13',g:29},
+        {name:'Etudes EIES',debut:'2026-02-16',fin:'2026-05-08',g:29},
+        {name:'APD complet',debut:'2026-02-16',fin:'2026-06-05',g:29},
+        {name:'Pre-commercialisation',debut:'2026-04-10',fin:'2026-06-04',g:29},
+        {name:'Permis environnemental',debut:'2026-05-11',fin:'2026-07-03',g:9},
+        {name:'DCE et AO',debut:'2026-06-08',fin:'2026-07-31',g:29},
+        {name:'Instruction permis construire',debut:'2026-07-07',fin:'2026-10-26',g:31},
+        {name:'Consultations bailleurs',debut:'2025-12-15',fin:'2026-04-03',g:0},
+        {name:'Travaux phase 1',debut:'2026-10-27',fin:'2029-01-15',g:31}
+      ],
+      comment:'Blocage P2P (+29j). Delai instruction PC tres court, appui necessaire.'
+    },
+    { id:'projet-ecole', name:'Projet Ecole', duree:730, debut:'2025-12-17', fin:'2027-09-10', glissMax:55,
+      tasks:[
+        {name:'GO du CA',debut:'2025-12-17',fin:'2025-12-17',g:0},
+        {name:'Accord formel MLF',debut:'2026-01-20',fin:'2026-02-13',g:38},
+        {name:'Choix equipe MOE',debut:'2026-01-19',fin:'2026-02-27',g:30},
+        {name:'Prescriptions urbanisme',debut:'2025-12-17',fin:'2026-01-15',g:0},
+        {name:'Etude APS',debut:'2026-03-02',fin:'2026-04-28',g:32},
+        {name:'Validation APS',debut:'2026-04-29',fin:'2026-05-05',g:32},
+        {name:'APD',debut:'2026-05-06',fin:'2026-07-02',g:30},
+        {name:'DCE phase 1',debut:'2026-07-10',fin:'2026-08-07',g:30},
+        {name:'AO phase 1',debut:'2026-08-10',fin:'2026-09-18',g:30},
+        {name:'Instruction permis construire',debut:'2026-07-24',fin:'2026-11-12',g:55},
+        {name:'Travaux phase 1',debut:'2026-10-12',fin:'2027-09-10',g:16}
+      ],
+      comment:'Accord MLF non finalise au 04/02 (+38j). Appui necessaire pour raccourcir instruction PC.'
+    },
+    { id:'eden-extension', name:'Eden Extension 6 Villas', duree:1200, debut:'2026-02-12', fin:'2030-09-18', glissMax:0,
+      tasks:[
+        {name:'GO du COPIL',debut:'2026-02-12',fin:'2026-02-12',g:0},
+        {name:'Acquisition propriete',debut:'2026-02-12',fin:'2026-06-03',g:0},
+        {name:'Modification PUDe',debut:'2026-06-04',fin:'2026-11-18',g:0},
+        {name:'Permis environnemental',debut:'2026-06-04',fin:'2026-11-18',g:0},
+        {name:'Conception et etudes',debut:'2026-11-19',fin:'2027-05-05',g:0},
+        {name:'Brochure',debut:'2027-05-06',fin:'2027-06-30',g:0},
+        {name:'Instruction permis construire',debut:'2027-05-06',fin:'2027-12-15',g:0},
+        {name:'Travaux',debut:'2027-12-16',fin:'2030-09-18',g:0}
+      ],
+      comment:'Nouveau projet. 6 villas haut de gamme. Permis environnemental sur 2 saisons requis.'
+    }
+  ];
+
+  window._devProjects = devProjects;
+
+  function pDate(s){ const p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function daysDiff(a,b){ return Math.round((b-a)/86400000); }
+  function fmtDate(s){ const p=s.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); }
+
+  // Current phases
+  devProjects.forEach(p => {
+    p.phases = [];
+    p.nextPhase = null;
+    const d0 = pDate(p.debut), df = pDate(p.fin);
+    p.pct = today >= df ? 100 : today <= d0 ? 0 : Math.round(daysDiff(d0,today)/daysDiff(d0,df)*100);
+    p.tasks.forEach(t => {
+      const td = pDate(t.debut), tf = pDate(t.fin);
+      t.done = today >= tf;
+      t.active = td <= today && today <= tf;
+      if(t.active) p.phases.push(t.name);
+      else if(td > today && !p.nextPhase) p.nextPhase = t.name;
+    });
+    p.status = p.glissMax > 30 ? 'retard' : p.glissMax > 0 ? 'leger' : 'ok';
+  });
+
+  // KPIs
+  const total = devProjects.length;
+  const enRetard = devProjects.filter(p=>p.glissMax>30).length;
+  const permisDeposes = 3;
+  const glissMoy = Math.round(devProjects.reduce((s,p)=>s+p.glissMax,0)/total);
+  const avgPct = Math.round(devProjects.reduce((s,p)=>s+p.pct,0)/total);
+
+  document.getElementById('dev-kpi-grid').innerHTML = `
+    <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Projets en cours</div><div class="props-kpi-val" style="color:${azur};">${total}</div><div class="props-kpi-sub">Developpement actif</div></div>
+    <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Permis deposes</div><div class="props-kpi-val">${permisDeposes} / ${total}</div><div class="props-kpi-sub">En instruction</div></div>
+    <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Avancement moy.</div><div class="props-kpi-val" style="color:${azur};">${avgPct} %</div><div class="props-kpi-sub">Tous projets</div></div>
+    <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Glissement moy.</div><div class="props-kpi-val" style="color:${glissMoy>30?red:azur};">${glissMoy} j</div><div class="props-kpi-sub">${enRetard} projet${enRetard>1?'s':''} en retard</div></div>
+  `;
+
+  // Alert banner
+  const delayed = devProjects.filter(p=>p.glissMax>30);
+  if(delayed.length){
+    document.getElementById('dev-alert-banner').innerHTML = `
+      <div style="margin-top:12px;padding:10px 16px;border-radius:10px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:11px;font-weight:700;color:#ff5050;">&#9888; Projets en retard :</span>
+        ${delayed.map(p=>`<span style="font-size:10px;color:#ff5050;background:rgba(255,80,80,0.1);padding:3px 8px;border-radius:6px;">${p.name} <b>+${p.glissMax}j</b></span>`).join('')}
+      </div>`;
+  }
+
+  // Project cards — clickable
+  const list = document.getElementById('dev-projects-list');
+  devProjects.forEach((p,idx) => {
+    const statusColor = p.status==='retard' ? red : p.status==='leger' ? '#FDB823' : vert;
+    const statusLabel = p.status==='retard' ? 'En retard' : p.status==='leger' ? 'Leger retard' : 'Dans les temps';
+    const phaseStr = p.phases.length ? p.phases.join(', ') : (p.nextPhase ? 'Prochaine: '+p.nextPhase : 'Non demarre');
+    const d0 = pDate(p.debut), df = pDate(p.fin);
+    const totalDays = daysDiff(d0,df);
+    let timelineHtml = '<div style="display:flex;gap:1px;height:6px;border-radius:3px;overflow:hidden;margin-top:6px;">';
+    p.tasks.forEach(t => {
+      const td = pDate(t.debut), tf = pDate(t.fin);
+      const w = Math.max(daysDiff(td,tf)/totalDays*100, 0.5);
+      const hasDelay = t.g > 0;
+      const bg = hasDelay ? (t.done ? 'rgba(255,32,64,0.6)' : 'rgba(255,32,64,0.8)') : (t.done ? 'rgba(66,106,179,0.5)' : t.active ? azur : 'rgba(66,106,179,0.12)');
+      timelineHtml += '<div style="width:'+w+'%;background:'+bg+';border-radius:1px;" title="'+t.name+(hasDelay?' (+'+t.g+'j)':'')+'"></div>';
+    });
+    timelineHtml += '</div>';
+
+    const card = document.createElement('div');
+    card.style.cssText = 'background:rgba(66,106,179,0.04);border:1px solid rgba(66,106,179,0.12);border-radius:12px;padding:16px;cursor:pointer;transition:border-color 0.2s,transform 0.15s;';
+    card.onmouseenter = function(){ this.style.borderColor='rgba(66,106,179,0.35)'; this.style.transform='translateY(-2px)'; };
+    card.onmouseleave = function(){ this.style.borderColor='rgba(66,106,179,0.12)'; this.style.transform='none'; };
+    card.onclick = function(){ openDevProject(idx); };
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:700;color:#fff;">${p.name}</div>
+        <span style="font-size:9px;font-weight:700;color:${statusColor};background:${statusColor}15;padding:3px 8px;border-radius:6px;">${statusLabel}</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:10px;">${p.duree} jours &middot; ${p.debut.slice(0,4)} &rarr; ${p.fin.slice(0,4)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:10px;color:rgba(255,255,255,0.6);">Avancement global</span>
+        <span style="font-size:11px;font-weight:700;color:${azur};">${p.pct}%</span>
+      </div>
+      <div style="height:4px;background:rgba(66,106,179,0.1);border-radius:2px;overflow:hidden;">
+        <div style="height:100%;width:${p.pct}%;background:${p.status==='retard'?neonRed:azur};border-radius:2px;"></div>
+      </div>
+      ${p.glissMax > 0 ? '<div style="font-size:10px;color:'+statusColor+';margin-top:6px;font-weight:600;">Glissement max: +'+p.glissMax+' jours</div>' : ''}
+      <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,0.5);"><b style="color:rgba(255,255,255,0.7);">Phase en cours:</b> ${phaseStr}</div>
+      ${timelineHtml}
+      <div style="display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px;">
+        <span>${p.debut.slice(0,7)}</span><span>${p.fin.slice(0,7)}</span>
+      </div>
+      ${p.comment ? '<div style="margin-top:8px;font-size:9px;color:rgba(255,255,255,0.35);font-style:italic;line-height:1.3;">'+p.comment+'</div>' : ''}
+    `;
+    list.appendChild(card);
+  });
+
+  // Update main Properties card
+  const devCard = document.querySelector('[data-pole="dev"]');
+  if(devCard){
+    const cells = devCard.querySelectorAll('.csec-kpi-val');
+    if(cells[0]) cells[0].textContent = total;
+    if(cells[1]) cells[1].textContent = permisDeposes + ' / ' + total;
+    if(cells[2]) cells[2].textContent = avgPct + ' %';
+    if(cells[3]){ cells[3].textContent = glissMoy + ' j'; cells[3].style.color = glissMoy>30?red:terra; }
+    const labels = devCard.querySelectorAll('.csec-kpi-label');
+    if(labels[1]) labels[1].textContent = 'Permis deposes';
+    if(labels[2]) labels[2].textContent = 'Avancement moy.';
+  }
+
+  // ═══ OPEN PROJECT DETAIL WITH GANTT ═══
+  window.openDevProject = function(idx){
+    const p = devProjects[idx];
+    const panel = document.getElementById('panel-dev-project');
+    panel.style.display = '';
+    document.getElementById('dev-proj-title').textContent = p.name;
+
+    const statusColor = p.status==='retard' ? neonRed : p.status==='leger' ? '#FDB823' : vert;
+    const statusLabel = p.status==='retard' ? 'En retard' : p.status==='leger' ? 'Leger retard' : 'Dans les temps';
+    const tasksWithDelay = p.tasks.filter(t=>t.g>0);
+    const maxDelay = p.glissMax;
+
+    // KPIs
+    document.getElementById('dev-proj-kpis').innerHTML = `
+      <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Avancement</div><div class="props-kpi-val" style="color:${azur};">${p.pct} %</div><div class="props-kpi-sub">${p.duree} jours total</div></div>
+      <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Statut</div><div class="props-kpi-val" style="color:${statusColor};font-size:clamp(14px,1.6vw,20px);">${statusLabel}</div><div class="props-kpi-sub">${p.tasks.length} taches</div></div>
+      <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Glissement max</div><div class="props-kpi-val" style="color:${maxDelay>0?neonRed:vert};${maxDelay>0?'text-shadow:0 0 12px rgba(255,32,64,0.6);':''}">${maxDelay > 0 ? '+'+maxDelay+' j' : '0 j'}</div><div class="props-kpi-sub">${tasksWithDelay.length} tache${tasksWithDelay.length>1?'s':''} impactee${tasksWithDelay.length>1?'s':''}</div></div>
+      <div class="props-kpi-card" style="border-color:rgba(66,106,179,0.15);"><div class="props-kpi-label">Periode</div><div class="props-kpi-val" style="color:${azur};font-size:clamp(11px,1.2vw,15px);">${fmtDate(p.debut)}</div><div class="props-kpi-sub">au ${fmtDate(p.fin)}</div></div>
+    `;
+
+    // Comment
+    document.getElementById('dev-proj-comment').innerHTML = p.comment ? `<div style="padding:10px 14px;border-radius:8px;background:rgba(66,106,179,0.06);border:1px solid rgba(66,106,179,0.1);font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;"><b style="color:rgba(255,255,255,0.8);">Notes :</b> ${p.comment}</div>` : '';
+
+    // ═══ GANTT CHART ═══
+    const allDates = [];
+    p.tasks.forEach(t => { allDates.push(pDate(t.debut)); allDates.push(pDate(t.fin)); });
+    const minDate = new Date(Math.min(...allDates));
+    const maxDate = new Date(Math.max(...allDates));
+    const totalDays = daysDiff(minDate,maxDate) || 1;
+
+    // Month headers
+    const months = [];
+    let cursor = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+    while(cursor <= maxDate){
+      const mStart = new Date(Math.max(cursor, minDate));
+      const nextM = new Date(cursor.getFullYear(), cursor.getMonth()+1, 1);
+      const mEnd = new Date(Math.min(nextM, maxDate));
+      const mLabel = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'][cursor.getMonth()] + ' ' + cursor.getFullYear().toString().slice(2);
+      const left = daysDiff(minDate,mStart)/totalDays*100;
+      const width = daysDiff(mStart,mEnd)/totalDays*100;
+      months.push({label:mLabel, left, width});
+      cursor = nextM;
+    }
+
+    const rowH = 32, headerH = 24, labelW = 220, chartW = 800;
+    const svgH = headerH + p.tasks.length * rowH + 10;
+
+    let ganttSvg = `<svg width="${labelW+chartW}" height="${svgH}" style="font-family:'DM Sans',sans-serif;min-width:${labelW+chartW}px;">`;
+    // Month headers
+    months.forEach(m => {
+      const x = labelW + m.left/100*chartW;
+      const w = m.width/100*chartW;
+      ganttSvg += `<rect x="${x}" y="0" width="${w}" height="${headerH}" fill="rgba(66,106,179,0.06)" stroke="rgba(66,106,179,0.08)" stroke-width="0.5"/>`;
+      if(w > 25) ganttSvg += `<text x="${x+w/2}" y="${headerH-7}" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8" font-weight="600">${m.label}</text>`;
+    });
+
+    // Today line
+    const todayX = labelW + daysDiff(minDate,today)/totalDays*chartW;
+    if(todayX >= labelW && todayX <= labelW+chartW){
+      ganttSvg += `<line x1="${todayX}" y1="0" x2="${todayX}" y2="${svgH}" stroke="${azur}" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>`;
+      ganttSvg += `<text x="${todayX}" y="${svgH-2}" text-anchor="middle" fill="${azur}" font-size="7" font-weight="700" opacity="0.7">Aujourd'hui</text>`;
+    }
+
+    // Task rows
+    p.tasks.forEach((t, i) => {
+      const y = headerH + i * rowH;
+      const td = pDate(t.debut), tf = pDate(t.fin);
+      const barLeft = daysDiff(minDate,td)/totalDays*chartW;
+      const barW = Math.max(daysDiff(td,tf)/totalDays*chartW, 3);
+      const hasDelay = t.g > 0;
+      const isMilestone = daysDiff(td,tf) === 0;
+
+      // Row background (alternating)
+      if(i%2===0) ganttSvg += `<rect x="0" y="${y}" width="${labelW+chartW}" height="${rowH}" fill="rgba(255,255,255,0.015)"/>`;
+
+      // Task label
+      const labelColor = hasDelay ? neonRed : (t.done ? 'rgba(255,255,255,0.5)' : t.active ? '#fff' : 'rgba(255,255,255,0.6)');
+      ganttSvg += `<text x="8" y="${y+rowH/2+4}" fill="${labelColor}" font-size="10" font-weight="${t.active?'700':'400'}">${t.name.length>28?t.name.slice(0,26)+'...':t.name}</text>`;
+
+      if(isMilestone){
+        // Diamond milestone
+        const cx = labelW + barLeft;
+        ganttSvg += `<polygon points="${cx},${y+8} ${cx+6},${y+rowH/2} ${cx},${y+rowH-8} ${cx-6},${y+rowH/2}" fill="${hasDelay?neonRed:azur}" opacity="0.9"/>`;
+      } else {
+        // Bar
+        const barColor = hasDelay ? neonRed : (t.done ? 'rgba(66,106,179,0.6)' : t.active ? azur : 'rgba(66,106,179,0.25)');
+        const barY = y + 8;
+        const barH = rowH - 16;
+
+        if(hasDelay){
+          // Neon glow effect for delayed tasks
+          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${barW}" height="${barH}" rx="3" fill="none" stroke="${neonRed}" stroke-width="2" opacity="0.3" filter="url(#neonGlow)"/>`;
+          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${barW}" height="${barH}" rx="3" fill="${neonRed}" opacity="0.85"/>`;
+          // Delay badge
+          ganttSvg += `<text x="${labelW+barLeft+barW+5}" y="${barY+barH-2}" fill="${neonRed}" font-size="9" font-weight="700" style="text-shadow:0 0 8px rgba(255,32,64,0.8);">+${t.g}j</text>`;
+        } else {
+          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${barW}" height="${barH}" rx="3" fill="${barColor}"/>`;
+        }
+
+        // Progress fill for active tasks
+        if(t.active){
+          const elapsed = daysDiff(td,today);
+          const taskDays = daysDiff(td,tf);
+          const progW = barW * Math.min(elapsed/taskDays, 1);
+          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${progW}" height="${barH}" rx="3" fill="${hasDelay?neonRed:azur}" opacity="0.4"/>`;
+        }
+      }
+
+      // Date labels
+      ganttSvg += `<text x="${labelW+barLeft}" y="${y+rowH-3}" fill="rgba(255,255,255,0.2)" font-size="7">${fmtDate(t.debut)}</text>`;
+    });
+
+    // Neon glow filter
+    ganttSvg = `<defs><filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` + ganttSvg.slice(ganttSvg.indexOf('>') + 1);
+    ganttSvg = `<svg width="${labelW+chartW}" height="${svgH}" style="font-family:'DM Sans',sans-serif;min-width:${labelW+chartW}px;">` + ganttSvg;
+    ganttSvg += '</svg>';
+
+    // Legend
+    const legend = `<div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
+      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:4px;border-radius:2px;background:rgba(66,106,179,0.6);display:inline-block;"></span> Termine</span>
+      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:4px;border-radius:2px;background:${azur};display:inline-block;"></span> En cours</span>
+      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:4px;border-radius:2px;background:rgba(66,106,179,0.25);display:inline-block;"></span> A venir</span>
+      <span style="font-size:9px;color:${neonRed};display:flex;align-items:center;gap:4px;font-weight:700;text-shadow:0 0 8px rgba(255,32,64,0.5);"><span style="width:12px;height:4px;border-radius:2px;background:${neonRed};display:inline-block;box-shadow:0 0 8px rgba(255,32,64,0.6);"></span> Retard</span>
+      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:1px;height:10px;border-left:1.5px dashed ${azur};display:inline-block;opacity:0.6;"></span> Aujourd'hui</span>
+    </div>`;
+
+    document.getElementById('dev-proj-gantt').innerHTML = ganttSvg + legend;
+
+    panel.style.transform = 'translateX(0)';
+    panel.scrollTop = 0;
+  };
+
+  window.closePanelDevProject = function(){
+    document.getElementById('panel-dev-project').style.transform = 'translateX(100%)';
+  };
+})();
+</script>
 
 <div id="inner-props-travaux" class="inner-page" style="background:#0a0916;">
   <div class="sd-sticky-bar">
