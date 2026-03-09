@@ -1106,24 +1106,24 @@ function closeEnrProjets(){
       </div>
     </div>
 
-    <!-- En-têtes résumé -->
+    <!-- En-têtes résumé — filtres cliquables -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;">
-      <div style="background:rgba(116,184,89,0.06);border:1px solid rgba(116,184,89,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <div id="enrp-filter-termine" onclick="toggleEnrFilter('termine')" style="cursor:pointer;transition:all 0.3s;background:rgba(116,184,89,0.06);border:1px solid rgba(116,184,89,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <div style="width:8px;height:8px;border-radius:50%;background:#74b859;"></div>
         <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(116,184,89,0.7);">Terminé</span>
         <span style="font-size:18px;font-weight:800;color:#74b859;" id="enrp-term-count">—</span>
       </div>
-      <div style="background:rgba(248,193,0,0.05);border:1px solid rgba(248,193,0,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <div id="enrp-filter-construction" onclick="toggleEnrFilter('construction')" style="cursor:pointer;transition:all 0.3s;background:rgba(248,193,0,0.05);border:1px solid rgba(248,193,0,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <div style="width:8px;height:8px;border-radius:50%;background:#f8c100;"></div>
         <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(248,193,0,0.7);">Construction</span>
         <span style="font-size:18px;font-weight:800;color:#f8c100;" id="enrp-const-count">—</span>
       </div>
-      <div style="background:rgba(90,175,175,0.05);border:1px solid rgba(90,175,175,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <div id="enrp-filter-developpement" onclick="toggleEnrFilter('developpement')" style="cursor:pointer;transition:all 0.3s;background:rgba(90,175,175,0.05);border:1px solid rgba(90,175,175,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <div style="width:8px;height:8px;border-radius:50%;background:#5aafaf;"></div>
         <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(90,175,175,0.7);">Développement</span>
         <span style="font-size:18px;font-weight:800;color:#5aafaf;" id="enrp-dev-count">—</span>
       </div>
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <div id="enrp-filter-planifie" onclick="toggleEnrFilter('planifie')" style="cursor:pointer;transition:all 0.3s;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);"></div>
         <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);">Planifié</span>
         <span style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.4);" id="enrp-plan-count">—</span>
@@ -1339,7 +1339,7 @@ function closeEnrProjets(){
     </div>`;
   }
 
-  /* ── Classify & render ── */
+  /* ── Classify ── */
   const grouped = { termine:[], construction:[], developpement:[], planifie:[] };
   enrProjects.forEach(p => { grouped[getPhase(p)].push(p); });
 
@@ -1353,47 +1353,115 @@ function closeEnrProjets(){
   document.getElementById('enrp-dev-count').textContent    = grouped.developpement.length;
   document.getElementById('enrp-plan-count').textContent   = grouped.planifie.length;
 
-  // Summary bar
-  let html = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Total Projets</div>
-      <div style="font-size:28px;font-weight:800;color:#74b859;">${enrProjects.length}</div>
-    </div>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Puissance PV</div>
-      <div style="font-size:28px;font-weight:800;color:#74b859;">${totalMw.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(116,184,89,0.6);margin-left:4px;">MW</span></div>
-    </div>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Stockage BESS</div>
-      <div style="font-size:28px;font-weight:800;color:#5aafaf;">${totalBess}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh</span></div>
-    </div>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">CAPEX Total</div>
-      <div style="font-size:28px;font-weight:800;color:#f8c100;">${totalCapex.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(248,193,0,0.6);margin-left:4px;">M$</span></div>
-    </div>
-  </div>`;
+  /* ── Phase filter state ── */
+  let activePhaseFilter = null; // null = show all
 
-  // Render each group
-  const order = ['termine','construction','developpement','planifie'];
-  order.forEach(phase => {
-    const list = grouped[phase];
-    if (!list.length) return;
-    const color = phaseColors[phase];
-    const rgb = phaseBgs[phase];
-    html += `<div style="margin-bottom:32px;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:0 4px;">
-        <div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 8px ${color};"></div>
-        <div style="font-size:11px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:${color};">${phaseLabels[phase]}</div>
-        <span style="font-size:11px;font-weight:800;color:${color};background:rgba(${rgb},0.12);border-radius:6px;padding:2px 10px;">${list.length}</span>
-        <div style="height:1px;flex:1;background:rgba(${rgb},0.15);"></div>
+  const filterBtnStyles = {
+    termine:      { bg:'rgba(116,184,89,', border:'rgba(116,184,89,' },
+    construction: { bg:'rgba(248,193,0,',  border:'rgba(248,193,0,' },
+    developpement:{ bg:'rgba(90,175,175,', border:'rgba(90,175,175,' },
+    planifie:     { bg:'rgba(255,255,255,', border:'rgba(255,255,255,' }
+  };
+  const filterIds = {
+    termine:'enrp-filter-termine', construction:'enrp-filter-construction',
+    developpement:'enrp-filter-developpement', planifie:'enrp-filter-planifie'
+  };
+
+  function updateFilterButtons() {
+    Object.keys(filterIds).forEach(phase => {
+      const btn = document.getElementById(filterIds[phase]);
+      if (!btn) return;
+      const s = filterBtnStyles[phase];
+      const isActive = activePhaseFilter === phase;
+      const isNone = activePhaseFilter === null;
+      if (isActive) {
+        btn.style.background = s.bg + '0.2)';
+        btn.style.borderColor = s.border + '0.6)';
+        btn.style.transform = 'scale(1.03)';
+        btn.style.boxShadow = '0 0 16px ' + s.bg + '0.2)';
+        btn.style.opacity = '1';
+      } else if (isNone) {
+        btn.style.background = phase === 'planifie' ? 'rgba(255,255,255,0.03)' : s.bg + '0.06)';
+        btn.style.borderColor = phase === 'planifie' ? 'rgba(255,255,255,0.08)' : s.border + '0.15)';
+        btn.style.transform = 'scale(1)';
+        btn.style.boxShadow = 'none';
+        btn.style.opacity = '1';
+      } else {
+        btn.style.background = phase === 'planifie' ? 'rgba(255,255,255,0.02)' : s.bg + '0.03)';
+        btn.style.borderColor = phase === 'planifie' ? 'rgba(255,255,255,0.05)' : s.border + '0.08)';
+        btn.style.transform = 'scale(1)';
+        btn.style.boxShadow = 'none';
+        btn.style.opacity = '0.4';
+      }
+    });
+  }
+
+  function renderEnrProjects() {
+    // Determine which phases to show
+    const showPhases = activePhaseFilter ? [activePhaseFilter] : ['termine','construction','developpement','planifie'];
+
+    // Filtered projects for summary bar
+    const filtered = activePhaseFilter ? grouped[activePhaseFilter] : enrProjects;
+    const fMw = filtered.reduce((s,p) => s + (p.pvMw||0), 0);
+    const fCapex = filtered.reduce((s,p) => s + (p.capexM||0), 0);
+    const fBess = filtered.reduce((s,p) => s + (p.bessMwh||0), 0);
+
+    // Summary bar
+    let html = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Total Projets</div>
+        <div style="font-size:28px;font-weight:800;color:#74b859;">${filtered.length}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-        ${list.map(p => projCardHtml(p)).join('')}
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Puissance PV</div>
+        <div style="font-size:28px;font-weight:800;color:#74b859;">${fMw.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(116,184,89,0.6);margin-left:4px;">MW</span></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Stockage BESS</div>
+        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${fBess}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh</span></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">CAPEX Total</div>
+        <div style="font-size:28px;font-weight:800;color:#f8c100;">${fCapex.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(248,193,0,0.6);margin-left:4px;">M$</span></div>
       </div>
     </div>`;
-  });
 
-  document.getElementById('enrp-pairs-list').innerHTML = html;
+    // Render each visible group
+    showPhases.forEach(phase => {
+      const list = grouped[phase];
+      if (!list.length) return;
+      const color = phaseColors[phase];
+      const rgb = phaseBgs[phase];
+      html += `<div style="margin-bottom:32px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:0 4px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 8px ${color};"></div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:${color};">${phaseLabels[phase]}</div>
+          <span style="font-size:11px;font-weight:800;color:${color};background:rgba(${rgb},0.12);border-radius:6px;padding:2px 10px;">${list.length}</span>
+          <div style="height:1px;flex:1;background:rgba(${rgb},0.15);"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          ${list.map(p => projCardHtml(p)).join('')}
+        </div>
+      </div>`;
+    });
+
+    document.getElementById('enrp-pairs-list').innerHTML = html;
+  }
+
+  /* ── Toggle filter (global function for onclick) ── */
+  window.toggleEnrFilter = function(phase) {
+    if (activePhaseFilter === phase) {
+      activePhaseFilter = null; // re-click = cancel filter
+    } else {
+      activePhaseFilter = phase;
+    }
+    updateFilterButtons();
+    renderEnrProjects();
+  };
+
+  /* ── Initial render ── */
+  updateFilterButtons();
+  renderEnrProjects();
 
   /* ── Update summary card on EnR main page ── */
   const el = (id) => document.getElementById(id);
