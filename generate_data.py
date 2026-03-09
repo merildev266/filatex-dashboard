@@ -10,6 +10,8 @@ def generate():
     sites = {
         "tamatave": "TAMATAVE_LIVE",
         "diego": "DIEGO_LIVE",
+        "majunga": "MAJUNGA_LIVE",
+        "tulear": "TULEAR_LIVE",
     }
 
     all_js = "// Auto-generated from xlsx files\n"
