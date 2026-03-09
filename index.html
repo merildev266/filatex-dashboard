@@ -1316,10 +1316,47 @@ function closeEnrProjets(){
 
   /* ═══ ENRICHMENT — DASHBOARD_ENR 03/03/26 + STATUS ETUDE_ENR 09/03/26 ═══ */
   const enrEnrich = {
-    'tulear-2':      { constProg:0.98, glissement:61,  puissance:1000,  prodJour:5389,  lead:'Toki',      epciste:'MADAGREEN', pvMw:1 },
-    'nosy-be-1':     { constProg:0.97, glissement:168, puissance:3000,  prodJour:13890, lead:'Lindon',    epciste:'SQVISION' },
-    'diego-wind-1':  { constProg:0.63, glissement:208, puissance:120,   prodJour:666,   lead:'Toki',      epciste:'AELOS/OTI' },
-    'moramanga-1':   { constProg:0.67, glissement:135, puissance:15400, prodJour:80882, lead:'Lindon',    epciste:'BLUESKY' },
+    'tulear-2':      { constProg:0.98, glissement:61,  puissance:1000,  prodJour:5389,  lead:'Toki',      epciste:'MADAGREEN', pvMw:1,
+      stages:[
+        {name:'Engineering',tasks:[{name:'Études préliminaires',pct:100,status:'done'},{name:'Design détaillé',pct:100,status:'done'}]},
+        {name:'Construction',tasks:[{name:'Procurement',pct:100,status:'done'},{name:'Travaux site',pct:100,status:'done'},{name:'Commissioning',pct:90,status:'delayed',delayWeeks:9}]}
+      ],
+      delays:{'Commissioning':{weeks:9,cause:'Ajustements techniques lors de la mise en service — recalibrage onduleurs',resolution:'Quasi finalisé — 98% avancement, COD prévu sous 2 semaines'}}
+    },
+    'nosy-be-1':     { constProg:0.97, glissement:168, puissance:3000,  prodJour:13890, lead:'Lindon',    epciste:'SQVISION',
+      stages:[
+        {name:'Études & Faisabilité',tasks:[{name:'Étude de faisabilité',pct:100,status:'done'},{name:'Acquisition foncière',pct:100,status:'done'},{name:'Permis environnemental',pct:100,status:'done'}]},
+        {name:'Engineering',tasks:[{name:'Design détaillé',pct:100,status:'done'},{name:'Validation technique',pct:100,status:'done'}]},
+        {name:'Construction',tasks:[{name:'Procurement',pct:100,status:'done'},{name:'Livraison modules',pct:100,status:'delayed',delayWeeks:12},{name:'Montage & câblage',pct:100,status:'done'},{name:'Commissioning',pct:100,status:'delayed',delayWeeks:12}]}
+      ],
+      delays:{
+        'Livraison modules':{weeks:12,cause:'Retard fournisseur SQVISION — congestion portuaire Tamatave + dédouanement lent',resolution:'Livraison effectuée avec 3 mois de retard, rattrapage partiel en accélérant le montage'},
+        'Commissioning':{weeks:12,cause:'Report en cascade suite retard livraison modules',resolution:'COD atteint le 07/02/2026 (+168j vs plan initial)'}
+      }
+    },
+    'diego-wind-1':  { constProg:0.63, glissement:208, puissance:120,   prodJour:666,   lead:'Toki',      epciste:'AELOS/OTI',
+      stages:[
+        {name:'Études & Faisabilité',tasks:[{name:'Étude de vent',pct:100,status:'done'},{name:'Acquisition foncière',pct:100,status:'done'}]},
+        {name:'Engineering',tasks:[{name:'Design aérogénérateur',pct:90,status:'progress'},{name:'Études géotechniques',pct:100,status:'done'}]},
+        {name:'Construction',tasks:[{name:'Fondations & génie civil',pct:100,status:'done'},{name:'Travaux site',pct:63,status:'delayed',delayWeeks:30},{name:'Installation éoliennes',pct:40,status:'delayed',delayWeeks:20},{name:'Commissioning',pct:0,status:'pending'}]}
+      ],
+      delays:{
+        'Travaux site':{weeks:30,cause:'Conditions météo défavorables (saison cyclonique) + accès site difficile en période de pluie',resolution:'En cours — mobilisation équipes supplémentaires, planning révisé'},
+        'Installation éoliennes':{weeks:20,cause:'Retard livraison nacelles AELOS + attente conditions vent favorables pour levage',resolution:'En cours — créneau levage planifié avril 2026'}
+      }
+    },
+    'moramanga-1':   { constProg:0.67, glissement:135, puissance:15400, prodJour:80882, lead:'Lindon',    epciste:'BLUESKY',
+      stages:[
+        {name:'Études & Faisabilité',tasks:[{name:'Étude de faisabilité',pct:100,status:'done'},{name:'Permis environnemental',pct:100,status:'done'}]},
+        {name:'Engineering',tasks:[{name:'Design détaillé',pct:100,status:'done'},{name:'Validation réseau JIRAMA',pct:100,status:'done'}]},
+        {name:'Tendering',tasks:[{name:'Appel d\'offres EPC',pct:100,status:'done'},{name:'Attribution BLUESKY',pct:100,status:'done'}]},
+        {name:'Construction',tasks:[{name:'Procurement',pct:100,status:'done'},{name:'Travaux site',pct:67,status:'delayed',delayWeeks:19},{name:'Montage panneaux',pct:55,status:'delayed',delayWeeks:15},{name:'Commissioning',pct:0,status:'pending'}]}
+      ],
+      delays:{
+        'Travaux site':{weeks:19,cause:'Retard dédouanement équipements + problèmes logistiques route Moramanga',resolution:'En cours — suivi renforcé avec transitaire, convoi exceptionnel prévu'},
+        'Montage panneaux':{weeks:15,cause:'Report en cascade suite retard livraison — main d\'œuvre en attente',resolution:'Montage accéléré dès réception, 2 équipes mobilisées'}
+      }
+    },
     'bongatsara-1':  { constProg:0.24, glissement:0,   puissance:5000,  prodJour:24836, lead:'Lindon',    epciste:'TBC' },
     'fihaonana-1':   { constProg:0,    glissement:0,   puissance:4000,  prodJour:20570, lead:'Toki',      epciste:'TBC' },
     'oursun-1':      { constProg:0,    glissement:0,   puissance:3200,  prodJour:12099, lead:'Henintsoa', epciste:'TBC' },
@@ -1921,49 +1958,120 @@ function renderPdCashflow(p, hasCc, color, rgb) {
 }
 
 /* ── Section 6: Gantt simplifié ── */
-function renderPdGantt(p, phase, color, rgb) {
-  const dates = [p.engStart, p.constStart, p.constEnd].filter(Boolean).map(d => new Date(d));
-  if (dates.length < 2) { document.getElementById('pd-gantt-section').innerHTML = ''; return; }
-  const allStart = new Date(Math.min(...dates));
-  const allEnd = new Date(Math.max(...dates));
-  const totalMs = allEnd - allStart || 1;
-  const now = new Date();
-  const todayPct = Math.max(0, Math.min(100, ((now - allStart) / totalMs) * 100));
+/* ── Delay Popup ── */
+function showDelayPopup(taskName, delayLabel, cause, resolution) {
+  const existing = document.querySelector('.sg-popup-overlay');
+  if (existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'sg-popup-overlay';
+  overlay.innerHTML = `<div class="sg-popup">
+    <div class="sg-popup-header">
+      <div class="sg-popup-title">${taskName}</div>
+      <div class="sg-popup-badge">${delayLabel}</div>
+      <button class="sg-popup-close" onclick="this.closest('.sg-popup-overlay').remove()">✕</button>
+    </div>
+    <div class="sg-popup-section">
+      <div class="sg-popup-section-label cause">Cause</div>
+      <div class="sg-popup-section-text">${cause}</div>
+    </div>
+    <div class="sg-popup-section">
+      <div class="sg-popup-section-label resolution">Résolution</div>
+      <div class="sg-popup-section-text">${resolution}</div>
+    </div>
+  </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
 
-  function bar(start, end) {
-    if (!start || !end) return { left:0, width:0 };
-    const s = new Date(start), e = new Date(end);
-    return { left: Math.max(0, ((s-allStart)/totalMs)*100), width: Math.max(1, ((e-s)/totalMs)*100) };
+/* ── Auto-generate stages from project phases ── */
+function autoStages(p) {
+  const stages = [];
+  if (p.engStart && p.engEnd) {
+    const ep = p.engPct || 0;
+    stages.push({name:'Engineering', tasks:[
+      {name:'Études préliminaires', pct:Math.min(100, Math.round(ep*1.2)), status: ep>=100?'done':ep>0?'progress':'pending'},
+      {name:'Design détaillé', pct:ep, status: ep>=100?'done':ep>50?'progress':ep>0?'progress':'pending'},
+    ]});
   }
+  if (p.tendStart && p.tendEnd) {
+    stages.push({name:'Tendering & Contrats', tasks:[
+      {name:'Appel d\'offres', pct: p.tendDone?100:50, status: p.tendDone?'done':'progress'},
+      {name:'Attribution contrat', pct: p.tendDone?100:0, status: p.tendDone?'done':'pending'},
+    ]});
+  }
+  if (p.constStart && p.constEnd) {
+    const cp = Math.round((p.constProg||0)*100);
+    const isD = p.glissement > 0;
+    stages.push({name:'Construction', tasks:[
+      {name:'Procurement', pct: cp>20?100:Math.min(100,cp*5), status: cp>20?'done':cp>0?'progress':'pending'},
+      {name:'Travaux site', pct:cp, status: isD?'delayed':cp>=100?'done':cp>0?'progress':'pending', delayWeeks: isD?Math.round(p.glissement/7):0},
+      {name:'Commissioning', pct: cp>=95?Math.min(100,Math.round((cp-95)*20)):0, status: cp>=100?'done':cp>=95?'progress':'pending'},
+    ]});
+  }
+  return stages;
+}
 
-  const phases = [
-    { label:'Engineering', start:p.engStart, end:p.engEnd, c:'#5aafaf' },
-    { label:'Tendering', start:p.tendStart, end:p.tendEnd, c:'#5e4c9f' },
-    { label:'Construction', start:p.constStart, end:p.constEnd, c:'#FDB823' },
-  ].filter(ph => ph.start && ph.end);
+/* ── Section 6: Stage-Gate Gantt ── */
+function renderPdGantt(p, phase, color, rgb) {
+  const stages = p.stages || autoStages(p);
+  if (!stages.length) { document.getElementById('pd-gantt-section').innerHTML = ''; return; }
+  const delays = p.delays || {};
+  const defaultCause = p.comment || 'Cause en cours d\'analyse';
+  const defaultResolution = 'En cours — suivi renforcé';
 
-  document.getElementById('pd-gantt-section').innerHTML = `
-    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Gantt Simplifié</div>
-    <div class="neutral-card" style="position:relative;margin-bottom:32px;">
-      <div style="position:absolute;left:calc(120px + ${todayPct}% * (100% - 140px) / 100%);top:0;bottom:0;width:2px;background:rgba(255,255,255,0.15);z-index:2;pointer-events:none;">
-        <div style="position:absolute;top:-16px;left:-22px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.4);white-space:nowrap;">Auj.</div>
-      </div>
-      ${phases.map(ph => {
-        const b = bar(ph.start, ph.end);
-        return `<div style="display:flex;align-items:center;margin-bottom:14px;">
-          <div style="width:120px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);">${ph.label}</div>
-          <div style="flex:1;position:relative;height:20px;background:rgba(255,255,255,0.03);border-radius:6px;">
-            <div style="position:absolute;left:${b.left}%;width:${b.width}%;height:100%;border-radius:6px;background:${ph.c}44;border:1px solid ${ph.c}88;">
-              <div style="position:absolute;right:6px;top:3px;font-size:7px;font-weight:700;color:${ph.c};">${fmtDate(ph.end)}</div>
-            </div>
-          </div>
-        </div>`;
-      }).join('')}
-      <div style="text-align:center;margin-top:16px;padding:14px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:10px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.25);">📊 Gantt détaillé à venir</div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.15);margin-top:4px;">Les tâches détaillées seront intégrées depuis MS Project</div>
-      </div>
-    </div>`;
+  /* Store current project delays globally for onclick handlers */
+  window._sgDelays = delays;
+  window._sgDefaultCause = defaultCause;
+  window._sgDefaultResolution = defaultResolution;
+
+  let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Stage-Gate</div>
+  <div class="neutral-card" style="margin-bottom:32px;">`;
+
+  stages.forEach(stage => {
+    html += `<div class="sg-stage">
+      <div class="sg-stage-label">${stage.name}</div>`;
+    stage.tasks.forEach(t => {
+      const isDelayed = t.status === 'delayed';
+      const pctLabel = t.pct > 0 ? t.pct + '%' : '';
+      const barW = Math.max(t.pct > 0 ? 3 : 0, t.pct);
+      const dInfo = delays[t.name];
+      const delayW = t.delayWeeks || (dInfo ? dInfo.weeks : 0);
+      const delayLabel = delayW > 0 ? '+' + delayW + ' sem' : '';
+      const cause = dInfo ? dInfo.cause : defaultCause;
+      const resolution = dInfo ? dInfo.resolution : defaultResolution;
+      const escapedName = t.name.replace(/'/g, "\\'");
+      const escapedCause = cause.replace(/'/g, "\\'");
+      const escapedResolution = resolution.replace(/'/g, "\\'");
+
+      /* Delay offset: show striped red bar after progress to visualize the overrun */
+      const delayBarPct = isDelayed && delayW > 0 ? Math.min(30, Math.max(8, Math.round(delayW * 0.8))) : 0;
+      /* If task is 100% complete but delayed, shrink progress to make room for delay indicator */
+      const adjustedBarW = isDelayed && delayBarPct > 0 && barW + delayBarPct > 100 ? 100 - delayBarPct : barW;
+      const delayBarLeft = adjustedBarW;
+
+      html += `<div class="sg-task">
+        <div class="sg-task-name ${isDelayed?'delayed':''}">${t.name}</div>
+        <div class="sg-bar-track">
+          <div class="sg-bar-fill ${t.status}" style="width:${adjustedBarW}%;">${pctLabel}</div>
+          ${isDelayed && delayBarPct > 0 ? `<div class="sg-bar-delay" style="left:${delayBarLeft}%;width:${delayBarPct}%;">+${delayW}s</div>` : ''}
+        </div>
+        ${isDelayed ? `<span class="sg-warn" onclick="showDelayPopup('${escapedName}','${delayLabel}','${escapedCause}','${escapedResolution}')">⚠</span>` : ''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  /* Legend */
+  html += `<div style="display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(0,171,99,0.6);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">Terminé</span></div>
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(90,175,175,0.55);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">En cours</span></div>
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(255,64,96,0.55);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">En retard</span></div>
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(255,255,255,0.06);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">À venir</span></div>
+    <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;filter:drop-shadow(0 0 3px rgba(255,64,96,0.4));">⚠</span><span style="font-size:8px;color:rgba(255,255,255,0.35);">Cliquer pour détails retard</span></div>
+  </div>`;
+
+  html += `</div>`;
+  document.getElementById('pd-gantt-section').innerHTML = html;
 }
 
 /* ── Section 7: Schedule ── */
@@ -2826,7 +2934,7 @@ function closeDiegoDetail() {
   const list = document.getElementById('dev-projects-list');
   devProjects.forEach((p,idx) => {
     const statusColor = p.status==='retard' ? red : p.status==='leger' ? '#FDB823' : vert;
-    const statusLabel = p.status==='retard' ? 'En retard' : p.status==='leger' ? 'Leger retard' : 'Dans les temps';
+    const statusLabel = p.status==='retard' ? 'En retard +'+p.glissMax+'j' : p.status==='leger' ? '+'+p.glissMax+'j retard' : 'Dans les temps';
     const phaseStr = p.phases.length ? p.phases.join(', ') : (p.nextPhase ? 'Prochaine: '+p.nextPhase : 'Non demarre');
     const d0 = pDate(p.debut), df = pDate(p.fin);
     const totalDays = daysDiff(d0,df);
@@ -2905,110 +3013,111 @@ function closeDiegoDetail() {
     // Comment
     document.getElementById('dev-proj-comment').innerHTML = p.comment ? `<div style="padding:10px 14px;border-radius:8px;background:rgba(66,106,179,0.06);border:1px solid rgba(66,106,179,0.1);font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;"><b style="color:rgba(255,255,255,0.8);">Notes :</b> ${p.comment}</div>` : '';
 
-    // ═══ GANTT CHART ═══
+    // ═══ STAGE-GATE GANTT (temporal) ═══
+    // Compute project timeline
     const allDates = [];
     p.tasks.forEach(t => { allDates.push(pDate(t.debut)); allDates.push(pDate(t.fin)); });
-    const minDate = new Date(Math.min(...allDates));
-    const maxDate = new Date(Math.max(...allDates));
-    const totalDays = daysDiff(minDate,maxDate) || 1;
+    const projStart = new Date(Math.min(...allDates));
+    const projEnd = new Date(Math.max(...allDates));
+    const projDays = daysDiff(projStart, projEnd) || 1;
 
-    // Month headers
-    const months = [];
-    let cursor = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-    while(cursor <= maxDate){
-      const mStart = new Date(Math.max(cursor, minDate));
-      const nextM = new Date(cursor.getFullYear(), cursor.getMonth()+1, 1);
-      const mEnd = new Date(Math.min(nextM, maxDate));
-      const mLabel = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'][cursor.getMonth()] + ' ' + cursor.getFullYear().toString().slice(2);
-      const left = daysDiff(minDate,mStart)/totalDays*100;
-      const width = daysDiff(mStart,mEnd)/totalDays*100;
-      months.push({label:mLabel, left, width});
-      cursor = nextM;
+    // Build task list in chronological order with temporal positioning
+    const sortedTasks = p.tasks.slice().sort((a,b) => pDate(a.debut) - pDate(b.debut));
+
+    // Year markers
+    const years = [];
+    let yCursor = new Date(projStart.getFullYear(), 0, 1);
+    while(yCursor <= projEnd){
+      const yStart = new Date(Math.max(yCursor, projStart));
+      const nextY = new Date(yCursor.getFullYear()+1, 0, 1);
+      const yEnd = new Date(Math.min(nextY, projEnd));
+      const left = daysDiff(projStart, yStart)/projDays*100;
+      const width = daysDiff(yStart, yEnd)/projDays*100;
+      if(width > 3) years.push({label:yCursor.getFullYear(), left, width});
+      yCursor = nextY;
     }
 
-    const rowH = 32, headerH = 24, labelW = 220, chartW = 800;
-    const svgH = headerH + p.tasks.length * rowH + 10;
+    // Today position
+    const todayPct = Math.max(0, Math.min(100, daysDiff(projStart, today)/projDays*100));
 
-    let ganttSvg = `<svg width="${labelW+chartW}" height="${svgH}" style="font-family:'DM Sans',sans-serif;min-width:${labelW+chartW}px;">`;
-    // Month headers
-    months.forEach(m => {
-      const x = labelW + m.left/100*chartW;
-      const w = m.width/100*chartW;
-      ganttSvg += `<rect x="${x}" y="0" width="${w}" height="${headerH}" fill="rgba(66,106,179,0.06)" stroke="rgba(66,106,179,0.08)" stroke-width="0.5"/>`;
-      if(w > 25) ganttSvg += `<text x="${x+w/2}" y="${headerH-7}" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8" font-weight="600">${m.label}</text>`;
+    let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(66,106,179,0.5);margin-bottom:18px;">Planning · Gantt</div>
+    <div class="neutral-card" style="background:rgba(66,106,179,0.06);border-color:rgba(66,106,179,0.18);margin-bottom:32px;position:relative;">`;
+
+    // Year header bar
+    html += `<div style="display:flex;margin-bottom:14px;border-radius:6px;overflow:hidden;height:20px;position:relative;">`;
+    years.forEach((y,i) => {
+      html += `<div style="position:absolute;left:${y.left}%;width:${y.width}%;height:100%;background:rgba(66,106,179,${i%2===0?'0.08':'0.04'});display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.35);">${y.label}</div>`;
     });
+    html += `</div>`;
 
-    // Today line
-    const todayX = labelW + daysDiff(minDate,today)/totalDays*chartW;
-    if(todayX >= labelW && todayX <= labelW+chartW){
-      ganttSvg += `<line x1="${todayX}" y1="0" x2="${todayX}" y2="${svgH}" stroke="${azur}" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>`;
-      ganttSvg += `<text x="${todayX}" y="${svgH-2}" text-anchor="middle" fill="${azur}" font-size="7" font-weight="700" opacity="0.7">Aujourd'hui</text>`;
+    // Today vertical line
+    if(todayPct > 0 && todayPct < 100){
+      html += `<div style="position:absolute;left:calc(${todayPct}%);top:34px;bottom:60px;width:2px;background:${azur};opacity:0.4;z-index:2;pointer-events:none;">
+        <div style="position:absolute;top:-14px;left:-18px;font-size:7px;font-weight:700;color:${azur};opacity:0.8;white-space:nowrap;">Auj.</div>
+      </div>`;
     }
 
-    // Task rows
-    p.tasks.forEach((t, i) => {
-      const y = headerH + i * rowH;
+    // Task rows (chronological)
+    sortedTasks.forEach(t => {
       const td = pDate(t.debut), tf = pDate(t.fin);
-      const barLeft = daysDiff(minDate,td)/totalDays*chartW;
-      const barW = Math.max(daysDiff(td,tf)/totalDays*chartW, 3);
-      const hasDelay = t.g > 0;
-      const isMilestone = daysDiff(td,tf) === 0;
+      const taskDays = daysDiff(td, tf);
+      const isMilestone = taskDays === 0;
+      const leftPct = daysDiff(projStart, td)/projDays*100;
+      const widthPct = Math.max(isMilestone ? 0.5 : 1, taskDays/projDays*100);
+      const pctVal = t.done ? 100 : t.active ? Math.min(99,Math.round(daysDiff(td,today)/Math.max(taskDays,1)*100)) : 0;
+      const isDelayed = t.g > 0;
+      const status = isDelayed ? 'delayed' : t.done ? 'done' : t.active ? 'progress' : 'pending';
+      const delayWeeks = isDelayed ? Math.max(1,Math.round(t.g/7)) : 0;
+      const delayLabel = delayWeeks > 0 ? '+' + delayWeeks + ' sem' : '';
+      const escapedName = t.name.replace(/'/g, "\\'");
+      const cause = (p.comment||'Cause en cours d\'analyse').replace(/'/g, "\\'");
+      const resolution = 'Suivi en cours — voir notes projet'.replace(/'/g, "\\'");
 
-      // Row background (alternating)
-      if(i%2===0) ganttSvg += `<rect x="0" y="${y}" width="${labelW+chartW}" height="${rowH}" fill="rgba(255,255,255,0.015)"/>`;
+      // Color for the bar
+      const barColor = isDelayed ? 'rgba(255,64,96,0.7)' : t.done ? 'rgba(0,171,99,0.6)' : t.active ? 'rgba(90,175,175,0.6)' : 'rgba(66,106,179,0.2)';
+      const barBorder = isDelayed ? 'rgba(255,64,96,0.4)' : t.done ? 'rgba(0,171,99,0.3)' : t.active ? 'rgba(90,175,175,0.3)' : 'rgba(66,106,179,0.1)';
+      const glowStyle = isDelayed ? 'box-shadow:0 0 10px rgba(255,64,96,0.3);' : '';
 
-      // Task label
-      const labelColor = hasDelay ? neonRed : (t.done ? 'rgba(255,255,255,0.5)' : t.active ? '#fff' : 'rgba(255,255,255,0.6)');
-      ganttSvg += `<text x="8" y="${y+rowH/2+4}" fill="${labelColor}" font-size="10" font-weight="${t.active?'700':'400'}">${t.name.length>28?t.name.slice(0,26)+'...':t.name}</text>`;
+      html += `<div style="display:flex;align-items:center;margin-bottom:6px;min-height:26px;">
+        <div class="sg-task-name ${isDelayed?'delayed':''}" style="width:170px;flex-shrink:0;">${t.name}</div>
+        <div style="flex:1;position:relative;height:22px;">`;
 
       if(isMilestone){
         // Diamond milestone
-        const cx = labelW + barLeft;
-        ganttSvg += `<polygon points="${cx},${y+8} ${cx+6},${y+rowH/2} ${cx},${y+rowH-8} ${cx-6},${y+rowH/2}" fill="${hasDelay?neonRed:azur}" opacity="0.9"/>`;
+        html += `<div style="position:absolute;left:${leftPct}%;top:3px;width:14px;height:14px;transform:rotate(45deg);background:${isDelayed?'rgba(255,64,96,0.8)':azur};border-radius:2px;margin-left:-7px;${glowStyle}"></div>`;
       } else {
-        // Bar
-        const barColor = hasDelay ? neonRed : (t.done ? 'rgba(66,106,179,0.6)' : t.active ? azur : 'rgba(66,106,179,0.25)');
-        const barY = y + 8;
-        const barH = rowH - 16;
-
-        if(hasDelay){
-          // Neon glow effect for delayed tasks
-          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${barW}" height="${barH}" rx="3" fill="none" stroke="${neonRed}" stroke-width="2" opacity="0.3" filter="url(#neonGlow)"/>`;
-          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${barW}" height="${barH}" rx="3" fill="${neonRed}" opacity="0.85"/>`;
-          // Delay badge
-          ganttSvg += `<text x="${labelW+barLeft+barW+5}" y="${barY+barH-2}" fill="${neonRed}" font-size="9" font-weight="700" style="text-shadow:0 0 8px rgba(255,32,64,0.8);">+${t.g}j</text>`;
-        } else {
-          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${barW}" height="${barH}" rx="3" fill="${barColor}"/>`;
+        // Temporal bar
+        const fillW = pctVal;
+        html += `<div style="position:absolute;left:${leftPct}%;width:${widthPct}%;height:100%;border-radius:5px;background:${barColor};border:1px solid ${barBorder};${glowStyle}overflow:hidden;">
+          ${fillW > 0 && fillW < 100 ? `<div style="height:100%;width:${fillW}%;background:rgba(255,255,255,0.12);border-radius:5px 0 0 5px;"></div>` : ''}
+        </div>`;
+        // Percentage label
+        if(pctVal > 0){
+          html += `<div style="position:absolute;left:${leftPct + widthPct + 0.5}%;top:3px;font-size:8px;font-weight:800;color:${isDelayed?'rgba(255,64,96,0.8)':'rgba(255,255,255,0.5)'};">${pctVal}%</div>`;
         }
-
-        // Progress fill for active tasks
-        if(t.active){
-          const elapsed = daysDiff(td,today);
-          const taskDays = daysDiff(td,tf);
-          const progW = barW * Math.min(elapsed/taskDays, 1);
-          ganttSvg += `<rect x="${labelW+barLeft}" y="${barY}" width="${progW}" height="${barH}" rx="3" fill="${hasDelay?neonRed:azur}" opacity="0.4"/>`;
+        // Delay badge
+        if(isDelayed){
+          html += `<div style="position:absolute;left:${leftPct + widthPct + (pctVal>0?4:0.5)}%;top:3px;font-size:8px;font-weight:800;color:rgba(255,64,96,0.9);text-shadow:0 0 6px rgba(255,64,96,0.5);">+${t.g}j</div>`;
         }
       }
 
-      // Date labels
-      ganttSvg += `<text x="${labelW+barLeft}" y="${y+rowH-3}" fill="rgba(255,255,255,0.2)" font-size="7">${fmtDate(t.debut)}</text>`;
+      html += `</div>`;
+      html += isDelayed ? `<span class="sg-warn" style="flex-shrink:0;" onclick="showDelayPopup('${escapedName}','${delayLabel}','${cause}','${resolution}')">⚠</span>` : '';
+      html += `</div>`;
     });
 
-    // Neon glow filter
-    ganttSvg = `<defs><filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` + ganttSvg.slice(ganttSvg.indexOf('>') + 1);
-    ganttSvg = `<svg width="${labelW+chartW}" height="${svgH}" style="font-family:'DM Sans',sans-serif;min-width:${labelW+chartW}px;">` + ganttSvg;
-    ganttSvg += '</svg>';
-
-    // Legend
-    const legend = `<div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
-      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:4px;border-radius:2px;background:rgba(66,106,179,0.6);display:inline-block;"></span> Termine</span>
-      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:4px;border-radius:2px;background:${azur};display:inline-block;"></span> En cours</span>
-      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:4px;border-radius:2px;background:rgba(66,106,179,0.25);display:inline-block;"></span> A venir</span>
-      <span style="font-size:9px;color:${neonRed};display:flex;align-items:center;gap:4px;font-weight:700;text-shadow:0 0 8px rgba(255,32,64,0.5);"><span style="width:12px;height:4px;border-radius:2px;background:${neonRed};display:inline-block;box-shadow:0 0 8px rgba(255,32,64,0.6);"></span> Retard</span>
-      <span style="font-size:9px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:4px;"><span style="width:1px;height:10px;border-left:1.5px dashed ${azur};display:inline-block;opacity:0.6;"></span> Aujourd'hui</span>
+    /* Legend */
+    html += `<div style="display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(0,171,99,0.6);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">Terminé</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(90,175,175,0.55);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">En cours</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(255,64,96,0.55);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">En retard</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;border-radius:3px;background:rgba(66,106,179,0.2);"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">À venir</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;filter:drop-shadow(0 0 3px rgba(255,64,96,0.4));">⚠</span><span style="font-size:8px;color:rgba(255,255,255,0.35);">Cliquer pour détails retard</span></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:2px;height:10px;background:${azur};opacity:0.5;"></div><span style="font-size:8px;color:rgba(255,255,255,0.35);">Aujourd'hui</span></div>
     </div>`;
 
-    document.getElementById('dev-proj-gantt').innerHTML = ganttSvg + legend;
+    html += `</div>`;
+    document.getElementById('dev-proj-gantt').innerHTML = html;
 
     panel.style.transform = 'translateX(0)';
     panel.scrollTop = 0;
@@ -3326,49 +3435,50 @@ function closeDiegoDetail() {
         <!-- Total projets -->
         <div class="capex-kpi-card">
           <div class="ckpi-label">Projets actifs</div>
-          <div class="ckpi-val">12</div>
+          <div class="ckpi-val">72</div>
           <div class="ckpi-sub">4 pôles</div>
         </div>
 
-        <!-- Investissement total -->
+        <!-- Budget révisé -->
         <div class="capex-kpi-card">
-          <div class="ckpi-label">Investissement total</div>
-          <div class="ckpi-val">247 M$</div>
+          <div class="ckpi-label">Budget révisé</div>
+          <div class="ckpi-val">296 M$</div>
           <div class="ckpi-sub-row">
-            <span class="ckpi-tag-init">Initial 230 M$</span>
-            <span class="ckpi-delta up">+7.4%</span>
+            <span class="ckpi-tag-init">Initial 386 M$</span>
+            <span class="ckpi-delta down">-23%</span>
           </div>
         </div>
 
         <!-- Réalisé -->
         <div class="capex-kpi-card">
-          <div class="ckpi-label">Réalisé YTD</div>
-          <div class="ckpi-val">94 M$</div>
+          <div class="ckpi-label">Réalisé / Engagé</div>
+          <div class="ckpi-val">35.9 M$</div>
           <div class="ckpi-progress-wrap">
             <div class="ckpi-progress-track">
-              <div class="ckpi-progress-bar" style="width:38%;background:#5e4c9f;"></div>
+              <div class="ckpi-progress-bar" style="width:12%;background:#5e4c9f;"></div>
             </div>
-            <span class="ckpi-pct">38%</span>
+            <span class="ckpi-pct">12%</span>
           </div>
         </div>
 
-        <!-- TRI moyen -->
+        <!-- Répartition -->
         <div class="capex-kpi-card">
-          <div class="ckpi-label">TRI moyen</div>
-          <div class="ckpi-val">14.2%</div>
+          <div class="ckpi-label">Répartition budget</div>
+          <div class="ckpi-val" style="font-size:18px;">EnR 52%</div>
           <div class="ckpi-sub-row">
-            <span class="ckpi-tag-init">Cible 13.5%</span>
-            <span class="ckpi-delta up">+0.7pt</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.3);">IMMO 36%</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.3);">VEN 10%</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.3);">HFO 3%</span>
           </div>
         </div>
 
-        <!-- Cashflow net -->
+        <!-- Alertes -->
         <div class="capex-kpi-card">
-          <div class="ckpi-label">Cashflow net YTD</div>
-          <div class="ckpi-val" style="color:#a8d98a;">+18.4 M$</div>
+          <div class="ckpi-label">Alertes projets</div>
+          <div class="ckpi-val" style="color:#f37056;">3</div>
           <div class="ckpi-sub-row">
-            <span style="font-size:9px;color:rgba(255,255,255,0.3);">In 112 M$</span>
-            <span style="font-size:9px;color:rgba(255,255,255,0.3);">Out 93.6 M$</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.3);">2 retards EnR</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.3);">1 restructuration</span>
           </div>
         </div>
 
@@ -3385,30 +3495,30 @@ function closeDiegoDetail() {
           <div style="display:flex;align-items:center;gap:12px;">
             <div class="csec-dot" style="background:#00ab63;box-shadow:0 0 10px rgba(0,171,99,0.5);"></div>
             <span class="csec-title" style="color:#a8d98a;">EnR</span>
-            <span class="csec-badge">17 projets</span>
+            <span class="csec-badge">32 projets</span>
           </div>
           <span class="csec-arrow">→</span>
         </div>
         <div class="csec-kpis">
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Investi</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">—</div>
-            <div class="csec-kpi-vs">/ 62 M$ initial</div>
+            <div class="csec-kpi-label">Budget révisé</div>
+            <div class="csec-kpi-val" style="color:#a8d98a;">153 M$</div>
+            <div class="csec-kpi-vs">/ 188 M$ initial</div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Avancement</div>
-            <div class="csec-kpi-val">52%</div>
-            <div class="csec-progress-mini"><div style="width:52%;background:#00ab63;"></div></div>
+            <div class="csec-kpi-label">Engagé</div>
+            <div class="csec-kpi-val">6.7 M$</div>
+            <div class="csec-progress-mini"><div style="width:4%;background:#00ab63;"></div></div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">TRI réel</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">16.8%</div>
-            <div class="csec-kpi-vs">cible 15%</div>
+            <div class="csec-kpi-label">TRI moyen</div>
+            <div class="csec-kpi-val" style="color:#a8d98a;">~11%</div>
+            <div class="csec-kpi-vs">ENAT + LIDERA</div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">CF net</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">+6.2 M$</div>
-            <div class="csec-kpi-vs">YTD</div>
+            <div class="csec-kpi-label">Entités</div>
+            <div class="csec-kpi-val" style="color:#a8d98a;">3</div>
+            <div class="csec-kpi-vs">ENAT · LIDERA · SERV</div>
           </div>
         </div>
       </div>
@@ -3419,30 +3529,30 @@ function closeDiegoDetail() {
           <div style="display:flex;align-items:center;gap:12px;">
             <div class="csec-dot" style="background:#426ab3;box-shadow:0 0 10px rgba(66,106,179,0.5);"></div>
             <span class="csec-title" style="color:#8bb0ff;">HFO</span>
-            <span class="csec-badge">11 projets</span>
+            <span class="csec-badge">7 projets</span>
           </div>
           <span class="csec-arrow">→</span>
         </div>
         <div class="csec-kpis">
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Investi</div>
-            <div class="csec-kpi-val" style="color:#8bb0ff;">—</div>
-            <div class="csec-kpi-vs">/ 85 M$ initial</div>
+            <div class="csec-kpi-label">Budget révisé</div>
+            <div class="csec-kpi-val" style="color:#8bb0ff;">8.3 M$</div>
+            <div class="csec-kpi-vs">/ 8.6 M$ initial</div>
+          </div>
+          <div class="csec-kpi">
+            <div class="csec-kpi-label">Engagé</div>
+            <div class="csec-kpi-val">2.9 M$</div>
+            <div class="csec-progress-mini"><div style="width:34%;background:#426ab3;"></div></div>
+          </div>
+          <div class="csec-kpi">
+            <div class="csec-kpi-label">TRI moyen</div>
+            <div class="csec-kpi-val" style="color:#8bb0ff;">~7%</div>
+            <div class="csec-kpi-vs">3% à 13%</div>
           </div>
           <div class="csec-kpi">
             <div class="csec-kpi-label">Avancement</div>
-            <div class="csec-kpi-val">71%</div>
-            <div class="csec-progress-mini"><div style="width:71%;background:#426ab3;"></div></div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">TRI réel</div>
-            <div class="csec-kpi-val" style="color:#8bb0ff;">12.4%</div>
-            <div class="csec-kpi-vs">cible 13%</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">CF net</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">+4.8 M$</div>
-            <div class="csec-kpi-vs">YTD</div>
+            <div class="csec-kpi-val" style="color:#8bb0ff;">34%</div>
+            <div class="csec-kpi-vs">du budget engagé</div>
           </div>
         </div>
       </div>
@@ -3453,30 +3563,30 @@ function closeDiegoDetail() {
           <div style="display:flex;align-items:center;gap:12px;">
             <div class="csec-dot" style="background:#FDB823;box-shadow:0 0 10px rgba(253,184,35,0.5);"></div>
             <span class="csec-title" style="color:#ffd84d;">Immobilier</span>
-            <span class="csec-badge">6 projets</span>
+            <span class="csec-badge">24 projets</span>
           </div>
           <span class="csec-arrow">→</span>
         </div>
         <div class="csec-kpis">
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Investi</div>
-            <div class="csec-kpi-val" style="color:#ffd84d;">54 M$</div>
-            <div class="csec-kpi-vs">/ 52 M$ initial</div>
+            <div class="csec-kpi-label">Budget révisé</div>
+            <div class="csec-kpi-val" style="color:#ffd84d;">105 M$</div>
+            <div class="csec-kpi-vs">/ 158 M$ initial</div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Avancement</div>
-            <div class="csec-kpi-val">28%</div>
-            <div class="csec-progress-mini"><div style="width:28%;background:#FDB823;"></div></div>
+            <div class="csec-kpi-label">Engagé</div>
+            <div class="csec-kpi-val">6.4 M$</div>
+            <div class="csec-progress-mini"><div style="width:6%;background:#FDB823;"></div></div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">ROI réel</div>
-            <div class="csec-kpi-val" style="color:#ffd84d;">11.2%</div>
-            <div class="csec-kpi-vs">cible 10%</div>
+            <div class="csec-kpi-label">ROI moyen</div>
+            <div class="csec-kpi-val" style="color:#ffd84d;">~18%</div>
+            <div class="csec-kpi-vs">9% à 30%</div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">CF net</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">+5.1 M$</div>
-            <div class="csec-kpi-vs">YTD</div>
+            <div class="csec-kpi-label">Catégories</div>
+            <div class="csec-kpi-val" style="color:#ffd84d;">3</div>
+            <div class="csec-kpi-vs">Travaux · Dév · Foncier</div>
           </div>
         </div>
       </div>
@@ -3487,30 +3597,30 @@ function closeDiegoDetail() {
           <div style="display:flex;align-items:center;gap:12px;">
             <div class="csec-dot" style="background:#f37056;box-shadow:0 0 10px rgba(243,112,86,0.5);"></div>
             <span class="csec-title" style="color:#ffaa88;">Ventures</span>
-            <span class="csec-badge">8 projets</span>
+            <span class="csec-badge">9 projets</span>
           </div>
           <span class="csec-arrow">→</span>
         </div>
         <div class="csec-kpis">
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Investi</div>
-            <div class="csec-kpi-val" style="color:#ffaa88;">37 M$</div>
-            <div class="csec-kpi-vs">/ 31 M$ initial</div>
+            <div class="csec-kpi-label">Budget révisé</div>
+            <div class="csec-kpi-val" style="color:#ffaa88;">29.7 M$</div>
+            <div class="csec-kpi-vs">/ 30.9 M$ initial</div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">Avancement</div>
-            <div class="csec-kpi-val">44%</div>
-            <div class="csec-progress-mini"><div style="width:44%;background:#f37056;"></div></div>
+            <div class="csec-kpi-label">Déployé</div>
+            <div class="csec-kpi-val">19.9 M$</div>
+            <div class="csec-progress-mini"><div style="width:67%;background:#f37056;"></div></div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">ROI réel</div>
-            <div class="csec-kpi-val" style="color:#f37056;">18.6%</div>
-            <div class="csec-kpi-vs">cible 20%</div>
+            <div class="csec-kpi-label">TRI initial</div>
+            <div class="csec-kpi-val" style="color:#ffaa88;">10%</div>
+            <div class="csec-kpi-vs">Hotel Tamatave</div>
           </div>
           <div class="csec-kpi">
-            <div class="csec-kpi-label">CF net</div>
-            <div class="csec-kpi-val" style="color:#ff7070;">-2.3 M$</div>
-            <div class="csec-kpi-vs">YTD</div>
+            <div class="csec-kpi-label">Alertes</div>
+            <div class="csec-kpi-val" style="color:#f37056;">1</div>
+            <div class="csec-kpi-vs">Orga Earth (restruct.)</div>
           </div>
         </div>
       </div>
@@ -3543,6 +3653,36 @@ function closeDiegoDetail() {
 .enr-kpi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;transition:all 0.25s;}
 .enr-kpi-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);box-shadow:0 8px 30px rgba(0,0,0,0.2);}
 .neutral-card{background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.18);border-radius:20px;padding:28px 24px;}
+/* Stage-gate Gantt */
+.sg-stage{margin-bottom:20px;}
+.sg-stage-label{font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;padding-left:10px;border-left:3px solid rgba(0,171,99,0.3);}
+.sg-task{display:flex;align-items:center;margin-bottom:7px;padding:0 4px;}
+.sg-task-name{width:180px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0;}
+.sg-task-name.delayed{color:#ff4060;font-weight:700;}
+.sg-bar-track{flex:1;height:22px;background:rgba(255,255,255,0.04);border-radius:6px;position:relative;overflow:hidden;}
+.sg-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:8px;font-weight:800;color:rgba(255,255,255,0.9);transition:width 0.6s ease;min-width:0;}
+.sg-bar-fill.done{background:linear-gradient(90deg,rgba(0,171,99,0.45),rgba(0,171,99,0.7));}
+.sg-bar-fill.progress{background:linear-gradient(90deg,rgba(90,175,175,0.35),rgba(90,175,175,0.65));}
+.sg-bar-fill.delayed{background:linear-gradient(90deg,rgba(255,64,96,0.35),rgba(255,64,96,0.7));box-shadow:0 0 12px rgba(255,64,96,0.3);}
+.sg-bar-fill.pending{background:rgba(255,255,255,0.06);}
+.sg-bar-delay{position:absolute;top:0;height:100%;border-radius:0 6px 6px 0;background:repeating-linear-gradient(110deg,rgba(255,64,96,0.18),rgba(255,64,96,0.18) 4px,rgba(255,64,96,0.08) 4px,rgba(255,64,96,0.08) 8px);border-left:2px solid rgba(255,64,96,0.5);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:rgba(255,64,96,0.8);letter-spacing:0.02em;}
+.sg-warn{margin-left:8px;cursor:pointer;font-size:14px;filter:drop-shadow(0 0 4px rgba(255,64,96,0.5));transition:transform 0.15s;}
+.sg-warn:hover{transform:scale(1.2);}
+/* Delay Popup */
+.sg-popup-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;animation:sgFadeIn 0.2s ease;}
+@keyframes sgFadeIn{from{opacity:0}to{opacity:1}}
+.sg-popup{background:#1e1a2e;border:1px solid rgba(255,64,96,0.2);border-radius:20px;padding:28px 24px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.6);animation:sgSlideUp 0.25s ease;}
+@keyframes sgSlideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sg-popup-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.sg-popup-title{font-size:15px;font-weight:800;color:#fff;flex:1;}
+.sg-popup-badge{font-size:10px;font-weight:800;color:#fff;background:rgba(0,171,99,0.25);border:1px solid rgba(0,171,99,0.4);border-radius:8px;padding:4px 10px;white-space:nowrap;}
+.sg-popup-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.5);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;}
+.sg-popup-close:hover{background:rgba(255,255,255,0.15);}
+.sg-popup-section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+.sg-popup-section-label{font-size:9px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;}
+.sg-popup-section-label.cause{color:#f37056;}
+.sg-popup-section-label.resolution{color:#00ab63;}
+.sg-popup-section-text{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;}
 .ckpi-label{font-size:9px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:rgba(94,76,159,0.6);}
 .ckpi-val{font-size:26px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:-0.5px;line-height:1.1;}
 .ckpi-sub{font-size:9px;color:rgba(255,255,255,0.3);}
@@ -3611,142 +3751,262 @@ function closeDiegoDetail() {
 const capexData = {
   enr: {
     color: '#00ab63', colorRgb: '116,184,89',
-    title: 'EnR — Énergies Renouvelables',
+    title: 'EnR — Énergies Renouvelables (ENAT + LIDERA)',
     projects: [
       {
-        id:'enr-1', name:'Nosy Be – Solar 1 In Ground 3MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,4,4,5,5], cfOut: [3,3,3,2,2,2], cfNet: '—',
+        id:'enr-1', name:'Nosy Be - Phase 2 2MW + BESS', status:'on-track',
+        investInit: '3 764 713 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '3.8 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [6, 6, 6, 4, 4, 4], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '02.05.26', dateDebReel: '02.05.26', dateFinInit: '30.10.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-2', name:'Tulear Phase 2 1MW', status:'on-track',
+        investInit: '1 355 701 $', investReel: '804 288 $', deltaInvest: '—',
+        etatEnCours: '804 k$', etatTotal: '1.4 M$', etatPct: 59,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '11%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '21.10.24', dateDebReel: '21.10.24', dateFinInit: '23.07.25', dateFinReel: '—',
+      },
+      {
+        id:'enr-3', name:'Tulear Phase 3 3.9MW', status:'on-track',
+        investInit: '3 611 250 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '3.6 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [8, 8, 8, 2, 2, 2], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '28.02.26', dateDebReel: '28.02.26', dateFinInit: '23.12.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-4', name:'Vestop Solar - Phase 1 4MW Fihaonana', status:'on-track',
+        investInit: '3 633 950 $', investReel: '3 484 $', deltaInvest: '—',
+        etatEnCours: '3 k$', etatTotal: '3.6 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [5, 5, 5, 5, 5, 5], cfNet: '—',
+        triInit: '12%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '04.05.26', dateDebReel: '04.05.26', dateFinInit: '15.11.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-5', name:'Vestop Solar - Fiahonana Phase 2', status:'on-track',
+        investInit: '460 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '460 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '01.02.26', dateDebReel: '01.02.26', dateFinInit: '15.05.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-6', name:'Vestop Solar - Fiahonana Phase 2 15MW', status:'on-track',
+        investInit: '15 308 654 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '15.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [5, 5, 5, 3, 3, 3], cfNet: '—',
+        triInit: '12%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '15.08.26', dateDebReel: '15.08.26', dateFinInit: '15.04.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-7', name:'Mandrosolar Afripower Ph 1 - 15MW Moramanga', status:'delayed',
+        investInit: '11 123 707 $', investReel: '3 372 335 $', deltaInvest: '—',
+        etatEnCours: '3.4 M$', etatTotal: '11.1 M$', etatPct: 30,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '15%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '06.06.25', dateDebReel: '06.06.25', dateFinInit: '02.04.25', dateFinReel: '—',
+      },
+      {
+        id:'enr-8', name:'Mandrosolar Afripower Ph 2 - Studies', status:'on-track',
+        investInit: '300 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '300 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '02.11.25', dateDebReel: '02.11.25', dateFinInit: '15.06.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-9', name:'Mandrosolar Afripower Ph 2 - 25MW Moramanga', status:'on-track',
+        investInit: '22 590 550 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '22.6 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [3, 3, 3, 3, 3, 3], cfNet: '—',
+        triInit: '11%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '30.05.26', dateDebReel: '30.05.26', dateFinInit: '30.04.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-10', name:'Eolien Diego Ph 1 - 0.12MW (Aelos)', status:'delayed',
+        investInit: '1 074 167 $', investReel: '448 385 $', deltaInvest: '—',
+        etatEnCours: '448 k$', etatTotal: '1.1 M$', etatPct: 42,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '23/02/25', dateDebReel: '23/02/25', dateFinInit: '28.03.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-11', name:'Eolien Diego Ph 2 - 4.88MW', status:'on-track',
+        investInit: '7 140 560 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '7.1 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [1, 1, 1, 4, 4, 4], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '20.10.26', dateDebReel: '20.10.26', dateFinInit: '15.09.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-12', name:'OURSUN Phase 1 3.2MW', status:'on-track',
+        investInit: '5 961 194 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '6.0 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [6, 6, 6, 4, 4, 4], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '15.03.26', dateDebReel: '15.03.26', dateFinInit: '23.12.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-13', name:'OURSUN Phase II 7.8MW', status:'on-track',
+        investInit: '7 864 580 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '7.9 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [1, 1, 1, 3, 3, 3], cfNet: '—',
+        triInit: '12%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '10.01.27', dateDebReel: '10.01.27', dateFinInit: '20.12.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-14', name:'Top Energie (Bongatsara) Project 5MW', status:'on-track',
+        investInit: '4 655 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '4.7 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [8, 8, 8, 2, 2, 2], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '22.12.25', dateDebReel: '22.12.25', dateFinInit: '30.12.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-15', name:'Top Energie (Bongatsara) Studies', status:'on-track',
+        investInit: '80 000 $', investReel: '25 733 $', deltaInvest: '—',
+        etatEnCours: '26 k$', etatTotal: '80 k$', etatPct: 32,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '15.04.25', dateDebReel: '15.04.25', dateFinInit: '20.02.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-16', name:'TE Bongatsara Ph 2 Studies', status:'on-track',
+        investInit: '120 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '120 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '15.02.26', dateDebReel: '15.02.26', dateFinInit: '15.08.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-17', name:'TE Bongatsara Ph 2 5MW', status:'on-track',
+        investInit: '4 655 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '4.7 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [5, 5, 5, 3, 3, 3], cfNet: '—',
+        triInit: '11%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '10.10.26', dateDebReel: '10.10.26', dateFinInit: '12.08.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-18', name:'TE Marais Masay 10MW', status:'on-track',
+        investInit: '12 795 253 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '12.8 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [1, 1, 1, 4, 4, 4], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '04.11.26', dateDebReel: '04.11.26', dateFinInit: '10.11.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-19', name:'TE Marais Masay 10MW Studies', status:'on-track',
+        investInit: '190 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '190 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [7, 7, 7, 3, 3, 3], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '02.02.26', dateDebReel: '02.02.26', dateFinInit: '30.07.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-20', name:'TE Ambohidratimo 10MW', status:'on-track',
+        investInit: '10 205 140 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '10.2 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [1, 1, 1, 5, 5, 5], cfNet: '—',
+        triInit: '11%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '01.09.26', dateDebReel: '01.09.26', dateFinInit: '07.09.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-21', name:'TE Ambohidratimo', status:'on-track',
+        investInit: '420 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '420 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [10, 10, 10, 1, 1, 1], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '10.02.26', dateDebReel: '10.02.26', dateFinInit: '30.07.26', dateFinReel: '—',
+      },
+      {
+        id:'enr-22', name:'Small Sites', status:'on-track',
+        investInit: '2 300 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '2.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [1, 1, 1, 3, 3, 3], cfNet: '—',
+        triInit: '3%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '05.12.26', dateDebReel: '05.12.26', dateFinInit: '20.07.27', dateFinReel: '—',
+      },
+      {
+        id:'enr-23', name:'LIDERA – Tamatave Green Power Phase 2 - Development', status:'on-track',
+        investInit: '18 800 000 $', investReel: '234 000 $', deltaInvest: '-99%',
+        etatEnCours: '117 k$', etatTotal: '234 k$', etatPct: 50,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '11%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '21.02.25', dateDebReel: '21.02.25', dateFinInit: '—', dateFinReel: '25.10.25',
+      },
+      {
+        id:'enr-24', name:'LIDERA – Tamatave Green Power 18MW', status:'on-track',
+        investInit: '—', investReel: '11 894 495 $', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '11.9 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '26.01.25', dateDebReel: '26.01.25', dateFinInit: '01.09.26', dateFinReel: '27.09.25',
+      },
+      {
+        id:'enr-25', name:'LIDERA – Tamatave Green Power BESS 5MW/10MWh', status:'on-track',
+        investInit: '—', investReel: '2 367 200 $', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '2.4 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'enr-2', name:'Éolien Diego Ph 2 (Studies) 4.88MW', status:'on-track',
-        investInit: '250 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '0', etatTotal: '0.25', etatPct: 0,
-        cfIn: [0,0,5,5,0,0], cfOut: [0,0,0,0,0,0], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '01.02.26', dateDebReel: '01.02.26', dateFinInit: '30.09.26', dateFinReel: '30.09.26',
-      },
-      {
-        id:'enr-3', name:'Éolien Diego Ph 2 – 4.88MW', status:'on-track',
-        investInit: '6 890 560 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '0', etatTotal: '6.89', etatPct: 0,
-        cfIn: [0,0,28,28,41,41], cfOut: [0,0,0,0,0,0], cfNet: '—',
+        id:'enr-26', name:'LIDERA – Diego Green Power - Development', status:'on-track',
+        investInit: '—', investReel: '179 000 $', deltaInvest: '—',
+        etatEnCours: '90 k$', etatTotal: '179 k$', etatPct: 50,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '13%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '20.10.26', dateDebReel: '20.10.26', dateFinInit: '15.09.27', dateFinReel: '15.09.27',
+        dateDebInit: '21.02.25', dateDebReel: '21.02.25', dateFinInit: '—', dateFinReel: '25.10.25',
       },
       {
-        id:'enr-4', name:'OURSUN Phase 1 3.2MW (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,1,2,2,2], cfOut: [2,1,1,1,1,1], cfNet: '—',
+        id:'enr-27', name:'LIDERA – Diego Green Power 7.6MW', status:'on-track',
+        investInit: '19 700 000 $', investReel: '6 280 000 $', deltaInvest: '-68%',
+        etatEnCours: '—', etatTotal: '6.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '26.01.25', dateDebReel: '26.01.25', dateFinInit: '15.01.26', dateFinReel: '27.09.25',
+      },
+      {
+        id:'enr-28', name:'LIDERA – Majunga Green Power - Development', status:'on-track',
+        investInit: '—', investReel: '211 000 $', deltaInvest: '—',
+        etatEnCours: '106 k$', etatTotal: '211 k$', etatPct: 50,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '13%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '21.02.25', dateDebReel: '21.02.25', dateFinInit: '—', dateFinReel: '25.10.25',
+      },
+      {
+        id:'enr-29', name:'LIDERA – Majunga Green Power 10.75MW', status:'on-track',
+        investInit: '26 700 000 $', investReel: '9 074 691 $', deltaInvest: '-66%',
+        etatEnCours: '—', etatTotal: '9.1 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '26.01.25', dateDebReel: '26.01.25', dateFinInit: '15.01.26', dateFinReel: '27.09.25',
+      },
+      {
+        id:'enr-30', name:'LIDERA SERV – SODIAMA', status:'on-track',
+        investInit: '640 000 $', investReel: '177 822 $', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '178 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '10%', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'enr-5', name:'OURSUN Phase 1 – 3.2MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,3,4,4,5], cfOut: [3,3,3,2,2,2], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
+        id:'enr-31', name:'LIDERA SERV – Solarisation Malaga 190kWc', status:'on-track',
+        investInit: '354 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '354 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '9%', triReel: '13%', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'enr-6', name:'OURSUN Phase II 7.8MW (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,2,3], cfOut: [2,2,2,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-7', name:'OURSUN Phase II – 7.8MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [3,4,5,6,7,7], cfOut: [4,4,4,3,3,3], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-8', name:'Top Énergie Bongatsara – 5MW (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,1,2,2,2], cfOut: [1,1,2,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-9', name:'Top Énergie Bongatsara – 5MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,4,4,5,5], cfOut: [3,3,3,2,2,2], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-10', name:'TE Bongatsara Ph 2 – 5MW (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,1,1,2,2], cfOut: [1,1,1,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-11', name:'TE Bongatsara Ph 2 – 5MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,3,4,5,5], cfOut: [3,3,3,2,2,2], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-12', name:'TE Marais Masay – 10MW (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,2,3], cfOut: [2,2,2,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-13', name:'TE Marais Masay – 10MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [3,4,5,6,7,8], cfOut: [5,5,4,4,3,3], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-14', name:'TE Ambohidratimo – 10MW (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,2,3], cfOut: [2,2,2,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-15', name:'TE Ambohidratimo – 10MW', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [3,4,5,6,7,8], cfOut: [5,5,4,4,3,3], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-16', name:'Small Sites (Studies)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,1,1,1,2], cfOut: [1,1,1,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'enr-17', name:'Small Sites', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,2,2,2,3,3], cfOut: [2,2,2,2,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
+        id:'enr-32', name:'LIDERA SERV – Solarisation Eden 131kWc', status:'on-track',
+        investInit: '294 528 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '295 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '8%', triReel: '10%', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       }
     ]
@@ -3756,144 +4016,256 @@ const capexData = {
     title: 'HFO — Centrales Thermiques',
     projects: [
       {
-        id:'hfo-1', name:'Overhaul International 2025 – 19 moteurs', status:'on-track',
-        investInit: '4 846 477 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '4.85', etatPct: 0,
-        cfIn: [4,6,8,7,9,11], cfOut: [8,6,5,4,3,2], cfNet: '—',
+        id:'hfo-1', name:'Overhaul International (2025 - 19 moteurs)', status:'on-track',
+        investInit: '4 846 477 $', investReel: '3 095 007 $', deltaInvest: '—',
+        etatEnCours: '1.9 M$', etatTotal: '3.1 M$', etatPct: 61,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '11%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '2025', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.04.25', dateDebReel: '25.04.25', dateFinInit: '25.07.25', dateFinReel: '—',
       },
       {
         id:'hfo-2', name:'Installation & Commissioning MAN', status:'on-track',
-        investInit: '303 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '0.30', etatPct: 0,
-        cfIn: [1,2,2,3,3,3], cfOut: [2,2,2,2,1,1], cfNet: '—',
+        investInit: '303 000 $', investReel: '1 736 677 $', deltaInvest: '—',
+        etatEnCours: '695 k$', etatTotal: '1.7 M$', etatPct: 40,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '13%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.05.25', dateDebReel: '25.05.25', dateFinInit: '25.09.25', dateFinReel: '—',
       },
       {
-        id:'hfo-3', name:'Redémarrage DEUTZ', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,2,2], cfOut: [2,2,1,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'hfo-4', name:'Redémarrage Rolls Royce', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,2,2], cfOut: [2,2,1,1,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'hfo-5', name:'Upgrade Majunga (Kyros)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,2,3,3,4,4], cfOut: [3,3,3,2,2,2], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'hfo-6', name:'Installation & Commissioning 2×6R32', status:'on-track',
-        investInit: '1 170 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '1.17', etatPct: 0,
-        cfIn: [3,4,5,5,6,6], cfOut: [4,4,4,3,3,3], cfNet: '—',
+        id:'hfo-3', name:'Installation & Commissioning 2x6R32', status:'on-track',
+        investInit: '1 170 000 $', investReel: '1 451 895 $', deltaInvest: '—',
+        etatEnCours: '240 k$', etatTotal: '1.5 M$', etatPct: 17,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '8%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.04.25', dateDebReel: '25.04.25', dateFinInit: '25.09.25', dateFinReel: '—',
       },
       {
-        id:'hfo-7', name:'Overhaul Auxiliaire', status:'on-track',
-        investInit: '110 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '0.11', etatPct: 0,
-        cfIn: [1,1,1,1,2,2], cfOut: [1,1,1,1,1,1], cfNet: '—',
+        id:'hfo-4', name:'Overhaul Auxiliaire', status:'on-track',
+        investInit: '110 000 $', investReel: '530 000 $', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '530 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '8%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.05.25', dateDebReel: '25.05.25', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'hfo-8', name:'Mise en Production FPGS', status:'on-track',
-        investInit: '945 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '0.95', etatPct: 0,
-        cfIn: [2,2,3,3,3,4], cfOut: [3,3,3,2,2,2], cfNet: '—',
+        id:'hfo-5', name:'Mise en Production FPGS', status:'on-track',
+        investInit: '945 000 $', investReel: '1 001 000 $', deltaInvest: '—',
+        etatEnCours: '34 k$', etatTotal: '1.0 M$', etatPct: 3,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '4%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.05.25', dateDebReel: '25.05.25', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'hfo-9', name:'Cooling System Upgrade (eau)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,2,2,3,3,3], cfOut: [2,2,2,2,2,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
-      },
-      {
-        id:'hfo-10', name:'SGX / Plant Renovation', status:'on-track',
+        id:'hfo-6', name:'SGX / Plant Renovation', status:'on-track',
         investInit: '451 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '0.45', etatPct: 0,
-        cfIn: [1,2,2,2,3,3], cfOut: [2,2,2,2,1,1], cfNet: '—',
+        etatEnCours: '—', etatTotal: '451 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '5%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.05.25', dateDebReel: '25.05.25', dateFinInit: '25.04.25', dateFinReel: '—',
       },
       {
-        id:'hfo-11', name:'SCADA', status:'on-track',
-        investInit: '248 000 $', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '0.25', etatPct: 0,
-        cfIn: [1,1,1,2,2,2], cfOut: [1,1,2,1,1,1], cfNet: '—',
+        id:'hfo-7', name:'SCADA', status:'on-track',
+        investInit: '248 000 $', investReel: '107 000 $', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '107 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '3%', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.07.25', dateDebReel: '25.07.25', dateFinInit: '25.09.25', dateFinReel: '—',
       }
     ]
   },
   immo: {
     color: '#FDB823', colorRgb: '248,193,0',
-    title: 'Immobilier — Patrimoine',
+    title: 'Immobilier — Patrimoine (Travaux + Foncier)',
     projects: [
       {
         id:'immo-1', name:'Trano Gasy (Total 9)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [3,4,4,5,5,6], cfOut: [5,5,5,4,4,4], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        investInit: '4 901 400 $', investReel: '3 960 200 $', deltaInvest: '-19%',
+        etatEnCours: '1.9 M$', etatTotal: '4.0 M$', etatPct: 48,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '15%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '22.01.22', dateDebReel: '22.01.22', dateFinInit: '—', dateFinReel: '26.01.26',
       },
       {
         id:'immo-2', name:'Eden 8 (Total 8)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [3,3,4,4,5,5], cfOut: [4,4,4,3,3,3], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        investInit: '2 394 000 $', investReel: '2 296 218 $', deltaInvest: '-4%',
+        etatEnCours: '1.2 M$', etatTotal: '2.3 M$', etatPct: 50,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '18%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '24.08.25', dateDebReel: '24.08.25', dateFinInit: '—', dateFinReel: '26.02.26',
       },
       {
-        id:'immo-3', name:'Vega – Villa Témoin', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,2,2,3,3,4], cfOut: [2,2,2,2,2,2], cfNet: '—',
+        id:'immo-3', name:'Vega - Villa Temoin', status:'on-track',
+        investInit: '510 638 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '511 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '25.04.25', dateDebReel: '25.04.25', dateFinInit: '—', dateFinReel: '26.09.26',
       },
       {
         id:'immo-4', name:'ZFI Rooftop Solaire (Ph 1)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,2,3,3,4,4], cfOut: [3,3,3,2,2,2], cfNet: '—',
+        investInit: '3 108 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '1.5 M$', etatTotal: '3.1 M$', etatPct: 47,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
-        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+        dateDebInit: '24.02.24', dateDebReel: '24.02.24', dateFinInit: '—', dateFinReel: '25.07.25',
       },
       {
         id:'immo-5', name:'ZFI Rooftop Solaire (Ph 2)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,3,4,4,5], cfOut: [3,3,3,3,2,2], cfNet: '—',
+        investInit: '5 700 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '1.5 M$', etatTotal: '5.7 M$', etatPct: 26,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
         id:'immo-6', name:'La Perle', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,3,4,5,5], cfOut: [3,3,3,3,2,2], cfNet: '—',
+        investInit: '637 584 $', investReel: '439 082 $', deltaInvest: '-31%',
+        etatEnCours: '78 k$', etatTotal: '439 k$', etatPct: 18,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '25.04.25', dateDebReel: '25.04.25', dateFinInit: '—', dateFinReel: '25.07.25',
+      },
+      {
+        id:'immo-7', name:'Extension Eden 2 Villas', status:'on-track',
+        investInit: '—', investReel: '643 500 $', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '644 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '25.12.25', dateDebReel: '25.12.25', dateFinInit: '—', dateFinReel: '26.10.25',
+      },
+      {
+        id:'immo-8', name:'Rond Point ZFI', status:'on-track',
+        investInit: '680 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '680 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '25.04.25', dateDebReel: '25.04.25', dateFinInit: '—', dateFinReel: '26.02.26',
+      },
+      {
+        id:'immo-9', name:'Immeuble Hermes Ambatobe', status:'on-track',
+        investInit: '16 716 867 $', investReel: '5 065 037 $', deltaInvest: '-70%',
+        etatEnCours: '—', etatTotal: '5.1 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '12%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '25.11.25', dateDebReel: '25.11.25', dateFinInit: '—', dateFinReel: '28.10.28',
+      },
+      {
+        id:'immo-10', name:'OBP', status:'on-track',
+        investInit: '9 254 752 $', investReel: '6 815 550 $', deltaInvest: '-26%',
+        etatEnCours: '—', etatTotal: '6.8 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '12%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '26.01.26', dateDebReel: '26.01.26', dateFinInit: '—', dateFinReel: '28.01.28',
+      },
+      {
+        id:'immo-11', name:'Hotel Tamatave', status:'on-track',
+        investInit: '3 548 000 $', investReel: '2 925 000 $', deltaInvest: '-18%',
+        etatEnCours: '—', etatTotal: '2.9 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '9%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '25.12.25', dateDebReel: '25.12.25', dateFinInit: '—', dateFinReel: '25.12.28',
+      },
+      {
+        id:'immo-12', name:'Casa del Lago', status:'on-track',
+        investInit: '36 522 086 $', investReel: '27 343 750 $', deltaInvest: '-25%',
+        etatEnCours: '—', etatTotal: '27.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '20%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '25.12.25', dateDebReel: '25.12.25', dateFinInit: '—', dateFinReel: '27.12.30',
+      },
+      {
+        id:'immo-13', name:'Phase 1', status:'on-track',
+        investInit: '22 000 000 $', investReel: '15 000 000 $', deltaInvest: '-32%',
+        etatEnCours: '—', etatTotal: '15 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '26.06.26', dateDebReel: '26.06.26', dateFinInit: '—', dateFinReel: '28.06.28',
+      },
+      {
+        id:'immo-14', name:'Phase 2', status:'on-track',
+        investInit: '14 000 000 $', investReel: '14 200 000 $', deltaInvest: '+1%',
+        etatEnCours: '—', etatTotal: '14.2 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '27.03.27', dateDebReel: '27.03.27', dateFinInit: '—', dateFinReel: '29.03.29',
+      },
+      {
+        id:'immo-15', name:'Phase 3', status:'on-track',
+        investInit: '8 000 000 $', investReel: '14 200 000 $', deltaInvest: '+78%',
+        etatEnCours: '—', etatTotal: '14.2 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '28.02.28', dateDebReel: '28.02.28', dateFinInit: '—', dateFinReel: '29.03.30',
+      },
+      {
+        id:'immo-16', name:'ZF Colina', status:'on-track',
+        investInit: '15 267 500 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '15.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '30%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '01.08.26', dateDebReel: '01.08.26', dateFinInit: '—', dateFinReel: '01.12.28',
+      },
+      {
+        id:'immo-17', name:'Extension Eden 6 villas', status:'on-track',
+        investInit: '2 315 086 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '2.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '30%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '01.05.27', dateDebReel: '01.05.27', dateFinInit: '—', dateFinReel: '01.06.29',
+      },
+      {
+        id:'immo-18', name:'Résidence Ivatosoa', status:'on-track',
+        investInit: '4 132 052 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '4.1 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '20%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '01.04.26', dateDebReel: '01.04.26', dateFinInit: '—', dateFinReel: '01.04.28',
+      },
+      {
+        id:'immo-19', name:'Projet école', status:'on-track',
+        investInit: '6 000 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '6 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '9%', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '01.06.26', dateDebReel: '01.06.26', dateFinInit: '—', dateFinReel: '08.02.27',
+      },
+      {
+        id:'immo-20', name:'Foncier – Amaya', status:'on-track',
+        investInit: '140 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '140 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+      },
+      {
+        id:'immo-21', name:'Foncier – Anosizato 2', status:'on-track',
+        investInit: '120 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '120 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+      },
+      {
+        id:'immo-22', name:'Foncier – Vega (Remblayage + cloture)', status:'on-track',
+        investInit: '800 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '800 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+      },
+      {
+        id:'immo-23', name:'Foncier – Amaya', status:'on-track',
+        investInit: '560 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '560 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+      },
+      {
+        id:'immo-24', name:'Foncier – Anosizato 2', status:'on-track',
+        investInit: '480 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '—', etatTotal: '480 k$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       }
@@ -3901,69 +4273,77 @@ const capexData = {
   },
   ventures: {
     color: '#f37056', colorRgb: '255,135,88',
-    title: 'Ventures — Investissements',
+    title: 'Ventures — Investissements Externes',
     projects: [
       {
-        id:'ven-1', name:'Hôtel Tamatave', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,3,3,4,5,5], cfOut: [4,4,4,3,3,3], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
+        id:'ven-1', name:'Hotel Tamatave', status:'on-track',
+        investInit: '3 105 000 $', investReel: '2 700 000 $', deltaInvest: '-13%',
+        etatEnCours: '1.4 M$', etatTotal: '2.7 M$', etatPct: 50,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '10%', triReel: '15%', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'ven-2', name:'Seedstar / Ampersand', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,2,2,3,3,4], cfOut: [3,3,3,2,2,2], cfNet: '—',
+        id:'ven-2', name:'Seedstar/Ampersand', status:'on-track',
+        investInit: '5 000 000 $', investReel: '4 347 826 $', deltaInvest: '-13%',
+        etatEnCours: '5 M$', etatTotal: '4.3 M$', etatPct: 100,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
         id:'ven-3', name:'BGFI', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,2,3,3,4,4], cfOut: [3,3,3,2,2,2], cfNet: '—',
+        investInit: '1 200 000 $', investReel: '1 275 000 $', deltaInvest: '+6%',
+        etatEnCours: '—', etatTotal: '1.3 M$', etatPct: 0,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
         id:'ven-4', name:'Hospitality (discussions)', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,2,3], cfOut: [2,2,2,1,1,1], cfNet: '—',
+        investInit: '10 000 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '3 M$', etatTotal: '10 M$', etatPct: 30,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
         id:'ven-5', name:'Education', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,2,2,3,3], cfOut: [2,2,2,2,1,1], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'up',
+        investInit: '1 725 000 $', investReel: '1 700 000 $', deltaInvest: '-1%',
+        etatEnCours: '850 k$', etatTotal: '1.7 M$', etatPct: 50,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '9%', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
         id:'ven-6', name:'Energiestro', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,2,2,3,3,4], cfOut: [3,3,2,2,2,2], cfNet: '—',
+        investInit: '120 000 $', investReel: '100 000 $', deltaInvest: '-17%',
+        etatEnCours: '120 k$', etatTotal: '100 k$', etatPct: 100,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'ven-7', name:'Orga Earth (restructure)', status:'delayed',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [1,1,1,2,2,2], cfOut: [3,3,2,2,2,2], cfNet: '—',
-        triInit: '—', triReel: '—', deltaPerf: 'down',
+        id:'ven-7', name:'Banque Maurice', status:'on-track',
+        investInit: '4 000 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '4 M$', etatTotal: '4 M$', etatPct: 100,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       },
       {
-        id:'ven-8', name:'Oasis', status:'on-track',
-        investInit: '—', investReel: '—', deltaInvest: '—',
-        etatEnCours: '—', etatTotal: '—', etatPct: 0,
-        cfIn: [2,2,3,3,4,4], cfOut: [3,3,3,2,2,2], cfNet: '—',
+        id:'ven-8', name:'Orga Earth (restructure)', status:'delayed',
+        investInit: '150 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '150 k$', etatTotal: '150 k$', etatPct: 100,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
+        triInit: '—', triReel: '—', deltaPerf: 'up',
+        dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
+      },
+      {
+        id:'ven-9', name:'Oasis', status:'on-track',
+        investInit: '5 600 000 $', investReel: '—', deltaInvest: '—',
+        etatEnCours: '5.6 M$', etatTotal: '5.6 M$', etatPct: 100,
+        cfIn: [0, 0, 0, 0, 0, 0], cfOut: [0, 0, 0, 0, 0, 0], cfNet: '—',
         triInit: '—', triReel: '—', deltaPerf: 'up',
         dateDebInit: '—', dateDebReel: '—', dateFinInit: '—', dateFinReel: '—',
       }
@@ -4056,7 +4436,7 @@ function renderProjectCard(p, color, colorRgb) {
       <!-- État d'investissement -->
       <div class="cpj-block">
         <div class="cpj-block-label">État d'investissement</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;">${p.etatEnCours} M$ sur ${p.etatTotal} M$</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;">${p.etatEnCours} sur ${p.etatTotal}</div>
         <div style="width:100%;height:8px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;margin-bottom:6px;">
           <div style="height:100%;width:${p.etatPct}%;background:${color};border-radius:4px;transition:width 0.6s;"></div>
         </div>
