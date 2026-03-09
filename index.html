@@ -1070,7 +1070,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
         <div style="margin-bottom:22px;">
           <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:16px;">
             <span id="enr-card-total" style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;letter-spacing:-2px;">20</span>
-            <span style="font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:0.05em;">projets · 161.2 MW</span>
+            <span id="enr-card-mw" style="font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:0.05em;">projets · — MWc</span>
           </div>
           <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 16px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
             <div style="display:flex;align-items:center;gap:10px;">
@@ -1314,6 +1314,41 @@ function closeEnrProjets(){
       cc:{bac:1458564, forecast:1219368, ac:1193232, avReel:95, spi:0.95, cpi:1.16, perf:'En retard mais sous budget'} },
   ];
 
+  /* ═══ ENRICHMENT — DASHBOARD_ENR 03/03/26 + STATUS ETUDE_ENR 09/03/26 ═══ */
+  const enrEnrich = {
+    'tulear-2':      { constProg:0.98, glissement:61,  puissance:1000,  prodJour:5389,  lead:'Toki',      epciste:'MADAGREEN', pvMw:1 },
+    'nosy-be-1':     { constProg:0.97, glissement:168, puissance:3000,  prodJour:13890, lead:'Lindon',    epciste:'SQVISION' },
+    'diego-wind-1':  { constProg:0.63, glissement:208, puissance:120,   prodJour:666,   lead:'Toki',      epciste:'AELOS/OTI' },
+    'moramanga-1':   { constProg:0.67, glissement:135, puissance:15400, prodJour:80882, lead:'Lindon',    epciste:'BLUESKY' },
+    'bongatsara-1':  { constProg:0.24, glissement:0,   puissance:5000,  prodJour:24836, lead:'Lindon',    epciste:'TBC' },
+    'fihaonana-1':   { constProg:0,    glissement:0,   puissance:4000,  prodJour:20570, lead:'Toki',      epciste:'TBC' },
+    'oursun-1':      { constProg:0,    glissement:0,   puissance:3200,  prodJour:12099, lead:'Henintsoa', epciste:'TBC' },
+    'nosy-be-2':     { constProg:0,    glissement:0,   puissance:2000,  prodJour:9260,  lead:'Lindon',    epciste:'TBC' },
+    'tulear-3':      { constProg:0,    glissement:0,   lead:'Toki',      epciste:'TBC' },
+    'small-sites':   { constProg:0,    glissement:0,   lead:'Aymar',     epciste:'TBC' },
+    'oursun-2':      { constProg:0,    glissement:0,   puissance:7800,  prodJour:29490, lead:'Henintsoa', epciste:'TBC' },
+    'mahajanga':     { constProg:0,    glissement:0,   puissance:10750, prodJour:51247, lead:'Aymar',     epciste:'TBC', pvMw:10.75 },
+    'diego-lidera':  { constProg:0,    glissement:0,   puissance:7600,  prodJour:35730, lead:'Aymar',     epciste:'TBC', pvMw:7.6 },
+    'tamatave':      { constProg:0,    glissement:0,   puissance:16000, prodJour:70619, lead:'Aymar',     epciste:'TBC', pvMw:16 },
+    'moramanga-2':   { constProg:0,    glissement:0,   lead:'Lindon',    epciste:'TBC' },
+    'bongatsara-2':  { constProg:0,    glissement:0,   lead:'Lindon',    epciste:'TBC' },
+    'diego-wind-2':  { constProg:0,    glissement:0,   lead:'Toki',      epciste:'TBC' },
+    'fihaonana-2':   { constProg:0,    glissement:0,   lead:'Toki',      epciste:'TBC' },
+    'ambohidratrimo':{ constProg:0,    glissement:0,   lead:'Toki',      epciste:'TBC' },
+    'marais-masay':  { constProg:0,    glissement:0,   lead:'Aymar',     epciste:'TBC' },
+  };
+  enrProjects.forEach(p => { const e = enrEnrich[p.id]; if (e) Object.assign(p, e); });
+
+  /* New project — Lidera Phase3 Toamasina (from DATABASE sheet) */
+  enrProjects.push({
+    id:'lidera-toamasina-3', name:'Lidera Toamasina Phase 3', loc:'Tamatave', type:'solar', pvMw:2, bessMwh:null,
+    capexM:2.060, tri:null, engPct:0, constStart:'2026-09-24', constEnd:'2027-09-24',
+    engStart:'2026-03-23', engEnd:'2026-09-24', tendStart:null, tendEnd:null, tendDone:false,
+    costDev:60000, costPv:2000000, comment:null, chef:'Aymar',
+    qtr:[], cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null},
+    constProg:0, glissement:0, lead:'Aymar', epciste:'TBC'
+  });
+
   /* ── Phase logic ── */
   const today = new Date();
   function getPhase(p) {
@@ -1361,10 +1396,13 @@ function closeEnrProjets(){
         <span style="font-size:14px;">${typeIcon(p.type)}</span>
         <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.88);flex:1;">${p.name}</span>
         <span style="font-size:9px;font-weight:700;color:${color};background:rgba(${rgb},0.12);border-radius:6px;padding:3px 8px;">${phaseLabels[phase]}</span>
+        ${p.glissement > 0 ? '<span style="font-size:9px;font-weight:700;color:#ff5050;background:rgba(255,80,80,0.12);border-radius:6px;padding:3px 8px;">\u26A0 '+p.glissement+'j retard</span>' : ''}
       </div>
       <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.05);border-radius:5px;padding:2px 8px;">${p.pvMw} MW${p.bessMwh ? ' + '+p.bessMwh+' MWh' : ''}</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.05);border-radius:5px;padding:2px 8px;">${p.pvMw} MWc${p.bessMwh ? ' + '+p.bessMwh+' MWh' : ''}</span>
         <span style="font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);border-radius:5px;padding:2px 8px;">📍 ${p.loc}</span>
+        ${p.lead ? '<span style="font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);border-radius:5px;padding:2px 8px;">\uD83D\uDC64 '+p.lead+'</span>' : ''}
+        ${p.epciste && p.epciste !== 'TBC' ? '<span style="font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);border-radius:5px;padding:2px 8px;">\uD83C\uDFD7 '+p.epciste+'</span>' : ''}
       </div>
       <div class="enrp-kpi-grid" style="grid-template-columns:repeat(3,1fr);">
         <div class="enrp-kpi">
@@ -1387,10 +1425,12 @@ function closeEnrProjets(){
         </div>
         <div class="enrp-kpi">
           <div class="enrp-kpi-label">Construction</div>
+          ${p.constProg > 0 ? '<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px 0 4px;"><div style="height:100%;width:'+Math.round(p.constProg*100)+'%;background:'+(p.glissement>0?'#ff5050':color)+';border-radius:3px;"></div></div><div style="font-size:16px;font-weight:800;color:'+(p.glissement>0?'#ff5050':color)+';">'+Math.round(p.constProg*100)+'%</div>' : ''}
           <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:1.8;">
             <div>Début: <span style="color:${color};">${fmtDate(p.constStart)}</span></div>
-            <div>COD: <span style="color:${color};">${fmtDate(p.constEnd)}</span></div>
+            <div>COD: <span style="color:${p.glissement > 0 ? '#ff5050' : color};">${fmtDate(p.constEnd)}</span></div>
           </div>
+          ${p.glissement > 0 ? '<div style="font-size:9px;color:#ff5050;margin-top:4px;font-weight:600;">\u26A0 '+p.glissement+'j de retard</div>' : ''}
         </div>
         <div class="enrp-kpi">
           <div class="enrp-kpi-label">Avancement réel</div>
@@ -1481,23 +1521,59 @@ function closeEnrProjets(){
     const fCapex = filtered.reduce((s,p) => s + (p.capexM||0), 0);
     const fBess = filtered.reduce((s,p) => s + (p.bessMwh||0), 0);
 
-    // Summary bar
-    let html = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
+    // Glissement alert + summary KPIs
+    const projsWithDelay = filtered.filter(p => p.glissement && p.glissement > 0);
+    const avgDelay = projsWithDelay.length > 0 ? Math.round(projsWithDelay.reduce((s,p) => s + p.glissement, 0) / projsWithDelay.length) : 0;
+    const maxDelay = projsWithDelay.length > 0 ? Math.max(...projsWithDelay.map(p => p.glissement)) : 0;
+    const fProd = filtered.reduce((s,p) => s + (p.prodJour||0), 0);
+
+    let html = '';
+    if (projsWithDelay.length > 0) {
+      html += '<div style="background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);border-radius:14px;padding:16px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'
+        + '<div style="font-size:24px;">\u26A0\uFE0F</div>'
+        + '<div style="flex:1;min-width:200px;">'
+        + '<div style="font-size:11px;font-weight:700;color:#ff5050;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Alerte Glissement</div>'
+        + '<div style="font-size:10px;color:rgba(255,255,255,0.5);">' + projsWithDelay.length + ' projet' + (projsWithDelay.length>1?'s':'') + ' en retard \xB7 Retard moyen: ' + avgDelay + ' jours \xB7 Max: ' + maxDelay + ' jours</div>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+        + projsWithDelay.map(p => '<span style="font-size:9px;color:#ff5050;background:rgba(255,80,80,0.12);border-radius:6px;padding:3px 8px;white-space:nowrap;">'+p.name+' '+p.glissement+'j</span>').join('')
+        + '</div></div>';
+    }
+
+    html += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
         <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Total Projets</div>
         <div style="font-size:28px;font-weight:800;color:#00ab63;">${filtered.length}</div>
       </div>
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Puissance PV</div>
-        <div style="font-size:28px;font-weight:800;color:#00ab63;">${fMw.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:4px;">MW</span></div>
-      </div>
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Stockage BESS</div>
-        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${fBess}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh</span></div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Capacité totale</div>
+        <div style="font-size:28px;font-weight:800;color:#00ab63;">${fMw.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:4px;">MWc</span></div>
       </div>
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
         <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">CAPEX Total</div>
         <div style="font-size:28px;font-weight:800;color:#FDB823;">${fCapex.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(253,184,35,0.6);margin-left:4px;">M$</span></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Production est.</div>
+        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${fProd > 0 ? Math.round(fProd/1000) : '\u2014'}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh/j</span></div>
+      </div>
+    </div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Stockage BESS</div>
+        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${fBess}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh</span></div>
+      </div>
+      <div style="background:rgba(253,184,35,0.03);border:1px solid rgba(253,184,35,0.12);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(253,184,35,0.5);margin-bottom:4px;">En Construction</div>
+        <div style="font-size:28px;font-weight:800;color:#FDB823;">${grouped.construction.length}</div>
+      </div>
+      <div style="background:rgba(90,175,175,0.03);border:1px solid rgba(90,175,175,0.12);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(90,175,175,0.5);margin-bottom:4px;">En D\xe9veloppement</div>
+        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${grouped.developpement.length}</div>
+      </div>
+      <div style="background:rgba(${projsWithDelay.length>0?'255,80,80':'255,255,255'},0.03);border:1px solid rgba(${projsWithDelay.length>0?'255,80,80':'255,255,255'},0.12);border-radius:12px;padding:14px 16px;text-align:center;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${projsWithDelay.length>0?'rgba(255,80,80,0.7)':'rgba(255,255,255,0.3)'};margin-bottom:4px;">Glissement moy.</div>
+        <div style="font-size:28px;font-weight:800;color:${projsWithDelay.length>0?'#ff5050':'rgba(255,255,255,0.4)'};">${avgDelay>0?avgDelay:'\u2014'}<span style="font-size:12px;font-weight:400;color:${projsWithDelay.length>0?'rgba(255,80,80,0.6)':'rgba(255,255,255,0.3)'};margin-left:4px;">jours</span></div>
       </div>
     </div>`;
 
@@ -1541,6 +1617,7 @@ function closeEnrProjets(){
   /* ── Update summary card on EnR main page ── */
   const el = (id) => document.getElementById(id);
   if (el('enr-card-total')) el('enr-card-total').textContent = enrProjects.length;
+  if (el('enr-card-mw'))    el('enr-card-mw').textContent    = 'projets \xB7 ' + totalMw.toFixed(1) + ' MWc \xB7 ' + totalCapex.toFixed(1) + ' M$';
   if (el('enr-card-terme')) el('enr-card-terme').textContent = grouped.termine.length;
   if (el('enr-card-const')) el('enr-card-const').textContent = grouped.construction.length;
   if (el('enr-card-dev'))   el('enr-card-dev').textContent   = grouped.developpement.length;
