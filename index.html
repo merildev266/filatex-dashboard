@@ -1149,103 +1149,123 @@ function closeEnrProjets(){
     { id:'moramanga-1', name:'Moramanga Phase 1', loc:'Moramanga', type:'solar', pvMw:15, bessMwh:null,
       capexM:11.124, tri:11.4, engPct:100, constStart:'2025-06-06', constEnd:'2026-05-15',
       engStart:'2023-11-21', engEnd:'2025-07-25', tendStart:null, tendEnd:null, tendDone:true,
-      costDev:281720, costPv:10841987, comment:null,
+      costDev:281720, costPv:10841987, comment:null, chef:null,
+      qtr:[{q:'Q3-25',a:281720},{q:'Q1-26',a:7589391},{q:'Q2-26',a:3252596}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'nosy-be-1', name:'Nosy-Be Phase 1', loc:'Nosy-Be', type:'solar', pvMw:3, bessMwh:null,
       capexM:2.784, tri:4.19, engPct:100, constStart:'2024-10-10', constEnd:'2026-02-07',
       engStart:'2024-01-09', engEnd:'2025-09-30', tendStart:null, tendEnd:null, tendDone:true,
-      costDev:83854, costPv:2700000, comment:null,
+      costDev:83854, costPv:2700000, comment:null, chef:'Lindon',
+      qtr:[{q:'Q3-25',a:1163854},{q:'Q4-25',a:810000},{q:'Q1-26',a:810000}],
       cc:{bac:3005209, forecast:2514494, ac:2067946, avReel:100, spi:1.0, cpi:1.45, perf:'Dans les temps et budget OK',
           debPlan:'2024-10-10', debReel:'2024-10-10', codPlan:'2025-08-23', codReel:'2026-02-07', ecartJours:-168} },
     { id:'bongatsara-1', name:'Bongatsara Phase 1', loc:'Bongatsara', type:'solar', pvMw:5, bessMwh:1.5,
       capexM:4.735, tri:11, engPct:80, constStart:'2025-12-22', constEnd:'2026-12-30',
       engStart:'2025-04-15', engEnd:'2026-03-15', tendStart:'2025-12-22', tendEnd:'2026-03-22', tendDone:false,
-      costDev:80000, costPv:4655000, comment:null,
+      costDev:80000, costPv:4655000, comment:null, chef:'Henintsoa',
+      qtr:[{q:'Q4-25',a:80000},{q:'Q1-26',a:1862000},{q:'Q2-26',a:1862000},{q:'Q3-26',a:931000}],
       cc:{bac:5316367, forecast:4735000, ac:25733, avReel:26, spi:0.58, cpi:53.7, perf:'En retard mais sous budget'} },
     { id:'diego-wind-1', name:'Diego Wind Phase 1', loc:'Diego', type:'wind', pvMw:0.12, bessMwh:null,
       capexM:1.074, tri:12.9, engPct:90, constStart:'2025-02-23', constEnd:'2026-06-25',
       engStart:'2024-11-15', engEnd:'2026-03-30', tendStart:null, tendEnd:null, tendDone:true,
-      costDev:90000, costPv:984167, comment:null,
+      costDev:90000, costPv:984167, comment:null, chef:'Toki',
+      qtr:[{q:'Q3-25',a:680500},{q:'Q4-25',a:196833},{q:'Q1-26',a:196833}],
       cc:{bac:938041, forecast:1074167, ac:446723, avReel:57, spi:0.57, cpi:1.20, perf:'En retard mais sous budget'} },
     { id:'tamatave', name:'Lidera Tamatave', loc:'Tamatave', type:'solar', pvMw:20, bessMwh:9,
       capexM:17.196, tri:9, engPct:50, constStart:'2026-07-30', constEnd:'2027-03-24',
       engStart:'2024-01-03', engEnd:'2026-06-30', tendStart:'2026-05-30', tendEnd:'2026-07-15', tendDone:false,
-      costDev:234000, costPv:16961645, comment:'Ph2 - Terrain dispo que pour 16MW + Litige terrain',
+      costDev:234000, costPv:16961645, comment:'Ph2 - Terrain dispo que pour 16MW + Litige terrain', chef:'Aymar',
+      qtr:[{q:'Q3-25',a:117000},{q:'Q1-26',a:117000},{q:'Q2-26',a:6784658},{q:'Q3-26',a:3392329},{q:'Q4-26',a:3392329},{q:'Q1-27',a:3392329}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'diego-lidera', name:'Lidera Diego', loc:'Diego', type:'solar', pvMw:10, bessMwh:5,
       capexM:7.809, tri:4.2, engPct:75, constStart:'2026-06-15', constEnd:'2027-01-16',
       engStart:'2024-01-03', engEnd:'2026-03-15', tendStart:'2026-03-25', tendEnd:'2026-05-10', tendDone:false,
-      costDev:179000, costPv:7630000, comment:null,
+      costDev:179000, costPv:7630000, comment:null, chef:'Aymar',
+      qtr:[{q:'Q3-25',a:89500},{q:'Q1-26',a:89500},{q:'Q2-26',a:3815000},{q:'Q3-26',a:2289000},{q:'Q4-26',a:1526000}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'mahajanga', name:'Lidera Mahajanga', loc:'Mahajanga', type:'solar', pvMw:12, bessMwh:5,
       capexM:10.636, tri:8.6, engPct:90, constStart:'2026-06-15', constEnd:'2027-03-21',
       engStart:'2024-01-03', engEnd:'2026-03-15', tendStart:'2026-04-01', tendEnd:'2026-05-10', tendDone:false,
-      costDev:211000, costPv:10424691, comment:null,
+      costDev:211000, costPv:10424691, comment:null, chef:'Aymar',
+      qtr:[{q:'Q3-25',a:105500},{q:'Q1-26',a:105500},{q:'Q2-26',a:5212346},{q:'Q3-26',a:3127407},{q:'Q1-27',a:2084938}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'oursun-1', name:'Oursun ZFI Phase 1', loc:'ZFI Antsirabe', type:'solar', pvMw:3.2, bessMwh:1,
       capexM:5.961, tri:11.8, engPct:85, constStart:'2026-05-30', constEnd:'2027-01-30',
       engStart:'2021-01-10', engEnd:'2026-03-20', tendStart:'2026-04-01', tendEnd:'2026-05-15', tendDone:false,
-      costDev:79000, costPv:5882194, comment:null,
+      costDev:79000, costPv:5882194, comment:null, chef:'Henintsoa',
+      qtr:[{q:'Q4-25',a:79000},{q:'Q1-26',a:2352878},{q:'Q2-26',a:1176439},{q:'Q3-26',a:1176439},{q:'Q4-26',a:1176439}],
       cc:{bac:5782787, forecast:5961194, ac:0, avReel:10, spi:0.48, cpi:null, perf:'En retard mais sous budget'} },
     { id:'moramanga-2', name:'Moramanga Phase 2', loc:'Moramanga', type:'solar', pvMw:25, bessMwh:null,
       capexM:22.891, tri:11, engPct:35, constStart:'2026-06-30', constEnd:'2027-05-30',
       engStart:'2025-11-02', engEnd:'2026-06-15', tendStart:'2026-04-15', tendEnd:'2026-06-15', tendDone:false,
-      costDev:300000, costPv:22590550, comment:null,
+      costDev:300000, costPv:22590550, comment:null, chef:null,
+      qtr:[{q:'Q1-26',a:150000},{q:'Q2-26',a:11445275},{q:'Q3-26',a:6777165},{q:'Q1-27',a:4518110}],
       cc:{bac:10036607, forecast:7802433, ac:3001045, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'fihaonana-1', name:'Vestop Fihaonana Phase 1', loc:'Fihaonana', type:'solar', pvMw:4, bessMwh:null,
       capexM:3.634, tri:11.9, engPct:50, constStart:'2026-05-04', constEnd:'2026-12-15',
       engStart:'2025-03-18', engEnd:'2026-03-30', tendStart:'2026-04-05', tendEnd:'2026-04-30', tendDone:false,
-      costDev:200000, costPv:3433950, comment:null,
+      costDev:200000, costPv:3433950, comment:null, chef:'Toki',
+      qtr:[{q:'Q3-25',a:200000},{q:'Q2-26',a:1716975},{q:'Q3-26',a:1030185},{q:'Q4-26',a:686790}],
       cc:{bac:4333731, forecast:3633950, ac:3484, avReel:24, spi:0.59, cpi:298.5, perf:'En retard mais sous budget'} },
     { id:'nosy-be-2', name:'Nosy-Be Phase 2', loc:'Nosy-Be', type:'solar', pvMw:2, bessMwh:5,
       capexM:3.765, tri:4.2, engPct:90, constStart:'2026-06-02', constEnd:'2026-11-30',
       engStart:'2024-07-15', engEnd:'2026-03-20', tendStart:'2026-04-15', tendEnd:'2026-05-30', tendDone:false,
-      costDev:34153, costPv:3730560, comment:null,
+      costDev:34153, costPv:3730560, comment:null, chef:null,
+      qtr:[{q:'Q4-25',a:34153},{q:'Q1-26',a:1119168},{q:'Q2-26',a:1119168},{q:'Q3-26',a:1119168},{q:'Q4-26',a:373056}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'tulear-3', name:'Tuléar Phase 3', loc:'Tuléar', type:'solar', pvMw:3.1, bessMwh:2.5,
       capexM:3.611, tri:11, engPct:100, constStart:'2026-04-28', constEnd:'2027-01-23',
       engStart:'2024-01-09', engEnd:'2025-11-30', tendStart:'2025-12-05', tendEnd:null, tendDone:false,
-      costDev:103000, costPv:3508250, comment:null,
+      costDev:103000, costPv:3508250, comment:null, chef:'Toki',
+      qtr:[{q:'Q4-25',a:61800},{q:'Q1-26',a:41200},{q:'Q2-26',a:1754125},{q:'Q4-26',a:1754125}],
       cc:{bac:1458564, forecast:1219368, ac:1193232, avReel:95, spi:0.95, cpi:1.16, perf:'En retard mais sous budget'} },
     { id:'oursun-2', name:'Oursun ZFI Phase 2', loc:'ZFI Antsirabe', type:'solar', pvMw:7.8, bessMwh:2,
       capexM:7.865, tri:12, engPct:85, constStart:'2027-01-25', constEnd:'2027-11-20',
       engStart:'2021-01-10', engEnd:'2026-09-30', tendStart:'2026-10-01', tendEnd:'2026-12-15', tendDone:false,
-      costDev:60000, costPv:7804580, comment:null,
+      costDev:60000, costPv:7804580, comment:null, chef:null,
+      qtr:[{q:'Q1-26',a:42000},{q:'Q2-26',a:18000},{q:'Q3-26',a:2341374},{q:'Q1-27',a:2341374},{q:'Q3-27',a:2341374},{q:'Q4-27',a:780458}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'bongatsara-2', name:'Bongatsara Phase 2', loc:'Ambohimalaza', type:'solar', pvMw:5, bessMwh:1.5,
       capexM:4.775, tri:6.7, engPct:null, constStart:'2026-10-10', constEnd:'2027-08-12',
       engStart:'2026-02-15', engEnd:'2026-08-15', tendStart:'2026-08-15', tendEnd:'2026-10-05', tendDone:false,
-      costDev:120000, costPv:4655000, comment:'Terrain en litige + 30% coûts sup. GC v/s Phase 1',
+      costDev:120000, costPv:4655000, comment:'Terrain en litige + 30% coûts sup. GC v/s Phase 1', chef:null,
+      qtr:[{q:'Q1-26',a:120000},{q:'Q2-26',a:2327500},{q:'Q4-26',a:1396500},{q:'Q2-27',a:931000}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'diego-wind-2', name:'Diego Wind Phase 2', loc:'Diego', type:'wind', pvMw:4.88, bessMwh:null,
       capexM:7.141, tri:12.9, engPct:null, constStart:'2026-10-20', constEnd:'2027-09-15',
       engStart:'2026-02-01', engEnd:'2026-09-30', tendStart:'2026-08-30', tendEnd:'2026-09-30', tendDone:false,
-      costDev:250000, costPv:6890560, comment:null,
+      costDev:250000, costPv:6890560, comment:null, chef:null,
+      qtr:[{q:'Q1-26',a:125000},{q:'Q2-26',a:125000},{q:'Q3-26',a:2756224},{q:'Q1-27',a:2756224},{q:'Q3-27',a:1378112}],
       cc:{bac:24500, forecast:24500, ac:0, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'fihaonana-2', name:'Vestop Fihaonana Phase 2', loc:'Fihaonana', type:'solar', pvMw:15, bessMwh:7.5,
       capexM:15.539, tri:11.9, engPct:null, constStart:'2026-10-15', constEnd:'2027-06-15',
       engStart:'2026-03-01', engEnd:'2026-06-15', tendStart:'2026-07-15', tendEnd:'2026-08-15', tendDone:false,
-      costDev:230000, costPv:15308654, comment:null,
+      costDev:230000, costPv:15308654, comment:null, chef:null,
+      qtr:[{q:'Q1-26',a:138000},{q:'Q2-26',a:7746327},{q:'Q4-26',a:4592596},{q:'Q1-27',a:3061731}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'marais-masay', name:'Floating Solar Marais Masay', loc:'Tana', type:'floating', pvMw:10, bessMwh:2.5,
       capexM:12.985, tri:null, engPct:null, constStart:'2026-11-04', constEnd:'2027-11-10',
       engStart:'2026-02-02', engEnd:'2026-07-30', tendStart:'2026-08-10', tendEnd:'2026-10-25', tendDone:false,
-      costDev:190000, costPv:12795253, comment:null,
+      costDev:190000, costPv:12795253, comment:null, chef:null,
+      qtr:[{q:'Q1-26',a:57000},{q:'Q2-26',a:76000},{q:'Q3-26',a:57000},{q:'Q1-27',a:6397627},{q:'Q3-27',a:3838576},{q:'Q4-27',a:2559051}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'small-sites', name:'Small Sites', loc:'Ihosy, Sakaraha, Maintirano, Ranohira', type:'solar', pvMw:2.18, bessMwh:null,
       capexM:2.3, tri:3, engPct:null, constStart:'2026-12-05', constEnd:'2027-07-20',
       engStart:'2026-03-22', engEnd:'2026-08-15', tendStart:'2026-10-10', tendEnd:'2026-11-20', tendDone:false,
-      costDev:300000, costPv:2000000, comment:'Terrains indisponibles - Discussions JIRAMA',
+      costDev:300000, costPv:2000000, comment:'Terrains indisponibles - Discussions JIRAMA', chef:null,
+      qtr:[{q:'Q1-26',a:150000},{q:'Q2-26',a:150000},{q:'Q3-26',a:600000},{q:'Q1-27',a:600000},{q:'Q2-27',a:600000},{q:'Q3-27',a:200000}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'ambohidratrimo', name:'Ambohidratrimo', loc:'Ambohijanaka', type:'solar', pvMw:10, bessMwh:2.5,
       capexM:10.415, tri:11, engPct:null, constStart:'2026-10-01', constEnd:'2027-10-07',
       engStart:'2026-03-10', engEnd:'2026-08-30', tendStart:'2026-09-05', tendEnd:'2026-09-30', tendDone:false,
-      costDev:210000, costPv:10205140, comment:"En cours d'analyse terrain",
+      costDev:210000, costPv:10205140, comment:"En cours d'analyse terrain", chef:null,
+      qtr:[{q:'Q1-26',a:126000},{q:'Q2-26',a:84000},{q:'Q4-26',a:5102570},{q:'Q2-27',a:5102570}],
       cc:{bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null} },
     { id:'tulear-2', name:'Tuléar Phase 2', loc:'Tuléar', type:'solar', pvMw:3.9, bessMwh:null,
       capexM:1.356, tri:null, engPct:100, constStart:'2024-10-21', constEnd:'2025-07-23',
       engStart:'2024-01-09', engEnd:'2025-08-15', tendStart:null, tendEnd:null, tendDone:false,
-      costDev:18250, costPv:1337451, comment:null,
+      costDev:18250, costPv:1337451, comment:null, chef:'Toki',
+      qtr:[{q:'Q3-25',a:1088211},{q:'Q4-25',a:267490}],
       cc:{bac:1458564, forecast:1219368, ac:1193232, avReel:95, spi:0.95, cpi:1.16, perf:'En retard mais sous budget'} },
   ];
 
@@ -1281,7 +1301,7 @@ function closeEnrProjets(){
     const perfLabel = p.cc && p.cc.perf ? p.cc.perf : null;
     const perfColor = perfLabel && perfLabel.includes('temps') ? '#74b859' : perfLabel ? '#ff8758' : 'rgba(255,255,255,0.3)';
 
-    return `<div class="enrp-proj-card" style="border-color:rgba(${rgb},0.18);">
+    return `<div class="enrp-proj-card" style="border-color:rgba(${rgb},0.18);cursor:pointer;" onclick="openProjectDetail('${p.id}')">
       <div class="enrp-proj-name">
         <span style="font-size:14px;">${typeIcon(p.type)}</span>
         <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.88);flex:1;">${p.name}</span>
@@ -1471,7 +1491,401 @@ function closeEnrProjets(){
   if (el('enr-card-dev'))   el('enr-card-dev').textContent   = grouped.developpement.length;
   if (el('enr-card-plan'))  el('enr-card-plan').textContent  = grouped.planifie.length;
 
+  /* ── Expose to global scope for project detail panel ── */
+  window._enrProjects = enrProjects;
+  window._getPhase = getPhase;
+  window._phaseLabels = phaseLabels;
+  window._phaseColors = phaseColors;
+  window._phaseBgs = phaseBgs;
+  window.fmtM = fmtM;
+  window.fmtK = fmtK;
+  window.fmtDate = fmtDate;
+  window.fmtPct = fmtPct;
+  window.typeIcon = typeIcon;
+
 })();
+</script>
+
+<!-- ══════════════ PROJECT DETAIL PANEL (generic) ══════════════ -->
+<div id="panel-project-detail" style="position:fixed;inset:0;z-index:300;background:#08120a;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
+  <div class="nav-back"><button class="back-btn" onclick="closeProjectDetail()" style="border-color:rgba(116,184,89,0.3);color:#74b859;">← Projets EnR</button></div>
+  <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
+    <div id="pd-header"></div>
+    <div id="pd-kpi-row"></div>
+    <div id="pd-evm-section"></div>
+    <div id="pd-budget-section"></div>
+    <div id="pd-cashflow-section"></div>
+    <div id="pd-gantt-section"></div>
+    <div id="pd-schedule-section"></div>
+    <div id="pd-comments-section"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   PROJECT DETAIL — Fiche Projet complète
+   ══════════════════════════════════════════════ */
+
+function openProjectDetail(projectId) {
+  const projects = window._enrProjects;
+  const p = projects.find(x => x.id === projectId);
+  if (!p) return;
+  const phase = window._getPhase(p);
+  const color = window._phaseColors[phase];
+  const rgb = window._phaseBgs[phase];
+  const hasCc = p.cc && p.cc.bac !== null && p.cc.bac > 0;
+
+  renderPdHeader(p, phase, color, rgb);
+  renderPdKpiRow(p, phase, color, rgb, hasCc);
+  renderPdEvm(p, hasCc, color, rgb);
+  renderPdBudget(p, color, rgb);
+  renderPdCashflow(p, hasCc, color, rgb);
+  renderPdGantt(p, phase, color, rgb);
+  renderPdSchedule(p, color, rgb, hasCc);
+  renderPdComments(p);
+
+  const panel = document.getElementById('panel-project-detail');
+  panel.style.transform = 'translateX(0)';
+  panel.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProjectDetail() {
+  document.getElementById('panel-project-detail').style.transform = 'translateX(100%)';
+  document.body.style.overflow = '';
+}
+
+/* ── Section 1: Header ── */
+function renderPdHeader(p, phase, color, rgb) {
+  document.getElementById('pd-header').innerHTML = `
+    <div class="inner-topbar" style="border-bottom-color:rgba(${rgb},0.15);margin-bottom:36px;">
+      <div style="text-align:center;width:100%;">
+        <div class="inner-title" style="color:${color};">${typeIcon(p.type)} ${p.name}</div>
+        <div class="inner-subtitle" style="color:rgba(${rgb},0.5);">
+          ${p.pvMw} MW${p.bessMwh ? ' + ' + p.bessMwh + ' MWh BESS' : ''}
+          · 📍 ${p.loc}
+          ${p.chef ? ' · 👤 ' + p.chef : ''}
+          · <span style="background:rgba(${rgb},0.15);color:${color};border:1px solid rgba(${rgb},0.3);border-radius:6px;padding:2px 10px;font-weight:700;font-size:10px;">${window._phaseLabels[phase]}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Section 2: KPI Row ── */
+function renderPdKpiRow(p, phase, color, rgb, hasCc) {
+  const engPct = p.engPct !== null ? p.engPct : 0;
+  const avReel = hasCc && p.cc.avReel !== null ? p.cc.avReel : null;
+  document.getElementById('pd-kpi-row').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:36px;">
+      <div class="enr-kpi-card">
+        <div class="ckpi-label" style="color:rgba(${rgb},0.6);">CAPEX Total</div>
+        <div class="ckpi-val" style="color:${color};">${fmtM(p.capexM)}</div>
+        <div class="ckpi-sub">Dév. ${fmtK(p.costDev)}</div>
+        <div class="ckpi-sub">PV ${fmtK(p.costPv)}</div>
+      </div>
+      <div class="enr-kpi-card">
+        <div class="ckpi-label" style="color:rgba(${rgb},0.6);">TRI</div>
+        <div class="ckpi-val" style="color:${p.tri >= 10 ? '#74b859' : p.tri ? '#ff8758' : 'rgba(255,255,255,0.3)'};">
+          ${p.tri !== null ? p.tri + '%' : '—'}
+        </div>
+        <div class="ckpi-sub">${p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : 'À déterminer'}</div>
+      </div>
+      <div class="enr-kpi-card">
+        <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Engineering</div>
+        <div class="ckpi-val" style="color:${color};">${p.engPct !== null ? engPct + '%' : '—'}</div>
+        <div class="ckpi-progress-track" style="background:rgba(${rgb},0.12);height:5px;border-radius:3px;overflow:hidden;margin:6px 0;">
+          <div class="ckpi-progress-bar" style="width:${engPct}%;background:${color};height:100%;border-radius:3px;"></div>
+        </div>
+        <div class="ckpi-sub">${fmtDate(p.engStart)} → ${fmtDate(p.engEnd)}</div>
+      </div>
+      <div class="enr-kpi-card">
+        <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Construction</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.8;margin-top:6px;">
+          <div>Début: <span style="color:${color};font-weight:700;">${fmtDate(p.constStart)}</span></div>
+          <div>COD: <span style="color:${color};font-weight:700;">${fmtDate(p.constEnd)}</span></div>
+        </div>
+      </div>
+      <div class="enr-kpi-card">
+        <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Avancement Réel</div>
+        ${avReel !== null ? `
+          <div class="ckpi-val" style="color:${color};">${avReel}%</div>
+          <div class="ckpi-progress-track" style="background:rgba(${rgb},0.12);height:5px;border-radius:3px;overflow:hidden;margin:6px 0;">
+            <div class="ckpi-progress-bar" style="width:${avReel}%;background:${color};height:100%;border-radius:3px;"></div>
+          </div>
+          <div class="ckpi-sub">SPI: ${p.cc.spi !== null ? p.cc.spi.toFixed(2) : '—'}</div>
+        ` : `<div style="font-size:13px;color:rgba(255,255,255,0.2);margin-top:10px;">Données à venir</div>`}
+      </div>
+      <div class="enr-kpi-card">
+        <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Performance</div>
+        ${p.cc && p.cc.perf ? `
+          <div style="font-size:11px;font-weight:600;color:${p.cc.perf.includes('temps') ? '#74b859' : '#ff8758'};margin-top:8px;line-height:1.5;">${p.cc.perf}</div>
+          ${p.cc.cpi !== null ? `<div class="ckpi-sub">CPI: ${p.cc.cpi > 10 ? '>10' : p.cc.cpi.toFixed(2)}</div>` : ''}
+        ` : `<div style="font-size:13px;color:rgba(255,255,255,0.2);margin-top:10px;">—</div>`}
+      </div>
+    </div>`;
+}
+
+/* ── Section 3: EVM ── */
+function renderPdEvm(p, hasCc, color, rgb) {
+  const el = document.getElementById('pd-evm-section');
+  if (!hasCc) { el.innerHTML = ''; return; }
+  const cc = p.cc;
+  const ev = cc.bac && cc.avReel ? cc.bac * (cc.avReel / 100) : null;
+  const etc = cc.forecast && cc.ac !== null ? cc.forecast - cc.ac : null;
+  const cv = ev !== null && cc.ac !== null ? ev - cc.ac : null;
+  const sv = ev !== null && cc.bac ? ev - (cc.bac * (cc.avReel / 100)) : null;
+
+  el.innerHTML = `
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Earned Value Management (EVM)</div>
+    <div class="neutral-card" style="margin-bottom:32px;">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">BAC</div>
+          <div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.85);">${fmtK(cc.bac)}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Forecast</div>
+          <div style="font-size:20px;font-weight:800;color:#5aafaf;">${fmtK(cc.forecast)}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Coût Réel (AC)</div>
+          <div style="font-size:20px;font-weight:800;color:#f8c100;">${fmtK(cc.ac)}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Valeur Acquise (EV)</div>
+          <div style="font-size:20px;font-weight:800;color:#74b859;">${ev ? fmtK(ev) : '—'}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Reste (ETC)</div>
+          <div style="font-size:20px;font-weight:800;color:#ff8758;">${etc !== null ? fmtK(etc) : '—'}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">SPI</div>
+          <div style="font-size:22px;font-weight:800;color:${cc.spi >= 1 ? '#74b859' : cc.spi >= 0.9 ? '#f8c100' : '#ff5050'};">${cc.spi !== null ? cc.spi.toFixed(2) : '—'}</div>
+          ${cc.spi !== null ? `<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin-top:8px;">
+            <div style="height:100%;width:${Math.min(cc.spi * 100, 100)}%;background:${cc.spi >= 1 ? '#74b859' : '#ff8758'};border-radius:3px;"></div>
+          </div>` : ''}
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">CPI</div>
+          <div style="font-size:22px;font-weight:800;color:${cc.cpi !== null && cc.cpi >= 1 ? '#74b859' : '#ff5050'};">${cc.cpi !== null ? (cc.cpi > 10 ? '>10' : cc.cpi.toFixed(2)) : '—'}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Écart Coût (CV)</div>
+          <div style="font-size:18px;font-weight:800;color:${cv !== null && cv >= 0 ? '#74b859' : '#ff5050'};">${cv !== null ? fmtK(cv) : '—'}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Écart Budget</div>
+          <div style="font-size:18px;font-weight:800;color:${cc.forecast <= cc.bac ? '#74b859' : '#ff5050'};">${fmtK(cc.forecast - cc.bac)}</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:4px;">${cc.forecast <= cc.bac ? 'Sous budget' : 'Dépassement'}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Section 4: Budget Breakdown ── */
+function renderPdBudget(p, color, rgb) {
+  const total = p.capexM * 1e6;
+  const dev = p.costDev || 0;
+  const pv = p.costPv || 0;
+  const other = Math.max(0, total - dev - pv);
+  const pDev = total > 0 ? (dev/total)*100 : 0;
+  const pPv = total > 0 ? (pv/total)*100 : 0;
+  const pOth = total > 0 ? (other/total)*100 : 0;
+
+  document.getElementById('pd-budget-section').innerHTML = `
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Répartition Budget</div>
+    <div class="neutral-card" style="margin-bottom:32px;">
+      <div style="display:flex;height:28px;border-radius:8px;overflow:hidden;margin-bottom:18px;">
+        <div style="flex:${Math.max(pDev,0.5)};background:rgba(90,175,175,0.7);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;">${pDev > 8 ? 'Dév.' : ''}</div>
+        <div style="flex:${Math.max(pPv,0.5)};background:rgba(116,184,89,0.6);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;">${pPv > 8 ? 'PV / EPC' : ''}</div>
+        <div style="flex:${Math.max(pOth,0.5)};background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:rgba(255,255,255,0.5);">${pOth > 8 ? 'Autres' : ''}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+        <div style="text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(90,175,175,0.6);margin-bottom:4px;">Développement</div>
+          <div style="font-size:20px;font-weight:800;color:#5aafaf;">${fmtK(dev)}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.3);">${pDev.toFixed(1)}%</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(116,184,89,0.6);margin-bottom:4px;">PV / EPC</div>
+          <div style="font-size:20px;font-weight:800;color:#74b859;">${fmtK(pv)}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.3);">${pPv.toFixed(1)}%</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Autres</div>
+          <div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.5);">${fmtK(other)}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.3);">${pOth.toFixed(1)}%</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Section 5: Cash Flow ── */
+function renderPdCashflow(p, hasCc, color, rgb) {
+  const el = document.getElementById('pd-cashflow-section');
+  const quarters = p.qtr;
+  if (!quarters || !quarters.length) {
+    el.innerHTML = `
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Flux Financiers</div>
+      <div style="background:rgba(${rgb},0.04);border:1px dashed rgba(${rgb},0.2);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.25);">Données financières à venir</div>
+      </div>`;
+    return;
+  }
+
+  const maxVal = Math.max(...quarters.map(q => q.a), 1);
+  const now = new Date();
+  const curQ = 'Q' + Math.ceil((now.getMonth()+1)/3) + '-' + String(now.getFullYear()).slice(2);
+
+  // Determine if quarter is in the past
+  function qtrOrder(q) {
+    const [qn, yr] = q.replace('Q','').split('-');
+    return parseInt('20'+yr)*10 + parseInt(qn);
+  }
+  const curOrd = qtrOrder(curQ);
+
+  const totalQtr = quarters.reduce((s,q) => s + q.a, 0);
+  const spentQtr = quarters.filter(q => qtrOrder(q.q) < curOrd).reduce((s,q) => s + q.a, 0);
+  const remainQtr = totalQtr - spentQtr;
+
+  el.innerHTML = `
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Flux Financiers · Décaissements Trimestriels</div>
+    <div class="neutral-card" style="margin-bottom:32px;">
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:#74b859;"></div><span style="font-size:9px;color:rgba(255,255,255,0.4);">Dépensé</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:rgba(248,193,0,0.7);"></div><span style="font-size:9px;color:rgba(255,255,255,0.4);">En cours</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:rgba(255,135,88,0.5);"></div><span style="font-size:9px;color:rgba(255,255,255,0.4);">À venir</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:8px;padding-bottom:4px;">
+        ${quarters.map(q => {
+          const h = Math.max(4, Math.round((q.a / maxVal) * 90));
+          const ord = qtrOrder(q.q);
+          const barColor = ord < curOrd ? '#74b859' : ord === curOrd ? 'rgba(248,193,0,0.7)' : 'rgba(255,135,88,0.5)';
+          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div style="font-size:7px;color:rgba(255,255,255,0.4);font-weight:700;">${q.a >= 1e6 ? (q.a/1e6).toFixed(1)+'M' : q.a >= 1e3 ? Math.round(q.a/1e3)+'k' : q.a}</div>
+            <div style="width:100%;height:${h}px;background:${barColor};border-radius:4px 4px 0 0;transition:height 0.5s;"></div>
+            <div style="font-size:7px;color:rgba(255,255,255,0.25);white-space:nowrap;">${q.q}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
+        <div style="text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Dépensé</div>
+          <div style="font-size:20px;font-weight:800;color:#74b859;">${hasCc ? fmtK(p.cc.ac) : fmtK(spentQtr)}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Reste à décaisser</div>
+          <div style="font-size:20px;font-weight:800;color:#ff8758;">${hasCc && p.cc.forecast ? fmtK(p.cc.forecast - p.cc.ac) : fmtK(remainQtr)}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Total Planifié</div>
+          <div style="font-size:20px;font-weight:800;color:#5aafaf;">${fmtK(totalQtr)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Section 6: Gantt simplifié ── */
+function renderPdGantt(p, phase, color, rgb) {
+  const dates = [p.engStart, p.constStart, p.constEnd].filter(Boolean).map(d => new Date(d));
+  if (dates.length < 2) { document.getElementById('pd-gantt-section').innerHTML = ''; return; }
+  const allStart = new Date(Math.min(...dates));
+  const allEnd = new Date(Math.max(...dates));
+  const totalMs = allEnd - allStart || 1;
+  const now = new Date();
+  const todayPct = Math.max(0, Math.min(100, ((now - allStart) / totalMs) * 100));
+
+  function bar(start, end) {
+    if (!start || !end) return { left:0, width:0 };
+    const s = new Date(start), e = new Date(end);
+    return { left: Math.max(0, ((s-allStart)/totalMs)*100), width: Math.max(1, ((e-s)/totalMs)*100) };
+  }
+
+  const phases = [
+    { label:'Engineering', start:p.engStart, end:p.engEnd, c:'#5aafaf' },
+    { label:'Tendering', start:p.tendStart, end:p.tendEnd, c:'#8b7cf6' },
+    { label:'Construction', start:p.constStart, end:p.constEnd, c:'#f8c100' },
+  ].filter(ph => ph.start && ph.end);
+
+  document.getElementById('pd-gantt-section').innerHTML = `
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Gantt Simplifié</div>
+    <div class="neutral-card" style="position:relative;margin-bottom:32px;">
+      <div style="position:absolute;left:calc(120px + ${todayPct}% * (100% - 140px) / 100%);top:0;bottom:0;width:2px;background:rgba(255,255,255,0.15);z-index:2;pointer-events:none;">
+        <div style="position:absolute;top:-16px;left:-22px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.4);white-space:nowrap;">Auj.</div>
+      </div>
+      ${phases.map(ph => {
+        const b = bar(ph.start, ph.end);
+        return `<div style="display:flex;align-items:center;margin-bottom:14px;">
+          <div style="width:120px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);">${ph.label}</div>
+          <div style="flex:1;position:relative;height:20px;background:rgba(255,255,255,0.03);border-radius:6px;">
+            <div style="position:absolute;left:${b.left}%;width:${b.width}%;height:100%;border-radius:6px;background:${ph.c}44;border:1px solid ${ph.c}88;">
+              <div style="position:absolute;right:6px;top:3px;font-size:7px;font-weight:700;color:${ph.c};">${fmtDate(ph.end)}</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="text-align:center;margin-top:16px;padding:14px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:10px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.25);">📊 Gantt détaillé à venir</div>
+        <div style="font-size:8px;color:rgba(255,255,255,0.15);margin-top:4px;">Les tâches détaillées seront intégrées depuis MS Project</div>
+      </div>
+    </div>`;
+}
+
+/* ── Section 7: Schedule ── */
+function renderPdSchedule(p, color, rgb, hasCc) {
+  const cc = p.cc || {};
+  const hasExtra = cc.debPlan || cc.codPlan;
+  const constDays = p.constStart && p.constEnd ? Math.round((new Date(p.constEnd)-new Date(p.constStart))/(864e5)) : null;
+  const engDays = p.engStart && p.engEnd ? Math.round((new Date(p.engEnd)-new Date(p.engStart))/(864e5)) : null;
+
+  document.getElementById('pd-schedule-section').innerHTML = `
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning & Écarts</div>
+    <div class="neutral-card" style="margin-bottom:32px;">
+      <div style="display:grid;grid-template-columns:repeat(${hasExtra && cc.ecartJours !== undefined ? 4 : 3},1fr);gap:14px;">
+        <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Début ${hasExtra ? 'Planifié' : ''}</div>
+          <div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.85);">${fmtDate(hasExtra ? cc.debPlan : p.constStart)}</div>
+          ${hasExtra && cc.debReel ? `<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">Réel: ${fmtDate(cc.debReel)}</div>` : ''}
+        </div>
+        <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">COD ${hasExtra ? 'Planifiée' : ''}</div>
+          <div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.85);">${fmtDate(hasExtra ? cc.codPlan : p.constEnd)}</div>
+          ${hasExtra && cc.codReel ? `<div style="font-size:9px;color:${cc.ecartJours < 0 ? '#ff5050' : '#74b859'};margin-top:4px;">Réel: ${fmtDate(cc.codReel)}</div>` : ''}
+        </div>
+        ${hasExtra && cc.ecartJours !== undefined ? `
+          <div style="background:rgba(0,0,0,0.2);border:1px solid ${cc.ecartJours < 0 ? 'rgba(255,80,80,0.3)' : 'rgba(116,184,89,0.3)'};border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Écart Planning</div>
+            <div style="font-size:24px;font-weight:800;color:${cc.ecartJours < 0 ? '#ff5050' : '#74b859'};">${cc.ecartJours > 0 ? '+' : ''}${cc.ecartJours} j</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.3);">${cc.ecartJours < 0 ? 'En retard' : cc.ecartJours === 0 ? 'Dans les temps' : 'En avance'}</div>
+          </div>
+        ` : ''}
+        <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Durées</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);line-height:1.8;">
+            <div>Eng: <span style="font-weight:700;color:rgba(255,255,255,0.7);">${engDays ? engDays + ' j' : '—'}</span></div>
+            <div>Const: <span style="font-weight:700;color:rgba(255,255,255,0.7);">${constDays ? constDays + ' j' : '—'}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Section 8: Comments ── */
+function renderPdComments(p) {
+  const el = document.getElementById('pd-comments-section');
+  if (!p.comment) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,135,88,0.6);margin-bottom:18px;">Commentaires & Risques</div>
+    <div style="background:rgba(255,135,88,0.06);border:1px solid rgba(255,135,88,0.15);border-radius:14px;padding:18px;margin-bottom:32px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:16px;">⚠</span>
+        <div style="font-size:11px;color:rgba(255,180,130,0.8);line-height:1.6;">${p.comment}</div>
+      </div>
+    </div>`;
+}
 </script>
 
 <!-- ══════════════ DIEGO PH2 DETAIL PANEL
