@@ -1273,8 +1273,18 @@ function closeEnrProjets(){
   const today = new Date();
   function getPhase(p) {
     const cs = new Date(p.constStart), ce = new Date(p.constEnd);
-    if (ce < today && (p.engPct === 100 || (p.cc && p.cc.avReel === 100))) return 'termine';
-    if (cs <= today) return 'construction';
+    /* Si avReel existe dans le Cost Control, on l'utilise en priorité */
+    const avReel = p.cc && p.cc.avReel !== null ? p.cc.avReel : null;
+    if (avReel !== null) {
+      /* Terminé seulement si avancement réel = 100% */
+      if (avReel === 100) return 'termine';
+      /* En construction si le chantier a commencé */
+      if (cs <= today) return 'construction';
+    } else {
+      /* Sans CC : on se base sur les dates + engPct */
+      if (ce < today && p.engPct === 100) return 'termine';
+      if (cs <= today) return 'construction';
+    }
     if (p.engPct !== null && p.engPct > 0) return 'developpement';
     return 'planifie';
   }
