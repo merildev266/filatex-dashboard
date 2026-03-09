@@ -1202,8 +1202,8 @@ function closeEnrProjets(){
       engStart:'2024-01-09', engEnd:'2025-09-30', tendStart:null, tendEnd:null, tendDone:true,
       costDev:83854, costPv:2700000, comment:null, chef:'Lindon',
       qtr:[{q:'Q3-25',a:1163854},{q:'Q4-25',a:810000},{q:'Q1-26',a:810000}],
-      cc:{bac:3005209, forecast:2514494, ac:2067946, avReel:100, spi:1.0, cpi:1.45, perf:'Dans les temps et budget OK',
-          debPlan:'2024-10-10', debReel:'2024-10-10', codPlan:'2025-08-23', codReel:'2026-02-07', ecartJours:-168} },
+      cc:{bac:3005209, forecast:2514494, ac:2067946, avReel:100, spi:1.0, cpi:1.45, perf:'En retard, sous budget',
+          debPlan:'2024-10-10', debReel:'2024-10-10', codPlan:'2025-08-23', codReel:'2026-02-07', ecartJours:168} },
     { id:'bongatsara-1', name:'Bongatsara Phase 1', loc:'Bongatsara', type:'solar', pvMw:5, bessMwh:1.5,
       capexM:4.735, tri:11, engPct:80, constStart:'2025-12-22', constEnd:'2026-12-30',
       engStart:'2025-04-15', engEnd:'2026-03-15', tendStart:'2025-12-22', tendEnd:'2026-03-22', tendDone:false,
@@ -1985,13 +1985,13 @@ function renderPdSchedule(p, color, rgb, hasCc) {
         <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:14px;text-align:center;">
           <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">COD ${hasExtra ? 'Planifiée' : ''}</div>
           <div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.85);">${fmtDate(hasExtra ? cc.codPlan : p.constEnd)}</div>
-          ${hasExtra && cc.codReel ? `<div style="font-size:9px;color:${cc.ecartJours < 0 ? '#ff5050' : '#00ab63'};margin-top:4px;">Réel: ${fmtDate(cc.codReel)}</div>` : ''}
+          ${hasExtra && cc.codReel ? `<div style="font-size:9px;color:${cc.ecartJours > 0 ? '#ff5050' : '#00ab63'};margin-top:4px;">Réel: ${fmtDate(cc.codReel)}</div>` : ''}
         </div>
         ${hasExtra && cc.ecartJours !== undefined ? `
-          <div style="background:rgba(0,0,0,0.2);border:1px solid ${cc.ecartJours < 0 ? 'rgba(255,80,80,0.3)' : 'rgba(0,171,99,0.3)'};border-radius:10px;padding:14px;text-align:center;">
-            <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Écart Planning</div>
-            <div style="font-size:24px;font-weight:800;color:${cc.ecartJours < 0 ? '#ff5050' : '#00ab63'};">${cc.ecartJours > 0 ? '+' : ''}${cc.ecartJours} j</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.3);">${cc.ecartJours < 0 ? 'En retard' : cc.ecartJours === 0 ? 'Dans les temps' : 'En avance'}</div>
+          <div style="background:rgba(0,0,0,0.2);border:1px solid ${cc.ecartJours > 0 ? 'rgba(255,80,80,0.3)' : 'rgba(0,171,99,0.3)'};border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Glissement</div>
+            <div style="font-size:24px;font-weight:800;color:${cc.ecartJours > 0 ? '#ff5050' : '#00ab63'};">${cc.ecartJours} j</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.3);">${cc.ecartJours > 0 ? 'En retard' : cc.ecartJours === 0 ? 'Dans les temps' : 'En avance'}</div>
           </div>
         ` : ''}
         <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:14px;text-align:center;">
