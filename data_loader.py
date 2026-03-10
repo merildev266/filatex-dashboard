@@ -3,6 +3,7 @@ Loads Tamatave and Diego xlsx daily reports and transforms them into the
 siteData format expected by the Filatex PMO Dashboard frontend.
 """
 import os
+import re
 import glob
 import pandas as pd
 import numpy as np
@@ -370,7 +371,6 @@ def find_hfo_sheets(sheet_names):
 
     Returns list of (day_number, sheet_name) sorted by day.
     """
-    import re
     results = []
     for sn in sheet_names:
         sl = sn.lower().strip()
@@ -489,25 +489,7 @@ def parse_hfo_detail(xls, cfg):
     has_condition = hfo_cfg.get("has_condition_row", True)
 
     # Use configurable row_offsets if provided, else defaults
-    DEFAULT_OFFSETS = {
-        "condition":       0,
-        "h_cumul":         1,
-        "hToday":          2,
-        "hStandby":        3,
-        "arretForce":      4,
-        "arretPlanifie":   5,
-        "maxLoad":         6,
-        "energieProd":     7,
-        "consLVMV":        8,
-        "consoHFO":        9,
-        "consoLFO":        10,
-        "oilTopUp":        11,
-        "oilConso":        12,
-        "oilSumpLevel":    13,
-        "lubeOilPressure": 14,
-        "fuelOilTemp":     15,
-    }
-    ROW_OFFSETS = hfo_cfg.get("row_offsets", DEFAULT_OFFSETS)
+    ROW_OFFSETS = hfo_cfg.get("row_offsets", _DEFAULT_OFFSETS)
     # If custom offsets don't include condition and site has no condition row,
     # make sure condition is absent
     if not has_condition and "condition" in ROW_OFFSETS:
@@ -1220,10 +1202,6 @@ def build_site_data(site_key):
 # Backward compatibility
 def build_tamatave_data():
     return build_site_data("tamatave")
-
-
-def build_diego_data():
-    return build_site_data("diego")
 
 
 if __name__ == "__main__":
