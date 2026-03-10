@@ -869,6 +869,30 @@ if(sessionStorage.getItem('dash_auth')==='1'){
   <span id="home-footer-pmo" style="font-size:8px;font-family:'Aeonik','DM Sans',sans-serif;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,200,220,0.7);font-weight:500;">Made by PMO with <span style="font-size:11px;color:#ff6b8a;">♥</span></span>
 </div>
 
+<!-- ══════════════ BOTTOM NAV BAR ══════════════ -->
+<div id="bottom-nav">
+  <button class="bnav-item active" data-pole="home" onclick="goHome()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Accueil</span>
+  </button>
+  <button class="bnav-item" data-pole="energy" onclick="navTo('energy')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <span>Energy</span>
+  </button>
+  <button class="bnav-item" data-pole="investments" onclick="navTo('investments')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+    <span>Invest</span>
+  </button>
+  <button class="bnav-item" data-pole="properties" onclick="navTo('properties')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="8" y2="6.01"/><line x1="12" y1="6" x2="12" y2="6.01"/><line x1="16" y1="6" x2="16" y2="6.01"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/></svg>
+    <span>Properties</span>
+  </button>
+  <button class="bnav-item" data-pole="capex" onclick="navTo('capex')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+    <span>CAPEX</span>
+  </button>
+</div>
+
 <!-- ══════════════ PAGE ENERGY ══════════════ -->
 <div id="page-energy" class="placeholder-page" style="background:#080d18;">
   <div class="sd-sticky-bar">
@@ -3825,6 +3849,19 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 .gantt-zoom-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);min-width:28px;text-align:center;letter-spacing:0.05em;}
 .gantt-zoom-reset{font-size:9px;color:rgba(255,255,255,0.35);cursor:pointer;padding:2px 4px;}
 .gantt-zoom-reset:hover{color:rgba(255,255,255,0.6);}
+/* ── Bottom Nav Bar ── */
+#bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:900;display:flex;justify-content:space-around;align-items:center;height:56px;background:rgba(8,11,24,0.92);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,0.06);padding:0 8px;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:rgba(255,255,255,0.25);cursor:pointer;padding:6px 0;transition:color 0.2s;font-family:'DM Sans',sans-serif;position:relative;}
+.bnav-item svg{width:20px;height:20px;fill:none;}
+.bnav-item span{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;}
+.bnav-item:hover{color:rgba(255,255,255,0.55);}
+.bnav-item[data-pole="energy"].active{color:#00ab63;}
+.bnav-item[data-pole="investments"].active{color:#f37056;}
+.bnav-item[data-pole="properties"].active{color:#FDB823;}
+.bnav-item[data-pole="capex"].active{color:#5e4c9f;}
+.bnav-item[data-pole="home"].active{color:rgba(255,255,255,0.7);}
+.bnav-item.active::after{content:'';position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:currentColor;}
+#login-screen:not(.hidden) ~ #bottom-nav{display:none!important;}
 /* Delay Popup */
 .sg-popup-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;animation:sgFadeIn 0.2s ease;}
 @keyframes sgFadeIn{from{opacity:0}to{opacity:1}}
@@ -4682,6 +4719,7 @@ function openPage(pole) {
   if (pole === 'energy') updateEnergyHfoCard();
   const el = document.getElementById('page-' + pole);
   if(el) { el.classList.add('active'); document.body.style.overflow = 'hidden'; scrollTop(el); }
+  updateNavActive(pole);
 }
 
 // ── Met à jour la card HFO de la page Énergie depuis les données live ──
@@ -4780,7 +4818,45 @@ function updateEnergyHfoCard() {
 function closePage(pageId) {
   const el = document.getElementById(pageId);
   if(el) { el.classList.remove('active'); document.body.style.overflow = ''; scrollTop(el); }
+  updateNavActive('home');
 }
+
+function navTo(pole) {
+  // Close all panels
+  ['panel-project-detail','panel-diego-detail','panel-dev-project',
+   'panel-enr-projets','panel-groupe-detail','detail-panel','capex-section-panel']
+    .forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
+    });
+  // Close all inner pages
+  document.querySelectorAll('.inner-page').forEach(function(ip) { ip.classList.remove('active'); });
+  // Close all main pages
+  document.querySelectorAll('.placeholder-page').forEach(function(p) { p.classList.remove('active'); });
+  document.body.style.overflow = '';
+  // Open target page
+  openPage(pole);
+}
+
+function goHome() {
+  ['panel-project-detail','panel-diego-detail','panel-dev-project',
+   'panel-enr-projets','panel-groupe-detail','detail-panel','capex-section-panel']
+    .forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
+    });
+  document.querySelectorAll('.inner-page').forEach(function(ip) { ip.classList.remove('active'); });
+  document.querySelectorAll('.placeholder-page').forEach(function(p) { p.classList.remove('active'); });
+  document.body.style.overflow = '';
+  updateNavActive('home');
+}
+
+function updateNavActive(pole) {
+  document.querySelectorAll('.bnav-item').forEach(function(b) { b.classList.remove('active'); });
+  var active = document.querySelector('.bnav-item[data-pole="' + pole + '"]');
+  if (active) active.classList.add('active');
+}
+
 function openInner(type) {
   if(type === 'hfo') { renderSites(); renderConsolidated(); }
   const el = document.getElementById('inner-' + type);
