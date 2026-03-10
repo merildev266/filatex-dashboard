@@ -1150,7 +1150,144 @@ function setEnrFilter(f, btn){
   btn.classList.add('active');
   const labels = {'24h':'24h','month':MONTH_SHORT[selectedMonthIndex],'year':String(new Date().getFullYear())};
 }
-function openEnrDetail(){ /* à brancher plus tard */ }
+function openEnrDetail(){ openEnrProduction(); }
+function openEnrProduction(){
+  var projects = window._enrProjects || [];
+  var getPhase = window._getPhase;
+  var phaseLabels = window._phaseLabels;
+  var phaseColors = window._phaseColors;
+  var phaseBgs = window._phaseBgs;
+  var enrMwhJ = window._enrMwhJ || 0;
+
+  var producing = [], future = [];
+  var prodByType = {solar:0, wind:0, floating:0};
+  var totalPuissanceOp = 0;
+
+  projects.forEach(function(p){
+    if (!p.prodJour) return;
+    var phase = getPhase(p);
+    var eff = 0;
+    if (phase === 'termine') eff = p.prodJour;
+    else if (phase === 'construction') eff = p.prodJour * (p.constProg || 0);
+    prodByType[p.type] = (prodByType[p.type]||0) + eff;
+    if (eff > 0) {
+      producing.push({p:p, eff:eff, phase:phase});
+      totalPuissanceOp += (p.puissance || p.pvMw * 1000) || 0;
+    } else {
+      future.push({p:p, phase:phase});
+    }
+  });
+  producing.sort(function(a,b){ return b.eff - a.eff; });
+  var totalEff = prodByType.solar + prodByType.wind + prodByType.floating;
+
+  var typeLabel = {solar:'Solaire', wind:'Éolien', floating:'Flottant'};
+  var typeColor = {solar:'#00ab63', wind:'#5aafaf', floating:'#4a8fe7'};
+  var typeIco = {solar:'\u2600\uFE0F', wind:'\uD83D\uDCA8', floating:'\uD83C\uDF0A'};
+
+  /* ── Section 1 : KPIs ── */
+  var html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;">';
+  html += '<div style="background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.18);border-radius:14px;padding:18px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:6px;">Production totale</div>'
+    + '<div style="font-size:32px;font-weight:800;color:#00ab63;">' + Math.round(totalEff/1000) + '<span style="font-size:14px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:4px;">MWh/j</span></div></div>';
+  html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Puissance opérationnelle</div>'
+    + '<div style="font-size:32px;font-weight:800;color:rgba(255,255,255,0.85);">' + (totalPuissanceOp/1000).toFixed(1) + '<span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:4px;">MW</span></div></div>';
+  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:14px;padding:18px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:6px;">Part EnR mix</div>'
+    + '<div style="font-size:32px;font-weight:800;color:#00ab63;">' + (document.getElementById('enr-prod-mix') ? document.getElementById('enr-prod-mix').textContent : '—') + '<span style="font-size:14px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:2px;">%</span></div></div>';
+  html += '<div style="background:rgba(253,184,35,0.04);border:1px solid rgba(253,184,35,0.12);border-radius:14px;padding:18px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(253,184,35,0.5);margin-bottom:6px;">Sites en production</div>'
+    + '<div style="font-size:32px;font-weight:800;color:#FDB823;">' + producing.length + '</div></div>';
+  html += '</div>';
+
+  /* ── Section 2 : Répartition par type ── */
+  html += '<div style="margin-bottom:32px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">Répartition par type</div>';
+  ['solar','wind','floating'].forEach(function(t){
+    var val = prodByType[t];
+    if (val <= 0 && t === 'floating') return;
+    var pct = totalEff > 0 ? (val / totalEff * 100) : 0;
+    html += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">'
+      + '<div style="width:70px;font-size:11px;font-weight:700;color:' + typeColor[t] + ';">' + typeIco[t] + ' ' + typeLabel[t] + '</div>'
+      + '<div style="flex:1;height:24px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden;position:relative;">'
+      + '<div style="height:100%;width:' + Math.max(pct, 1) + '%;background:' + typeColor[t] + ';border-radius:8px;transition:width 0.6s;opacity:0.7;"></div>'
+      + '<div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);">' + Math.round(val/1000) + ' MWh/j · ' + pct.toFixed(0) + '%</div>'
+      + '</div></div>';
+  });
+  html += '</div>';
+
+  /* ── Section 3 : Sites en production ── */
+  html += '<div style="margin-bottom:36px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.6);margin-bottom:16px;">Sites en production (' + producing.length + ')</div>';
+  producing.forEach(function(item){
+    var p = item.p, eff = item.eff, phase = item.phase;
+    var color = phaseColors[phase], rgb = phaseBgs[phase];
+    var puissanceMW = (p.puissance ? p.puissance/1000 : p.pvMw) || 0;
+    var effMwh = (eff/1000).toFixed(1);
+    var pctOfTotal = totalEff > 0 ? (eff/totalEff*100).toFixed(0) : 0;
+    var progPct = phase === 'termine' ? 100 : Math.round((p.constProg||0)*100);
+
+    html += '<div style="background:rgba(' + rgb + ',0.04);border:1px solid rgba(' + rgb + ',0.15);border-radius:14px;padding:18px 22px;margin-bottom:10px;">';
+    /* Header row */
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
+      + '<div style="display:flex;align-items:center;gap:10px;">'
+      + '<span style="font-size:16px;">' + (window.typeIcon ? window.typeIcon(p.type) : '') + '</span>'
+      + '<span style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);">' + p.name + '</span>'
+      + '<span style="font-size:9px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.05);border-radius:5px;padding:2px 8px;">\uD83D\uDCCD ' + p.loc + '</span>'
+      + '</div>'
+      + '<span style="font-size:9px;font-weight:700;color:' + color + ';background:rgba(' + rgb + ',0.12);border-radius:6px;padding:3px 10px;">' + phaseLabels[phase] + '</span>'
+      + '</div>';
+    /* KPI row */
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:12px;">';
+    html += '<div style="text-align:center;"><div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Puissance</div><div style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.85);">' + puissanceMW.toFixed(1) + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:2px;">MW</span></div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Prod. estimée</div><div style="font-size:18px;font-weight:800;color:#00ab63;">' + effMwh + '<span style="font-size:10px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:2px;">MWh/j</span></div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Part du total</div><div style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.7);">' + pctOfTotal + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:1px;">%</span></div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Avancement</div><div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px auto 4px;width:80%;"><div style="height:100%;width:' + progPct + '%;background:' + color + ';border-radius:3px;"></div></div><div style="font-size:14px;font-weight:800;color:' + color + ';">' + progPct + '%</div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">COD</div><div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-top:6px;">' + (window.fmtDate ? window.fmtDate(p.constEnd) : p.constEnd||'—') + '</div></div>';
+    html += '</div>';
+    /* Delay warning */
+    if (p.glissement && p.glissement > 0) {
+      html += '<div style="margin-top:10px;padding:6px 12px;background:rgba(255,80,80,0.06);border:1px solid rgba(255,80,80,0.15);border-radius:8px;font-size:9px;color:#ff5050;font-weight:600;">\u26A0 Retard: ' + p.glissement + ' jours</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  /* ── Section 4 : Production future (projets en dév/planifié) ── */
+  if (future.length > 0) {
+    var futureProd = future.reduce(function(s,item){ return s + (item.p.prodJour||0); }, 0);
+    html += '<div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(90,175,175,0.6);margin-bottom:16px;">Production future potentielle (' + future.length + ' projets · +' + Math.round(futureProd/1000) + ' MWh/j)</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
+    future.forEach(function(item){
+      var p = item.p, phase = item.phase;
+      var color = phaseColors[phase], rgb = phaseBgs[phase];
+      html += '<div style="background:rgba(' + rgb + ',0.03);border:1px solid rgba(' + rgb + ',0.1);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">'
+        + '<div>'
+        + '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);">' + (window.typeIcon ? window.typeIcon(p.type) : '') + ' ' + p.name + '</div>'
+        + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-top:3px;">' + p.loc + ' · ' + (p.pvMw||0) + ' MWc</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+        + '<div style="font-size:14px;font-weight:800;color:' + color + ';">' + Math.round(p.prodJour/1000) + '<span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:2px;">MWh/j</span></div>'
+        + '<div style="font-size:9px;font-weight:600;color:' + color + ';">' + phaseLabels[phase] + '</div>'
+        + '</div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  document.getElementById('enr-prod-detail-content').innerHTML = html;
+  var panel = document.getElementById('panel-enr-production');
+  panel.style.display = 'block';
+  panel.style.transform = 'translateX(0)';
+  panel.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+function closeEnrProduction(){
+  var panel = document.getElementById('panel-enr-production');
+  panel.style.transform = 'translateX(100%)';
+  setTimeout(function(){ panel.style.display = ''; }, 450);
+  document.body.style.overflow = '';
+}
 function openEnrProjets(){
   document.getElementById('panel-enr-projets').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1160,6 +1297,20 @@ function closeEnrProjets(){
   document.body.style.overflow = '';
 }
 </script>
+
+<!-- ══ PANEL PRODUCTION EnR ══ -->
+<div id="panel-enr-production" style="position:fixed;inset:0;z-index:260;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
+  <div class="nav-back"><button class="back-btn" onclick="closeEnrProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← EnR</button></div>
+  <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
+    <div class="inner-topbar" style="border-bottom-color:rgba(0,171,99,0.15);margin-bottom:36px;">
+      <div style="text-align:center;width:100%;">
+        <div class="inner-title" style="color:#00ab63;">Production EnR</div>
+        <div class="inner-subtitle" style="color:rgba(0,171,99,0.5);">Détail par site · Production journalière estimée</div>
+      </div>
+    </div>
+    <div id="enr-prod-detail-content"></div>
+  </div>
+</div>
 
 <!-- ══ PANEL PROJETS EnR ══ -->
 <div id="panel-enr-projets">
@@ -4856,7 +5007,7 @@ function closePage(pageId) {
 function navTo(pole) {
   // Close all panels
   ['panel-project-detail','panel-diego-detail','panel-dev-project',
-   'panel-enr-projets','panel-groupe-detail','detail-panel','capex-section-panel']
+   'panel-enr-projets','panel-enr-production','panel-groupe-detail','detail-panel','capex-section-panel']
     .forEach(function(id) {
       var el = document.getElementById(id);
       if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
@@ -4872,7 +5023,7 @@ function navTo(pole) {
 
 function goHome() {
   ['panel-project-detail','panel-diego-detail','panel-dev-project',
-   'panel-enr-projets','panel-groupe-detail','detail-panel','capex-section-panel']
+   'panel-enr-projets','panel-enr-production','panel-groupe-detail','detail-panel','capex-section-panel']
     .forEach(function(id) {
       var el = document.getElementById(id);
       if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
