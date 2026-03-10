@@ -1151,29 +1151,20 @@ function setEnrFilter(f, btn){
   const labels = {'24h':'24h','month':MONTH_SHORT[selectedMonthIndex],'year':String(new Date().getFullYear())};
 }
 function openEnrDetail(){ openEnrProduction(); }
+
+/* ── Shared EnR helpers ── */
+var _enrColors = ['#00ab63','#5aafaf','#4a8fe7'];
+var _enrRgbs   = ['0,171,99','90,175,175','74,143,231'];
+var _enrMonths  = ['','Janv','Fév','Mars','Avr','Mai','Juin','Juil','Août','Sept','Oct','Nov','Déc'];
+
 function openEnrProduction(){
   var sites = window._enrSites || (typeof ENR_SITES !== 'undefined' ? ENR_SITES : []);
   if (!sites.length) return;
 
-  var MONTHS_FR = ['','Janv','Fév','Mars','Avr','Mai','Juin','Juil','Août','Sept','Oct','Nov','Déc'];
-  var siteColors = ['#00ab63','#5aafaf','#4a8fe7'];
-  var siteRgbs   = ['0,171,99','90,175,175','74,143,231'];
-
-  /* ── Helpers ── */
-  function kpi(label, val, unit, col, sub) {
-    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 12px;text-align:center;">'
-      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">' + label + '</div>'
-      + '<div style="font-size:24px;font-weight:800;color:' + (col||'rgba(255,255,255,0.85)') + ';line-height:1;">' + val
-      + (unit ? '<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:3px;">' + unit + '</span>' : '')
-      + '</div>'
-      + (sub ? '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + sub + '</div>' : '')
-      + '</div>';
-  }
-
   /* ── Aggregates ── */
   var totalCapMw = 0, totalProdKwh = 0, totalAvgDaily = 0;
   sites.forEach(function(s){ totalCapMw += s.capacityMw; totalProdKwh += s.totalProdKwh; totalAvgDaily += s.avgDailyKwh; });
-  var mixPct = document.getElementById('enr-prod-mix') ? document.getElementById('enr-prod-mix').textContent : '—';
+  var mixPct = document.getElementById('enr-prod-mix') ? document.getElementById('enr-prod-mix').textContent : '\u2014';
 
   var html = '';
 
@@ -1183,9 +1174,9 @@ function openEnrProduction(){
     + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.55);margin-bottom:8px;">Production moyenne</div>'
     + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + (totalAvgDaily/1000).toFixed(1)
     + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">MWh/j</span></div>'
-    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">' + sites.length + ' centrales solaires · ' + totalCapMw.toFixed(1) + ' MWc</div></div>';
+    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">' + sites.length + ' centrales solaires \xB7 ' + totalCapMw.toFixed(1) + ' MWc</div></div>';
   html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:24px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Production cumulée</div>'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Production cumul\u00e9e</div>'
     + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + (totalProdKwh/1000).toFixed(0)
     + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">MWh</span></div>'
     + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">Depuis janvier 2026</div></div>';
@@ -1196,99 +1187,64 @@ function openEnrProduction(){
     + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">EnR / (EnR + HFO)</div></div>';
   html += '</div>';
 
-  /* ══════════ SITE CARDS ══════════ */
+  /* ══════════ 3 SITE CARDS — une ligne ══════════ */
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">';
   sites.forEach(function(s, si){
-    var col = siteColors[si % siteColors.length];
-    var rgb = siteRgbs[si % siteRgbs.length];
+    var col = _enrColors[si % _enrColors.length];
+    var rgb = _enrRgbs[si % _enrRgbs.length];
     var pct = totalAvgDaily > 0 ? (s.avgDailyKwh / totalAvgDaily * 100).toFixed(0) : 0;
-    var latestMonth = s.monthly.length ? s.monthly[s.monthly.length - 1] : null;
-    var prevMonth = s.monthly.length > 1 ? s.monthly[s.monthly.length - 2] : null;
+    var lastDay = s.daily.length ? s.daily[s.daily.length - 1] : null;
+    var lastDayLabel = lastDay ? lastDay.date.split('-')[2] + '/' + lastDay.date.split('-')[1] : '';
 
-    /* ── Site card container ── */
-    html += '<div style="background:rgba(' + rgb + ',0.04);border:1px solid rgba(' + rgb + ',0.15);border-radius:20px;padding:28px 24px;margin-bottom:20px;">';
+    html += '<div onclick="openEnrSiteDetail(' + si + ')" style="background:rgba(' + rgb + ',0.05);border:1px solid rgba(' + rgb + ',0.18);border-radius:20px;padding:24px 20px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;"'
+      + ' onmouseenter="this.style.background=\'rgba(' + rgb + ',0.1)\';this.style.borderColor=\'rgba(' + rgb + ',0.35)\';this.style.transform=\'translateY(-2px)\'"'
+      + ' onmouseleave="this.style.background=\'rgba(' + rgb + ',0.05)\';this.style.borderColor=\'rgba(' + rgb + ',0.18)\';this.style.transform=\'translateY(0)\'">';
 
-    /* Header */
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">'
-      + '<div>'
-      + '<div style="font-size:15px;font-weight:800;color:rgba(255,255,255,0.9);">\u2600\uFE0F ' + s.entity + '</div>'
-      + '<div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;">\uD83D\uDCCD ' + s.loc + ' · ' + s.centrale + '</div>'
-      + '</div>'
-      + '<div style="background:rgba(' + rgb + ',0.12);border:1px solid rgba(' + rgb + ',0.25);border-radius:10px;padding:6px 14px;text-align:center;">'
-      + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + pct + '%</div>'
-      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(' + rgb + ',0.6);">du total</div>'
-      + '</div></div>';
+    /* Site name + badge % */
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'
+      + '<div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.9);">\u2600\uFE0F ' + s.name + '</div>'
+      + '<div style="background:rgba(' + rgb + ',0.15);border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;color:' + col + ';">' + pct + '%</div>'
+      + '</div>';
 
-    /* KPI row - 4 cartes */
-    html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">';
-    html += kpi('Capacité', s.capacityMw, 'MWc', col);
-    html += kpi('Prod. totale', (s.totalProdKwh/1000).toFixed(0), 'MWh', col, s.totalDays + ' jours');
-    html += kpi('Moyenne / jour', (s.avgDailyKwh/1000).toFixed(1), 'MWh/j', col);
-    html += kpi('Pic puissance', s.maxPeakKw, 'kW', 'rgba(255,255,255,0.85)');
+    /* Main KPI */
+    html += '<div style="text-align:center;margin-bottom:16px;">'
+      + '<div style="font-size:36px;font-weight:800;color:' + col + ';line-height:1;">' + (s.avgDailyKwh/1000).toFixed(1)
+      + '<span style="font-size:14px;font-weight:400;color:rgba(' + rgb + ',0.5);margin-left:3px;">MWh/j</span></div>'
+      + '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">Moy. journali\u00e8re</div>'
+      + '</div>';
+
+    /* Sub KPIs — 2x2 grid */
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">';
+    html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Capacit\u00e9</div>'
+      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.85);">' + s.capacityMw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWc</span></div></div>';
+    html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Cumul\u00e9</div>'
+      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (s.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
+    html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Pic</div>'
+      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + s.maxPeakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
+    html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Donn\u00e9es</div>'
+      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + s.totalDays + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">jours</span></div></div>';
     html += '</div>';
 
-    /* Monthly cards */
-    html += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(s.monthly.length, 3) + ',1fr);gap:12px;margin-bottom:16px;">';
-    s.monthly.forEach(function(m){
-      var monthNum = parseInt(m.month.split('-')[1]);
-      var monthName = MONTHS_FR[monthNum] || m.month;
-      var maxDayProd = Math.max.apply(null, m.dailyProd.length ? m.dailyProd : [0]);
-      var barH = 50;
-
-      html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.12);border-radius:14px;padding:16px 14px;">';
-
-      /* Month header */
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
-        + '<div style="font-size:12px;font-weight:800;color:rgba(255,255,255,0.75);">' + monthName + '</div>'
-        + '<div style="font-size:18px;font-weight:800;color:' + col + ';">' + (m.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.3);">MWh</span></div>'
+    /* Dernier jour */
+    if (lastDay) {
+      html += '<div style="background:rgba(' + rgb + ',0.08);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
+        + '<span style="font-size:9px;color:rgba(255,255,255,0.35);">Dernier relev\u00e9 \xB7 ' + lastDayLabel + '</span>'
+        + '<span style="font-size:14px;font-weight:800;color:' + col + ';">' + (lastDay.prodKwh/1000).toFixed(1) + ' MWh</span>'
         + '</div>';
-
-      /* Mini sparkline */
-      html += '<div style="display:flex;align-items:flex-end;gap:1px;height:' + barH + 'px;margin-bottom:12px;">';
-      m.dailyProd.forEach(function(dv){
-        var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * barH), 2) : 2;
-        html += '<div style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.5;border-radius:2px 2px 0 0;"></div>';
-      });
-      html += '</div>';
-
-      /* Sub-KPIs inside month card */
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px;text-align:center;">'
-        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Moy/j</div>'
-        + '<div style="font-size:14px;font-weight:800;color:' + col + ';">' + (m.avgDailyProdKwh/1000).toFixed(1) + ' <span style="font-size:8px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
-      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px;text-align:center;">'
-        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Pic</div>'
-        + '<div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.7);">' + m.maxPeakKw + ' <span style="font-size:8px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
-      html += '</div>';
-
-      /* Interruptions badge */
-      if (m.totalUnschedInterrupt > 0) {
-        html += '<div style="margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);border-radius:8px;padding:6px 10px;text-align:center;font-size:9px;color:#ff5050;font-weight:600;">'
-          + '\u26A0 ' + m.totalUnschedInterrupt.toFixed(1) + 'h interruptions</div>';
-      }
-
-      html += '</div>'; /* end month card */
-    });
-    html += '</div>';
-
-    /* 7 derniers jours - row of mini cards */
-    var last7 = s.daily.slice(-7);
-    if (last7.length > 0) {
-      html += '<div style="display:grid;grid-template-columns:repeat(' + last7.length + ',1fr);gap:6px;">';
-      last7.forEach(function(d){
-        var dayParts = d.date.split('-');
-        var dayLabel = dayParts[2] + '/' + dayParts[1];
-        html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 4px;text-align:center;">'
-          + '<div style="font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:4px;">' + dayLabel + '</div>'
-          + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (d.prodKwh/1000).toFixed(1) + '</div>'
-          + '<div style="font-size:7px;color:rgba(255,255,255,0.2);margin-top:2px;">MWh</div>'
-          + (d.peakKw ? '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:3px;">' + Math.round(d.peakKw) + ' kW</div>' : '')
-          + '</div>';
-      });
-      html += '</div>';
     }
 
+    /* CTA */
+    html += '<div style="display:flex;align-items:center;gap:6px;color:rgba(' + rgb + ',0.7);font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;">'
+      + '<span>Voir le d\u00e9tail</span><span style="font-size:12px;">\u2192</span></div>';
+
+    html += '<div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(' + rgb + ',0.1),transparent 70%);pointer-events:none;"></div>';
     html += '</div>'; /* end site card */
   });
+  html += '</div>';
 
   document.getElementById('enr-prod-detail-content').innerHTML = html;
   var panel = document.getElementById('panel-enr-production');
@@ -1297,11 +1253,116 @@ function openEnrProduction(){
   panel.scrollTop = 0;
   document.body.style.overflow = 'hidden';
 }
+
+/* ══════════ SITE DETAIL (clic sur une carte site) ══════════ */
+function openEnrSiteDetail(siteIndex){
+  var sites = window._enrSites || (typeof ENR_SITES !== 'undefined' ? ENR_SITES : []);
+  var s = sites[siteIndex];
+  if (!s) return;
+  var col = _enrColors[siteIndex % _enrColors.length];
+  var rgb = _enrRgbs[siteIndex % _enrRgbs.length];
+
+  var html = '';
+
+  /* ── Header ── */
+  html += '<div style="margin-bottom:28px;">'
+    + '<div style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.95);">\u2600\uFE0F ' + s.entity + '</div>'
+    + '<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;">\uD83D\uDCCD ' + s.loc + ' \xB7 ' + s.centrale + '</div>'
+    + '</div>';
+
+  /* ── KPIs (5 cartes) ── */
+  html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;">';
+  var kpis = [
+    ['Capacit\u00e9', s.capacityMw, 'MWc'],
+    ['Prod. totale', (s.totalProdKwh/1000).toFixed(0), 'MWh'],
+    ['Moy / jour', (s.avgDailyKwh/1000).toFixed(1), 'MWh/j'],
+    ['Pic puissance', s.maxPeakKw, 'kW'],
+    ['Jours', s.totalDays, '']
+  ];
+  kpis.forEach(function(k, ki){
+    var kCol = ki < 3 ? col : 'rgba(255,255,255,0.85)';
+    html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.12);border-radius:14px;padding:16px 10px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">' + k[0] + '</div>'
+      + '<div style="font-size:22px;font-weight:800;color:' + kCol + ';line-height:1;">' + k[1]
+      + (k[2] ? '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.3);margin-left:3px;">' + k[2] + '</span>' : '')
+      + '</div></div>';
+  });
+  html += '</div>';
+
+  /* ── Monthly cards ── */
+  html += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(s.monthly.length, 3) + ',1fr);gap:14px;margin-bottom:28px;">';
+  s.monthly.forEach(function(m){
+    var monthNum = parseInt(m.month.split('-')[1]);
+    var monthName = _enrMonths[monthNum] || m.month;
+    var maxDayProd = Math.max.apply(null, m.dailyProd.length ? m.dailyProd : [0]);
+
+    html += '<div style="background:rgba(' + rgb + ',0.05);border:1px solid rgba(' + rgb + ',0.12);border-radius:16px;padding:18px 16px;">';
+
+    /* Month header */
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'
+      + '<div style="font-size:13px;font-weight:800;color:rgba(255,255,255,0.8);">' + monthName + '</div>'
+      + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + (m.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.3);">MWh</span></div>'
+      + '</div>';
+
+    /* Sparkline */
+    html += '<div style="display:flex;align-items:flex-end;gap:1px;height:55px;margin-bottom:14px;">';
+    m.dailyProd.forEach(function(dv){
+      var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * 55), 2) : 2;
+      html += '<div style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.5;border-radius:2px 2px 0 0;"></div>';
+    });
+    html += '</div>';
+
+    /* Sub KPIs */
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+    html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Moy/j</div>'
+      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (m.avgDailyProdKwh/1000).toFixed(1) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
+    html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Pic</div>'
+      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + m.maxPeakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
+    html += '</div>';
+
+    if (m.totalUnschedInterrupt > 0) {
+      html += '<div style="margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);border-radius:8px;padding:6px 10px;text-align:center;font-size:9px;color:#ff5050;font-weight:600;">'
+        + '\u26A0 ' + m.totalUnschedInterrupt.toFixed(1) + 'h interruptions</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  /* ── 7 derniers jours ── */
+  var last7 = s.daily.slice(-7);
+  if (last7.length > 0) {
+    html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;">7 derniers jours</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(' + last7.length + ',1fr);gap:8px;">';
+    last7.forEach(function(d){
+      var dayParts = d.date.split('-');
+      var dayLabel = dayParts[2] + '/' + dayParts[1];
+      html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.1);border-radius:12px;padding:12px 6px;text-align:center;">'
+        + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:5px;">' + dayLabel + '</div>'
+        + '<div style="font-size:18px;font-weight:800;color:' + col + ';">' + (d.prodKwh/1000).toFixed(1) + '</div>'
+        + '<div style="font-size:8px;color:rgba(255,255,255,0.2);margin-top:2px;">MWh</div>'
+        + (d.peakKw ? '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:4px;">' + Math.round(d.peakKw) + ' kW</div>' : '')
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  /* Update panel content + subtitle */
+  document.getElementById('enr-prod-detail-content').innerHTML = html;
+  var subtitleEl = document.querySelector('#panel-enr-production .inner-subtitle');
+  if (subtitleEl) subtitleEl.innerHTML = '<span onclick="openEnrProduction()" style="cursor:pointer;text-decoration:underline;color:rgba(0,171,99,0.6);">\u2190 Tous les sites</span> \xB7 ' + s.name;
+  document.getElementById('panel-enr-production').scrollTop = 0;
+}
+
 function closeEnrProduction(){
   var panel = document.getElementById('panel-enr-production');
   panel.style.transform = 'translateX(100%)';
   setTimeout(function(){ panel.style.display = ''; }, 450);
   document.body.style.overflow = '';
+  /* Reset subtitle */
+  var subtitleEl = panel.querySelector('.inner-subtitle');
+  if (subtitleEl) subtitleEl.textContent = 'D\u00e9tail par site \xB7 Donn\u00e9es r\u00e9elles de production';
 }
 function openEnrProjets(){
   document.getElementById('panel-enr-projets').classList.add('active');
