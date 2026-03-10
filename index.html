@@ -1041,17 +1041,80 @@ if(sessionStorage.getItem('dash_auth')==='1'){
       <div class="e-section">
         <div class="e-section-label">Projets</div>
 
-        <!-- HFO Projets (placeholder) -->
+        <!-- HFO Projets -->
         <div class="e-col">
           <div class="e-title" style="color:#1e4d63;">HFO</div>
           <div class="e-subtitle" style="color:rgba(138,146,171,0.5);">Thermique</div>
-          <div class="capex-section-card e-card" style="border-color:rgba(138,146,171,0.12);opacity:0.5;cursor:default;">
-            <div style="display:flex;align-items:center;justify-content:center;flex:1;padding:40px 20px;">
-              <div style="text-align:center;">
-                <div style="font-size:clamp(12px,1.2vw,18px);font-weight:700;color:rgba(138,146,171,0.4);letter-spacing:0.1em;">À venir</div>
-                <div style="font-size:clamp(7px,0.6vw,9px);color:rgba(138,146,171,0.25);margin-top:8px;letter-spacing:0.15em;text-transform:uppercase;">Données en cours d'intégration</div>
+          <div class="capex-section-card e-card" onclick="openHfoProjets()" data-pole="hfo"
+            style="border-color:rgba(138,146,171,0.35);"
+            onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 20px 60px rgba(138,146,171,0.35)';this.style.transform='translateY(-6px)'"
+            onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+
+            <!-- Total projets + Overhauls -->
+            <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px clamp(6px,0.8vw,12px);">
+              <div class="e-sec-label">Projets en cours</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(255,255,255,0.9);"><span id="e-hfo-proj-total">—</span></div>
+                  <div class="e-sub">Projets</div>
+                </div>
+                <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+                  <div class="e-pct" style="color:rgba(138,146,171,0.5);">·</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big"><span id="e-hfo-proj-oh">—</span> <span class="e-big-unit">overhauls</span></div>
+                  <div class="e-sub">Moteurs</div>
+                </div>
               </div>
             </div>
+
+            <!-- Statut -->
+            <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px;">
+              <div class="e-sec-label">Par statut</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(243,112,86,0.9);"><span id="e-hfo-proj-urgent">—</span></div>
+                  <div class="e-sub">Urgents</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-hfo-proj-encours">—</span></div>
+                  <div class="e-sub">En cours</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(255,255,255,0.4);"><span id="e-hfo-proj-indef">—</span></div>
+                  <div class="e-sub">Indéfinis</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CAPEX Budget -->
+            <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px;">
+              <div class="e-sec-label">Budget CAPEX</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(100,136,255,0.9);"><span id="e-hfo-proj-budget">—</span></div>
+                  <div class="e-sub">Budget</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-hfo-proj-incurred">—</span></div>
+                  <div class="e-sub">Réalisé</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big"><span id="e-hfo-proj-pct">—</span><span class="e-big-unit">%</span></div>
+                  <div class="e-sub">Exécution</div>
+                </div>
+              </div>
+              <div style="margin-top:8px;height:4px;background:rgba(138,146,171,0.1);border-radius:2px;overflow:hidden;">
+                <div id="e-hfo-proj-bar" style="height:100%;background:rgba(100,136,255,0.6);border-radius:2px;width:0%;transition:width 0.8s;"></div>
+              </div>
+            </div>
+
+            <!-- Sites -->
+            <div style="padding:clamp(4px,0.7vw,10px) 4px 4px;">
+              <div class="e-sec-label">Par site</div>
+              <div id="e-hfo-proj-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:2px;"></div>
+            </div>
+
           </div>
         </div>
 
@@ -1513,7 +1576,144 @@ function closeEnrProjets(){
   document.getElementById('panel-enr-projets').classList.remove('active');
   document.body.style.overflow = '';
 }
+
+/* ── HFO Projets panel ── */
+function openHfoProjets(){
+  var hfp = (typeof HFO_PROJECTS !== 'undefined') ? HFO_PROJECTS : null;
+  if (!hfp) return;
+  var catLabels = {overhaul:'Overhaul',remise:'Remise en service',maintenance:'Maintenance',scada:'SCADA',installation:'Installation',autre:'Autre'};
+  var statusLabels = {urgent:'Urgent',en_cours:'En cours',termine:'Termin\u00e9',indefini:'Ind\u00e9fini'};
+  var statusColors = {urgent:'#f37056',en_cours:'#FDB823',termine:'#00ab63',indefini:'rgba(138,146,171,0.5)'};
+
+  var html = '';
+
+  /* KPIs */
+  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;">';
+  var kpis = [
+    ['Total projets', hfp.total, ''],
+    ['Overhauls', hfp.overhauls, 'moteurs'],
+    ['Urgents', hfp.urgents, '< 30j'],
+    ['En cours', hfp.enCours, '']
+  ];
+  kpis.forEach(function(k, i) {
+    var col = i === 2 ? '#f37056' : (i === 3 ? '#FDB823' : 'rgba(255,255,255,0.9)');
+    html += '<div style="background:rgba(138,146,171,0.06);border:1px solid rgba(138,146,171,0.12);border-radius:16px;padding:20px 14px;text-align:center;">'
+      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin-bottom:8px;">' + k[0] + '</div>'
+      + '<div style="font-size:32px;font-weight:800;color:' + col + ';line-height:1;">' + k[1] + '</div>'
+      + (k[2] ? '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + k[2] + '</div>' : '')
+      + '</div>';
+  });
+  html += '</div>';
+
+  /* CAPEX Budget section */
+  var capex = (typeof capexData !== 'undefined' && capexData.hfo) ? capexData.hfo : null;
+  if (capex && capex.projects) {
+    html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(100,136,255,0.5);margin-bottom:14px;">Budget CAPEX</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px;">';
+    capex.projects.forEach(function(cp){
+      var barW = Math.min(cp.etatPct, 100);
+      var sCol = cp.status === 'over-budget' ? '#f37056' : 'rgba(100,136,255,0.8)';
+      html += '<div style="background:rgba(100,136,255,0.04);border:1px solid rgba(100,136,255,0.12);border-radius:14px;padding:16px 18px;">'
+        + '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + cp.name + '</div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">'
+        + '<div style="font-size:9px;color:rgba(255,255,255,0.4);">Budget: <span style="color:rgba(255,255,255,0.7);">' + cp.etatTotal + '</span></div>'
+        + '<div style="font-size:9px;color:rgba(255,255,255,0.4);">Réalisé: <span style="color:' + sCol + ';">' + cp.etatEnCours + '</span></div>'
+        + '</div>'
+        + '<div style="height:4px;background:rgba(100,136,255,0.1);border-radius:2px;overflow:hidden;margin-bottom:6px;">'
+        + '<div style="height:100%;width:' + barW + '%;background:' + sCol + ';border-radius:2px;"></div></div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:baseline;">'
+        + '<div style="font-size:9px;color:rgba(255,255,255,0.3);">Init: ' + cp.investInit + '</div>'
+        + '<div style="font-size:11px;font-weight:700;color:' + sCol + ';">' + cp.etatPct + '%</div>'
+        + (cp.triInit !== '\u2014' ? '<div style="font-size:9px;color:rgba(255,255,255,0.3);">TRI: ' + cp.triInit + '</div>' : '')
+        + '</div>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  /* Par site */
+  var mainSites = ['TAMATAVE','MAJUNGA','DIEGO','TULEAR','ANTSIRABE'];
+  html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(138,146,171,0.4);margin-bottom:14px;">Par site</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(' + mainSites.length + ',1fr);gap:12px;margin-bottom:32px;">';
+  mainSites.forEach(function(site) {
+    var bs = hfp.bySite[site];
+    if (!bs) return;
+    html += '<div style="background:rgba(138,146,171,0.05);border:1px solid rgba(138,146,171,0.12);border-radius:14px;padding:16px 10px;text-align:center;">'
+      + '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:8px;">' + site.charAt(0) + site.slice(1).toLowerCase() + '</div>'
+      + '<div style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.85);line-height:1;">' + bs.total + '</div>'
+      + '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + bs.overhaul + ' OH' + (bs.urgent > 0 ? ' \xB7 <span style="color:#f37056;">' + bs.urgent + ' urgent</span>' : '') + '</div>'
+      + '</div>';
+  });
+  html += '</div>';
+
+  /* Liste des projets par site */
+  mainSites.concat(['VESTOP','AUTRE']).forEach(function(site) {
+    var siteProjects = hfp.projects.filter(function(p) { return p.site === site; });
+    if (!siteProjects.length) return;
+
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin:24px 0 12px;border-bottom:1px solid rgba(138,146,171,0.1);padding-bottom:8px;">'
+      + site.charAt(0) + site.slice(1).toLowerCase() + ' \u2014 ' + siteProjects.length + ' projets</div>';
+
+    siteProjects.forEach(function(p) {
+      var sCol = statusColors[p.status] || 'rgba(138,146,171,0.5)';
+      var sLabel = statusLabels[p.status] || p.status;
+      var cLabel = catLabels[p.categorie] || p.categorie;
+
+      html += '<div style="background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.1);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;">';
+
+      /* Left: projet info */
+      html += '<div style="flex:1;min-width:0;">'
+        + '<div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.projet + '</div>'
+        + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-top:3px;">'
+        + cLabel
+        + (p.moteur ? ' \xB7 ' + p.moteur : '')
+        + (p.resp ? ' \xB7 ' + p.resp : '')
+        + '</div></div>';
+
+      /* Right: status + day to go */
+      html += '<div style="text-align:right;flex:0 0 auto;">'
+        + '<div style="font-size:9px;font-weight:700;color:' + sCol + ';letter-spacing:0.1em;text-transform:uppercase;">' + sLabel + '</div>';
+      if (p.dayToGo !== null && p.dayToGo > 0) {
+        html += '<div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.7);margin-top:2px;">' + p.dayToGo + ' <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.3);">jours</span></div>';
+      }
+      if (p.dlRevu) {
+        html += '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:2px;">DL: ' + p.dlRevu.split('-')[2] + '/' + p.dlRevu.split('-')[1] + '/' + p.dlRevu.split('-')[0] + '</div>';
+      }
+      html += '</div>';
+
+      html += '</div>';
+    });
+  });
+
+  document.getElementById('hfo-proj-detail-content').innerHTML = html;
+  var panel = document.getElementById('panel-hfo-projets');
+  panel.style.display = '';
+  panel.style.transform = 'translateX(0)';
+  panel.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeHfoProjets(){
+  var panel = document.getElementById('panel-hfo-projets');
+  panel.style.transform = 'translateX(100%)';
+  setTimeout(function(){ panel.style.display = ''; }, 450);
+  document.body.style.overflow = '';
+}
 </script>
+
+<!-- ══ PANEL PROJETS HFO ══ -->
+<div id="panel-hfo-projets" style="position:fixed;inset:0;z-index:255;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
+  <div class="nav-back"><button class="back-btn" onclick="closeHfoProjets()">← Energy</button></div>
+  <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
+    <div class="inner-topbar" style="border-bottom-color:rgba(138,146,171,0.15);margin-bottom:36px;">
+      <div style="text-align:center;width:100%;">
+        <div class="inner-title" style="color:rgba(255,255,255,0.9);">Projets HFO</div>
+        <div class="inner-subtitle" style="color:rgba(138,146,171,0.5);">Overhauls · Maintenance · Infrastructure · CAPEX</div>
+      </div>
+    </div>
+    <div id="hfo-proj-detail-content"></div>
+  </div>
+</div>
 
 <!-- ══ PANEL PRODUCTION EnR ══ -->
 <div id="panel-enr-production" style="position:fixed;inset:0;z-index:260;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
@@ -1574,6 +1774,7 @@ function closeEnrProjets(){
 </div>
 
 <script src="enr_site_data.js"></script>
+<script src="hfo_projects.js"></script>
 <script>
 (function(){
 
@@ -2128,6 +2329,33 @@ function closeEnrProjets(){
   window.fmtDate = fmtDate;
   window.fmtPct = fmtPct;
   window.typeIcon = typeIcon;
+
+  /* ── HFO Projects card on Energy page ── */
+  var hfp = (typeof HFO_PROJECTS !== 'undefined') ? HFO_PROJECTS : null;
+  if (hfp) {
+    if (el('e-hfo-proj-total'))   el('e-hfo-proj-total').textContent = hfp.total;
+    if (el('e-hfo-proj-oh'))      el('e-hfo-proj-oh').textContent = hfp.overhauls;
+    if (el('e-hfo-proj-urgent'))  el('e-hfo-proj-urgent').textContent = hfp.urgents;
+    if (el('e-hfo-proj-encours')) el('e-hfo-proj-encours').textContent = hfp.enCours;
+    var indef = hfp.total - hfp.urgents - hfp.enCours - hfp.termines;
+    if (el('e-hfo-proj-indef'))   el('e-hfo-proj-indef').textContent = indef;
+
+    var sRow = el('e-hfo-proj-sites-row');
+    if (sRow) {
+      var mainSites = ['TAMATAVE','MAJUNGA','DIEGO','TULEAR','ANTSIRABE'];
+      var rh = '';
+      mainSites.forEach(function(s, i) {
+        var bs = hfp.bySite[s];
+        if (!bs) return;
+        rh += '<div style="text-align:center;flex:1;">'
+          + '<div class="e-big">' + bs.total + '</div>'
+          + '<div class="e-sub">' + s.charAt(0) + s.slice(1).toLowerCase() + '</div>'
+          + '</div>';
+        if (i < mainSites.length - 1) rh += '<div style="width:1px;height:25px;background:rgba(138,146,171,0.15);"></div>';
+      });
+      sRow.innerHTML = rh;
+    }
+  }
 
 })();
 </script>
@@ -4978,6 +5206,33 @@ const capexData = {
   }
 };
 
+/* Populate HFO CAPEX card on Energy page */
+(function(){
+  var hfo = capexData.hfo;
+  if (!hfo || !hfo.projects) return;
+  var totalBudget = 0, totalIncurred = 0;
+  hfo.projects.forEach(function(p){
+    var b = parseFloat(p.etatTotal.replace(/[^0-9.]/g,'')) || 0;
+    if (p.etatTotal.indexOf('M$') > -1) b *= 1000000;
+    else if (p.etatTotal.indexOf('k$') > -1) b *= 1000;
+    totalBudget += b;
+    var i = parseFloat(p.etatEnCours.replace(/[^0-9.]/g,'')) || 0;
+    if (p.etatEnCours.indexOf('M$') > -1) i *= 1000000;
+    else if (p.etatEnCours.indexOf('k$') > -1) i *= 1000;
+    totalIncurred += i;
+  });
+  var pct = totalBudget > 0 ? Math.round(totalIncurred / totalBudget * 100) : 0;
+  function fmt(n){ return n >= 1000000 ? (n/1000000).toFixed(1) + ' M$' : Math.round(n/1000) + ' k$'; }
+  var eB = document.getElementById('e-hfo-proj-budget');
+  var eI = document.getElementById('e-hfo-proj-incurred');
+  var eP = document.getElementById('e-hfo-proj-pct');
+  var eBar = document.getElementById('e-hfo-proj-bar');
+  if (eB) eB.textContent = fmt(totalBudget);
+  if (eI) eI.textContent = fmt(totalIncurred);
+  if (eP) eP.textContent = pct;
+  if (eBar) eBar.style.width = pct + '%';
+})();
+
 function openCapexSection(pole) {
   const data = capexData[pole];
   const panel = document.getElementById('capex-section-panel');
@@ -5270,7 +5525,7 @@ function closePage(pageId) {
 function navTo(pole) {
   // Close all panels
   ['panel-project-detail','panel-diego-detail','panel-dev-project',
-   'panel-enr-projets','panel-enr-production','panel-groupe-detail','detail-panel','capex-section-panel']
+   'panel-enr-projets','panel-enr-production','panel-hfo-projets','panel-groupe-detail','detail-panel','capex-section-panel']
     .forEach(function(id) {
       var el = document.getElementById(id);
       if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
@@ -5286,7 +5541,7 @@ function navTo(pole) {
 
 function goHome() {
   ['panel-project-detail','panel-diego-detail','panel-dev-project',
-   'panel-enr-projets','panel-enr-production','panel-groupe-detail','detail-panel','capex-section-panel']
+   'panel-enr-projets','panel-enr-production','panel-hfo-projets','panel-groupe-detail','detail-panel','capex-section-panel']
     .forEach(function(id) {
       var el = document.getElementById(id);
       if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
