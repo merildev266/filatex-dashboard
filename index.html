@@ -1048,36 +1048,36 @@ if(sessionStorage.getItem('dash_auth')==='1'){
            style="background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.18);border-radius:20px;padding:28px 32px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;"
            onmouseenter="this.style.background='rgba(0,171,99,0.11)';this.style.borderColor='rgba(0,171,99,0.35)';this.style.transform='translateY(-2px)'"
            onmouseleave="this.style.background='rgba(0,171,99,0.06)';this.style.borderColor='rgba(0,171,99,0.18)';this.style.transform='translateY(0)'">
-        <div style="margin-bottom:22px;">
+        <div style="margin-bottom:18px;">
           <div style="font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.6);">Production EnR</div>
         </div>
-        <div style="margin-bottom:24px;">
-          <div style="font-size:48px;font-weight:800;color:#00ab63;line-height:1;letter-spacing:-2px;">
-            <span id="enr-prod-total">—</span><span style="font-size:20px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:6px;">MWh/j</span>
+        <!-- KPI principal -->
+        <div style="margin-bottom:18px;">
+          <div style="font-size:44px;font-weight:800;color:#00ab63;line-height:1;letter-spacing:-2px;">
+            <span id="enr-prod-total">—</span><span style="font-size:18px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:6px;">MWh/j</span>
           </div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:6px;letter-spacing:0.05em;">Production journalière moyenne (3 sites solaires)</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:5px;">Moyenne journalière · 3 centrales solaires</div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px;">
-          <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 10px;text-align:center;">
-            <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Solaire</div>
-            <div id="enr-prod-solaire" style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh/j</div>
+        <!-- KPIs secondaires : Puissance + Cumulé + Mix -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+          <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 8px;text-align:center;">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.25);margin-bottom:4px;">Puissance</div>
+            <div id="enr-prod-cap" style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.85);">—</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.2);">MWc installés</div>
           </div>
-          <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 10px;text-align:center;">
-            <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Éolien</div>
-            <div id="enr-prod-eolien" style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh/j</div>
+          <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 8px;text-align:center;">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.25);margin-bottom:4px;">Prod. cumulée</div>
+            <div id="enr-prod-cumul" style="font-size:18px;font-weight:800;color:#00ab63;">—</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.2);">MWh depuis janv.</div>
           </div>
-          <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 10px;text-align:center;">
-            <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Flottant</div>
-            <div id="enr-prod-autre" style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh/j</div>
+          <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 8px;text-align:center;">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.25);margin-bottom:4px;">Mix EnR</div>
+            <div style="font-size:18px;font-weight:800;color:#00ab63;"><span id="enr-prod-mix">—</span><span style="font-size:10px;font-weight:400;">%</span></div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.2);">EnR / Total</div>
           </div>
         </div>
-        <div style="background:rgba(0,0,0,0.18);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-          <span style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Part EnR dans le mix</span>
-          <span style="font-size:20px;font-weight:800;color:#00ab63;"><span id="enr-prod-mix">—</span><span style="font-size:12px;font-weight:400;">%</span></span>
-        </div>
+        <!-- Par site -->
+        <div id="enr-prod-sites" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;"></div>
         <div style="display:flex;align-items:center;gap:6px;color:rgba(0,171,99,0.7);font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;">
           <span>Voir le détail</span><span style="font-size:12px;">→</span>
         </div>
@@ -1155,127 +1155,139 @@ function openEnrProduction(){
   var sites = window._enrSites || (typeof ENR_SITES !== 'undefined' ? ENR_SITES : []);
   if (!sites.length) return;
 
-  var MONTHS_FR = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  var MONTHS_FR = ['','Janv','Fév','Mars','Avr','Mai','Juin','Juil','Août','Sept','Oct','Nov','Déc'];
   var siteColors = ['#00ab63','#5aafaf','#4a8fe7'];
+  var siteRgbs   = ['0,171,99','90,175,175','74,143,231'];
 
-  /* ── Aggregate stats ── */
-  var totalCapMw = 0, totalProdKwh = 0, totalDays = 0, totalAvgDaily = 0;
-  sites.forEach(function(s){ totalCapMw += s.capacityMw; totalProdKwh += s.totalProdKwh; totalDays += s.totalDays; totalAvgDaily += s.avgDailyKwh; });
+  /* ── Helpers ── */
+  function kpi(label, val, unit, col, sub) {
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 12px;text-align:center;">'
+      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">' + label + '</div>'
+      + '<div style="font-size:24px;font-weight:800;color:' + (col||'rgba(255,255,255,0.85)') + ';line-height:1;">' + val
+      + (unit ? '<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:3px;">' + unit + '</span>' : '')
+      + '</div>'
+      + (sub ? '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + sub + '</div>' : '')
+      + '</div>';
+  }
+
+  /* ── Aggregates ── */
+  var totalCapMw = 0, totalProdKwh = 0, totalAvgDaily = 0;
+  sites.forEach(function(s){ totalCapMw += s.capacityMw; totalProdKwh += s.totalProdKwh; totalAvgDaily += s.avgDailyKwh; });
   var mixPct = document.getElementById('enr-prod-mix') ? document.getElementById('enr-prod-mix').textContent : '—';
 
   var html = '';
 
-  /* ── Section 1: KPIs consolidés ── */
-  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;">';
-  html += '<div style="background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.18);border-radius:14px;padding:18px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:6px;">Prod. moyenne / jour</div>'
-    + '<div style="font-size:32px;font-weight:800;color:#00ab63;">' + (totalAvgDaily/1000).toFixed(1) + '<span style="font-size:14px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:4px;">MWh/j</span></div></div>';
-  html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Puissance installée</div>'
-    + '<div style="font-size:32px;font-weight:800;color:rgba(255,255,255,0.85);">' + totalCapMw.toFixed(1) + '<span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:4px;">MWc</span></div></div>';
-  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:14px;padding:18px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:6px;">Production totale</div>'
-    + '<div style="font-size:32px;font-weight:800;color:#00ab63;">' + (totalProdKwh/1000).toFixed(0) + '<span style="font-size:14px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:4px;">MWh</span></div></div>';
-  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:14px;padding:18px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:6px;">Part EnR mix</div>'
-    + '<div style="font-size:32px;font-weight:800;color:#00ab63;">' + mixPct + '<span style="font-size:14px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:2px;">%</span></div></div>';
+  /* ══════════ GLOBAL KPIs (3 cartes) ══════════ */
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">';
+  html += '<div style="background:rgba(0,171,99,0.07);border:1px solid rgba(0,171,99,0.2);border-radius:18px;padding:24px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.55);margin-bottom:8px;">Production moyenne</div>'
+    + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + (totalAvgDaily/1000).toFixed(1)
+    + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">MWh/j</span></div>'
+    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">' + sites.length + ' centrales solaires · ' + totalCapMw.toFixed(1) + ' MWc</div></div>';
+  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:24px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Production cumulée</div>'
+    + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + (totalProdKwh/1000).toFixed(0)
+    + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">MWh</span></div>'
+    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">Depuis janvier 2026</div></div>';
+  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:24px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Part EnR dans le mix</div>'
+    + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + mixPct
+    + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:2px;">%</span></div>'
+    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">EnR / (EnR + HFO)</div></div>';
   html += '</div>';
 
-  /* ── Section 2: Répartition par site (barres) ── */
-  html += '<div style="margin-bottom:32px;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">Répartition par site</div>';
-  sites.forEach(function(s, i){
-    var pct = totalAvgDaily > 0 ? (s.avgDailyKwh / totalAvgDaily * 100) : 0;
-    var col = siteColors[i % siteColors.length];
-    html += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">'
-      + '<div style="width:80px;font-size:11px;font-weight:700;color:' + col + ';">\u2600\uFE0F ' + s.name + '</div>'
-      + '<div style="flex:1;height:24px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden;position:relative;">'
-      + '<div style="height:100%;width:' + Math.max(pct, 2) + '%;background:' + col + ';border-radius:8px;opacity:0.7;"></div>'
-      + '<div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);">' + (s.avgDailyKwh/1000).toFixed(1) + ' MWh/j · ' + pct.toFixed(0) + '%</div>'
-      + '</div></div>';
-  });
-  html += '</div>';
-
-  /* ── Section 3: Détail par site ── */
+  /* ══════════ SITE CARDS ══════════ */
   sites.forEach(function(s, si){
     var col = siteColors[si % siteColors.length];
-    html += '<div style="margin-bottom:32px;">';
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:' + col + ';margin-bottom:16px;">\u2600\uFE0F ' + s.entity + ' — ' + s.loc + '</div>';
+    var rgb = siteRgbs[si % siteRgbs.length];
+    var pct = totalAvgDaily > 0 ? (s.avgDailyKwh / totalAvgDaily * 100).toFixed(0) : 0;
+    var latestMonth = s.monthly.length ? s.monthly[s.monthly.length - 1] : null;
+    var prevMonth = s.monthly.length > 1 ? s.monthly[s.monthly.length - 2] : null;
 
-    /* Site KPIs */
-    html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">';
-    html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 10px;text-align:center;">'
-      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Capacité</div>'
-      + '<div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.85);">' + s.capacityMw + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:2px;">MWc</span></div></div>';
-    html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 10px;text-align:center;">'
-      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Prod. totale</div>'
-      + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + (s.totalProdKwh/1000).toFixed(0) + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:2px;">MWh</span></div></div>';
-    html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 10px;text-align:center;">'
-      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Moy. journalière</div>'
-      + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + (s.avgDailyKwh/1000).toFixed(1) + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:2px;">MWh/j</span></div></div>';
-    html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 10px;text-align:center;">'
-      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Pic puissance</div>'
-      + '<div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.85);">' + s.maxPeakKw + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:2px;">kW</span></div></div>';
-    html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 10px;text-align:center;">'
-      + '<div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Jours de données</div>'
-      + '<div style="font-size:20px;font-weight:800;color:rgba(255,255,255,0.85);">' + s.totalDays + '</div></div>';
+    /* ── Site card container ── */
+    html += '<div style="background:rgba(' + rgb + ',0.04);border:1px solid rgba(' + rgb + ',0.15);border-radius:20px;padding:28px 24px;margin-bottom:20px;">';
+
+    /* Header */
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">'
+      + '<div>'
+      + '<div style="font-size:15px;font-weight:800;color:rgba(255,255,255,0.9);">\u2600\uFE0F ' + s.entity + '</div>'
+      + '<div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;">\uD83D\uDCCD ' + s.loc + ' · ' + s.centrale + '</div>'
+      + '</div>'
+      + '<div style="background:rgba(' + rgb + ',0.12);border:1px solid rgba(' + rgb + ',0.25);border-radius:10px;padding:6px 14px;text-align:center;">'
+      + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + pct + '%</div>'
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(' + rgb + ',0.6);">du total</div>'
+      + '</div></div>';
+
+    /* KPI row - 4 cartes */
+    html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">';
+    html += kpi('Capacité', s.capacityMw, 'MWc', col);
+    html += kpi('Prod. totale', (s.totalProdKwh/1000).toFixed(0), 'MWh', col, s.totalDays + ' jours');
+    html += kpi('Moyenne / jour', (s.avgDailyKwh/1000).toFixed(1), 'MWh/j', col);
+    html += kpi('Pic puissance', s.maxPeakKw, 'kW', 'rgba(255,255,255,0.85)');
     html += '</div>';
 
-    /* Monthly breakdown */
+    /* Monthly cards */
     html += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(s.monthly.length, 3) + ',1fr);gap:12px;margin-bottom:16px;">';
     s.monthly.forEach(function(m){
       var monthNum = parseInt(m.month.split('-')[1]);
       var monthName = MONTHS_FR[monthNum] || m.month;
       var maxDayProd = Math.max.apply(null, m.dailyProd.length ? m.dailyProd : [0]);
-      var barH = 60;
+      var barH = 50;
 
-      html += '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 12px;">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">'
-        + '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);">' + monthName + '</div>'
-        + '<div style="font-size:14px;font-weight:800;color:' + col + ';">' + (m.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.35);">MWh</span></div>'
+      html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.12);border-radius:14px;padding:16px 14px;">';
+
+      /* Month header */
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
+        + '<div style="font-size:12px;font-weight:800;color:rgba(255,255,255,0.75);">' + monthName + '</div>'
+        + '<div style="font-size:18px;font-weight:800;color:' + col + ';">' + (m.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.3);">MWh</span></div>'
         + '</div>';
 
-      /* Mini bar chart */
-      html += '<div style="display:flex;align-items:flex-end;gap:1px;height:' + barH + 'px;margin-bottom:8px;">';
+      /* Mini sparkline */
+      html += '<div style="display:flex;align-items:flex-end;gap:1px;height:' + barH + 'px;margin-bottom:12px;">';
       m.dailyProd.forEach(function(dv){
-        var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * barH), 1) : 1;
-        html += '<div style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.6;border-radius:1px 1px 0 0;"></div>';
+        var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * barH), 2) : 2;
+        html += '<div style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.5;border-radius:2px 2px 0 0;"></div>';
       });
       html += '</div>';
 
-      /* Stats row */
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:9px;color:rgba(255,255,255,0.4);">'
-        + '<div>Moy: <span style="color:rgba(255,255,255,0.7);font-weight:600;">' + (m.avgDailyProdKwh/1000).toFixed(1) + '</span> MWh/j</div>'
-        + '<div>Pic: <span style="color:rgba(255,255,255,0.7);font-weight:600;">' + m.maxPeakKw + '</span> kW</div>'
-        + '<div>' + m.daysWithData + ' jours</div>'
-        + '</div>';
+      /* Sub-KPIs inside month card */
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Moy/j</div>'
+        + '<div style="font-size:14px;font-weight:800;color:' + col + ';">' + (m.avgDailyProdKwh/1000).toFixed(1) + ' <span style="font-size:8px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Pic</div>'
+        + '<div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.7);">' + m.maxPeakKw + ' <span style="font-size:8px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
+      html += '</div>';
 
-      /* Availability / interruptions */
+      /* Interruptions badge */
       if (m.totalUnschedInterrupt > 0) {
-        html += '<div style="margin-top:6px;font-size:9px;color:rgba(255,80,80,0.7);">\u26A0 Interruptions non prog.: ' + m.totalUnschedInterrupt.toFixed(1) + 'h</div>';
+        html += '<div style="margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);border-radius:8px;padding:6px 10px;text-align:center;font-size:9px;color:#ff5050;font-weight:600;">'
+          + '\u26A0 ' + m.totalUnschedInterrupt.toFixed(1) + 'h interruptions</div>';
       }
 
-      html += '</div>';
+      html += '</div>'; /* end month card */
     });
     html += '</div>';
 
-    /* Latest 7 days mini-table */
+    /* 7 derniers jours - row of mini cards */
     var last7 = s.daily.slice(-7);
     if (last7.length > 0) {
-      html += '<div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">7 derniers jours</div>';
-      html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">';
+      html += '<div style="display:grid;grid-template-columns:repeat(' + last7.length + ',1fr);gap:6px;">';
       last7.forEach(function(d){
-        var dayNum = d.date.split('-')[2];
-        html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 4px;text-align:center;">'
-          + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:4px;">' + dayNum + '</div>'
-          + '<div style="font-size:13px;font-weight:800;color:' + col + ';">' + (d.prodKwh/1000).toFixed(1) + '</div>'
-          + '<div style="font-size:8px;color:rgba(255,255,255,0.25);">MWh</div>'
+        var dayParts = d.date.split('-');
+        var dayLabel = dayParts[2] + '/' + dayParts[1];
+        html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 4px;text-align:center;">'
+          + '<div style="font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:4px;">' + dayLabel + '</div>'
+          + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (d.prodKwh/1000).toFixed(1) + '</div>'
+          + '<div style="font-size:7px;color:rgba(255,255,255,0.2);margin-top:2px;">MWh</div>'
+          + (d.peakKw ? '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:3px;">' + Math.round(d.peakKw) + ' kW</div>' : '')
           + '</div>';
       });
       html += '</div>';
     }
 
-    html += '</div>'; /* end site block */
+    html += '</div>'; /* end site card */
   });
 
   document.getElementById('enr-prod-detail-content').innerHTML = html;
@@ -1841,14 +1853,29 @@ function closeEnrProjets(){
 
   /* ── Production EnR — données réelles depuis enr_site_data.js ── */
   var enrSites = (typeof ENR_SITES !== 'undefined') ? ENR_SITES : [];
-  var totalEnrAvgKwh = 0;
-  enrSites.forEach(function(s) { totalEnrAvgKwh += s.avgDailyKwh; });
+  var totalEnrAvgKwh = 0, totalEnrProdKwh = 0, totalEnrCapMw = 0;
+  enrSites.forEach(function(s) { totalEnrAvgKwh += s.avgDailyKwh; totalEnrProdKwh += s.totalProdKwh; totalEnrCapMw += s.capacityMw; });
   var enrMwhJ = totalEnrAvgKwh / 1000;
 
-  if (el('enr-prod-total'))   el('enr-prod-total').textContent   = enrMwhJ.toFixed(1);
-  if (el('enr-prod-solaire')) el('enr-prod-solaire').textContent = enrMwhJ.toFixed(1);
-  if (el('enr-prod-eolien'))  el('enr-prod-eolien').textContent  = '—';
-  if (el('enr-prod-autre'))   el('enr-prod-autre').textContent   = '—';
+  if (el('enr-prod-total'))  el('enr-prod-total').textContent  = enrMwhJ.toFixed(1);
+  if (el('enr-prod-cap'))    el('enr-prod-cap').textContent    = totalEnrCapMw.toFixed(1);
+  if (el('enr-prod-cumul'))  el('enr-prod-cumul').textContent  = Math.round(totalEnrProdKwh / 1000);
+
+  /* Per-site mini cards */
+  var siteColors = ['#00ab63','#5aafaf','#4a8fe7'];
+  var sitesEl = el('enr-prod-sites');
+  if (sitesEl && enrSites.length) {
+    var sh = '';
+    enrSites.forEach(function(s, i) {
+      var col = siteColors[i % siteColors.length];
+      sh += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 8px;text-align:center;">'
+        + '<div style="font-size:7px;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.25);margin-bottom:4px;">\u2600\uFE0F ' + s.name + '</div>'
+        + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (s.avgDailyKwh/1000).toFixed(1) + '</div>'
+        + '<div style="font-size:8px;color:rgba(255,255,255,0.2);">MWh/j · ' + s.capacityMw + ' MWc</div>'
+        + '</div>';
+    });
+    sitesEl.innerHTML = sh;
+  }
 
   /* Mix EnR calculé après chargement site_data.js (voir updateEnrMix) */
   window._enrMwhJ = enrMwhJ;
