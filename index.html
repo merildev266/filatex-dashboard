@@ -1252,6 +1252,13 @@ function openEnrProduction(){
   panel.style.transform = 'translateX(0)';
   panel.scrollTop = 0;
   document.body.style.overflow = 'hidden';
+  /* Reset title/subtitle/back button to overview state */
+  var titleEl = panel.querySelector('.inner-title');
+  if (titleEl) titleEl.textContent = 'Production EnR';
+  var subtitleEl = panel.querySelector('.inner-subtitle');
+  if (subtitleEl) subtitleEl.textContent = 'D\u00e9tail par site \xB7 Donn\u00e9es r\u00e9elles de production';
+  var backBtn = panel.querySelector('.back-btn');
+  if (backBtn) { backBtn.textContent = '\u2190 EnR'; backBtn.onclick = function(){ closeEnrProduction(); }; }
 }
 
 /* ══════════ SITE DETAIL (clic sur une carte site) ══════════ */
@@ -1263,6 +1270,16 @@ function openEnrSiteDetail(siteIndex){
   var rgb = _enrRgbs[siteIndex % _enrRgbs.length];
 
   var html = '';
+
+  /* ── Site nav strip (like HFO) ── */
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;justify-content:center;">';
+  sites.forEach(function(ns, ni){
+    var active = ni === siteIndex;
+    var nCol = _enrColors[ni % _enrColors.length];
+    var nRgb = _enrRgbs[ni % _enrRgbs.length];
+    html += '<button onclick="openEnrSiteDetail(' + ni + ')" style="background:' + (active ? nCol : 'rgba(' + nRgb + ',0.04)') + ';border:1px solid ' + (active ? nCol : 'rgba(' + nRgb + ',0.2)') + ';color:' + (active ? '#1e1d38' : 'rgba(' + nRgb + ',0.6)') + ';padding:6px 0;border-radius:20px;font-size:10px;font-weight:' + (active ? '700' : '600') + ';letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all 0.2s;min-width:130px;text-align:center;">' + ns.name + '</button>';
+  });
+  html += '</div>';
 
   /* ── Header ── */
   html += '<div style="margin-bottom:28px;">'
@@ -1348,10 +1365,15 @@ function openEnrSiteDetail(siteIndex){
     html += '</div>';
   }
 
-  /* Update panel content + subtitle */
+  /* Update panel content + subtitle + back button */
   document.getElementById('enr-prod-detail-content').innerHTML = html;
   var subtitleEl = document.querySelector('#panel-enr-production .inner-subtitle');
-  if (subtitleEl) subtitleEl.innerHTML = '<span onclick="openEnrProduction()" style="cursor:pointer;text-decoration:underline;color:rgba(0,171,99,0.6);">\u2190 Tous les sites</span> \xB7 ' + s.name;
+  if (subtitleEl) subtitleEl.innerHTML = s.entity + ' \xB7 ' + s.loc;
+  var titleEl = document.querySelector('#panel-enr-production .inner-title');
+  if (titleEl) titleEl.textContent = s.name;
+  /* Back button → returns to Production EnR overview */
+  var backBtn = document.querySelector('#panel-enr-production .back-btn');
+  if (backBtn) { backBtn.textContent = '\u2190 Production EnR'; backBtn.onclick = function(){ openEnrProduction(); }; }
   document.getElementById('panel-enr-production').scrollTop = 0;
 }
 
