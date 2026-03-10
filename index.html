@@ -461,71 +461,36 @@ body::-webkit-scrollbar{display:none;}
 #inner-hfo .s1-card{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
 #inner-hfo .contrib-banner{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
 
-/* ══ ENERGY PAGE — 3-level navigation ══ */
+/* ══ ENERGY PAGE — 2×2 grid, no scroll ══ */
 #page-energy{overflow:hidden;}
-#page-energy .inner-page-inner{min-height:auto;padding:0 clamp(16px,3vw,48px);}
-/* Niveau 1 : titles + 2 summary cards */
-.e-wrap{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:0 clamp(12px,1.6vw,24px);padding:0;height:calc(100vh - 128px);align-content:center;}
-.e-wrap .capex-section-card{padding:clamp(10px,1.2vw,20px) 0;border-radius:clamp(14px,1.6vw,22px);overflow:hidden;display:flex;flex-direction:column;}
-/* Summary card header — above cards */
-.e-sum-hdr{text-align:center;padding:clamp(8px,1vw,18px) 0 clamp(4px,0.5vw,8px);}
-.e-sum-hdr-title{font-size:clamp(22px,2.4vw,38px);font-weight:800;letter-spacing:-1px;color:rgba(255,255,255,0.92);}
-.e-sum-hdr-sub{font-size:clamp(6px,0.5vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.2);display:block;margin-top:2px;}
-/* Summary card body — energy type sections stacked */
-.e-sum-body{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding:0 clamp(12px,1.4vw,24px) clamp(8px,1vw,16px);}
-/* Energy type section (HFO block / EnR block inside summary) */
-.e-type-section{padding:clamp(6px,0.7vw,12px) 0;}
-.e-type-label{display:flex;align-items:center;gap:clamp(6px,0.7vw,12px);margin-bottom:clamp(8px,0.9vw,14px);}
-.e-type-label::before,.e-type-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);}
-.e-type-label span{font-size:clamp(6px,0.5vw,9px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;white-space:nowrap;}
-.e-type-label.e-hfo span{color:rgba(138,146,171,0.35);}
-.e-type-label.e-enr span{color:rgba(0,171,99,0.3);}
-/* KPI row — mini cards like inner-hfo */
-.e-kpi-row{display:flex;align-items:stretch;justify-content:center;gap:clamp(6px,0.7vw,12px);}
-.e-kpi-item{text-align:center;flex:1;background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.12);border-radius:clamp(8px,0.9vw,14px);padding:clamp(8px,0.9vw,14px) clamp(4px,0.5vw,8px);display:flex;flex-direction:column;justify-content:center;gap:2px;}
-.e-kpi-lbl{font-size:clamp(5px,0.4vw,7px);font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:clamp(2px,0.3vw,4px);}
-.e-kpi-val{font-size:clamp(18px,2vw,32px);font-weight:800;color:rgba(255,255,255,0.92);letter-spacing:-0.5px;line-height:1.1;}
-.e-kpi-unit{font-size:clamp(7px,0.6vw,11px);font-weight:500;color:rgba(255,255,255,0.3);}
-.e-kpi-label{font-size:clamp(5px,0.4vw,7px);color:rgba(255,255,255,0.2);margin-top:2px;}
-.e-kpi-val.e-red{color:rgba(243,112,86,0.85);}
-.e-kpi-val.e-green{color:rgba(0,171,99,0.85);}
-.e-kpi-val.e-blue{color:rgba(100,136,255,0.85);}
-.e-kpi-val.e-orange{color:rgba(253,184,35,0.85);}
-/* EnR kpi item override */
-.e-type-section.e-enr-sec .e-kpi-item{background:rgba(0,171,99,0.03);border-color:rgba(0,171,99,0.1);}
-/* Niveau 2 panels */
-.e-panel{position:fixed;inset:0;z-index:195;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);}
-.e-panel.active{transform:translateX(0);}
-.e-panel-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;gap:0 clamp(12px,1.6vw,24px);height:calc(100vh - 128px);align-content:center;padding:0 clamp(16px,3vw,48px);}
-.e-panel-grid .capex-section-card{padding:0;border-radius:clamp(14px,1.6vw,22px);overflow:hidden;}
-.e-panel-grid .e-sum-hdr{text-align:center;padding:clamp(8px,1vw,18px) 0 clamp(4px,0.5vw,8px);}
-/* Card shared styles (niveau 2 detailed cards) */
-.e-card-hdr{text-align:center;padding:clamp(8px,0.9vw,14px) 0 clamp(3px,0.4vw,6px);}
-.e-card-hdr-title{font-size:clamp(18px,1.8vw,28px);font-weight:800;letter-spacing:-1px;}
-.e-card-hdr-sub{font-size:clamp(5px,0.45vw,7px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;display:block;margin-top:1px;}
-.e-card{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-evenly;box-sizing:border-box;overflow:hidden;}
-.e-card .e-sec{border-bottom:1px solid rgba(138,146,171,0.08);padding:clamp(3px,0.4vw,7px) clamp(8px,1vw,16px);}
+#page-energy .inner-page-inner{min-height:auto;padding:6px clamp(16px,3vw,40px) 0;}
+#page-energy .capex-section-card{padding:clamp(6px,1vw,16px) clamp(10px,1.5vw,20px) clamp(4px,0.8vw,12px);border-radius:clamp(10px,1.2vw,18px);}
+.e-wrap{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:clamp(4px,0.5vw,8px) clamp(8px,1.2vw,16px);padding:0;height:calc(100vh - 128px);align-items:stretch;}
+.e-section-label{font-size:clamp(7px,0.6vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-align:center;margin:0;}
+.e-card-hdr{display:flex;align-items:baseline;gap:6px;padding:clamp(2px,0.3vw,5px) clamp(6px,0.8vw,12px) 0;}
+.e-card-hdr-title{font-size:clamp(13px,1.3vw,18px);font-weight:800;letter-spacing:-0.5px;}
+.e-card-hdr-sub{font-size:clamp(5px,0.45vw,7px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;}
+.e-card{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box;overflow:hidden;}
+.e-card .e-sec{border-bottom:1px solid rgba(138,146,171,0.12);padding:clamp(2px,0.35vw,5px) 4px;}
 .e-card .e-sec:last-child{border-bottom:none;}
-.e-card .e-sec-label{font-size:clamp(5px,0.45vw,7px);font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.45);margin-bottom:clamp(3px,0.4vw,7px);text-align:center;}
-.e-card .e-big{font-size:clamp(16px,1.6vw,24px);font-weight:800;color:rgba(255,255,255,0.92);letter-spacing:-0.5px;line-height:1.1;}
-.e-card .e-big-unit{font-size:clamp(7px,0.6vw,10px);font-weight:500;color:rgba(255,255,255,0.35);}
-.e-card .e-sub{font-size:clamp(5px,0.45vw,7px);color:rgba(255,255,255,0.28);margin-top:1px;}
-.e-card .e-mid{font-size:clamp(13px,1.3vw,20px);font-weight:800;letter-spacing:-0.5px;line-height:1.1;}
+.e-card .e-sec-label{font-size:clamp(5px,0.45vw,7px);font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin-bottom:clamp(2px,0.4vw,6px);text-align:center;}
+.e-card .e-big{font-size:clamp(13px,1.3vw,20px);font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:-0.5px;}
+.e-card .e-big-unit{font-size:clamp(6px,0.55vw,9px);font-weight:400;color:rgba(255,255,255,0.4);}
+.e-card .e-sub{font-size:clamp(5px,0.42vw,7px);color:rgba(255,255,255,0.3);margin-top:1px;}
+.e-card .e-mid{font-size:clamp(11px,1.1vw,17px);font-weight:800;letter-spacing:-0.5px;}
 .e-card .e-mid-unit{font-size:clamp(6px,0.55vw,9px);font-weight:400;}
-.e-card .e-pct{font-size:clamp(11px,1.1vw,16px);font-weight:800;}
-.e-card .e-pct-arrow{font-size:clamp(5px,0.45vw,7px);}
-.e-card .e-arret-num{font-size:clamp(20px,2.2vw,34px);font-weight:800;letter-spacing:-1.5px;line-height:1;}
-.e-card .e-arret-sub{font-size:clamp(5px,0.45vw,7px);color:rgba(255,255,255,0.3);margin-top:2px;}
-.e-card .e-arret-sub2{font-size:clamp(5px,0.4vw,6px);color:rgba(255,255,255,0.22);margin-top:0;}
-.e-card .e-arret-sub3{font-size:clamp(5px,0.4vw,6px);color:rgba(255,255,255,0.18);margin-top:0;}
-.e-card.e-enr .e-sec{border-color:rgba(0,171,99,0.06);}
-.e-card.e-enr .e-kpi-item{background:rgba(0,171,99,0.03);border-color:rgba(0,171,99,0.1);}
-.e-card .e-kpi-row{display:flex;align-items:stretch;justify-content:center;gap:clamp(6px,0.7vw,12px);}
-.e-card .e-kpi-item{text-align:center;flex:1;background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.12);border-radius:clamp(8px,0.9vw,14px);padding:clamp(6px,0.7vw,12px) clamp(4px,0.5vw,8px);display:flex;flex-direction:column;justify-content:center;gap:2px;}
+.e-card .e-pct{font-size:clamp(9px,0.9vw,13px);font-weight:800;}
+.e-card .e-pct-arrow{font-size:clamp(5px,0.42vw,6px);}
+.e-card .e-arret-num{font-size:clamp(16px,1.8vw,28px);font-weight:800;letter-spacing:-1px;}
+.e-card .e-arret-sub{font-size:clamp(5px,0.42vw,7px);color:rgba(255,255,255,0.3);margin-top:1px;}
+.e-card .e-arret-sub2{font-size:clamp(5px,0.38vw,6px);color:rgba(255,255,255,0.25);margin-top:0;}
+.e-card .e-arret-sub3{font-size:clamp(5px,0.38vw,6px);color:rgba(255,255,255,0.2);margin-top:0;}
+/* EnR card overrides */
+.e-card.e-enr .e-sec{border-color:rgba(0,171,99,0.08);}
 .e-card.e-enr .e-card-hdr-title{color:#a8d98a;}
-.e-card.e-enr .e-card-hdr-sub{color:rgba(0,171,99,0.35);}
-.e-card .e-card-hdr-title{color:rgba(138,146,171,0.6);}
-.e-card .e-card-hdr-sub{color:rgba(138,146,171,0.3);}
+.e-card.e-enr .e-card-hdr-sub{color:rgba(0,171,99,0.4);}
+.e-card.e-enr .csec-kpi-label{font-size:clamp(6px,0.55vw,8px);}
+.e-card.e-enr .csec-kpi-val{font-size:clamp(16px,1.8vw,30px);}
 
 /* ══ PROPERTIES GRID ══ */
 .p-wrap{min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;padding:0 clamp(16px,4vw,60px) 40px;}
@@ -943,308 +908,134 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
     <div class="e-wrap">
 
-      <!-- ═══ TITRES AU-DESSUS ═══ -->
-      <div class="e-sum-hdr">
-        <span class="e-sum-hdr-title">Production</span>
-        <span class="e-sum-hdr-sub">Donnees en temps reel</span>
-      </div>
-      <div class="e-sum-hdr">
-        <span class="e-sum-hdr-title">Projets</span>
-        <span class="e-sum-hdr-sub">Pipeline & CAPEX</span>
-      </div>
+      <!-- Column headers -->
+      <div class="e-section-label">Production</div>
+      <div class="e-section-label">Projets</div>
 
-      <!-- ═══ CARTE RESUME : PRODUCTION ═══ -->
-      <div class="capex-section-card" onclick="openEnergyProduction()"
-        style="border-color:rgba(255,255,255,0.1);cursor:pointer;"
-        onmouseenter="this.style.borderColor='rgba(255,255,255,0.25)';this.style.background='rgba(255,255,255,0.03)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.3)';this.style.transform='translateY(-3px)'"
-        onmouseleave="this.style.borderColor='rgba(255,255,255,0.1)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-sum-body">
-          <!-- HFO section -->
-          <div class="e-type-section">
-            <div class="e-type-label e-hfo"><span>HFO · Thermique</span></div>
-            <div class="e-kpi-row">
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Puissance dispo</div>
-                <div class="e-kpi-val"><span id="es-hfo-mw">—</span> <span class="e-kpi-unit">MW</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Production</div>
-                <div class="e-kpi-val"><span id="es-hfo-prod">—</span> <span class="e-kpi-unit">MWh</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Moteurs arret</div>
-                <div class="e-kpi-val e-red"><span id="es-hfo-arret">—</span><span class="e-kpi-unit"> / <span id="es-hfo-arret-tot">—</span></span></div>
-              </div>
-            </div>
-          </div>
-          <!-- EnR section -->
-          <div class="e-type-section e-enr-sec">
-            <div class="e-type-label e-enr"><span>EnR · Renouvelables</span></div>
-            <div class="e-kpi-row">
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Moy. journaliere</div>
-                <div class="e-kpi-val" style="color:rgba(0,171,99,0.85);"><span id="es-enr-mwhj">—</span> <span class="e-kpi-unit" style="color:rgba(0,171,99,0.4);">MWh/j</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Capacite installee</div>
-                <div class="e-kpi-val" style="color:rgba(0,171,99,0.85);"><span id="es-enr-cap">—</span> <span class="e-kpi-unit" style="color:rgba(0,171,99,0.4);">MWc</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Cumul production</div>
-                <div class="e-kpi-val" style="color:rgba(0,171,99,0.85);"><span id="es-enr-cumul">—</span> <span class="e-kpi-unit" style="color:rgba(0,171,99,0.4);">MWh</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- ═══ ROW 1 · HFO ═══ -->
 
-      <!-- ═══ CARTE RESUME : PROJETS ═══ -->
-      <div class="capex-section-card" onclick="openEnergyProjets()"
-        style="border-color:rgba(255,255,255,0.1);cursor:pointer;"
-        onmouseenter="this.style.borderColor='rgba(255,255,255,0.25)';this.style.background='rgba(255,255,255,0.03)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.3)';this.style.transform='translateY(-3px)'"
-        onmouseleave="this.style.borderColor='rgba(255,255,255,0.1)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-sum-body">
-          <!-- HFO section -->
-          <div class="e-type-section">
-            <div class="e-type-label e-hfo"><span>HFO · Thermique</span></div>
-            <div class="e-kpi-row">
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Total projets</div>
-                <div class="e-kpi-val"><span id="es-hfo-proj">—</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Urgents</div>
-                <div class="e-kpi-val e-red"><span id="es-hfo-urgent">—</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Budget CAPEX</div>
-                <div class="e-kpi-val e-blue"><span id="es-hfo-budget">—</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Execution</div>
-                <div class="e-kpi-val"><span id="es-hfo-exec">—</span><span class="e-kpi-unit">%</span></div>
-              </div>
-            </div>
-          </div>
-          <!-- EnR section -->
-          <div class="e-type-section e-enr-sec" style="border-top:1px solid rgba(255,255,255,0.04);">
-            <div class="e-type-label e-enr"><span>EnR · Renouvelables</span></div>
-            <div class="e-kpi-row">
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Projets</div>
-                <div class="e-kpi-val e-green"><span id="es-enr-proj">—</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">Pipeline</div>
-                <div class="e-kpi-val e-green"><span id="es-enr-mw">—</span> <span class="e-kpi-unit">MWc</span></div>
-              </div>
-              <div class="e-kpi-item">
-                <div class="e-kpi-lbl">CAPEX</div>
-                <div class="e-kpi-val e-green"><span id="es-enr-capex">—</span> <span class="e-kpi-unit">M$</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ══ PANEL ENERGY PRODUCTION (Niveau 2) ══ -->
-<div id="panel-energy-production" class="e-panel">
-  <div class="sd-sticky-bar">
-    <div class="nav-back"><button class="back-btn" onclick="closeEnergyProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
-    <div class="sd-site-name" style="font-size:clamp(14px,1.4vw,22px);font-weight:800;color:rgba(255,255,255,0.9);">Production</div>
-    <div class="nav-filter"><div class="time-filter"><span class="day-btn-wrap"><button class="tfilter" onclick="toggleDayDropdown(event,this)">24h</button><div class="day-dropdown"></div></span><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown"></div></span><button class="tfilter" onclick="setFilter('year',this)">Cette année</button></div></div>
-  </div>
-  <div class="inner-page-inner" style="min-height:auto;padding:0 clamp(16px,3vw,48px);">
-    <div class="e-panel-grid">
-
-      <div class="e-sum-hdr"><span class="e-sum-hdr-title">HFO</span><span class="e-sum-hdr-sub">Thermique</span></div>
-      <div class="e-sum-hdr"><span class="e-sum-hdr-title" style="color:#a8d98a;">EnR</span><span class="e-sum-hdr-sub" style="color:rgba(0,171,99,0.3);">Renouvelables</span></div>
-
-      <!-- HFO Production (detailed) -->
+      <!-- HFO Production -->
       <div class="capex-section-card e-card" onclick="openInner('hfo')" data-pole="hfo"
-        style="border-color:rgba(138,146,171,0.35);cursor:pointer;"
+        style="border-color:rgba(138,146,171,0.35);"
         onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 16px 40px rgba(138,146,171,0.25)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+        <div class="e-card-hdr"><span class="e-card-hdr-title" style="color:#1e4d63;">HFO</span><span class="e-card-hdr-sub" style="color:rgba(138,146,171,0.5);">Thermique</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label">Puissance dispo vs Contractuel</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Disponible</div>
-              <div class="e-kpi-val"><span id="e-hfo-mw-dispo">—</span> <span class="e-kpi-unit">MW</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-hfo-mw-dispo">—</span> <span class="e-big-unit">MW</span></div>
+              <div class="e-sub">Disponible</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">% Contrat</div>
-              <div class="e-kpi-val" style="font-size:clamp(14px,1.4vw,22px);"><span id="e-hfo-pct-contrat">—</span></div>
-              <div id="e-hfo-pct-arrow" style="font-size:clamp(5px,0.45vw,7px);color:rgba(255,255,255,0.3);">—</div>
+            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+              <div id="e-hfo-pct-contrat" class="e-pct">—</div>
+              <div id="e-hfo-pct-arrow" class="e-pct-arrow">—</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Contractuel</div>
-              <div class="e-kpi-val"><span id="e-hfo-mw-contrat">—</span> <span class="e-kpi-unit">MW</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label">Production a date vs Previsionnelle</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Reel · <span id="e-hfo-prod-filter">Ce mois</span></div>
-              <div class="e-kpi-val"><span id="e-hfo-prod-reel">—</span> <span class="e-kpi-unit">MWh</span></div>
-            </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">% Prevu</div>
-              <div class="e-kpi-val" style="font-size:clamp(14px,1.4vw,22px);"><span id="e-hfo-prod-pct">—</span></div>
-              <div id="e-hfo-prod-arrow" style="font-size:clamp(5px,0.45vw,7px);color:rgba(255,255,255,0.3);">—</div>
-            </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Previsionnel</div>
-              <div class="e-kpi-val"><span id="e-hfo-prod-prev">—</span> <span class="e-kpi-unit">MWh</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-hfo-mw-contrat">—</span> <span class="e-big-unit">MW</span></div>
+              <div class="e-sub">Contractuel</div>
             </div>
           </div>
         </div>
 
         <div class="e-sec">
-          <div class="e-sec-label">Moteurs a l'arret</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Moteurs arret</div>
-              <div class="e-kpi-val"><span id="e-hfo-arret-count">—</span><span class="e-kpi-unit"> / <span id="e-hfo-arret-total">—</span></span></div>
+          <div class="e-sec-label">Production à date vs Prévisionnelle</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-hfo-prod-reel">—</span> <span class="e-big-unit">MWh</span></div>
+              <div class="e-sub">Réel · <span id="e-hfo-prod-filter">Ce mois</span></div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Manque / jour</div>
-              <div class="e-kpi-val e-red"><span id="e-hfo-arret-mwhj">—</span> <span class="e-kpi-unit">MWh/j</span></div>
+            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+              <div id="e-hfo-prod-pct" class="e-pct">—</div>
+              <div id="e-hfo-prod-arrow" class="e-pct-arrow">—</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Manque a date · <span id="e-hfo-arret-period">—</span></div>
-              <div class="e-kpi-val e-red"><span id="e-hfo-arret-mwh-date">—</span> <span class="e-kpi-unit">MWh</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-hfo-prod-prev">—</span> <span class="e-big-unit">MWh</span></div>
+              <div class="e-sub">Prévisionnel</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="e-sec">
+          <div class="e-sec-label">Moteurs à l'arrêt</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div id="e-hfo-arret-count" class="e-arret-num">—</div>
+              <div class="e-arret-sub">/ <span id="e-hfo-arret-total">—</span> moteurs</div>
+            </div>
+            <div style="width:1px;height:30px;background:rgba(138,146,171,0.2);"></div>
+            <div style="text-align:center;flex:1;display:flex;flex-direction:column;gap:2px;">
+              <div>
+                <div class="e-mid" style="color:rgba(243,112,86,0.8);"><span id="e-hfo-arret-mwhj">—</span> <span class="e-mid-unit" style="color:rgba(243,112,86,0.5);">MWh/j</span></div>
+                <div class="e-arret-sub2">manque / jour</div>
+              </div>
+              <div style="height:1px;background:rgba(138,146,171,0.15);width:60%;margin:0 auto;"></div>
+              <div>
+                <div class="e-mid" style="color:rgba(243,112,86,0.8);"><span id="e-hfo-arret-mwh-date">—</span> <span class="e-mid-unit" style="color:rgba(243,112,86,0.5);">MWh</span></div>
+                <div class="e-arret-sub3">manque à date · <span id="e-hfo-arret-period">—</span></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- EnR Production (detailed) -->
-      <div class="capex-section-card e-card e-enr" onclick="openEnrProduction()" data-pole="enr"
-        style="border-color:rgba(0,171,99,0.15);cursor:pointer;"
-        onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
-        onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-
-        <div class="e-sec">
-          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production moyenne vs Capacite</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Moy. journaliere</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-mwhj">—</span> <span class="e-kpi-unit">MWh/j</span></div>
-            </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Ratio</div>
-              <div class="e-kpi-val e-green" style="font-size:clamp(14px,1.4vw,22px);"><span id="e-enr-ratio">—</span></div>
-              <div style="font-size:clamp(5px,0.45vw,7px);color:rgba(0,171,99,0.5);">kWh/kWc</div>
-            </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Installes</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-cap">—</span> <span class="e-kpi-unit">MWc</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production cumulee · Mix EnR</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Depuis janvier</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-cumul">—</span> <span class="e-kpi-unit">MWh</span></div>
-            </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Du mix</div>
-              <div class="e-kpi-val e-green" style="font-size:clamp(14px,1.4vw,22px);"><span id="e-enr-mix">—</span></div>
-            </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">En production</div>
-              <div class="e-kpi-val"><span id="e-enr-sites-count">—</span> <span class="e-kpi-unit">sites</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par site</div>
-          <div id="e-enr-sites-row" class="e-kpi-row"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ══ PANEL ENERGY PROJETS (Niveau 2) ══ -->
-<div id="panel-energy-projets" class="e-panel">
-  <div class="sd-sticky-bar">
-    <div class="nav-back"><button class="back-btn" onclick="closeEnergyProjets()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
-    <div class="sd-site-name" style="font-size:clamp(14px,1.4vw,22px);font-weight:800;color:rgba(255,255,255,0.9);">Projets</div>
-    <div class="nav-filter"><div class="time-filter"><span class="day-btn-wrap"><button class="tfilter" onclick="toggleDayDropdown(event,this)">24h</button><div class="day-dropdown"></div></span><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown"></div></span><button class="tfilter" onclick="setFilter('year',this)">Cette année</button></div></div>
-  </div>
-  <div class="inner-page-inner" style="min-height:auto;padding:0 clamp(16px,3vw,48px);">
-    <div class="e-panel-grid">
-
-      <div class="e-sum-hdr"><span class="e-sum-hdr-title">HFO</span><span class="e-sum-hdr-sub">Thermique</span></div>
-      <div class="e-sum-hdr"><span class="e-sum-hdr-title" style="color:#a8d98a;">EnR</span><span class="e-sum-hdr-sub" style="color:rgba(0,171,99,0.3);">Renouvelables</span></div>
-
-      <!-- HFO Projets (detailed) -->
+      <!-- HFO Projets -->
       <div class="capex-section-card e-card" onclick="openHfoProjets()" data-pole="hfo"
-        style="border-color:rgba(138,146,171,0.35);cursor:pointer;"
+        style="border-color:rgba(138,146,171,0.35);"
         onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 16px 40px rgba(138,146,171,0.25)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+        <div class="e-card-hdr"><span class="e-card-hdr-title" style="color:#1e4d63;">HFO</span><span class="e-card-hdr-sub" style="color:rgba(138,146,171,0.5);">Thermique</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label">Projets en cours</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Projets</div>
-              <div class="e-kpi-val"><span id="e-hfo-proj-total">—</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(255,255,255,0.9);"><span id="e-hfo-proj-total">—</span></div>
+              <div class="e-sub">Projets</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Overhauls</div>
-              <div class="e-kpi-val"><span id="e-hfo-proj-oh">—</span></div>
+            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+              <div class="e-pct" style="color:rgba(138,146,171,0.5);">·</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-hfo-proj-oh">—</span> <span class="e-big-unit">overhauls</span></div>
+              <div class="e-sub">Moteurs</div>
             </div>
           </div>
         </div>
 
         <div class="e-sec">
           <div class="e-sec-label">Par statut</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Urgents</div>
-              <div class="e-kpi-val e-red"><span id="e-hfo-proj-urgent">—</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(243,112,86,0.9);"><span id="e-hfo-proj-urgent">—</span></div>
+              <div class="e-sub">Urgents</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">En cours</div>
-              <div class="e-kpi-val e-orange"><span id="e-hfo-proj-encours">—</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-hfo-proj-encours">—</span></div>
+              <div class="e-sub">En cours</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Indefinis</div>
-              <div class="e-kpi-val" style="color:rgba(255,255,255,0.4);"><span id="e-hfo-proj-indef">—</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(255,255,255,0.4);"><span id="e-hfo-proj-indef">—</span></div>
+              <div class="e-sub">Indéfinis</div>
             </div>
           </div>
         </div>
 
         <div class="e-sec">
           <div class="e-sec-label">Budget CAPEX</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Budget</div>
-              <div class="e-kpi-val e-blue"><span id="e-hfo-proj-budget">—</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(100,136,255,0.9);"><span id="e-hfo-proj-budget">—</span></div>
+              <div class="e-sub">Budget</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Realise</div>
-              <div class="e-kpi-val e-orange"><span id="e-hfo-proj-incurred">—</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-hfo-proj-incurred">—</span></div>
+              <div class="e-sub">Réalisé</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Execution</div>
-              <div class="e-kpi-val"><span id="e-hfo-proj-pct">—</span><span class="e-kpi-unit">%</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-hfo-proj-pct">—</span><span class="e-big-unit">%</span></div>
+              <div class="e-sub">Exécution</div>
             </div>
           </div>
           <div style="margin-top:4px;height:3px;background:rgba(138,146,171,0.1);border-radius:2px;overflow:hidden;">
@@ -1254,58 +1045,113 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
         <div class="e-sec">
           <div class="e-sec-label">Par site</div>
-          <div id="e-hfo-proj-sites-row" class="e-kpi-row"></div>
+          <div id="e-hfo-proj-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:2px;"></div>
         </div>
       </div>
 
-      <!-- EnR Projets (detailed) -->
-      <div class="capex-section-card e-card e-enr" onclick="openEnrProjets()" data-pole="enr"
-        style="border-color:rgba(0,171,99,0.15);cursor:pointer;"
+      <!-- ═══ ROW 2 · EnR ═══ -->
+
+      <!-- EnR Production -->
+      <div class="capex-section-card e-card e-enr" onclick="openEnrProduction()" data-pole="enr"
+        style="border-color:rgba(0,171,99,0.15);"
         onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+        <div class="e-card-hdr"><span class="e-card-hdr-title">EnR</span><span class="e-card-hdr-sub">Renouvelables</span></div>
+
+        <div class="e-sec">
+          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production moyenne vs Capacité</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-enr-mwhj">—</span> <span class="e-big-unit">MWh/j</span></div>
+              <div class="e-sub">Moy. journalière</div>
+            </div>
+            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+              <div id="e-enr-ratio" class="e-pct" style="color:#00ab63;">—</div>
+              <div class="e-pct-arrow" style="color:rgba(0,171,99,0.5);">kWh/kWc</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-enr-cap">—</span> <span class="e-big-unit">MWc</span></div>
+              <div class="e-sub">Installés</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="e-sec">
+          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production cumulée · Mix EnR</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:#00ab63;"><span id="e-enr-cumul">—</span> <span class="e-big-unit" style="color:rgba(0,171,99,0.5);">MWh</span></div>
+              <div class="e-sub">Depuis janvier</div>
+            </div>
+            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+              <div id="e-enr-mix" class="e-pct" style="color:#00ab63;">—</div>
+              <div class="e-pct-arrow" style="color:rgba(0,171,99,0.5);">du mix</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-enr-sites-count">—</span> <span class="e-big-unit">sites</span></div>
+              <div class="e-sub">En production</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="e-sec">
+          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par site</div>
+          <div id="e-enr-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:4px;"></div>
+        </div>
+      </div>
+
+      <!-- EnR Projets -->
+      <div class="capex-section-card e-card e-enr" onclick="openEnrProjets()" data-pole="enr"
+        style="border-color:rgba(0,171,99,0.15);"
+        onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
+        onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+        <div class="e-card-hdr"><span class="e-card-hdr-title">EnR</span><span class="e-card-hdr-sub">Renouvelables</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Pipeline de projets</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Projets</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-proj-total">—</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:#00ab63;"><span id="e-enr-proj-total">—</span></div>
+              <div class="e-sub">Projets</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Puissance totale</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-proj-mw">—</span> <span class="e-kpi-unit">MWc</span></div>
+            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+              <div class="e-pct" style="color:rgba(0,171,99,0.6);">·</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big"><span id="e-enr-proj-mw">—</span> <span class="e-big-unit">MWc</span></div>
+              <div class="e-sub">Puissance totale</div>
             </div>
           </div>
         </div>
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par phase</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Termines</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-proj-terme">—</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(0,171,99,0.8);"><span id="e-enr-proj-terme">—</span></div>
+              <div class="e-sub">Terminés</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Construction</div>
-              <div class="e-kpi-val e-orange"><span id="e-enr-proj-const">—</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-enr-proj-const">—</span></div>
+              <div class="e-sub">Construction</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Developpement</div>
-              <div class="e-kpi-val" style="color:rgba(90,175,175,0.8);"><span id="e-enr-proj-dev">—</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(90,175,175,0.8);"><span id="e-enr-proj-dev">—</span></div>
+              <div class="e-sub">Développement</div>
             </div>
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">Planifies</div>
-              <div class="e-kpi-val" style="color:rgba(255,255,255,0.4);"><span id="e-enr-proj-plan">—</span></div>
+            <div style="text-align:center;flex:1;">
+              <div class="e-big" style="color:rgba(255,255,255,0.4);"><span id="e-enr-proj-plan">—</span></div>
+              <div class="e-sub">Planifiés</div>
             </div>
           </div>
         </div>
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Investissement</div>
-          <div class="e-kpi-row">
-            <div class="e-kpi-item">
-              <div class="e-kpi-lbl">CAPEX total</div>
-              <div class="e-kpi-val e-green"><span id="e-enr-proj-capex">—</span> <span class="e-kpi-unit">M$</span></div>
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div class="e-big" style="color:#00ab63;"><span id="e-enr-proj-capex">—</span> <span class="e-big-unit" style="color:rgba(0,171,99,0.5);">M$</span></div>
+              <div class="e-sub">CAPEX total</div>
             </div>
           </div>
         </div>
@@ -1702,53 +1548,6 @@ function openEnrProjets(){
 function closeEnrProjets(){
   document.getElementById('panel-enr-projets').classList.remove('active');
   document.body.style.overflow = '';
-}
-
-/* ── Energy Niveau 2 panels ── */
-function openEnergyProduction(){
-  var p = document.getElementById('panel-energy-production');
-  p.style.display = '';
-  p.style.transform = '';
-  p.classList.add('active');
-  p.scrollTop = 0;
-  document.body.style.overflow = 'hidden';
-}
-function closeEnergyProduction(){
-  var p = document.getElementById('panel-energy-production');
-  p.classList.remove('active');
-  document.body.style.overflow = '';
-}
-function openEnergyProjets(){
-  var p = document.getElementById('panel-energy-projets');
-  p.style.display = '';
-  p.style.transform = '';
-  p.classList.add('active');
-  p.scrollTop = 0;
-  document.body.style.overflow = 'hidden';
-}
-function closeEnergyProjets(){
-  var p = document.getElementById('panel-energy-projets');
-  p.classList.remove('active');
-  document.body.style.overflow = '';
-}
-/* Sync summary KPIs from detailed data */
-function syncEnergySummary(){
-  var s = function(id){ var el = document.getElementById(id); return el ? el.textContent : '—'; };
-  var w = function(id, v){ var el = document.getElementById(id); if(el) el.textContent = v; };
-  w('es-hfo-mw', s('e-hfo-mw-dispo'));
-  w('es-hfo-prod', s('e-hfo-prod-reel'));
-  w('es-hfo-arret', s('e-hfo-arret-count'));
-  w('es-hfo-arret-tot', s('e-hfo-arret-total'));
-  w('es-enr-mwhj', s('e-enr-mwhj'));
-  w('es-enr-cap', s('e-enr-cap'));
-  w('es-enr-cumul', s('e-enr-cumul'));
-  w('es-hfo-proj', s('e-hfo-proj-total'));
-  w('es-hfo-urgent', s('e-hfo-proj-urgent'));
-  w('es-hfo-budget', s('e-hfo-proj-budget'));
-  w('es-hfo-exec', s('e-hfo-proj-pct'));
-  w('es-enr-proj', s('e-enr-proj-total'));
-  w('es-enr-mw', s('e-enr-proj-mw'));
-  w('es-enr-capex', s('e-enr-proj-capex'));
 }
 
 /* ── HFO Projets panel ── */
@@ -2479,10 +2278,11 @@ function closeHfoProjets(){
     enrSites.forEach(function(s, i) {
       var col = siteColors[i % siteColors.length];
       var pct = totalEnrAvgKwh > 0 ? Math.round(s.avgDailyKwh / totalEnrAvgKwh * 100) : 0;
-      rh += '<div class="e-kpi-item">'
-        + '<div class="e-kpi-lbl">\u2600\uFE0F ' + s.name + ' \xB7 ' + pct + '%</div>'
-        + '<div class="e-kpi-val" style="color:' + col + ';"><span>' + (s.avgDailyKwh/1000).toFixed(1) + '</span> <span class="e-kpi-unit">MWh/j</span></div>'
+      rh += '<div style="text-align:center;flex:1;">'
+        + '<div class="e-big" style="color:' + col + ';"><span>' + (s.avgDailyKwh/1000).toFixed(1) + '</span> <span class="e-big-unit" style="color:rgba(255,255,255,0.3);">MWh/j</span></div>'
+        + '<div class="e-sub">\u2600\uFE0F ' + s.name + ' \xB7 ' + pct + '%</div>'
         + '</div>';
+      if (i < enrSites.length - 1) rh += '<div style="width:1px;height:35px;background:rgba(0,171,99,0.15);"></div>';
     });
     sitesRowEl.innerHTML = rh;
   }
@@ -2520,16 +2320,16 @@ function closeHfoProjets(){
       mainSites.forEach(function(s, i) {
         var bs = hfp.bySite[s];
         if (!bs) return;
-        rh += '<div class="e-kpi-item">'
-          + '<div class="e-kpi-lbl">' + s.charAt(0) + s.slice(1).toLowerCase() + '</div>'
-          + '<div class="e-kpi-val">' + bs.total + '</div>'
+        rh += '<div style="text-align:center;flex:1;">'
+          + '<div class="e-big">' + bs.total + '</div>'
+          + '<div class="e-sub">' + s.charAt(0) + s.slice(1).toLowerCase() + '</div>'
           + '</div>';
+        if (i < mainSites.length - 1) rh += '<div style="width:1px;height:25px;background:rgba(138,146,171,0.15);"></div>';
       });
       sRow.innerHTML = rh;
     }
   }
 
-  if (typeof syncEnergySummary === 'function') syncEnergySummary();
 })();
 </script>
 
@@ -5688,7 +5488,6 @@ function updateEnergyHfoCard() {
   el('e-hfo-prod-arrow').textContent  = prodArrow;
   el('e-hfo-prod-arrow').style.color  = prodColDim;
   el('e-hfo-prod-filter').textContent = filterLabel;
-  if (typeof syncEnergySummary === 'function') syncEnergySummary();
 }
 function closePage(pageId) {
   const el = document.getElementById(pageId);
@@ -5699,10 +5498,10 @@ function closePage(pageId) {
 function navTo(pole) {
   // Close all panels
   ['panel-project-detail','panel-diego-detail','panel-dev-project',
-   'panel-enr-projets','panel-enr-production','panel-hfo-projets','panel-energy-production','panel-energy-projets','panel-groupe-detail','detail-panel','capex-section-panel']
+   'panel-enr-projets','panel-enr-production','panel-hfo-projets','panel-groupe-detail','detail-panel','capex-section-panel']
     .forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) { el.classList.remove('active'); el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
+      if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
     });
   // Close all inner pages
   document.querySelectorAll('.inner-page').forEach(function(ip) { ip.classList.remove('active'); });
@@ -5715,10 +5514,10 @@ function navTo(pole) {
 
 function goHome() {
   ['panel-project-detail','panel-diego-detail','panel-dev-project',
-   'panel-enr-projets','panel-enr-production','panel-hfo-projets','panel-energy-production','panel-energy-projets','panel-groupe-detail','detail-panel','capex-section-panel']
+   'panel-enr-projets','panel-enr-production','panel-hfo-projets','panel-groupe-detail','detail-panel','capex-section-panel']
     .forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) { el.classList.remove('active'); el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
+      if (el) { el.style.display = 'none'; el.style.transform = 'translateX(100%)'; }
     });
   document.querySelectorAll('.inner-page').forEach(function(ip) { ip.classList.remove('active'); });
   document.querySelectorAll('.placeholder-page').forEach(function(p) { p.classList.remove('active'); });
