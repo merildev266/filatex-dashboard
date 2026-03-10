@@ -1053,30 +1053,30 @@ if(sessionStorage.getItem('dash_auth')==='1'){
         </div>
         <div style="margin-bottom:24px;">
           <div style="font-size:48px;font-weight:800;color:#00ab63;line-height:1;letter-spacing:-2px;">
-            284<span style="font-size:20px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:6px;">MWh</span>
+            <span id="enr-prod-total">—</span><span style="font-size:20px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:6px;">MWh/j</span>
           </div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:6px;letter-spacing:0.05em;">Production totale consolidée</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:6px;letter-spacing:0.05em;">Production journalière estimée</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px;">
           <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 10px;text-align:center;">
             <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Solaire</div>
-            <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh</div>
+            <div id="enr-prod-solaire" style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh/j</div>
           </div>
           <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 10px;text-align:center;">
             <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Éolien</div>
-            <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh</div>
+            <div id="enr-prod-eolien" style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh/j</div>
           </div>
           <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 10px;text-align:center;">
-            <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Autre</div>
-            <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh</div>
+            <div style="font-size:8px;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.3);margin-bottom:5px;">Flottant</div>
+            <div id="enr-prod-autre" style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);">—</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.25);">MWh/j</div>
           </div>
         </div>
         <div style="background:rgba(0,0,0,0.18);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
           <span style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Part EnR dans le mix</span>
-          <span style="font-size:20px;font-weight:800;color:#00ab63;">38<span style="font-size:12px;font-weight:400;">%</span></span>
+          <span style="font-size:20px;font-weight:800;color:#00ab63;"><span id="enr-prod-mix">—</span><span style="font-size:12px;font-weight:400;">%</span></span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;color:rgba(0,171,99,0.7);font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;">
           <span>Voir le détail</span><span style="font-size:12px;">→</span>
@@ -1683,6 +1683,27 @@ function closeEnrProjets(){
   if (el('enr-card-const')) el('enr-card-const').textContent = grouped.construction.length;
   if (el('enr-card-dev'))   el('enr-card-dev').textContent   = grouped.developpement.length;
   if (el('enr-card-plan'))  el('enr-card-plan').textContent  = grouped.planifie.length;
+
+  /* ── Production EnR — calcul dynamique par type ── */
+  var prodByType = { solar:0, wind:0, floating:0 };
+  enrProjects.forEach(function(p) {
+    if (!p.prodJour) return;
+    var phase = getPhase(p);
+    var eff = 0;
+    if (phase === 'termine') eff = p.prodJour;
+    else if (phase === 'construction') eff = p.prodJour * (p.constProg || 0);
+    prodByType[p.type] = (prodByType[p.type] || 0) + eff;
+  });
+  var totalProdEnrKwh = prodByType.solar + prodByType.wind + prodByType.floating;
+  var enrMwhJ = totalProdEnrKwh / 1000;
+
+  if (el('enr-prod-total'))   el('enr-prod-total').textContent   = Math.round(enrMwhJ);
+  if (el('enr-prod-solaire')) el('enr-prod-solaire').textContent = Math.round(prodByType.solar / 1000);
+  if (el('enr-prod-eolien'))  el('enr-prod-eolien').textContent  = prodByType.wind > 0 ? (prodByType.wind / 1000).toFixed(1) : '—';
+  if (el('enr-prod-autre'))   el('enr-prod-autre').textContent   = prodByType.floating > 0 ? Math.round(prodByType.floating / 1000) : '—';
+
+  /* Mix EnR calculé après chargement site_data.js (voir updateEnrMix) */
+  window._enrMwhJ = enrMwhJ;
 
   /* ── Expose to global scope for project detail panel ── */
   window._enrProjects = enrProjects;
@@ -4705,8 +4726,19 @@ function renderProjectCard(p, color, colorRgb) {
 <script src="site_data.js"></script>
 <script>
 
-
-
+/* ── Mix EnR/HFO (après chargement site_data.js) ── */
+(function() {
+  var enrMwhJ = window._enrMwhJ || 0;
+  var totalHfoKwh = 0;
+  [TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE].forEach(function(site) {
+    if (!site || !site.groupes) return;
+    site.groupes.forEach(function(g) { totalHfoKwh += (g.energieProd || 0); });
+  });
+  var hfoMwhJ = totalHfoKwh / 1000;
+  var mixPct = (hfoMwhJ + enrMwhJ) > 0 ? Math.round(enrMwhJ / (hfoMwhJ + enrMwhJ) * 100) : 0;
+  var elMix = document.getElementById('enr-prod-mix');
+  if (elMix) elMix.textContent = mixPct;
+})();
 
 
 
