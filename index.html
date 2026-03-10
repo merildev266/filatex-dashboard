@@ -462,12 +462,13 @@ body::-webkit-scrollbar{display:none;}
 #inner-hfo .contrib-banner{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
 
 /* ══ ENERGY PAGE — responsive cards ══ */
-.e-wrap{min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;padding:0 clamp(16px,4vw,60px) 40px;}
-.e-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(20px,3.5vw,56px);width:100%;max-width:clamp(420px,58vw,820px);}
-.e-col{display:flex;flex-direction:column;align-items:center;}
-.e-title{font-size:clamp(28px,3.8vw,56px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:6px;text-align:center;}
-.e-subtitle{font-size:clamp(6px,0.55vw,8px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:clamp(10px,1.3vw,20px);text-align:center;}
-.e-card{width:100%;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box;}
+.e-wrap{display:flex;align-items:flex-start;justify-content:center;padding:clamp(10px,2vw,30px) clamp(16px,4vw,60px) 40px;gap:clamp(20px,3vw,48px);}
+.e-section{flex:1;max-width:clamp(280px,32vw,460px);}
+.e-section-label{font-size:clamp(7px,0.6vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-align:center;margin-bottom:clamp(14px,1.5vw,24px);}
+.e-col{display:flex;flex-direction:column;align-items:center;margin-bottom:clamp(16px,2vw,28px);}
+.e-title{font-size:clamp(22px,2.8vw,40px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:4px;text-align:center;}
+.e-subtitle{font-size:clamp(6px,0.55vw,8px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:clamp(8px,1vw,14px);text-align:center;}
+.e-card{width:100%;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box;}
 .e-card .e-sec{border-bottom:1px solid rgba(138,146,171,0.15);}
 .e-card .e-sec-label{font-size:clamp(6px,0.55vw,8px);font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(138,146,171,0.55);margin-bottom:clamp(6px,1vw,14px);text-align:center;}
 .e-card .e-big{font-size:clamp(16px,1.7vw,26px);font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:-1px;}
@@ -903,9 +904,12 @@ if(sessionStorage.getItem('dash_auth')==='1'){
   <div class="inner-page-inner">
 
     <div class="e-wrap">
-      <div class="e-grid">
 
-        <!-- Card HFO -->
+      <!-- ═══ COLONNE GAUCHE · PRODUCTION ═══ -->
+      <div class="e-section">
+        <div class="e-section-label">Production</div>
+
+        <!-- HFO Production -->
         <div class="e-col">
           <div class="e-title" style="color:#1e4d63;">HFO</div>
           <div class="e-subtitle" style="color:rgba(138,146,171,0.5);">Thermique</div>
@@ -914,7 +918,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
             onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 20px 60px rgba(138,146,171,0.35)';this.style.transform='translateY(-6px)'"
             onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
 
-            <!-- KPI 1 · Puissance disponible vs Contractuel -->
             <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px clamp(6px,0.8vw,12px);">
               <div class="e-sec-label">Puissance dispo vs Contractuel</div>
               <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -933,7 +936,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
               </div>
             </div>
 
-            <!-- KPI 2 · Production à date vs Prévisionnelle -->
             <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px;">
               <div class="e-sec-label">Production à date vs Prévisionnelle</div>
               <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -952,7 +954,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
               </div>
             </div>
 
-            <!-- KPI 3 · Moteurs à l'arrêt -->
             <div style="padding:clamp(4px,0.7vw,10px) 4px 4px;">
               <div class="e-sec-label">Moteurs à l'arrêt</div>
               <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -978,16 +979,15 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           </div>
         </div>
 
-        <!-- Card EnR -->
+        <!-- EnR Production -->
         <div class="e-col">
           <div class="e-title" style="color:#a8d98a;">EnR</div>
           <div class="e-subtitle" style="color:rgba(0,171,99,0.5);">Renouvelables</div>
-          <div class="capex-section-card e-card e-enr" onclick="openInner('enr')" data-pole="enr"
+          <div class="capex-section-card e-card e-enr" onclick="openEnrProduction()" data-pole="enr"
             style="border-color:rgba(0,171,99,0.15);"
             onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 20px 60px rgba(0,171,99,0.2)';this.style.transform='translateY(-6px)'"
             onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
 
-            <!-- KPI 1 · Production moyenne vs Capacité installée -->
             <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px clamp(6px,0.8vw,12px);">
               <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production moyenne vs Capacité</div>
               <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -1006,7 +1006,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
               </div>
             </div>
 
-            <!-- KPI 2 · Production cumulée + Mix EnR -->
             <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px;">
               <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production cumulée · Mix EnR</div>
               <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -1025,7 +1024,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
               </div>
             </div>
 
-            <!-- KPI 3 · Sites de production -->
             <div style="padding:clamp(4px,0.7vw,10px) 4px 4px;">
               <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par site</div>
               <div id="e-enr-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:4px;"></div>
@@ -1034,7 +1032,95 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           </div>
         </div>
 
-      </div>
+      </div><!-- end section Production -->
+
+      <!-- ═══ Séparateur vertical ═══ -->
+      <div style="width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.08) 20%,rgba(255,255,255,0.08) 80%,transparent);align-self:stretch;"></div>
+
+      <!-- ═══ COLONNE DROITE · PROJETS ═══ -->
+      <div class="e-section">
+        <div class="e-section-label">Projets</div>
+
+        <!-- HFO Projets (placeholder) -->
+        <div class="e-col">
+          <div class="e-title" style="color:#1e4d63;">HFO</div>
+          <div class="e-subtitle" style="color:rgba(138,146,171,0.5);">Thermique</div>
+          <div class="capex-section-card e-card" style="border-color:rgba(138,146,171,0.12);opacity:0.5;cursor:default;">
+            <div style="display:flex;align-items:center;justify-content:center;flex:1;padding:40px 20px;">
+              <div style="text-align:center;">
+                <div style="font-size:clamp(12px,1.2vw,18px);font-weight:700;color:rgba(138,146,171,0.4);letter-spacing:0.1em;">À venir</div>
+                <div style="font-size:clamp(7px,0.6vw,9px);color:rgba(138,146,171,0.25);margin-top:8px;letter-spacing:0.15em;text-transform:uppercase;">Données en cours d'intégration</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EnR Projets -->
+        <div class="e-col">
+          <div class="e-title" style="color:#a8d98a;">EnR</div>
+          <div class="e-subtitle" style="color:rgba(0,171,99,0.5);">Renouvelables</div>
+          <div class="capex-section-card e-card e-enr" onclick="openEnrProjets()" data-pole="enr"
+            style="border-color:rgba(0,171,99,0.15);"
+            onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 20px 60px rgba(0,171,99,0.2)';this.style.transform='translateY(-6px)'"
+            onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+
+            <!-- Total projets + MWc -->
+            <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px clamp(6px,0.8vw,12px);">
+              <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Pipeline de projets</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:#00ab63;"><span id="e-enr-proj-total">—</span></div>
+                  <div class="e-sub">Projets</div>
+                </div>
+                <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+                  <div class="e-pct" style="color:rgba(0,171,99,0.6);">·</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big"><span id="e-enr-proj-mw">—</span> <span class="e-big-unit">MWc</span></div>
+                  <div class="e-sub">Puissance totale</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Répartition par phase -->
+            <div class="e-sec" style="padding:clamp(4px,0.7vw,10px) 4px;">
+              <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par phase</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(0,171,99,0.8);"><span id="e-enr-proj-terme">—</span></div>
+                  <div class="e-sub">Terminés</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-enr-proj-const">—</span></div>
+                  <div class="e-sub">Construction</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(90,175,175,0.8);"><span id="e-enr-proj-dev">—</span></div>
+                  <div class="e-sub">Développement</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="e-big" style="color:rgba(255,255,255,0.4);"><span id="e-enr-proj-plan">—</span></div>
+                  <div class="e-sub">Planifiés</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CAPEX -->
+            <div style="padding:clamp(4px,0.7vw,10px) 4px 4px;">
+              <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Investissement</div>
+              <div style="display:flex;align-items:center;justify-content:center;">
+                <div style="text-align:center;">
+                  <div class="e-big" style="color:#00ab63;"><span id="e-enr-proj-capex">—</span> <span class="e-big-unit" style="color:rgba(0,171,99,0.5);">M$</span></div>
+                  <div class="e-sub">CAPEX total</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- end section Projets -->
+
     </div>
   </div>
 </div>
@@ -1287,7 +1373,7 @@ function openEnrProduction(){
   var subtitleEl = panel.querySelector('.inner-subtitle');
   if (subtitleEl) subtitleEl.textContent = 'D\u00e9tail par site \xB7 Donn\u00e9es r\u00e9elles de production';
   var backBtn = panel.querySelector('.back-btn');
-  if (backBtn) { backBtn.textContent = '\u2190 EnR'; backBtn.onclick = function(){ closeEnrProduction(); }; }
+  if (backBtn) { backBtn.textContent = '\u2190 Energy'; backBtn.onclick = function(){ closeEnrProduction(); }; }
 }
 
 /* ══════════ SITE DETAIL (clic sur une carte site) ══════════ */
@@ -1416,7 +1502,11 @@ function closeEnrProduction(){
   if (subtitleEl) subtitleEl.textContent = 'D\u00e9tail par site \xB7 Donn\u00e9es r\u00e9elles de production';
 }
 function openEnrProjets(){
-  document.getElementById('panel-enr-projets').classList.add('active');
+  var p = document.getElementById('panel-enr-projets');
+  p.style.display = '';
+  p.style.transform = '';
+  p.classList.add('active');
+  p.scrollTop = 0;
   document.body.style.overflow = 'hidden';
 }
 function closeEnrProjets(){
@@ -1427,7 +1517,7 @@ function closeEnrProjets(){
 
 <!-- ══ PANEL PRODUCTION EnR ══ -->
 <div id="panel-enr-production" style="position:fixed;inset:0;z-index:260;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
-  <div class="nav-back"><button class="back-btn" onclick="closeEnrProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← EnR</button></div>
+  <div class="nav-back"><button class="back-btn" onclick="closeEnrProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← Energy</button></div>
   <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
     <div class="inner-topbar" style="border-bottom-color:rgba(0,171,99,0.15);margin-bottom:36px;">
       <div style="text-align:center;width:100%;">
@@ -1441,7 +1531,7 @@ function closeEnrProjets(){
 
 <!-- ══ PANEL PROJETS EnR ══ -->
 <div id="panel-enr-projets">
-  <div class="nav-back"><button class="back-btn" onclick="closeEnrProjets()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← EnR</button></div>
+  <div class="nav-back"><button class="back-btn" onclick="closeEnrProjets()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← Energy</button></div>
 
   <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
 
@@ -1962,6 +2052,15 @@ function closeEnrProjets(){
   if (el('enr-card-const')) el('enr-card-const').textContent = grouped.construction.length;
   if (el('enr-card-dev'))   el('enr-card-dev').textContent   = grouped.developpement.length;
   if (el('enr-card-plan'))  el('enr-card-plan').textContent  = grouped.planifie.length;
+
+  /* ── Energy page · EnR Projets card ── */
+  if (el('e-enr-proj-total')) el('e-enr-proj-total').textContent = enrProjects.length;
+  if (el('e-enr-proj-mw'))    el('e-enr-proj-mw').textContent    = totalMw.toFixed(1);
+  if (el('e-enr-proj-terme')) el('e-enr-proj-terme').textContent = grouped.termine.length;
+  if (el('e-enr-proj-const')) el('e-enr-proj-const').textContent = grouped.construction.length;
+  if (el('e-enr-proj-dev'))   el('e-enr-proj-dev').textContent   = grouped.developpement.length;
+  if (el('e-enr-proj-plan'))  el('e-enr-proj-plan').textContent  = grouped.planifie.length;
+  if (el('e-enr-proj-capex')) el('e-enr-proj-capex').textContent = totalCapex.toFixed(1);
 
   /* ── Production EnR — données réelles depuis enr_site_data.js ── */
   var enrSites = (typeof ENR_SITES !== 'undefined') ? ENR_SITES : [];
