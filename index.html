@@ -4158,140 +4158,60 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 
     <!-- ══ 4 SECTIONS ══ -->
     <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(94,76,159,0.5);margin-bottom:12px;">Pôles d'investissement</div>
-    <div id="capex-poles-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1100px;margin:0 auto;">
+    <div id="capex-poles-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(8px,1vw,14px);max-width:1100px;margin:0 auto;">
 
       <!-- EnR -->
-      <div class="capex-section-card" onclick="openCapexSection('enr')" data-pole="enr">
-        <div class="csec-header">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div class="csec-dot" style="background:#00ab63;box-shadow:0 0 10px rgba(0,171,99,0.5);"></div>
-            <span class="csec-title" style="color:#a8d98a;">EnR</span>
-            <span class="csec-badge">32 projets</span>
-          </div>
-          <span class="csec-arrow">→</span>
-        </div>
-        <div class="csec-kpis">
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Budget révisé</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">153 M$</div>
-            <div class="csec-kpi-vs">/ 188 M$ initial</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Engagé</div>
-            <div class="csec-kpi-val">6.7 M$</div>
-            <div class="csec-progress-mini"><div style="width:4%;background:#00ab63;"></div></div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">TRI moyen</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">~11%</div>
-            <div class="csec-kpi-vs">ENAT + LIDERA</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Entités</div>
-            <div class="csec-kpi-val" style="color:#a8d98a;">3</div>
-            <div class="csec-kpi-vs">ENAT · LIDERA · SERV</div>
+      <div class="p-col" onclick="openCapexSection('enr')" style="cursor:pointer;">
+        <div class="p-title" style="color:#a8d98a;">EnR</div>
+        <div class="p-subtitle">32 projets</div>
+        <div class="capex-section-card p-card" data-pole="enr" style="border-color:rgba(0,171,99,0.2);">
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;flex:1;">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(0,171,99,0.1);border-bottom:1px solid rgba(0,171,99,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Budget révisé</div><div class="csec-kpi-val" style="color:#a8d98a;">153 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-bottom:1px solid rgba(0,171,99,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Engagé</div><div class="csec-kpi-val">6.7 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(0,171,99,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">TRI moyen</div><div class="csec-kpi-val" style="color:#a8d98a;">~11%</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Entités</div><div class="csec-kpi-val" style="color:#a8d98a;">3</div></div>
           </div>
         </div>
       </div>
 
       <!-- HFO -->
-      <div class="capex-section-card" onclick="openCapexSection('hfo')" data-pole="hfo">
-        <div class="csec-header">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div class="csec-dot" style="background:#426ab3;box-shadow:0 0 10px rgba(66,106,179,0.5);"></div>
-            <span class="csec-title" style="color:#8bb0ff;">HFO</span>
-            <span class="csec-badge">7 projets</span>
-          </div>
-          <span class="csec-arrow">→</span>
-        </div>
-        <div class="csec-kpis">
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Budget révisé</div>
-            <div class="csec-kpi-val" style="color:#8bb0ff;">8.3 M$</div>
-            <div class="csec-kpi-vs">/ 8.6 M$ initial</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Engagé</div>
-            <div class="csec-kpi-val">2.9 M$</div>
-            <div class="csec-progress-mini"><div style="width:34%;background:#426ab3;"></div></div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">TRI moyen</div>
-            <div class="csec-kpi-val" style="color:#8bb0ff;">~7%</div>
-            <div class="csec-kpi-vs">3% à 13%</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Avancement</div>
-            <div class="csec-kpi-val" style="color:#8bb0ff;">34%</div>
-            <div class="csec-kpi-vs">du budget engagé</div>
+      <div class="p-col" onclick="openCapexSection('hfo')" style="cursor:pointer;">
+        <div class="p-title" style="color:#8bb0ff;">HFO</div>
+        <div class="p-subtitle">7 projets</div>
+        <div class="capex-section-card p-card" data-pole="hfo" style="border-color:rgba(66,106,179,0.2);">
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;flex:1;">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(66,106,179,0.1);border-bottom:1px solid rgba(66,106,179,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Budget révisé</div><div class="csec-kpi-val" style="color:#8bb0ff;">8.3 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-bottom:1px solid rgba(66,106,179,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Engagé</div><div class="csec-kpi-val">2.9 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(66,106,179,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">TRI moyen</div><div class="csec-kpi-val" style="color:#8bb0ff;">~7%</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Avancement</div><div class="csec-kpi-val" style="color:#8bb0ff;">34%</div></div>
           </div>
         </div>
       </div>
 
       <!-- Immobilier -->
-      <div class="capex-section-card" onclick="openCapexSection('immo')" data-pole="immo">
-        <div class="csec-header">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div class="csec-dot" style="background:#FDB823;box-shadow:0 0 10px rgba(253,184,35,0.5);"></div>
-            <span class="csec-title" style="color:#ffd84d;">Immobilier</span>
-            <span class="csec-badge">24 projets</span>
-          </div>
-          <span class="csec-arrow">→</span>
-        </div>
-        <div class="csec-kpis">
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Budget révisé</div>
-            <div class="csec-kpi-val" style="color:#ffd84d;">105 M$</div>
-            <div class="csec-kpi-vs">/ 158 M$ initial</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Engagé</div>
-            <div class="csec-kpi-val">6.4 M$</div>
-            <div class="csec-progress-mini"><div style="width:6%;background:#FDB823;"></div></div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">ROI moyen</div>
-            <div class="csec-kpi-val" style="color:#ffd84d;">~18%</div>
-            <div class="csec-kpi-vs">9% à 30%</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Catégories</div>
-            <div class="csec-kpi-val" style="color:#ffd84d;">3</div>
-            <div class="csec-kpi-vs">Travaux · Dév · Foncier</div>
+      <div class="p-col" onclick="openCapexSection('immo')" style="cursor:pointer;">
+        <div class="p-title" style="color:#ffd84d;">Immobilier</div>
+        <div class="p-subtitle">24 projets</div>
+        <div class="capex-section-card p-card" data-pole="immo" style="border-color:rgba(253,184,35,0.2);">
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;flex:1;">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(253,184,35,0.1);border-bottom:1px solid rgba(253,184,35,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Budget révisé</div><div class="csec-kpi-val" style="color:#ffd84d;">105 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-bottom:1px solid rgba(253,184,35,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Engagé</div><div class="csec-kpi-val">6.4 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(253,184,35,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">ROI moyen</div><div class="csec-kpi-val" style="color:#ffd84d;">~18%</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Catégories</div><div class="csec-kpi-val" style="color:#ffd84d;">3</div></div>
           </div>
         </div>
       </div>
 
       <!-- Ventures -->
-      <div class="capex-section-card" onclick="openCapexSection('ventures')" data-pole="ventures">
-        <div class="csec-header">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div class="csec-dot" style="background:#f37056;box-shadow:0 0 10px rgba(243,112,86,0.5);"></div>
-            <span class="csec-title" style="color:#ffaa88;">Ventures</span>
-            <span class="csec-badge">9 projets</span>
-          </div>
-          <span class="csec-arrow">→</span>
-        </div>
-        <div class="csec-kpis">
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Budget révisé</div>
-            <div class="csec-kpi-val" style="color:#ffaa88;">29.7 M$</div>
-            <div class="csec-kpi-vs">/ 30.9 M$ initial</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Déployé</div>
-            <div class="csec-kpi-val">19.9 M$</div>
-            <div class="csec-progress-mini"><div style="width:67%;background:#f37056;"></div></div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">TRI initial</div>
-            <div class="csec-kpi-val" style="color:#ffaa88;">10%</div>
-            <div class="csec-kpi-vs">Hotel Tamatave</div>
-          </div>
-          <div class="csec-kpi">
-            <div class="csec-kpi-label">Alertes</div>
-            <div class="csec-kpi-val" style="color:#f37056;">1</div>
-            <div class="csec-kpi-vs">Orga Earth (restruct.)</div>
+      <div class="p-col" onclick="openCapexSection('ventures')" style="cursor:pointer;">
+        <div class="p-title" style="color:#ffaa88;">Ventures</div>
+        <div class="p-subtitle">9 projets</div>
+        <div class="capex-section-card p-card" data-pole="ventures" style="border-color:rgba(243,112,86,0.2);">
+          <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;flex:1;">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(243,112,86,0.1);border-bottom:1px solid rgba(243,112,86,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Budget révisé</div><div class="csec-kpi-val" style="color:#ffaa88;">29.7 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-bottom:1px solid rgba(243,112,86,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Déployé</div><div class="csec-kpi-val">19.9 M$</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-right:1px solid rgba(243,112,86,0.1);padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">TRI initial</div><div class="csec-kpi-val" style="color:#ffaa88;">10%</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(4px,0.5vw,8px);"><div class="csec-kpi-label">Alertes</div><div class="csec-kpi-val" style="color:#f37056;">1</div></div>
           </div>
         </div>
       </div>
@@ -4402,17 +4322,9 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 
 /* ── Section cards ── */
 .capex-section-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 24px 20px;cursor:pointer;transition:transform 0.28s,box-shadow 0.28s,border-color 0.28s,background 0.28s;}
-#capex-poles-grid .capex-section-card{aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;padding:clamp(10px,1.2vw,16px);box-sizing:border-box;overflow:hidden;}
-#capex-poles-grid .csec-header{margin-bottom:8px;}
-#capex-poles-grid .csec-dot{width:7px;height:7px;}
-#capex-poles-grid .csec-title{font-size:clamp(10px,1vw,14px);}
-#capex-poles-grid .csec-badge{font-size:clamp(5px,0.4vw,7px);padding:2px 5px;}
-#capex-poles-grid .csec-arrow{font-size:12px;}
-#capex-poles-grid .csec-kpis{grid-template-columns:repeat(2,1fr);gap:clamp(4px,0.5vw,8px);}
-#capex-poles-grid .csec-kpi-label{font-size:clamp(5px,0.4vw,7px);letter-spacing:0.15em;}
+#capex-poles-grid .csec-kpi-label{font-size:clamp(5px,0.4vw,7px);}
 #capex-poles-grid .csec-kpi-val{font-size:clamp(10px,0.9vw,15px);}
-#capex-poles-grid .csec-kpi-vs{font-size:clamp(5px,0.35vw,7px);}
-#capex-poles-grid .csec-progress-mini{height:2px;}
+#capex-poles-grid .p-card div[style*="display:flex"][style*="padding"]{padding:clamp(3px,0.4vw,6px)!important;}
 .capex-section-card:hover{transform:translateY(-4px);}
 .capex-section-card[data-pole="enr"]:hover{border-color:rgba(0,171,99,0.35);background:rgba(0,171,99,0.05);box-shadow:0 16px 50px rgba(0,171,99,0.12);}
 .capex-section-card[data-pole="hfo"]:hover{border-color:rgba(66,106,179,0.35);background:rgba(66,106,179,0.05);box-shadow:0 16px 50px rgba(66,106,179,0.12);}
