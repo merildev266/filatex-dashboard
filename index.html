@@ -306,6 +306,9 @@ body::-webkit-scrollbar{display:none;}
 /* Reporting card */
 .reporting-card{display:inline-flex;flex-direction:column;align-items:center;padding:16px 32px;border-color:rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;}
 .reporting-card:hover{border-color:rgba(58,57,92,0.5);transform:translateY(-10px);box-shadow:0 28px 80px rgba(58,57,92,0.25);background:rgba(58,57,92,0.08);}
+.reporting-fixed-wrap{position:fixed;bottom:80px;left:0;right:0;text-align:center;z-index:10;pointer-events:none;display:none;}
+.reporting-fixed-wrap.visible{display:block;}
+.reporting-fixed-wrap .reporting-card{pointer-events:auto;}
 .reporting-icon{font-size:24px;margin-bottom:6px;}
 .reporting-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.8);letter-spacing:0.15em;text-transform:uppercase;}
 .reporting-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;}
@@ -855,7 +858,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
   </div>
 
-  <div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;">
+  <div class="reporting-fixed-wrap visible" id="reporting-home">
     <div class="capex-section-card reporting-card"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO</div></div>
   </div>
 
@@ -1020,7 +1023,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
     </div>
   </div>
-  <div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;">
+  <div class="reporting-fixed-wrap" id="reporting-energy">
     <div class="capex-section-card reporting-card" style="border-color:rgba(0,171,99,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO</div></div>
   </div>
 </div>
@@ -3191,7 +3194,7 @@ function closeDiegoDetail() {
     </div>
 
   </div>
-  <div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;">
+  <div class="reporting-fixed-wrap" id="reporting-investments">
     <div class="capex-section-card reporting-card" style="border-color:rgba(243,112,86,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO</div></div>
   </div>
 </div>
@@ -3293,7 +3296,7 @@ function closeDiegoDetail() {
       </div>
     </div>
   </div>
-  <div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;">
+  <div class="reporting-fixed-wrap" id="reporting-properties">
     <div class="capex-section-card reporting-card" style="border-color:rgba(253,184,35,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO</div></div>
   </div>
 </div>
@@ -4298,7 +4301,7 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 
   </div><!-- end content -->
   </div><!-- end inner-page-inner -->
-  <div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;">
+  <div class="reporting-fixed-wrap" id="reporting-capex">
     <div class="capex-section-card reporting-card" style="border-color:rgba(94,76,159,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO</div></div>
   </div>
 
@@ -5263,11 +5266,38 @@ function renderProjectCard(p, color, colorRgb) {
 
 // ══ NAVIGATION ══
 function scrollTop(el) { if(el) el.scrollTop = 0; }
+function showReporting(pole) {
+  document.querySelectorAll('.reporting-fixed-wrap').forEach(function(w){ w.classList.remove('visible'); });
+  var id = pole === 'home' ? 'reporting-home' : 'reporting-' + pole;
+  var el = document.getElementById(id);
+  if (el) el.classList.add('visible');
+}
+function resetPoleState(pole) {
+  // Reset Investments to landing
+  if (pole === 'investments') {
+    var landing = document.getElementById('inv-landing');
+    var grid = document.getElementById('inv-grid-view');
+    var detail = document.getElementById('inv-detail-view');
+    if (landing) landing.style.display = '';
+    if (grid) grid.style.display = 'none';
+    if (detail) detail.style.display = 'none';
+    var backA = document.getElementById('inv-back-accueil');
+    var backG = document.getElementById('inv-back-grid');
+    var backD = document.getElementById('inv-back-detail');
+    if (backA) backA.style.display = '';
+    if (backG) backG.style.display = 'none';
+    if (backD) backD.style.display = 'none';
+  }
+  // Scroll to top
+  var page = document.getElementById('page-' + pole);
+  if (page) page.scrollTop = 0;
+}
 function openPage(pole) {
   if (pole === 'energy') updateEnergyHfoCard();
   const el = document.getElementById('page-' + pole);
   if(el) { el.classList.add('active'); document.body.style.overflow = 'hidden'; scrollTop(el); }
   updateNavActive(pole);
+  showReporting(pole);
 }
 
 // ── Met à jour la card HFO de la page Énergie depuis les données live ──
@@ -5382,6 +5412,8 @@ function navTo(pole) {
   // Close all main pages
   document.querySelectorAll('.placeholder-page').forEach(function(p) { p.classList.remove('active'); });
   document.body.style.overflow = '';
+  // Reset pole to its landing state
+  resetPoleState(pole);
   // Open target page
   openPage(pole);
 }
@@ -5397,6 +5429,7 @@ function goHome() {
   document.querySelectorAll('.placeholder-page').forEach(function(p) { p.classList.remove('active'); });
   document.body.style.overflow = '';
   updateNavActive('home');
+  showReporting('home');
 }
 
 function updateNavActive(pole) {
