@@ -64,7 +64,7 @@ body::-webkit-scrollbar{display:none;}
 
 /* ══ ANIMATIONS ══ */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateY(calc(-50% + 18px))}to{opacity:1;transform:translateY(-50%)}}
 @keyframes scrollMotif{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ══ HOME ══ */
@@ -73,7 +73,7 @@ body::-webkit-scrollbar{display:none;}
 .logo-groupe{height:90px;width:auto;pointer-events:none;}
 .header-divider{width:48px;height:1px;background:var(--border);}
 .header-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--text-dim);}
-.cards-grid{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;padding:82px 40px 0;box-sizing:border-box;animation:slideIn 0.7s 0.15s ease both;}
+.cards-grid{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 40px;box-sizing:border-box;animation:slideIn 0.7s 0.15s ease both;z-index:1;}
 .cards-row1{display:grid;grid-template-columns:repeat(4,240px);gap:22px;justify-content:center;}
 
 
@@ -607,6 +607,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
     </svg>
 </div>
+<div id="home">
 <!-- ══ MOTIF DÉFILANT ══ -->
 <div id="home-motif" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);pointer-events:none;z-index:0;opacity:0.55;line-height:0;overflow:hidden;">
   <div style="display:flex;width:200%;animation:scrollMotif 40s linear infinite;">
@@ -640,8 +641,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
     </svg>
   </div>
 </div>
-
-<div id="home">
     <header class="home-header">
     <div style="display:flex;align-items:center;justify-content:center;">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 469.8 72.94" style="height:97px;width:auto;max-width:100%;object-fit:contain;" aria-label="Groupe Filatex">
