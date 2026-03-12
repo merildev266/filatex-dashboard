@@ -423,7 +423,9 @@ body::-webkit-scrollbar{display:none;}
 #page-energy{overflow:hidden;}
 #page-energy .inner-page-inner{min-height:auto;padding:6px clamp(16px,3vw,40px) 0;}
 #page-energy .capex-section-card{padding:clamp(6px,1vw,16px) clamp(10px,1.5vw,20px) clamp(4px,0.8vw,12px);border-radius:clamp(10px,1.2vw,18px);}
-.e-wrap{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:clamp(4px,0.5vw,8px) clamp(8px,1.2vw,16px);padding:0;height:calc(100vh - 128px);align-items:stretch;}
+.e-wrap{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;gap:clamp(4px,0.5vw,8px) clamp(8px,1.2vw,16px);padding:0;height:calc(100vh - 128px);align-items:stretch;}
+.e-col-title{font-size:clamp(14px,1.4vw,22px);font-weight:800;letter-spacing:-0.5px;display:flex;align-items:baseline;gap:8px;}
+.e-col-title-sub{font-size:clamp(6px,0.55vw,9px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;}
 .e-section-label{font-size:clamp(7px,0.6vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-align:center;margin:0;}
 .e-card-hdr{display:flex;align-items:baseline;gap:6px;padding:clamp(2px,0.3vw,5px) clamp(6px,0.8vw,12px) 0;}
 .e-card-hdr-title{font-size:clamp(13px,1.3vw,18px);font-weight:800;letter-spacing:-0.5px;}
@@ -862,18 +864,15 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
     <div class="e-wrap">
 
-      <!-- Column headers -->
-      <div class="e-section-label">Production</div>
-      <div class="e-section-label">Projets</div>
+      <!-- ═══ Column titles (outside cards) ═══ -->
+      <div class="e-col-title" style="color:#1e4d63;">HFO <span class="e-col-title-sub" style="color:rgba(138,146,171,0.5);">Thermique</span></div>
+      <div class="e-col-title" style="color:#a8d98a;">EnR <span class="e-col-title-sub" style="color:rgba(0,171,99,0.4);">Renouvelables</span></div>
 
-      <!-- ═══ ROW 1 · HFO ═══ -->
-
-      <!-- HFO Production -->
+      <!-- ═══ HFO Card (left) ═══ -->
       <div class="capex-section-card e-card" onclick="openInner('hfo')" data-pole="hfo"
-        style="border-color:rgba(138,146,171,0.35);"
+        style="border-color:rgba(138,146,171,0.35);cursor:pointer;"
         onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 16px 40px rgba(138,146,171,0.25)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-card-hdr"><span class="e-card-hdr-title" style="color:#1e4d63;">HFO</span><span class="e-card-hdr-sub" style="color:rgba(138,146,171,0.5);">Thermique</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label">Puissance dispo vs Contractuel</div>
@@ -932,85 +931,14 @@ if(sessionStorage.getItem('dash_auth')==='1'){
             </div>
           </div>
         </div>
+
       </div>
 
-      <!-- HFO Projets -->
-      <div class="capex-section-card e-card" onclick="openHfoProjets()" data-pole="hfo"
-        style="border-color:rgba(138,146,171,0.35);"
-        onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 16px 40px rgba(138,146,171,0.25)';this.style.transform='translateY(-3px)'"
-        onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-card-hdr"><span class="e-card-hdr-title" style="color:#1e4d63;">HFO</span><span class="e-card-hdr-sub" style="color:rgba(138,146,171,0.5);">Thermique</span></div>
-
-        <div class="e-sec">
-          <div class="e-sec-label">Projets en cours</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(255,255,255,0.9);"><span id="e-hfo-proj-total">—</span></div>
-              <div class="e-sub">Projets</div>
-            </div>
-            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
-              <div class="e-pct" style="color:rgba(138,146,171,0.5);">·</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big"><span id="e-hfo-proj-oh">—</span> <span class="e-big-unit">overhauls</span></div>
-              <div class="e-sub">Moteurs</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label">Par statut</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(243,112,86,0.9);"><span id="e-hfo-proj-urgent">—</span></div>
-              <div class="e-sub">Urgents</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-hfo-proj-encours">—</span></div>
-              <div class="e-sub">En cours</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(255,255,255,0.4);"><span id="e-hfo-proj-indef">—</span></div>
-              <div class="e-sub">Indéfinis</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label">Budget CAPEX</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(100,136,255,0.9);"><span id="e-hfo-proj-budget">—</span></div>
-              <div class="e-sub">Budget</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-hfo-proj-incurred">—</span></div>
-              <div class="e-sub">Réalisé</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big"><span id="e-hfo-proj-pct">—</span><span class="e-big-unit">%</span></div>
-              <div class="e-sub">Exécution</div>
-            </div>
-          </div>
-          <div style="margin-top:4px;height:3px;background:rgba(138,146,171,0.1);border-radius:2px;overflow:hidden;">
-            <div id="e-hfo-proj-bar" style="height:100%;background:rgba(100,136,255,0.6);border-radius:2px;width:0%;transition:width 0.8s;"></div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label">Par site</div>
-          <div id="e-hfo-proj-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:2px;"></div>
-        </div>
-      </div>
-
-      <!-- ═══ ROW 2 · EnR ═══ -->
-
-      <!-- EnR Production -->
+      <!-- ═══ EnR Card (right) ═══ -->
       <div class="capex-section-card e-card e-enr" onclick="openEnrProduction()" data-pole="enr"
-        style="border-color:rgba(0,171,99,0.15);"
+        style="border-color:rgba(0,171,99,0.15);cursor:pointer;"
         onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-card-hdr"><span class="e-card-hdr-title">EnR</span><span class="e-card-hdr-sub">Renouvelables</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production moyenne vs Capacité</div>
@@ -1052,63 +980,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par site</div>
           <div id="e-enr-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:4px;"></div>
         </div>
-      </div>
 
-      <!-- EnR Projets -->
-      <div class="capex-section-card e-card e-enr" onclick="openEnrProjets()" data-pole="enr"
-        style="border-color:rgba(0,171,99,0.15);"
-        onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
-        onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-card-hdr"><span class="e-card-hdr-title">EnR</span><span class="e-card-hdr-sub">Renouvelables</span></div>
-
-        <div class="e-sec">
-          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Pipeline de projets</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:#00ab63;"><span id="e-enr-proj-total">—</span></div>
-              <div class="e-sub">Projets</div>
-            </div>
-            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
-              <div class="e-pct" style="color:rgba(0,171,99,0.6);">·</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big"><span id="e-enr-proj-mw">—</span> <span class="e-big-unit">MWc</span></div>
-              <div class="e-sub">Puissance totale</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Par phase</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(0,171,99,0.8);"><span id="e-enr-proj-terme">—</span></div>
-              <div class="e-sub">Terminés</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(253,184,35,0.8);"><span id="e-enr-proj-const">—</span></div>
-              <div class="e-sub">Construction</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(90,175,175,0.8);"><span id="e-enr-proj-dev">—</span></div>
-              <div class="e-sub">Développement</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div class="e-big" style="color:rgba(255,255,255,0.4);"><span id="e-enr-proj-plan">—</span></div>
-              <div class="e-sub">Planifiés</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
-          <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Investissement</div>
-          <div style="display:flex;align-items:center;justify-content:center;">
-            <div style="text-align:center;">
-              <div class="e-big" style="color:#00ab63;"><span id="e-enr-proj-capex">—</span> <span class="e-big-unit" style="color:rgba(0,171,99,0.5);">M$</span></div>
-              <div class="e-sub">CAPEX total</div>
-            </div>
-          </div>
-        </div>
       </div>
 
     </div>
