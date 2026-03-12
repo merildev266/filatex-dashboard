@@ -3096,12 +3096,12 @@ function closeDiegoDetail() {
 
 <!-- ══════════════ INVESTMENTS ══════════════ -->
 <div id="page-investments" class="placeholder-page" style="background:#0a0916;">
-  <div class="nav-back"><button class="back-btn" onclick="closePage('page-investments')" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Accueil</button></div>
+  <div class="nav-back" id="inv-back-accueil"><button class="back-btn" onclick="closePage('page-investments')" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Accueil</button></div>
   <div class="inner-page-inner">
     <div class="inner-topbar" style="border-bottom-color:rgba(243,112,86,0.15);">
       <div style="text-align:center;width:100%;">
-        <div class="inner-title" style="color:#f37056;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 378.79 97.28" style="height:40px;width:auto;"><defs><style>.iv1{fill:#fff}.iv2{fill:#f37056}</style></defs><g><rect class="iv2" x="45.77" y="72.18" width="45.77" height="24.81" transform="translate(137.32 169.16) rotate(-180)"/><rect class="iv2" x="0" y="81.39" width="91.55" height="15.6" transform="translate(91.55 178.38) rotate(-180)"/><path class="iv1" d="M46.97,0h8.93v51h-8.93V0Z"/><path class="iv1" d="M85.16,51c-.17-1-.33-2.16-.5-3.47-2.1,2.9-5.43,4.37-10.03,4.37-3.22.14-6.38-.92-8.87-2.96-2.32-2.01-3.58-4.97-3.43-8.03,0-3.37,1.1-6,3.33-7.87s5.2-2.8,8.98-2.8h9.84v-1.13c0-3.86-2.23-5.8-6.7-5.8-3.4-.19-6.58,1.69-8.04,4.77l-6.49-3.7c2.99-5.5,8.03-8.25,15.1-8.26,4.33,0,7.89,1.1,10.66,3.33,2.77,2.24,4.14,5.9,4.14,10.97v20.59h-7.98Z"/><path class="iv1" d="M118.63,24.5h-6.47v26.5h-8.73v-26.5h-6.54v-7.36h6.54V6.64h8.77v10.5h6.47l-.04,7.36Z"/><path class="iv1" d="M155.26,37.2h-25.54c.12,2.1,1.16,4.04,2.84,5.3,1.68,1.21,3.72,1.84,5.79,1.8,3.84,0,6.54-1.6,8.17-4.83l7.37,2.94c-1.2,2.92-3.32,5.36-6.04,6.96-2.87,1.71-6.16,2.59-9.5,2.53-5.03,0-9.12-1.64-12.26-4.93-3.17-3.27-4.73-7.56-4.73-12.9s1.56-9.66,4.7-13c3.13-3.33,7.27-4.97,12.43-4.97s9.1,1.63,12.17,4.9,4.6,7.63,4.6,13.07v3.13Z"/><path class="iv1" d="M166.62,34.46l-11.99-17.33h10.49c1.57,2.26,3.94,6,7.1,11.2l6.83-11.2h10.16l-11.96,17.2,11.68,16.66h-10.51c-2.5-3.59-4.8-7.23-6.83-10.78l-6.59,10.78h-9.97l11.6-16.54Z"/><path class="iv1" d="M33.96,11c2.98,0,5.38-2.43,5.38-5.4,0-2.98-2.43-5.38-5.4-5.38-1.43,0-2.79.57-3.8,1.58-2.12,2.09-2.13,5.51-.04,7.62.01.01.03.03.04.04,1.01,1.02,2.39,1.57,3.83,1.54Z"/><path class="iv1" d="M15.39,8.84c1.17-.9,3.27-1.1,6.37-.5V.4c-1.4-.25-2.82-.38-4.24-.4-3.99,0-7.13,1.1-9.39,3.31-2.3,2.23-3.43,5.6-3.43,10.1v3.83l-4.7-.06v7.36l4.7.06.06,26.43h8.84V13.4c0-2.1.59-3.63,1.8-4.56Z"/><path class="iv1" d="M23.71,24.56h5.65v26.43h8.94V17.23H13.6s0,7.34,10.11,7.34Z"/><path class="iv2" d="M111.85,62.95h5.59v34.04h-5.59v-34.04Z"/><path class="iv2" d="M143.48,74.52c1.86,1.82,2.8,4.73,2.8,8.75v13.71h-5.3v-13.42c0-2.37-.5-4.16-1.51-5.4-1.01-1.23-2.48-1.85-4.43-1.85-2.07,0-3.7.72-4.89,2.16-1.18,1.44-1.78,3.43-1.78,5.96v12.54h-5.25v-24.89h4.57l.58,3.26c1.88-2.37,4.54-3.55,7.97-3.55,2.95,0,5.36.91,7.22,2.72Z"/><path class="iv2" d="M147.79,72.09h5.64l6.86,19.26,6.76-19.26h5.54l-9.19,24.89h-6.42l-9.19-24.89Z"/></g></svg></div>
-        <div class="inner-subtitle" style="color:rgba(243,112,86,0.5);">Portefeuille d'investissements · Groupe Filatex</div>
+        <div class="inner-title" id="inv-banner-title" style="color:#f37056;font-size:clamp(24px,3vw,40px);font-weight:800;letter-spacing:-1px;">Ventures</div>
+        <div class="inner-subtitle" id="inv-banner-subtitle" style="color:rgba(243,112,86,0.5);">Portefeuille d'investissements · Groupe Filatex</div>
       </div>
     </div>
     <!-- ═══ LEVEL 1: Landing Externe / Interne ═══ -->
@@ -3154,11 +3154,7 @@ function closeDiegoDetail() {
 
     <!-- ═══ LEVEL 2: Project cards grid ═══ -->
     <div id="inv-grid-view" class="page-inner" style="display:none;padding-top:0;">
-      <div style="padding:8px 24px;">
-        <button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">← Investments</button>
-        <span id="inv-grid-title" style="font-size:clamp(16px,1.6vw,24px);font-weight:800;color:#f37056;margin-left:16px;">Ventures Externe</span>
-        <span id="inv-grid-subtitle" style="font-size:clamp(7px,0.6vw,10px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(243,112,86,0.4);margin-left:8px;">19 PROJETS</span>
-      </div>
+      <div class="nav-back"><button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Ventures</button></div>
       <div class="site-nav" style="margin:8px 24px 0;max-width:400px;" id="inv-type-nav">
         <button class="site-nav-btn inv-nav-btn" onclick="invNavType('externe')" data-inv="externe">Externe</button>
         <button class="site-nav-btn inv-nav-btn" onclick="invNavType('interne')" data-inv="interne">Interne</button>
@@ -3168,11 +3164,8 @@ function closeDiegoDetail() {
 
     <!-- ═══ LEVEL 3: Project detail ═══ -->
     <div id="inv-detail-view" class="page-inner" style="display:none;padding-top:0;">
-      <div style="padding:8px 24px;">
-        <button class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">← Projets</button>
-        <span id="inv-detail-title" style="font-size:clamp(16px,1.6vw,24px);font-weight:800;color:#f37056;margin-left:16px;"></span>
-      </div>
-      <div class="site-nav" style="margin:8px 24px 0;overflow-x:auto;flex-wrap:nowrap;" id="inv-proj-nav"></div>
+      <div class="nav-back"><button id="inv-detail-back" class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Externe</button></div>
+      <div class="site-nav" style="margin:8px 24px 0;flex-wrap:wrap;gap:6px;" id="inv-proj-nav"></div>
       <div id="inv-detail-content" style="padding:16px 24px;max-width:800px;margin:0 auto;"></div>
     </div>
 
@@ -5071,6 +5064,7 @@ function openCapexSection(pole) {
   content.innerHTML = data.projects.map(p => renderProjectCard(p, data.color, data.colorRgb)).join('');
 
   panel.classList.add('active');
+  panel.scrollTop = 0;
   document.body.style.overflow = 'hidden';
 }
 
@@ -7308,28 +7302,32 @@ var invProjects = [
 
 var _invCurrentType = 'externe';
 
+function _setInvBanner(title, subtitle) {
+  document.getElementById('inv-banner-title').textContent = title;
+  document.getElementById('inv-banner-subtitle').textContent = subtitle;
+}
+
 function invNavType(type) {
   _invCurrentType = type;
   document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); });
   document.getElementById('inv-detail-view').style.display = 'none';
   document.getElementById('inv-grid-view').style.display = '';
+  _setInvBanner(type === 'externe' ? 'Externe' : 'Interne', type === 'externe' ? 'Ventures · Investissements Externes' : 'Groupe · Investissements Internes');
   var filtered = invProjects.filter(function(p){ return p.type === type; });
-  var label = type === 'externe' ? 'Ventures Externe' : 'Ventures Interne';
-  document.getElementById('inv-grid-title').textContent = label;
-  document.getElementById('inv-grid-subtitle').textContent = filtered.length + ' PROJETS';
   _renderInvCards(filtered);
+  document.getElementById('page-investments').scrollTop = 0;
 }
 
 function openInvLevel(type) {
   _invCurrentType = type;
+  document.getElementById('inv-back-accueil').style.display = 'none';
   document.getElementById('inv-landing').style.display = 'none';
   document.getElementById('inv-grid-view').style.display = '';
   document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); });
+  _setInvBanner(type === 'externe' ? 'Externe' : 'Interne', type === 'externe' ? 'Ventures · Investissements Externes' : 'Groupe · Investissements Internes');
   var filtered = invProjects.filter(function(p){ return p.type === type; });
-  var label = type === 'externe' ? 'Ventures Externe' : 'Ventures Interne';
-  document.getElementById('inv-grid-title').textContent = label;
-  document.getElementById('inv-grid-subtitle').textContent = filtered.length + ' PROJETS';
   _renderInvCards(filtered);
+  document.getElementById('page-investments').scrollTop = 0;
 }
 
 function _renderInvCards(filtered) {
@@ -7356,6 +7354,9 @@ function _renderInvCards(filtered) {
 function closeInvLevel() {
   document.getElementById('inv-grid-view').style.display = 'none';
   document.getElementById('inv-landing').style.display = '';
+  document.getElementById('inv-back-accueil').style.display = '';
+  _setInvBanner('Ventures', 'Portefeuille d\'investissements · Groupe Filatex');
+  document.getElementById('page-investments').scrollTop = 0;
 }
 
 function openInvDetail(id) {
@@ -7363,7 +7364,8 @@ function openInvDetail(id) {
   if (!p) return;
   document.getElementById('inv-grid-view').style.display = 'none';
   document.getElementById('inv-detail-view').style.display = '';
-  document.getElementById('inv-detail-title').textContent = p.nom;
+  _setInvBanner(p.nom, p.type === 'externe' ? 'Ventures · Projet Externe' : 'Groupe · Projet Interne');
+  document.getElementById('inv-detail-back').textContent = p.type === 'externe' ? 'Externe' : 'Interne';
   var nav = document.getElementById('inv-proj-nav');
   var filtered = invProjects.filter(function(x){ return x.type === p.type; });
   nav.innerHTML = '';
@@ -7392,11 +7394,14 @@ function openInvDetail(id) {
   }
   html += '</div>';
   document.getElementById('inv-detail-content').innerHTML = html;
+  document.getElementById('page-investments').scrollTop = 0;
 }
 
 function closeInvDetail() {
   document.getElementById('inv-detail-view').style.display = 'none';
   document.getElementById('inv-grid-view').style.display = '';
+  _setInvBanner(_invCurrentType === 'externe' ? 'Externe' : 'Interne', _invCurrentType === 'externe' ? 'Ventures · Investissements Externes' : 'Groupe · Investissements Internes');
+  document.getElementById('page-investments').scrollTop = 0;
 }
 </script>
 </body>
