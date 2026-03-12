@@ -420,6 +420,8 @@ body::-webkit-scrollbar{display:none;}
 #inner-hfo .dkpi{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:14px;}
 #inner-hfo .conso-card{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:14px;}
 #inner-hfo .s1-card{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
+#inv-grid-kpi .s1-card{background:rgba(243,112,86,0.04);border:1px solid rgba(243,112,86,0.18);border-radius:16px;}
+#inv-grid-kpi .s1-card-value{color:#f37056;}
 #inner-hfo .contrib-banner{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
 
 /* ══ ENERGY PAGE — 2×2 grid, no scroll ══ */
@@ -3155,11 +3157,13 @@ function closeDiegoDetail() {
     <!-- ═══ LEVEL 2: Project cards grid ═══ -->
     <div id="inv-grid-view" class="page-inner" style="display:none;padding-top:0;">
       <div class="nav-back"><button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Ventures</button></div>
-      <div class="site-nav" style="margin:8px 24px 0;max-width:400px;" id="inv-type-nav">
+      <div class="site-nav" style="margin:8px auto 0;max-width:400px;justify-content:center;" id="inv-type-nav">
         <button class="site-nav-btn inv-nav-btn" onclick="invNavType('externe')" data-inv="externe">Externe</button>
         <button class="site-nav-btn inv-nav-btn" onclick="invNavType('interne')" data-inv="interne">Interne</button>
       </div>
-      <div id="inv-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:16px 24px;"></div>
+      <div id="inv-grid-kpi" class="detail-s1-top" style="padding:16px 24px 0;"></div>
+      <div style="padding:8px 24px 0;"><div class="section-title" style="text-align:center;color:rgba(243,112,86,0.4);">Projets — Cliquez pour le détail</div></div>
+      <div id="inv-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:8px 24px 16px;"></div>
     </div>
 
     <!-- ═══ LEVEL 3: Project detail ═══ -->
@@ -7307,6 +7311,34 @@ function _setInvBanner(title, subtitle) {
   document.getElementById('inv-banner-subtitle').textContent = subtitle;
 }
 
+function _renderInvKpi(type) {
+  var filtered = invProjects.filter(function(p){ return p.type === type; });
+  var total = filtered.length;
+  var withCapex = filtered.filter(function(p){ return p.capex !== null; });
+  var budgetTotal = 0, decaisseTotal = 0;
+  withCapex.forEach(function(p){
+    var inv = p.capex.invest.replace(/[^\d.,]/g,'').replace(',','.');
+    var eta = p.capex.etat.replace(/[^\d.,]/g,'').replace(',','.');
+    var invNum = parseFloat(inv) || 0;
+    var etaNum = parseFloat(eta) || 0;
+    var mult = p.capex.invest.indexOf('M') !== -1 ? 1 : 0.001;
+    var multE = p.capex.etat.indexOf('M') !== -1 ? 1 : 0.001;
+    budgetTotal += invNum * mult;
+    decaisseTotal += etaNum * multE;
+  });
+  var pctDecaisse = budgetTotal > 0 ? Math.round(decaisseTotal / budgetTotal * 100) : 0;
+  var budgetStr = budgetTotal >= 1 ? budgetTotal.toFixed(1) + ' M$' : (budgetTotal * 1000).toFixed(0) + ' k$';
+  var decaisseStr = decaisseTotal >= 1 ? decaisseTotal.toFixed(1) + ' M$' : (decaisseTotal * 1000).toFixed(0) + ' k$';
+  if (withCapex.length === 0) { budgetStr = 'X'; decaisseStr = 'X'; pctDecaisse = 'X'; }
+  var el = document.getElementById('inv-grid-kpi');
+  el.innerHTML = [
+    {lbl:'Projets', val:total, unit:'Total'},
+    {lbl:'Budget révisé', val:budgetStr, unit:'Investissement CAPEX'},
+    {lbl:'Décaissé', val:(pctDecaisse === 'X' ? 'X' : pctDecaisse + '%'), unit:'Taux d\'exécution'},
+    {lbl:'Montant décaissé', val:decaisseStr, unit:'Réalisé'}
+  ].map(function(k){ return '<div class="s1-card"><div class="s1-card-label">'+k.lbl+'</div><div class="s1-card-value">'+k.val+'</div><div class="s1-card-unit-line">'+k.unit+'</div></div>'; }).join('');
+}
+
 function invNavType(type) {
   _invCurrentType = type;
   document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); });
@@ -7314,6 +7346,7 @@ function invNavType(type) {
   document.getElementById('inv-grid-view').style.display = '';
   _setInvBanner(type === 'externe' ? 'Externe' : 'Interne', type === 'externe' ? 'Ventures · Investissements Externes' : 'Groupe · Investissements Internes');
   var filtered = invProjects.filter(function(p){ return p.type === type; });
+  _renderInvKpi(type);
   _renderInvCards(filtered);
   document.getElementById('page-investments').scrollTop = 0;
 }
@@ -7326,6 +7359,7 @@ function openInvLevel(type) {
   document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); });
   _setInvBanner(type === 'externe' ? 'Externe' : 'Interne', type === 'externe' ? 'Ventures · Investissements Externes' : 'Groupe · Investissements Internes');
   var filtered = invProjects.filter(function(p){ return p.type === type; });
+  _renderInvKpi(type);
   _renderInvCards(filtered);
   document.getElementById('page-investments').scrollTop = 0;
 }
