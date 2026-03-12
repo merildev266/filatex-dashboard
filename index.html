@@ -59,21 +59,23 @@ document.addEventListener('DOMContentLoaded', scale);
   --orange:#f37056; --red:#ff5050;
   --filatex:#3A395C; --filatex-bg:rgba(58,57,92,0.10); --filatex-border:rgba(58,57,92,0.22);
 }
-html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Aeonik','DM Sans',sans-serif;overflow-x:hidden;scrollbar-width:none;}
+html{height:100%;overflow:hidden;}
+body{height:100%;background:var(--dark);color:var(--text);font-family:'Aeonik','DM Sans',sans-serif;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;}
 body::-webkit-scrollbar{display:none;}
 
 /* ══ ANIMATIONS ══ */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideIn{from{opacity:0;transform:translateY(calc(-50% + 18px))}to{opacity:1;transform:translateY(-50%)}}
+@keyframes slideIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes scrollMotif{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ══ HOME ══ */
-#home{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;gap:0;width:100%;box-sizing:border-box;}
+#home{position:relative;z-index:1;min-height:100vh;width:100%;padding:0;gap:0;box-sizing:border-box;overflow:hidden;}
 .home-header{position:absolute;top:48px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 24px;box-sizing:border-box;animation:fadeIn 0.8s ease both;}
 .logo-groupe{height:90px;width:auto;pointer-events:none;}
 .header-divider{width:48px;height:1px;background:var(--border);}
 .header-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--text-dim);}
-.cards-grid{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 40px;box-sizing:border-box;animation:slideIn 0.7s 0.15s ease both;z-index:1;}
+.cards-grid{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 40px;box-sizing:border-box;animation:cardsIn 0.7s 0.15s ease both;z-index:1;}
+@keyframes cardsIn{from{opacity:0;transform:translateY(calc(-50% + 18px))}to{opacity:1;transform:translateY(-50%)}}
 .cards-row1{display:grid;grid-template-columns:repeat(4,240px);gap:22px;justify-content:center;}
 
 
@@ -100,13 +102,13 @@ body::-webkit-scrollbar{display:none;}
 
 /* ══ RESPONSIVE HOME ══ */
 @media (max-width:900px) {
-  .cards-row1{grid-template-columns:repeat(2,1fr)!important;gap:16px!important;max-width:400px;margin:0 auto;}
-  .card{padding:22px 12px!important;border-radius:14px!important;}
+  .cards-row1{grid-template-columns:repeat(2,1fr)!important;gap:18px!important;max-width:520px;margin:0 auto;}
+  .card{padding:28px 18px!important;border-radius:16px!important;}
   .card-logo-wrap{padding:0!important;}
-  .card-energy .card-logo-wrap svg{height:48px!important;}
-  .card-invest .card-logo-wrap svg{height:38px!important;}
-  .card-props .card-logo-wrap svg{height:44px!important;}
-  .card-capex .card-logo-wrap svg{height:38px!important;}
+  .card-energy .card-logo-wrap svg{height:60px!important;}
+  .card-invest .card-logo-wrap svg{height:50px!important;}
+  .card-props .card-logo-wrap svg{height:56px!important;}
+  .card-capex .card-logo-wrap svg{height:50px!important;}
   .cards-grid{padding:0 24px!important;}
   .home-header svg[aria-label="Groupe Filatex"]{height:80px!important;}
   .home-header .home-values{gap:0!important;flex-wrap:wrap;justify-content:center;}
@@ -116,14 +118,14 @@ body::-webkit-scrollbar{display:none;}
   #home-footer-pmo{font-size:8px!important;}
 }
 @media (max-width:600px) {
-  .cards-row1{gap:10px!important;max-width:300px;}
-  .card{padding:16px 10px!important;border-radius:12px!important;}
+  .cards-row1{gap:12px!important;max-width:calc(100vw - 48px);}
+  .card{padding:24px 14px!important;border-radius:14px!important;}
   .card-logo-wrap{padding:0!important;}
-  .card-energy .card-logo-wrap svg{height:34px!important;}
-  .card-invest .card-logo-wrap svg{height:27px!important;}
-  .card-props .card-logo-wrap svg{height:31px!important;}
-  .card-capex .card-logo-wrap svg{height:27px!important;}
-  .cards-grid{padding:0 16px!important;}
+  .card-energy .card-logo-wrap svg{height:50px!important;}
+  .card-invest .card-logo-wrap svg{height:42px!important;}
+  .card-props .card-logo-wrap svg{height:46px!important;}
+  .card-capex .card-logo-wrap svg{height:42px!important;}
+  .cards-grid{padding:0 20px!important;}
   .home-header{margin-bottom:20px!important;}
   .home-header svg[aria-label="Groupe Filatex"]{height:56px!important;}
   .home-header .home-values span{font-size:7px!important;letter-spacing:0.2em!important;}
