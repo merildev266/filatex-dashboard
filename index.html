@@ -305,7 +305,7 @@ body::-webkit-scrollbar{display:none;}
 
 /* Reporting card */
 .reporting-card{display:inline-flex;flex-direction:column;align-items:center;padding:16px 32px;border-color:rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;}
-.reporting-card:hover{border-color:rgba(255,255,255,0.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,0.05);}
+.reporting-card:hover{border-color:rgba(58,57,92,0.5);transform:translateY(-10px);box-shadow:0 28px 80px rgba(58,57,92,0.25);background:rgba(58,57,92,0.08);}
 .reporting-icon{font-size:24px;margin-bottom:6px;}
 .reporting-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.8);letter-spacing:0.15em;text-transform:uppercase;}
 .reporting-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;}
@@ -487,12 +487,12 @@ body::-webkit-scrollbar{display:none;}
 }
 
 /* ══ PROPERTIES GRID ══ */
-.p-wrap{min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;padding:0 clamp(16px,4vw,60px) 40px;}
-.p-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,1.5vw,24px);width:100%;max-width:1320px;}
+.p-wrap{display:flex;align-items:center;justify-content:center;padding:0 clamp(16px,4vw,60px);}
+.p-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,1vw,14px);width:100%;max-width:1100px;}
 .p-col{display:flex;flex-direction:column;align-items:center;}
 .p-title{font-size:clamp(16px,2vw,28px);font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:4px;text-align:center;}
 .p-subtitle{font-size:clamp(6px,0.5vw,9px);letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:clamp(8px,1vw,16px);color:#fff;}
-.p-card{width:100%;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;}
+.p-card{width:100%;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;overflow:hidden;min-width:0;}
 .p-card .csec-kpi-label{font-size:clamp(6px,0.55vw,9px);}
 .p-card .csec-kpi-val{font-size:clamp(14px,1.5vw,24px);}
 .capex-section-card[data-pole="foncier"]:hover{border-color:rgba(253,184,35,0.5);background:rgba(253,184,35,0.06);box-shadow:0 16px 50px rgba(253,184,35,0.15);}
@@ -3114,16 +3114,14 @@ function closeDiegoDetail() {
 
 <!-- ══════════════ INVESTMENTS ══════════════ -->
 <div id="page-investments" class="placeholder-page" style="background:#0a0916;scrollbar-width:none;">
-  <div class="nav-back" id="inv-back-accueil"><button class="back-btn" onclick="closePage('page-investments')" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Accueil</button></div>
-  <div class="nav-back" id="inv-back-grid" style="display:none;"><button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Ventures</button></div>
-  <div class="nav-back" id="inv-back-detail" style="display:none;"><button id="inv-detail-back" class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Externe</button></div>
+  <div class="sd-sticky-bar">
+    <div class="nav-back" id="inv-back-accueil"><button class="back-btn" onclick="closePage('page-investments')" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Accueil</button></div>
+    <div class="nav-back" id="inv-back-grid" style="display:none;"><button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Ventures</button></div>
+    <div class="nav-back" id="inv-back-detail" style="display:none;"><button id="inv-detail-back" class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Externe</button></div>
+    <div class="sd-site-name" id="inv-banner-title" style="color:#f37056;font-size:clamp(20px,2.5vw,32px);font-weight:800;letter-spacing:-1px;">Ventures</div>
+    <div class="nav-filter"></div>
+  </div>
   <div class="inner-page-inner">
-    <div class="inner-topbar" style="border-bottom-color:rgba(243,112,86,0.15);">
-      <div style="text-align:center;width:100%;">
-        <div class="inner-title" id="inv-banner-title" style="color:#f37056;font-size:clamp(24px,3vw,40px);font-weight:800;letter-spacing:-1px;">Ventures</div>
-        <div class="inner-subtitle" id="inv-banner-subtitle" style="color:rgba(243,112,86,0.5);">Portefeuille d'investissements · Groupe Filatex</div>
-      </div>
-    </div>
     <!-- ═══ LEVEL 1: Landing Externe / Interne ═══ -->
     <div id="inv-landing" class="page-inner" style="padding-top:0;">
       <div class="e-wrap" id="inv-wrap" style="max-width:1000px;margin:0 auto;padding:24px 0;">
@@ -3191,14 +3189,13 @@ function closeDiegoDetail() {
       <div id="inv-detail-content" style="padding:16px 24px;max-width:800px;margin:0 auto;"></div>
     </div>
 
-    </div>
   </div>
   <div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;">
     <div class="capex-section-card reporting-card" style="border-color:rgba(243,112,86,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO</div></div>
   </div>
 </div>
 <!-- ══════════════ PROPERTIES ══════════════ -->
-<div id="page-properties" class="placeholder-page" style="background:#0a0916;">
+<div id="page-properties" class="placeholder-page" style="background:#0a0916;scrollbar-width:none;overflow-y:hidden;">
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closePage('page-properties')" style="border-color:rgba(253,184,35,0.3);color:#FDB823;">Accueil</button></div>
     <div class="sd-site-name" style="color:#FDB823;font-size:clamp(20px,2.5vw,32px);font-weight:800;letter-spacing:-1px;">Properties</div>
@@ -4088,16 +4085,12 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 
 <!-- ══════════════ PAGE CAPEX ══════════════ -->
 <div id="page-capex" class="placeholder-page" style="background:#090818;">
-
-  <div class="nav-back"><button class="back-btn" onclick="closePage('page-capex')" style="border-color:rgba(94,76,159,0.3);color:#5e4c9f;">Accueil</button></div>
-
+  <div class="sd-sticky-bar">
+    <div class="nav-back"><button class="back-btn" onclick="closePage('page-capex')" style="border-color:rgba(94,76,159,0.3);color:#5e4c9f;">Accueil</button></div>
+    <div class="sd-site-name" style="color:#8a7cc4;font-size:clamp(20px,2.5vw,32px);font-weight:800;letter-spacing:-1px;">CAPEX</div>
+    <div class="nav-filter"></div>
+  </div>
   <div class="inner-page-inner">
-    <div class="inner-topbar" style="border-bottom-color:rgba(94,76,159,0.15);">
-      <div style="text-align:center;width:100%;">
-        <div class="inner-title" style="color:#8a7cc4;font-size:clamp(24px,3vw,40px);font-weight:800;letter-spacing:-1px;">CAPEX</div>
-        <div class="inner-subtitle" style="color:rgba(94,76,159,0.5);">Suivi des investissements · Portefeuille global</div>
-      </div>
-    </div>
 
   <div style="max-width:1240px;margin:0 auto;padding:0 40px 80px;">
 
@@ -7337,7 +7330,8 @@ var _invCurrentType = 'externe';
 
 function _setInvBanner(title, subtitle) {
   document.getElementById('inv-banner-title').textContent = title;
-  document.getElementById('inv-banner-subtitle').textContent = subtitle;
+  var sub = document.getElementById('inv-banner-subtitle');
+  if (sub) sub.textContent = subtitle;
 }
 
 function _setInvBack(level) {
