@@ -3114,7 +3114,7 @@ function closeDiegoDetail() {
         <!-- Externe -->
         <div class="e-col-title" style="color:#f37056;">Externe <span class="e-col-title-sub" style="color:rgba(243,112,86,0.5);">Ventures</span></div>
         <!-- Interne -->
-        <div class="e-col-title" style="color:#f37056;opacity:0.4;">Interne <span class="e-col-title-sub" style="color:rgba(243,112,86,0.3);">Groupe</span></div>
+        <div class="e-col-title" style="color:#f37056;">Interne <span class="e-col-title-sub" style="color:rgba(243,112,86,0.5);">Groupe</span></div>
 
         <div class="capex-section-card e-card" onclick="openInvLevel('externe')" style="border-color:rgba(243,112,86,0.35);cursor:pointer;"
           onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'"
@@ -3122,8 +3122,8 @@ function closeDiegoDetail() {
           <div class="e-sec">
             <div class="e-sec-label">Projets</div>
             <div style="display:flex;align-items:center;justify-content:space-around;">
-              <div style="text-align:center;"><div class="e-big" style="color:#f37056;" id="inv-ext-count">19</div><div class="e-sub">Total</div></div>
-              <div style="text-align:center;"><div class="e-big" style="color:#4ecdc4;" id="inv-ext-encours">19</div><div class="e-sub">En cours</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:#f37056;" id="inv-ext-count">10</div><div class="e-sub">Total</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:#4ecdc4;" id="inv-ext-encours">10</div><div class="e-sub">En cours</div></div>
               <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);" id="inv-ext-termine">0</div><div class="e-sub">Terminé</div></div>
             </div>
           </div>
@@ -3143,18 +3143,22 @@ function closeDiegoDetail() {
           </div>
         </div>
 
-        <div class="capex-section-card e-card" style="border-color:rgba(243,112,86,0.15);opacity:0.4;cursor:default;">
+        <div class="capex-section-card e-card" onclick="openInvLevel('interne')" style="border-color:rgba(243,112,86,0.35);cursor:pointer;"
+          onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'"
+          onmouseleave="this.style.borderColor='rgba(243,112,86,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
           <div class="e-sec">
             <div class="e-sec-label">Projets</div>
             <div style="display:flex;align-items:center;justify-content:space-around;">
-              <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);">0</div><div class="e-sub">Total</div></div>
-              <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);">0</div><div class="e-sub">En cours</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:#f37056;">9</div><div class="e-sub">Total</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:#4ecdc4;">9</div><div class="e-sub">En cours</div></div>
               <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);">0</div><div class="e-sub">Terminé</div></div>
             </div>
           </div>
-          <div class="e-sec" style="border-color:rgba(243,112,86,0.05);">
-            <div class="e-sec-label" style="color:rgba(255,255,255,0.15);">Aucun projet interne</div>
-            <div style="text-align:center;padding:12px 0;"><div class="e-sub" style="font-size:10px;">Données à venir</div></div>
+          <div class="e-sec">
+            <div class="e-sec-label">Responsable</div>
+            <div style="display:flex;align-items:center;justify-content:center;">
+              <div style="text-align:center;"><div class="e-mid">Imtiaz</div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -7291,23 +7295,23 @@ document.addEventListener('DOMContentLoaded', () => {
 var invProjects = [
   {id:'Inv_E_OASIS',nom:'OASIS',resp:'Imtiaz',type:'externe',status:'En cours',week:9,capex:{invest:'5.6 M$',etat:'5.6 M$',pct:100}},
   {id:'Inv_E_ORGA EARTH',nom:'Orga Earth',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:{invest:'150 k$',etat:'150 k$',pct:100}},
-  {id:'Inv_E_HAKANTO HOUSE',nom:'Hakanto House',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:null},
+  {id:'Inv_I_HAKANTO HOUSE',nom:'Hakanto House',resp:'Imtiaz',type:'interne',status:'En cours',week:7,capex:null},
   {id:'Inv_E_MLF',nom:'MLF',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:null},
   {id:'Inv_E_ENERGIESTRO',nom:'Energiestro',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:{invest:'100 k$',etat:'120 k$',pct:100}},
-  {id:'Inv_E_HOTEL TAMATAVE',nom:'Hotel Tamatave',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:{invest:'2.7 M$',etat:'1.4 M$',pct:50}},
+  {id:'Inv_I_HOTEL TAMATAVE',nom:'Hotel Tamatave',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:{invest:'2.7 M$',etat:'1.4 M$',pct:50}},
   {id:'Inv_E_SUNFARMING',nom:'Sunfarming',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
   {id:'Inv_E_AFRIDOCTOR',nom:'Afridoctor',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
   {id:'Inv_E_ARTEMIS',nom:'Artemis',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
   {id:'Inv_E_BGFI',nom:'BGFI',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:{invest:'1.3 M$',etat:'—',pct:0}},
   {id:'Inv_E_OUI CODING',nom:'Ouicoding',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
   {id:'Inv_E_SEED STAR',nom:'Seedstars',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:{invest:'4.3 M$',etat:'5 M$',pct:100}},
-  {id:'Inv_E_CAFE MARY',nom:'Café Mary',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
-  {id:'Inv_E_GHU',nom:'GHU',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
-  {id:'Inv_E_HAYA',nom:'HAYA',resp:'Imtiaz',type:'externe',status:'En cours',week:9,capex:null},
-  {id:'Inv_E_MAISSON DES COTONNIERS',nom:'Maison des Cotonniers',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
-  {id:'Inv_E_SHOW ROOM',nom:'Showroom',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
-  {id:'Inv_E_SPORT-SENS LASER-SENS',nom:'SS LS',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
-  {id:'Inv_E_TAXI BROUSSE PIZZA',nom:'Taxi Brousse Pizza',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null}
+  {id:'Inv_I_CAFE MARY',nom:'Café Mary',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null},
+  {id:'Inv_I_GHU',nom:'GHU',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null},
+  {id:'Inv_I_HAYA',nom:'HAYA',resp:'Imtiaz',type:'interne',status:'En cours',week:9,capex:null},
+  {id:'Inv_I_MAISON DES COTONNIERS',nom:'Maison des Cotonniers',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null},
+  {id:'Inv_I_SHOW ROOM',nom:'Showroom',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null},
+  {id:'Inv_I_SPORT-SENS LASER-SENS',nom:'SS LS',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null},
+  {id:'Inv_I_TAXI BROUSSE PIZZA',nom:'Taxi Brousse Pizza',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null}
 ];
 
 var _invCurrentType = 'externe';
