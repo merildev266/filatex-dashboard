@@ -297,6 +297,9 @@ body::-webkit-scrollbar{display:none;}
 .site-nav-btn{background:var(--dark2);border:1px solid var(--border);color:var(--text-muted);padding:6px 0;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'Aeonik','DM Sans',sans-serif;transition:all 0.2s;min-width:110px;text-align:center;}
 .site-nav-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
 .site-nav-btn.active{background:var(--energy);color:#1e1d38;border-color:var(--energy);font-weight:700;}
+.inv-nav-btn{background:rgba(243,112,86,0.04);border-color:rgba(243,112,86,0.2);color:rgba(243,112,86,0.6);}
+.inv-nav-btn:hover{background:rgba(243,112,86,0.1);border-color:rgba(243,112,86,0.45);color:#f37056;}
+.inv-nav-btn.active{background:#f37056;color:#1e1d38;border-color:#f37056;font-weight:700;}
 
 /* Contribution banner */
 .contrib-banner{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
@@ -3103,6 +3106,10 @@ function closeDiegoDetail() {
     </div>
     <!-- ═══ LEVEL 1: Landing Externe / Interne ═══ -->
     <div id="inv-landing" class="page-inner" style="padding-top:0;">
+      <div class="site-nav" style="margin:16px auto 0;max-width:400px;" id="inv-type-nav">
+        <button class="site-nav-btn inv-nav-btn active" onclick="invNavType('externe')" data-inv="externe">Externe</button>
+        <button class="site-nav-btn inv-nav-btn" onclick="invNavType('interne')" data-inv="interne">Interne</button>
+      </div>
       <div class="e-wrap" id="inv-wrap" style="max-width:1000px;margin:0 auto;padding:24px 0;">
         <!-- Externe -->
         <div class="e-col-title" style="color:#f37056;">Externe <span class="e-col-title-sub" style="color:rgba(243,112,86,0.5);">Ventures</span></div>
@@ -3160,6 +3167,7 @@ function closeDiegoDetail() {
         <span id="inv-grid-title" style="font-size:clamp(16px,1.6vw,24px);font-weight:800;color:#f37056;margin-left:16px;">Ventures Externe</span>
         <span id="inv-grid-subtitle" style="font-size:clamp(7px,0.6vw,10px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(243,112,86,0.4);margin-left:8px;">19 PROJETS</span>
       </div>
+      <div class="site-nav" style="margin:8px 24px 0;overflow-x:auto;flex-wrap:nowrap;" id="inv-proj-nav"></div>
       <div id="inv-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:16px 24px;"></div>
     </div>
 
@@ -7302,6 +7310,15 @@ var invProjects = [
   {id:'Inv_E_TAXI BROUSSE PIZZA',nom:'Taxi Brousse Pizza',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null}
 ];
 
+var _invCurrentType = 'externe';
+
+function invNavType(type) {
+  _invCurrentType = type;
+  document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); });
+  if (type === 'externe') openInvLevel('externe');
+  else openInvLevel('interne');
+}
+
 function openInvLevel(type) {
   document.getElementById('inv-landing').style.display = 'none';
   document.getElementById('inv-grid-view').style.display = '';
@@ -7309,6 +7326,11 @@ function openInvLevel(type) {
   var label = type === 'externe' ? 'Ventures Externe' : 'Ventures Interne';
   document.getElementById('inv-grid-title').textContent = label;
   document.getElementById('inv-grid-subtitle').textContent = filtered.length + ' PROJETS';
+  var nav = document.getElementById('inv-proj-nav');
+  nav.innerHTML = '';
+  filtered.forEach(function(p){
+    nav.innerHTML += '<button class="site-nav-btn inv-nav-btn" onclick="openInvDetail(\''+p.id+'\')" style="white-space:nowrap;">'+p.nom+'</button>';
+  });
   var c = document.getElementById('inv-cards-container');
   c.innerHTML = '';
   filtered.forEach(function(p){
@@ -7340,16 +7362,14 @@ function openInvDetail(id) {
   document.getElementById('inv-grid-view').style.display = 'none';
   document.getElementById('inv-detail-view').style.display = '';
   document.getElementById('inv-detail-title').textContent = p.nom;
+  document.querySelectorAll('#inv-proj-nav .inv-nav-btn').forEach(function(b){ b.classList.remove('active'); });
   var hasCx = p.capex !== null;
   var html = '<div class="capex-section-card" style="border-color:rgba(243,112,86,0.25);padding:24px;">';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
-  html += '<div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">ID Projet</div><div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.6);">'+p.id+'</div></div>';
-  html += '<div style="text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Responsable</div><div style="font-size:14px;font-weight:700;">'+p.resp+'</div></div>';
+  html += '<div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Responsable</div><div style="font-size:14px;font-weight:700;">'+p.resp+'</div></div>';
   var stColor = p.status === 'En cours' ? '#4ecdc4' : '#a8d98a';
-  html += '<div style="text-align:right;"><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Statut</div><div style="font-size:14px;font-weight:700;color:'+stColor+';">'+p.status+'</div></div>';
-  html += '</div>';
-  html += '<div style="border-top:1px solid rgba(243,112,86,0.1);padding-top:12px;margin-bottom:12px;">';
-  html += '<div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">Dernière mise à jour · Semaine '+p.week+'</div>';
+  html += '<div style="text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Statut</div><div style="font-size:14px;font-weight:700;color:'+stColor+';">'+p.status+'</div></div>';
+  html += '<div style="text-align:right;"><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Dernière MAJ</div><div style="font-size:14px;font-weight:700;">Semaine '+p.week+'</div></div>';
   html += '</div>';
   if (hasCx) {
     html += '<div style="border-top:1px solid rgba(243,112,86,0.1);padding-top:12px;">';
