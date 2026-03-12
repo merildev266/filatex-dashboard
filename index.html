@@ -304,14 +304,14 @@ body::-webkit-scrollbar{display:none;}
 .inv-nav-btn.active{background:#f37056;color:#1e1d38;border-color:#f37056;font-weight:700;}
 
 /* Reporting card */
-.reporting-card{display:inline-flex;flex-direction:column;align-items:center;padding:16px 32px;border-color:rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;}
+.reporting-card{display:inline-flex;flex-direction:column;align-items:center;padding:12px 26px;border-color:rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;}
 .reporting-card:hover{border-color:rgba(58,57,92,0.5);transform:translateY(-10px);box-shadow:0 28px 80px rgba(58,57,92,0.25);background:rgba(58,57,92,0.08);}
 .reporting-fixed-wrap{position:fixed;bottom:80px;left:0;right:0;text-align:center;z-index:10;pointer-events:none;display:none;}
 .reporting-fixed-wrap.visible{display:block;}
 .reporting-fixed-wrap .reporting-card{pointer-events:auto;}
-.reporting-icon{font-size:24px;margin-bottom:6px;}
-.reporting-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.8);letter-spacing:0.15em;text-transform:uppercase;}
-.reporting-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;}
+.reporting-icon{font-size:19px;margin-bottom:4px;}
+.reporting-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);letter-spacing:0.15em;text-transform:uppercase;}
+.reporting-sub{font-size:7px;color:rgba(255,255,255,0.3);margin-top:3px;}
 
 /* Contribution banner */
 .contrib-banner{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
@@ -4096,10 +4096,10 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
   </div>
   <div class="inner-page-inner">
 
-  <div style="max-width:1240px;margin:0 auto;padding:0 40px 80px;">
+  <div style="max-width:1240px;margin:0 auto;padding:0 40px 120px;">
 
     <!-- ══ GLOBAL SUMMARY ══ -->
-    <div style="margin-bottom:40px;">
+    <div style="margin-bottom:24px;">
       <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(94,76,159,0.5);margin-bottom:18px;">Vue consolidée · Tous pôles</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
 
@@ -4157,8 +4157,8 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
     </div>
 
     <!-- ══ 4 SECTIONS ══ -->
-    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(94,76,159,0.5);margin-bottom:18px;">Pôles d'investissement</div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(94,76,159,0.5);margin-bottom:12px;">Pôles d'investissement</div>
+    <div id="capex-poles-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1100px;margin:0 auto;">
 
       <!-- EnR -->
       <div class="capex-section-card" onclick="openCapexSection('enr')" data-pole="enr">
@@ -4402,6 +4402,17 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 
 /* ── Section cards ── */
 .capex-section-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 24px 20px;cursor:pointer;transition:transform 0.28s,box-shadow 0.28s,border-color 0.28s,background 0.28s;}
+#capex-poles-grid .capex-section-card{aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;padding:clamp(10px,1.2vw,16px);box-sizing:border-box;overflow:hidden;}
+#capex-poles-grid .csec-header{margin-bottom:8px;}
+#capex-poles-grid .csec-dot{width:7px;height:7px;}
+#capex-poles-grid .csec-title{font-size:clamp(10px,1vw,14px);}
+#capex-poles-grid .csec-badge{font-size:clamp(5px,0.4vw,7px);padding:2px 5px;}
+#capex-poles-grid .csec-arrow{font-size:12px;}
+#capex-poles-grid .csec-kpis{grid-template-columns:repeat(2,1fr);gap:clamp(4px,0.5vw,8px);}
+#capex-poles-grid .csec-kpi-label{font-size:clamp(5px,0.4vw,7px);letter-spacing:0.15em;}
+#capex-poles-grid .csec-kpi-val{font-size:clamp(10px,0.9vw,15px);}
+#capex-poles-grid .csec-kpi-vs{font-size:clamp(5px,0.35vw,7px);}
+#capex-poles-grid .csec-progress-mini{height:2px;}
 .capex-section-card:hover{transform:translateY(-4px);}
 .capex-section-card[data-pole="enr"]:hover{border-color:rgba(0,171,99,0.35);background:rgba(0,171,99,0.05);box-shadow:0 16px 50px rgba(0,171,99,0.12);}
 .capex-section-card[data-pole="hfo"]:hover{border-color:rgba(66,106,179,0.35);background:rgba(66,106,179,0.05);box-shadow:0 16px 50px rgba(66,106,179,0.12);}
