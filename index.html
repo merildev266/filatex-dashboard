@@ -301,6 +301,13 @@ body::-webkit-scrollbar{display:none;}
 .inv-nav-btn:hover{background:rgba(243,112,86,0.1);border-color:rgba(243,112,86,0.45);color:#f37056;}
 .inv-nav-btn.active{background:#f37056;color:#1e1d38;border-color:#f37056;font-weight:700;}
 
+/* Reporting card */
+.reporting-card{display:inline-flex;flex-direction:column;align-items:center;padding:16px 32px;border-color:rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;}
+.reporting-card:hover{border-color:rgba(255,255,255,0.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,0.05);}
+.reporting-icon{font-size:24px;margin-bottom:6px;}
+.reporting-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.8);letter-spacing:0.15em;text-transform:uppercase;}
+.reporting-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;}
+
 /* Contribution banner */
 .contrib-banner{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
 .contrib-pct{font-size:38px;font-weight:800;color:var(--energy);line-height:1;letter-spacing:-1px;}
@@ -844,6 +851,10 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
     </div><!-- end cards-row1 -->
 
+    <div style="text-align:center;padding:24px 0 0;">
+      <div class="capex-section-card reporting-card"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO · Suivi mensuel</div></div>
+    </div>
+
   </div>
 
 </div><!-- end #home -->
@@ -1002,6 +1013,10 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           <div id="e-enr-sites-row" style="display:flex;align-items:center;justify-content:space-between;gap:4px;"></div>
         </div>
 
+      </div>
+
+      <div style="grid-column:1/-1;text-align:center;padding:16px 0 0;">
+        <div class="capex-section-card reporting-card" style="border-color:rgba(0,171,99,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO · Suivi mensuel</div></div>
       </div>
 
     </div>
@@ -3153,6 +3168,11 @@ function closeDiegoDetail() {
             </div>
           </div>
         </div>
+
+        <div style="grid-column:1/-1;text-align:center;padding:16px 0 0;">
+          <div class="capex-section-card reporting-card" style="border-color:rgba(243,112,86,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO · Suivi mensuel</div></div>
+        </div>
+
       </div>
     </div>
 
@@ -3271,6 +3291,9 @@ function closeDiegoDetail() {
           </div>
         </div>
 
+      </div>
+      <div style="text-align:center;padding:24px 0 0;">
+        <div class="capex-section-card reporting-card" style="border-color:rgba(253,184,35,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO · Suivi mensuel</div></div>
       </div>
     </div>
   </div>
@@ -4276,6 +4299,11 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
       </div>
 
     </div><!-- end sections grid -->
+
+    <div style="text-align:center;padding:24px 0 0;">
+      <div class="capex-section-card reporting-card" style="border-color:rgba(94,76,159,0.15);"><div class="reporting-icon">📊</div><div class="reporting-label">Reporting</div><div class="reporting-sub">PMO · Suivi mensuel</div></div>
+    </div>
+
   </div><!-- end content -->
   </div><!-- end inner-page-inner -->
 
