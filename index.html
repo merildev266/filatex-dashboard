@@ -3101,9 +3101,77 @@ function closeDiegoDetail() {
         <div class="inner-subtitle" style="color:rgba(243,112,86,0.5);">Portefeuille d'investissements · Groupe Filatex</div>
       </div>
     </div>
-    <div class="page-inner" style="padding-top:0;">
-    <!-- Hidden page-header block removed (dead SVG duplicate) -->
-    <div class="coming-soon"><p>Dashboard Investments — En construction</p></div>
+    <!-- ═══ LEVEL 1: Landing Externe / Interne ═══ -->
+    <div id="inv-landing" class="page-inner" style="padding-top:0;">
+      <div class="e-wrap" id="inv-wrap" style="max-width:1000px;margin:0 auto;padding:24px 0;">
+        <!-- Externe -->
+        <div class="e-col-title" style="color:#f37056;">Externe <span class="e-col-title-sub" style="color:rgba(243,112,86,0.5);">Ventures</span></div>
+        <!-- Interne -->
+        <div class="e-col-title" style="color:#f37056;opacity:0.4;">Interne <span class="e-col-title-sub" style="color:rgba(243,112,86,0.3);">Groupe</span></div>
+
+        <div class="capex-section-card e-card" onclick="openInvLevel('externe')" style="border-color:rgba(243,112,86,0.35);cursor:pointer;"
+          onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'"
+          onmouseleave="this.style.borderColor='rgba(243,112,86,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+          <div class="e-sec">
+            <div class="e-sec-label">Projets</div>
+            <div style="display:flex;align-items:center;justify-content:space-around;">
+              <div style="text-align:center;"><div class="e-big" style="color:#f37056;" id="inv-ext-count">19</div><div class="e-sub">Total</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:#4ecdc4;" id="inv-ext-encours">19</div><div class="e-sub">En cours</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);" id="inv-ext-termine">0</div><div class="e-sub">Terminé</div></div>
+            </div>
+          </div>
+          <div class="e-sec">
+            <div class="e-sec-label">Investissement CAPEX</div>
+            <div style="display:flex;align-items:center;justify-content:space-around;">
+              <div style="text-align:center;"><div class="e-mid" style="color:#f37056;" id="inv-ext-budget">29.7 M$</div><div class="e-sub">Budget révisé</div></div>
+              <div style="text-align:center;"><div class="e-pct" style="color:#4ecdc4;" id="inv-ext-pct">67%</div><div class="e-sub">Décaissé</div></div>
+              <div style="text-align:center;"><div class="e-mid" id="inv-ext-decaisse">19.9 M$</div><div class="e-sub">Montant décaissé</div></div>
+            </div>
+          </div>
+          <div class="e-sec">
+            <div class="e-sec-label">Responsable</div>
+            <div style="display:flex;align-items:center;justify-content:center;">
+              <div style="text-align:center;"><div class="e-mid">Imtiaz</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="capex-section-card e-card" style="border-color:rgba(243,112,86,0.15);opacity:0.4;cursor:default;">
+          <div class="e-sec">
+            <div class="e-sec-label">Projets</div>
+            <div style="display:flex;align-items:center;justify-content:space-around;">
+              <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);">0</div><div class="e-sub">Total</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);">0</div><div class="e-sub">En cours</div></div>
+              <div style="text-align:center;"><div class="e-big" style="color:rgba(255,255,255,0.3);">0</div><div class="e-sub">Terminé</div></div>
+            </div>
+          </div>
+          <div class="e-sec" style="border-color:rgba(243,112,86,0.05);">
+            <div class="e-sec-label" style="color:rgba(255,255,255,0.15);">Aucun projet interne</div>
+            <div style="text-align:center;padding:12px 0;"><div class="e-sub" style="font-size:10px;">Données à venir</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LEVEL 2: Project cards grid ═══ -->
+    <div id="inv-grid-view" class="page-inner" style="display:none;padding-top:0;">
+      <div style="padding:8px 24px;">
+        <button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">← Investments</button>
+        <span id="inv-grid-title" style="font-size:clamp(16px,1.6vw,24px);font-weight:800;color:#f37056;margin-left:16px;">Ventures Externe</span>
+        <span id="inv-grid-subtitle" style="font-size:clamp(7px,0.6vw,10px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(243,112,86,0.4);margin-left:8px;">19 PROJETS</span>
+      </div>
+      <div id="inv-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:16px 24px;"></div>
+    </div>
+
+    <!-- ═══ LEVEL 3: Project detail ═══ -->
+    <div id="inv-detail-view" class="page-inner" style="display:none;padding-top:0;">
+      <div style="padding:8px 24px;">
+        <button class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">← Projets</button>
+        <span id="inv-detail-title" style="font-size:clamp(16px,1.6vw,24px);font-weight:800;color:#f37056;margin-left:16px;"></span>
+      </div>
+      <div id="inv-detail-content" style="padding:16px 24px;max-width:800px;margin:0 auto;"></div>
+    </div>
+
     </div>
   </div>
 </div>
@@ -7210,5 +7278,98 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="gd-body"></div>
   </div>
 </div>
+<script>
+/* ══ INVESTMENTS ══ */
+var invProjects = [
+  {id:'Inv_E_OASIS',nom:'OASIS',resp:'Imtiaz',type:'externe',status:'En cours',week:9,capex:{invest:'5.6 M$',etat:'5.6 M$',pct:100}},
+  {id:'Inv_E_ORGA EARTH',nom:'Orga Earth',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:{invest:'150 k$',etat:'150 k$',pct:100}},
+  {id:'Inv_E_HAKANTO HOUSE',nom:'Hakanto House',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:null},
+  {id:'Inv_E_MLF',nom:'MLF',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:null},
+  {id:'Inv_E_ENERGIESTRO',nom:'Energiestro',resp:'Imtiaz',type:'externe',status:'En cours',week:7,capex:{invest:'100 k$',etat:'120 k$',pct:100}},
+  {id:'Inv_E_HOTEL TAMATAVE',nom:'Hotel Tamatave',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:{invest:'2.7 M$',etat:'1.4 M$',pct:50}},
+  {id:'Inv_E_SUNFARMING',nom:'Sunfarming',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_AFRIDOCTOR',nom:'Afridoctor',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_ARTEMIS',nom:'Artemis',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_BGFI',nom:'BGFI',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:{invest:'1.3 M$',etat:'—',pct:0}},
+  {id:'Inv_E_OUI CODING',nom:'Ouicoding',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_SEED STAR',nom:'Seedstars',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:{invest:'4.3 M$',etat:'5 M$',pct:100}},
+  {id:'Inv_E_CAFE MARY',nom:'Café Mary',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_GHU',nom:'GHU',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_HAYA',nom:'HAYA',resp:'Imtiaz',type:'externe',status:'En cours',week:9,capex:null},
+  {id:'Inv_E_MAISSON DES COTONNIERS',nom:'Maison des Cotonniers',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_SHOW ROOM',nom:'Showroom',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_SPORT-SENS LASER-SENS',nom:'SS LS',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null},
+  {id:'Inv_E_TAXI BROUSSE PIZZA',nom:'Taxi Brousse Pizza',resp:'Imtiaz',type:'externe',status:'En cours',week:10,capex:null}
+];
+
+function openInvLevel(type) {
+  document.getElementById('inv-landing').style.display = 'none';
+  document.getElementById('inv-grid-view').style.display = '';
+  var filtered = invProjects.filter(function(p){ return p.type === type; });
+  var label = type === 'externe' ? 'Ventures Externe' : 'Ventures Interne';
+  document.getElementById('inv-grid-title').textContent = label;
+  document.getElementById('inv-grid-subtitle').textContent = filtered.length + ' PROJETS';
+  var c = document.getElementById('inv-cards-container');
+  c.innerHTML = '';
+  filtered.forEach(function(p){
+    var hasCx = p.capex !== null;
+    var pctBar = hasCx ? '<div style="width:100%;height:4px;background:rgba(243,112,86,0.1);border-radius:2px;margin-top:8px;"><div style="width:'+p.capex.pct+'%;height:100%;background:#f37056;border-radius:2px;"></div></div>' : '';
+    var cxHtml = hasCx
+      ? '<div style="display:flex;justify-content:space-between;margin-top:8px;"><div><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;">Invest</div><div style="font-size:16px;font-weight:800;color:#f37056;">'+p.capex.invest+'</div></div><div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;">Décaissé</div><div style="font-size:16px;font-weight:800;">'+p.capex.etat+'</div></div><div style="text-align:right;"><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;">Exécution</div><div style="font-size:16px;font-weight:800;color:#4ecdc4;">'+p.capex.pct+'%</div></div></div>'+pctBar
+      : '<div style="text-align:center;padding:8px 0;color:rgba(255,255,255,0.2);font-size:10px;">Données CAPEX non disponibles</div>';
+    var statusColor = p.status === 'En cours' ? '#4ecdc4' : (p.status === 'Terminé' ? '#a8d98a' : 'rgba(255,255,255,0.4)');
+    c.innerHTML += '<div class="capex-section-card" onclick="openInvDetail(\''+p.id+'\')" style="border-color:rgba(243,112,86,0.2);cursor:pointer;padding:16px;transition:all 0.2s;" onmouseenter="this.style.borderColor=\'rgba(243,112,86,0.5)\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 24px rgba(243,112,86,0.15)\'" onmouseleave="this.style.borderColor=\'rgba(243,112,86,0.2)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="font-size:clamp(14px,1.2vw,18px);font-weight:800;color:rgba(255,255,255,0.9);">'+p.nom+'</div>'
+      +'<div style="font-size:9px;font-weight:700;color:'+statusColor+';border:1px solid;border-radius:4px;padding:2px 6px;">'+p.status+'</div>'
+      +'</div>'
+      +'<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;">S'+p.week+' · '+p.resp+'</div>'
+      +cxHtml
+      +'</div>';
+  });
+}
+
+function closeInvLevel() {
+  document.getElementById('inv-grid-view').style.display = 'none';
+  document.getElementById('inv-landing').style.display = '';
+}
+
+function openInvDetail(id) {
+  var p = invProjects.find(function(x){ return x.id === id; });
+  if (!p) return;
+  document.getElementById('inv-grid-view').style.display = 'none';
+  document.getElementById('inv-detail-view').style.display = '';
+  document.getElementById('inv-detail-title').textContent = p.nom;
+  var hasCx = p.capex !== null;
+  var html = '<div class="capex-section-card" style="border-color:rgba(243,112,86,0.25);padding:24px;">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+  html += '<div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">ID Projet</div><div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.6);">'+p.id+'</div></div>';
+  html += '<div style="text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Responsable</div><div style="font-size:14px;font-weight:700;">'+p.resp+'</div></div>';
+  var stColor = p.status === 'En cours' ? '#4ecdc4' : '#a8d98a';
+  html += '<div style="text-align:right;"><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;">Statut</div><div style="font-size:14px;font-weight:700;color:'+stColor+';">'+p.status+'</div></div>';
+  html += '</div>';
+  html += '<div style="border-top:1px solid rgba(243,112,86,0.1);padding-top:12px;margin-bottom:12px;">';
+  html += '<div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">Dernière mise à jour · Semaine '+p.week+'</div>';
+  html += '</div>';
+  if (hasCx) {
+    html += '<div style="border-top:1px solid rgba(243,112,86,0.1);padding-top:12px;">';
+    html += '<div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:12px;">Données CAPEX</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">';
+    html += '<div style="text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.3);">Investissement</div><div style="font-size:22px;font-weight:800;color:#f37056;">'+p.capex.invest+'</div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.3);">Décaissé</div><div style="font-size:22px;font-weight:800;">'+p.capex.etat+'</div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.3);">Exécution</div><div style="font-size:22px;font-weight:800;color:#4ecdc4;">'+p.capex.pct+'%</div></div>';
+    html += '</div>';
+    html += '<div style="width:100%;height:6px;background:rgba(243,112,86,0.1);border-radius:3px;margin-top:12px;"><div style="width:'+p.capex.pct+'%;height:100%;background:#f37056;border-radius:3px;"></div></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('inv-detail-content').innerHTML = html;
+}
+
+function closeInvDetail() {
+  document.getElementById('inv-detail-view').style.display = 'none';
+  document.getElementById('inv-grid-view').style.display = '';
+}
+</script>
 </body>
 </html>
