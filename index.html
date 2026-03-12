@@ -3099,6 +3099,8 @@ function closeDiegoDetail() {
 <!-- ══════════════ INVESTMENTS ══════════════ -->
 <div id="page-investments" class="placeholder-page" style="background:#0a0916;scrollbar-width:none;">
   <div class="nav-back" id="inv-back-accueil"><button class="back-btn" onclick="closePage('page-investments')" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Accueil</button></div>
+  <div class="nav-back" id="inv-back-grid" style="display:none;"><button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Ventures</button></div>
+  <div class="nav-back" id="inv-back-detail" style="display:none;"><button id="inv-detail-back" class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Externe</button></div>
   <div class="inner-page-inner">
     <div class="inner-topbar" style="border-bottom-color:rgba(243,112,86,0.15);">
       <div style="text-align:center;width:100%;">
@@ -3156,7 +3158,6 @@ function closeDiegoDetail() {
 
     <!-- ═══ LEVEL 2: Project cards grid ═══ -->
     <div id="inv-grid-view" class="page-inner" style="display:none;padding-top:0;">
-      <div class="nav-back"><button class="back-btn" onclick="closeInvLevel()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Ventures</button></div>
       <div class="site-nav" style="margin:8px auto 0;max-width:400px;justify-content:center;" id="inv-type-nav">
         <button class="site-nav-btn inv-nav-btn" onclick="invNavType('externe')" data-inv="externe">Externe</button>
         <button class="site-nav-btn inv-nav-btn" onclick="invNavType('interne')" data-inv="interne">Interne</button>
@@ -3168,7 +3169,6 @@ function closeDiegoDetail() {
 
     <!-- ═══ LEVEL 3: Project detail ═══ -->
     <div id="inv-detail-view" class="page-inner" style="display:none;padding-top:0;">
-      <div class="nav-back"><button id="inv-detail-back" class="back-btn" onclick="closeInvDetail()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">Externe</button></div>
       <div class="site-nav" style="margin:8px 24px 0;flex-wrap:wrap;gap:6px;" id="inv-proj-nav"></div>
       <div id="inv-detail-content" style="padding:16px 24px;max-width:800px;margin:0 auto;"></div>
     </div>
@@ -7311,6 +7311,12 @@ function _setInvBanner(title, subtitle) {
   document.getElementById('inv-banner-subtitle').textContent = subtitle;
 }
 
+function _setInvBack(level) {
+  document.getElementById('inv-back-accueil').style.display = level === 'landing' ? '' : 'none';
+  document.getElementById('inv-back-grid').style.display = level === 'grid' ? '' : 'none';
+  document.getElementById('inv-back-detail').style.display = level === 'detail' ? '' : 'none';
+}
+
 function _renderInvKpi(type) {
   var filtered = invProjects.filter(function(p){ return p.type === type; });
   var total = filtered.length;
@@ -7353,7 +7359,7 @@ function invNavType(type) {
 
 function openInvLevel(type) {
   _invCurrentType = type;
-  document.getElementById('inv-back-accueil').style.display = 'none';
+  _setInvBack('grid');
   document.getElementById('inv-landing').style.display = 'none';
   document.getElementById('inv-grid-view').style.display = '';
   document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); });
@@ -7388,7 +7394,7 @@ function _renderInvCards(filtered) {
 function closeInvLevel() {
   document.getElementById('inv-grid-view').style.display = 'none';
   document.getElementById('inv-landing').style.display = '';
-  document.getElementById('inv-back-accueil').style.display = '';
+  _setInvBack('landing');
   _setInvBanner('Ventures', 'Portefeuille d\'investissements · Groupe Filatex');
   document.getElementById('page-investments').scrollTop = 0;
 }
@@ -7399,6 +7405,7 @@ function openInvDetail(id) {
   document.getElementById('inv-grid-view').style.display = 'none';
   document.getElementById('inv-detail-view').style.display = '';
   _setInvBanner(p.nom, p.type === 'externe' ? 'Ventures · Projet Externe' : 'Groupe · Projet Interne');
+  _setInvBack('detail');
   document.getElementById('inv-detail-back').textContent = p.type === 'externe' ? 'Externe' : 'Interne';
   var nav = document.getElementById('inv-proj-nav');
   var filtered = invProjects.filter(function(x){ return x.type === p.type; });
@@ -7434,6 +7441,7 @@ function openInvDetail(id) {
 function closeInvDetail() {
   document.getElementById('inv-detail-view').style.display = 'none';
   document.getElementById('inv-grid-view').style.display = '';
+  _setInvBack('grid');
   _setInvBanner(_invCurrentType === 'externe' ? 'Externe' : 'Interne', _invCurrentType === 'externe' ? 'Ventures · Investissements Externes' : 'Groupe · Investissements Internes');
   document.getElementById('page-investments').scrollTop = 0;
 }
