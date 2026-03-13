@@ -172,8 +172,8 @@ body::-webkit-scrollbar{display:none;}
 .inner-subtitle{font-size:10px;color:var(--text-dim);letter-spacing:0.25em;text-transform:uppercase;margin-top:2px;}
 
 /* ══ TIME FILTER ══ */
-.time-filter{display:flex;align-items:center;background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.18);border-radius:10px;padding:4px;gap:3px;}
-.tfilter{background:none;border:none;color:rgba(0,171,99,0.5);padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;font-family:'Aeonik','DM Sans',sans-serif;transition:all 0.2s;min-width:32px;text-align:center;box-sizing:border-box;}
+.time-filter{display:flex;align-items:center;background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.18);border-radius:10px;padding:3px;gap:2px;}
+.tfilter{background:none;border:none;color:rgba(0,171,99,0.5);padding:5px 8px;border-radius:7px;font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;font-family:'Aeonik','DM Sans',sans-serif;transition:all 0.2s;min-width:28px;text-align:center;box-sizing:border-box;}
 .tfilter:hover{color:#00ab63;background:rgba(0,171,99,0.08);}
 .tfilter.active{background:rgba(0,171,99,0.15);color:#00ab63;border:1px solid rgba(0,171,99,0.3);}
 .month-btn-wrap{position:relative;display:inline-block;}
@@ -182,21 +182,7 @@ body::-webkit-scrollbar{display:none;}
 .month-dropdown .md-item{padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-muted);white-space:nowrap;text-align:center;transition:all 0.15s;}
 .month-dropdown .md-item:hover{background:rgba(0,171,99,0.15);color:#00ab63;}
 .month-dropdown .md-item.md-active{background:rgba(0,171,99,0.25);color:#00ab63;font-weight:600;}
-.day-btn-wrap{position:relative;display:inline-block;}
-.day-dropdown{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:rgba(8,11,24,0.97);border:1px solid rgba(0,171,99,0.3);border-radius:10px;padding:8px;z-index:100;flex-direction:column;gap:4px;min-width:200px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-top:4px;}
-.day-dropdown.open{display:flex;}
-.day-dd-header{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 6px;border-bottom:1px solid rgba(0,171,99,0.15);margin-bottom:2px;}
-.day-dd-header span{font-size:11px;font-weight:600;color:#00ab63;letter-spacing:0.05em;text-transform:uppercase;}
-.day-dd-arrow{background:none;border:1px solid rgba(0,171,99,0.2);color:rgba(0,171,99,0.6);width:22px;height:22px;border-radius:5px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-family:'Aeonik','DM Sans',sans-serif;padding:0;}
-.day-dd-arrow:hover{background:rgba(0,171,99,0.12);color:#00ab63;border-color:rgba(0,171,99,0.4);}
-.day-dd-arrow:disabled{opacity:0.25;cursor:default;pointer-events:none;}
-.day-dd-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.day-dd-dow{font-size:8px;color:var(--text-dim);text-align:center;padding:2px 0;letter-spacing:0.05em;text-transform:uppercase;}
-.day-dd-item{padding:4px 2px;border-radius:5px;cursor:pointer;font-size:11px;color:var(--text-muted);text-align:center;transition:all 0.15s;font-weight:500;}
-.day-dd-item:hover{background:rgba(0,171,99,0.15);color:#00ab63;}
-.day-dd-item.dd-active{background:rgba(0,171,99,0.25);color:#00ab63;font-weight:700;}
-.day-dd-item.dd-empty{visibility:hidden;pointer-events:none;}
-.day-dd-item.dd-disabled{opacity:0.25;pointer-events:none;}
+
 .enr-filter:hover{color:#00ab63;background:rgba(0,171,99,0.08);}
 .enr-filter.active{background:linear-gradient(135deg,rgba(0,171,99,0.28),rgba(60,140,60,0.18));color:#a8d98a;border:none;box-shadow:0 0 12px rgba(0,171,99,0.15);}
 
@@ -900,7 +886,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closePage('page-energy')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Accueil</button></div>
     <div class="sd-site-name" style="color:#00ab63;">Energy</div>
-    <div class="nav-filter"><div class="time-filter"><span class="day-btn-wrap"><button class="tfilter" onclick="toggleDayDropdown(event,this)">24h</button><div class="day-dropdown"></div></span><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown"></div></span><button class="tfilter" onclick="setFilter('year',this)">Cette année</button></div></div>
+    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><button class="tfilter tf-quarter" data-q="1" onclick="setFilterQuarter(1,this)">Q1</button><button class="tfilter tf-quarter" data-q="2" onclick="setFilterQuarter(2,this)">Q2</button><button class="tfilter tf-quarter" data-q="3" onclick="setFilterQuarter(3,this)">Q3</button><button class="tfilter tf-quarter" data-q="4" onclick="setFilterQuarter(4,this)">Q4</button><button class="tfilter tf-year" data-year="2025" onclick="setFilterYear(2025,this)">2025</button><button class="tfilter tf-year" data-year="2026" onclick="setFilterYear(2026,this)">2026</button></div></div>
   </div>
   <div class="inner-page-inner">
 
@@ -942,7 +928,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <div style="text-align:center;flex:1;">
               <div class="e-big"><span id="e-hfo-prod-reel">—</span> <span class="e-big-unit">MWh</span></div>
-              <div class="e-sub">Réel · <span id="e-hfo-prod-filter">Ce mois</span></div>
+              <div class="e-sub">Réel · <span id="e-hfo-prod-filter">—</span></div>
             </div>
             <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
               <div id="e-hfo-prod-pct" class="e-pct">—</div>
@@ -1094,7 +1080,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closeInner('hfo')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
     <div class="sd-site-name">HFO</div>
-    <div class="nav-filter"><div class="time-filter"><span class="day-btn-wrap"><button class="tfilter" onclick="toggleDayDropdown(event,this)">24h</button><div class="day-dropdown"></div></span><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown"></div></span><button class="tfilter" onclick="setFilter('year',this)">Cette année</button></div></div>
+    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><button class="tfilter tf-quarter" data-q="1" onclick="setFilterQuarter(1,this)">Q1</button><button class="tfilter tf-quarter" data-q="2" onclick="setFilterQuarter(2,this)">Q2</button><button class="tfilter tf-quarter" data-q="3" onclick="setFilterQuarter(3,this)">Q3</button><button class="tfilter tf-quarter" data-q="4" onclick="setFilterQuarter(4,this)">Q4</button><button class="tfilter tf-year" data-year="2025" onclick="setFilterYear(2025,this)">2025</button><button class="tfilter tf-year" data-year="2026" onclick="setFilterYear(2026,this)">2026</button></div></div>
   </div>
   <div class="inner-page-inner">
     <div class="section-title" style="text-align:center;">Consolidé HFO — Tous sites actifs</div>
@@ -1108,7 +1094,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 <div id="inner-enr" class="inner-page" style="background:#080d18;">
 
   <div class="nav-back"><button class="back-btn" onclick="closeInner('enr')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
-  <div class="nav-filter"><div class="time-filter"><span class="enr-day-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrDayDropdown(event,this)">24h</button><div class="day-dropdown enr-day-dropdown"></div></span><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter" onclick="setEnrFilter('year',this)">Cette année</button></div></div>
+  <div class="nav-filter"><div class="time-filter"><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">M</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter tf-quarter" data-q="1" onclick="setEnrFilterQuarter(1,this)">Q1</button><button class="tfilter enr-filter tf-quarter" data-q="2" onclick="setEnrFilterQuarter(2,this)">Q2</button><button class="tfilter enr-filter tf-quarter" data-q="3" onclick="setEnrFilterQuarter(3,this)">Q3</button><button class="tfilter enr-filter tf-quarter" data-q="4" onclick="setEnrFilterQuarter(4,this)">Q4</button><button class="tfilter enr-filter tf-year" data-year="2025" onclick="setEnrFilterYear(2025,this)">2025</button><button class="tfilter enr-filter tf-year" data-year="2026" onclick="setEnrFilterYear(2026,this)">2026</button></div></div>
 
   <div class="inner-page-inner" style="position:relative;z-index:1;">
 
@@ -1227,8 +1213,8 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 /* ── ENR Filter State ── */
 var enrCurrentFilter = 'month';
 var enrSelectedMonthIndex = null; // 0-based, null = current
-var enrSelectedDayIndex = null;   // 0-based day, null = latest
-var enrDayDropdownMonth = null;
+var enrSelectedQuarter = Math.floor(new Date().getMonth() / 3) + 1;
+var enrSelectedYear = new Date().getFullYear();
 
 function getEnrDataMonth() {
   // Returns 1-based month of latest ENR data
@@ -1243,47 +1229,9 @@ function getEnrDataMonth() {
   return maxMonth;
 }
 
-function getEnrLatestDay() {
-  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
-  var maxDay = 1;
-  var dataMonth = getEnrDataMonth();
-  sites.forEach(function(s) {
-    if (s.latestDate) {
-      var parts = s.latestDate.split('-');
-      var m = parseInt(parts[1]);
-      if (m === dataMonth) {
-        var d = parseInt(parts[2]);
-        if (d > maxDay) maxDay = d;
-      }
-    }
-  });
-  return maxDay;
-}
-
-function getEnrMaxDayForMonth(monthIdx) {
-  var dataMonth = getEnrDataMonth() - 1;
-  if (monthIdx === dataMonth) return getEnrLatestDay();
-  return getDaysInMonth(monthIdx);
-}
-
-function getEnrDateLabel() {
-  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
-  var latest = null;
-  sites.forEach(function(s) {
-    if (s.latestDate && (!latest || s.latestDate > latest)) latest = s.latestDate;
-  });
-  if (!latest) return '24H';
-  var parts = latest.split('-');
-  return parts[2];
-}
 
 function setEnrFilter(f, btn) {
   enrCurrentFilter = f;
-  if (f !== '24h') {
-    enrSelectedDayIndex = null;
-    var defLabel = getEnrDateLabel();
-    document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(function(b) { b.textContent = defLabel; });
-  }
   if (f === 'month') {
     enrSelectedMonthIndex = getEnrDataMonth() - 1;
     document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) {
@@ -1291,15 +1239,33 @@ function setEnrFilter(f, btn) {
     });
     populateEnrMonthDropdowns();
   }
-  // Sync active state
+  syncEnrFilterActive();
+  refreshEnrView();
+}
+
+function syncEnrFilterActive() {
   document.querySelectorAll('.enr-filter').forEach(function(b) {
-    var dw = b.closest('.enr-day-btn-wrap');
     var mw = b.closest('.enr-month-btn-wrap');
-    if (f === '24h') b.classList.toggle('active', !!dw);
-    else if (f === 'month') b.classList.toggle('active', !!mw);
-    else b.classList.toggle('active', !dw && !mw);
+    var isQ = b.classList.contains('tf-quarter');
+    var isY = b.classList.contains('tf-year');
+    if (enrCurrentFilter === 'month') b.classList.toggle('active', !!mw);
+    else if (enrCurrentFilter === 'quarter') b.classList.toggle('active', isQ && parseInt(b.dataset.q) === enrSelectedQuarter);
+    else if (enrCurrentFilter === 'year') b.classList.toggle('active', isY && parseInt(b.dataset.year) === enrSelectedYear);
+    else b.classList.remove('active');
   });
-  // Re-render ENR views
+}
+
+function setEnrFilterQuarter(q, btn) {
+  enrCurrentFilter = 'quarter';
+  enrSelectedQuarter = q;
+  syncEnrFilterActive();
+  refreshEnrView();
+}
+
+function setEnrFilterYear(year, btn) {
+  enrCurrentFilter = 'year';
+  enrSelectedYear = year;
+  syncEnrFilterActive();
   refreshEnrView();
 }
 
@@ -1328,7 +1294,6 @@ function _startEnrMonthAutoClose(dd) {
 
 function toggleEnrMonthDropdown(event, btn) {
   event.stopPropagation();
-  closeAllEnrDayDropdowns();
   var wrap = btn.closest('.enr-month-btn-wrap');
   var dd = wrap ? wrap.querySelector('.enr-month-dropdown') : null;
   if (enrCurrentFilter !== 'month') {
@@ -1363,207 +1328,22 @@ function selectEnrMonth(monthIdx, event) {
   if (event) event.stopPropagation();
   closeAllEnrMonthDropdowns();
   enrSelectedMonthIndex = monthIdx;
-  enrSelectedDayIndex = null;
   enrCurrentFilter = 'month';
-  var defLabel = getEnrDateLabel();
-  document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(function(b) { b.textContent = defLabel; });
   document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
   populateEnrMonthDropdowns();
-  document.querySelectorAll('.enr-filter').forEach(function(b) {
-    var mw = b.closest('.enr-month-btn-wrap');
-    b.classList.toggle('active', !!mw);
-  });
-  refreshEnrView();
-}
-
-/* ── ENR Day Dropdown ── */
-var _enrDayDDTimer = null;
-var _enrDayDDHovered = false;
-
-function closeAllEnrDayDropdowns() {
-  if (_enrDayDDTimer) { clearTimeout(_enrDayDDTimer); _enrDayDDTimer = null; }
-  document.querySelectorAll('.enr-day-dropdown.open').forEach(function(dd) {
-    dd.classList.remove('open');
-    dd.onmouseenter = null;
-    dd.onmouseleave = null;
-  });
-}
-
-function _startEnrDayAutoClose(dd) {
-  if (_enrDayDDTimer) clearTimeout(_enrDayDDTimer);
-  _enrDayDDHovered = false;
-  dd.onmouseenter = function() { _enrDayDDHovered = true; if (_enrDayDDTimer) clearTimeout(_enrDayDDTimer); };
-  dd.onmouseleave = function() { _enrDayDDHovered = false; _startEnrDayAutoClose(dd); };
-  _enrDayDDTimer = setTimeout(function() {
-    if (!_enrDayDDHovered) closeAllEnrDayDropdowns();
-  }, 2000);
-}
-
-function toggleEnrDayDropdown(event, btn) {
-  event.stopPropagation();
-  closeAllEnrMonthDropdowns();
-  var wrap = btn.closest('.enr-day-btn-wrap');
-  var dd = wrap ? wrap.querySelector('.enr-day-dropdown') : null;
-  if (enrCurrentFilter !== '24h') {
-    closeAllEnrDayDropdowns();
-    setEnrFilter('24h', btn);
-    enrDayDropdownMonth = getEnrDataMonth() - 1;
-    populateEnrDayDropdowns();
-    if (dd) { dd.classList.add('open'); _startEnrDayAutoClose(dd); }
-    return;
-  }
-  if (!dd) return;
-  var wasOpen = dd.classList.contains('open');
-  closeAllEnrDayDropdowns();
-  if (!wasOpen) {
-    enrDayDropdownMonth = enrDayDropdownMonth !== null ? enrDayDropdownMonth : getEnrDataMonth() - 1;
-    populateEnrDayDropdowns();
-    dd.classList.add('open');
-    _startEnrDayAutoClose(dd);
-  }
-}
-
-function populateEnrDayDropdowns() {
-  var dataMonth = getEnrDataMonth() - 1;
-  var viewMonth = enrDayDropdownMonth !== null ? enrDayDropdownMonth : dataMonth;
-  var year = new Date().getFullYear();
-  var totalDays = getDaysInMonth(viewMonth, year);
-  var maxDataDay = getEnrMaxDayForMonth(viewMonth);
-  var firstDow = getFirstDayOfWeek(viewMonth, year);
-  var isPastMonth = viewMonth < dataMonth;
-  var isFutureMonth = viewMonth > dataMonth;
-
-  var activeDay = -1;
-  if (enrCurrentFilter === '24h' && enrSelectedDayIndex !== null) {
-    var selMonth = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : dataMonth;
-    if (viewMonth === selMonth) activeDay = enrSelectedDayIndex;
-  } else if (enrCurrentFilter === '24h' && enrSelectedDayIndex === null && viewMonth === dataMonth) {
-    activeDay = maxDataDay - 1;
-  }
-
-  document.querySelectorAll('.enr-day-dropdown').forEach(function(dd) {
-    var html = '';
-    html += '<div class="day-dd-header">';
-    html += '<button class="day-dd-arrow" onclick="navigateEnrDayDropdown(-1, event)"' + (viewMonth <= 0 ? ' disabled' : '') + '>‹</button>';
-    html += '<span>' + MONTH_NAMES[viewMonth] + '</span>';
-    html += '<button class="day-dd-arrow" onclick="navigateEnrDayDropdown(1, event)"' + (viewMonth >= dataMonth ? ' disabled' : '') + '>›</button>';
-    html += '</div>';
-    html += '<div class="day-dd-grid">';
-    var dows = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
-    dows.forEach(function(d) { html += '<div class="day-dd-dow">' + d + '</div>'; });
-    for (var i = 0; i < firstDow; i++) html += '<div class="day-dd-item dd-empty"></div>';
-    for (var d = 1; d <= totalDays; d++) {
-      var dayIdx = d - 1;
-      var cls = 'day-dd-item';
-      if (dayIdx === activeDay) cls += ' dd-active';
-      // Check if this day has data in any ENR site
-      var hasData = enrDayHasData(viewMonth, d);
-      if ((!hasData && viewMonth === dataMonth) || isFutureMonth || (viewMonth === dataMonth && d > maxDataDay)) cls += ' dd-disabled';
-      html += '<div class="' + cls + '" onclick="selectEnrDay(' + dayIdx + ',' + viewMonth + ',event)">' + d + '</div>';
-    }
-    html += '</div>';
-    dd.innerHTML = html;
-  });
-}
-
-function enrDayHasData(monthIdx, dayNum) {
-  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
-  var year = new Date().getFullYear();
-  var dateStr = year + '-' + String(monthIdx + 1).padStart(2,'0') + '-' + String(dayNum).padStart(2,'0');
-  for (var i = 0; i < sites.length; i++) {
-    for (var j = 0; j < sites[i].daily.length; j++) {
-      if (sites[i].daily[j].date === dateStr) return true;
-    }
-  }
-  return false;
-}
-
-function navigateEnrDayDropdown(dir, event) {
-  if (event) event.stopPropagation();
-  var dataMonth = getEnrDataMonth() - 1;
-  var cur = enrDayDropdownMonth !== null ? enrDayDropdownMonth : dataMonth;
-  var next = cur + dir;
-  if (next < 0 || next > dataMonth) return;
-  enrDayDropdownMonth = next;
-  populateEnrDayDropdowns();
-}
-
-function selectEnrDay(dayIdx, monthIdx, event) {
-  if (event) event.stopPropagation();
-  closeAllEnrDayDropdowns();
-  var dataMonth = getEnrDataMonth() - 1;
-
-  if (monthIdx < dataMonth) {
-    // Past month: switch to month filter
-    enrSelectedDayIndex = null;
-    enrSelectedMonthIndex = monthIdx;
-    enrCurrentFilter = 'month';
-    document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
-    populateEnrMonthDropdowns();
-    document.querySelectorAll('.enr-filter').forEach(function(b) {
-      var mw = b.closest('.enr-month-btn-wrap');
-      b.classList.toggle('active', !!mw);
-    });
-    refreshEnrView();
-    return;
-  }
-
-  // Current data month: select specific day
-  enrSelectedDayIndex = dayIdx;
-  enrSelectedMonthIndex = monthIdx;
-  enrCurrentFilter = '24h';
-
-  var dayLabel = String(dayIdx + 1).padStart(2, '0');
-  document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(function(b) { b.textContent = dayLabel; });
-  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
-  populateEnrMonthDropdowns();
-
-  document.querySelectorAll('.enr-filter').forEach(function(b) {
-    var dw = b.closest('.enr-day-btn-wrap');
-    b.classList.toggle('active', !!dw);
-  });
-
+  syncEnrFilterActive();
   refreshEnrView();
 }
 
 // Close ENR dropdowns on click outside
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.enr-month-btn-wrap')) closeAllEnrMonthDropdowns();
-  if (!e.target.closest('.enr-day-btn-wrap')) closeAllEnrDayDropdowns();
 });
 
 /* ── ENR Filtered Data Helpers ── */
 function getEnrFilteredSiteData(site) {
   // Returns {prodKwh, deliveredKwh, consumedKwh, peakKw, avgDailyKwh, days, label} based on current ENR filter
   var result = {prodKwh:0, deliveredKwh:0, consumedKwh:0, peakKw:0, avgDailyKwh:0, days:0, label:''};
-  if (enrCurrentFilter === '24h') {
-    // Find day data
-    var monthIdx = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
-    var dayIdx = enrSelectedDayIndex;
-    var year = new Date().getFullYear();
-    var dateStr;
-    if (dayIdx !== null) {
-      dateStr = year + '-' + String(monthIdx + 1).padStart(2,'0') + '-' + String(dayIdx + 1).padStart(2,'0');
-    } else {
-      // Latest day for this site
-      if (site.daily.length) dateStr = site.daily[site.daily.length - 1].date;
-      else return result;
-    }
-    var dayData = null;
-    for (var i = 0; i < site.daily.length; i++) {
-      if (site.daily[i].date === dateStr) { dayData = site.daily[i]; break; }
-    }
-    if (dayData) {
-      result.prodKwh = dayData.prodKwh;
-      result.deliveredKwh = dayData.deliveredKwh;
-      result.consumedKwh = dayData.consumedKwh;
-      result.peakKw = dayData.peakKw;
-      result.avgDailyKwh = dayData.prodKwh;
-      result.days = 1;
-      result.label = dateStr.split('-')[2] + '/' + dateStr.split('-')[1] + '/' + dateStr.split('-')[0];
-    }
-    return result;
-  }
   if (enrCurrentFilter === 'month') {
     var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
     var monthStr = new Date().getFullYear() + '-' + String(mi + 1).padStart(2,'0');
@@ -1582,14 +1362,42 @@ function getEnrFilteredSiteData(site) {
     }
     return result;
   }
+  if (enrCurrentFilter === 'quarter') {
+    var startMonth = (enrSelectedQuarter - 1) * 3 + 1;
+    var endMonth = startMonth + 2;
+    var year = new Date().getFullYear();
+    var totalProd = 0, totalDel = 0, totalCon = 0, maxPeak = 0, totalDays = 0;
+    site.monthly.forEach(function(m) {
+      var mNum = parseInt(m.month.split('-')[1]);
+      if (mNum >= startMonth && mNum <= endMonth) {
+        totalProd += m.totalProdKwh;
+        totalDel += m.totalDeliveredKwh;
+        totalCon += m.totalConsumedKwh;
+        if (m.maxPeakKw > maxPeak) maxPeak = m.maxPeakKw;
+        totalDays += m.daysWithData;
+      }
+    });
+    result.prodKwh = totalProd;
+    result.deliveredKwh = totalDel;
+    result.consumedKwh = totalCon;
+    result.peakKw = maxPeak;
+    result.avgDailyKwh = totalDays > 0 ? totalProd / totalDays : 0;
+    result.days = totalDays;
+    result.label = 'Q' + enrSelectedQuarter + ' ' + year;
+    return result;
+  }
   // year
   var totalProd = 0, totalDel = 0, totalCon = 0, maxPeak = 0, totalDays = 0;
+  var year = enrSelectedYear;
   site.monthly.forEach(function(m) {
-    totalProd += m.totalProdKwh;
-    totalDel += m.totalDeliveredKwh;
-    totalCon += m.totalConsumedKwh;
-    if (m.maxPeakKw > maxPeak) maxPeak = m.maxPeakKw;
-    totalDays += m.daysWithData;
+    var mYear = parseInt(m.month.split('-')[0]);
+    if (mYear === year) {
+      totalProd += m.totalProdKwh;
+      totalDel += m.totalDeliveredKwh;
+      totalCon += m.totalConsumedKwh;
+      if (m.maxPeakKw > maxPeak) maxPeak = m.maxPeakKw;
+      totalDays += m.daysWithData;
+    }
   });
   result.prodKwh = totalProd;
   result.deliveredKwh = totalDel;
@@ -1597,31 +1405,26 @@ function getEnrFilteredSiteData(site) {
   result.peakKw = maxPeak;
   result.avgDailyKwh = totalDays > 0 ? totalProd / totalDays : 0;
   result.days = totalDays;
-  result.label = String(new Date().getFullYear());
+  result.label = String(year);
   return result;
 }
 
 function getEnrFilterLabel() {
-  if (enrCurrentFilter === '24h') {
-    if (enrSelectedDayIndex !== null) {
-      var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
-      return String(enrSelectedDayIndex + 1).padStart(2,'0') + ' ' + MONTH_NAMES[mi];
-    }
-    return 'Dernier jour';
-  }
   if (enrCurrentFilter === 'month') {
     var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
     return MONTH_NAMES[mi] + ' ' + new Date().getFullYear();
   }
-  return String(new Date().getFullYear());
+  if (enrCurrentFilter === 'quarter') {
+    return 'Q' + enrSelectedQuarter + ' ' + new Date().getFullYear();
+  }
+  return String(enrSelectedYear);
 }
 
 function getEnrProdUnit() {
-  return enrCurrentFilter === '24h' ? 'kWh' : 'MWh';
+  return 'MWh';
 }
 
 function formatEnrProd(kwh) {
-  if (enrCurrentFilter === '24h') return Math.round(kwh).toLocaleString('fr-FR');
   return (kwh / 1000).toFixed(1);
 }
 
@@ -1658,11 +1461,7 @@ function updateEnrCards() {
   var el;
   el = document.getElementById('enr-prod-total');
   if (el) {
-    if (enrCurrentFilter === '24h') {
-      el.textContent = (totalProd / 1000).toFixed(1);
-    } else {
-      el.textContent = (totalAvgDaily / 1000).toFixed(1);
-    }
+    el.textContent = (totalAvgDaily / 1000).toFixed(1);
   }
   el = document.getElementById('enr-prod-cumul');
   if (el) el.textContent = (totalProd / 1000).toFixed(0);
@@ -1691,7 +1490,6 @@ function openEnrProduction(){
   });
   var mixPct = document.getElementById('enr-prod-mix') ? document.getElementById('enr-prod-mix').textContent : '\u2014';
   var filterLabel = getEnrFilterLabel();
-  var isDay = enrCurrentFilter === '24h';
   var prodUnit = getEnrProdUnit();
 
   var html = '';
@@ -1699,9 +1497,9 @@ function openEnrProduction(){
   /* ══════════ GLOBAL KPIs (3 cartes) ══════════ */
   html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">';
   // KPI 1: Production
-  var kpi1Label = isDay ? 'Production' : 'Production totale';
-  var kpi1Value = isDay ? formatEnrProd(totalProdKwh) : (totalProdKwh/1000).toFixed(1);
-  var kpi1Unit = isDay ? 'kWh' : 'MWh';
+  var kpi1Label = 'Production totale';
+  var kpi1Value = (totalProdKwh/1000).toFixed(1);
+  var kpi1Unit = 'MWh';
   html += '<div style="background:rgba(0,171,99,0.07);border:1px solid rgba(0,171,99,0.2);border-radius:18px;padding:24px 16px;text-align:center;">'
     + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.55);margin-bottom:8px;">' + kpi1Label + '</div>'
     + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + kpi1Value
@@ -1740,9 +1538,9 @@ function openEnrProduction(){
       + '</div>';
 
     /* Main KPI — filtered */
-    var mainVal = isDay ? formatEnrProd(fd.prodKwh) : (fd.prodKwh/1000).toFixed(1);
-    var mainUnit = isDay ? 'kWh' : 'MWh';
-    var mainLabel = isDay ? filterLabel : (enrCurrentFilter === 'month' ? MONTH_NAMES[enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth()-1)] : String(new Date().getFullYear()));
+    var mainVal = (fd.prodKwh/1000).toFixed(1);
+    var mainUnit = 'MWh';
+    var mainLabel = enrCurrentFilter === 'month' ? MONTH_NAMES[enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth()-1)] : (enrCurrentFilter === 'quarter' ? 'Q' + enrSelectedQuarter : String(enrSelectedYear));
     html += '<div style="text-align:center;margin-bottom:16px;">'
       + '<div style="font-size:36px;font-weight:800;color:' + col + ';line-height:1;">' + mainVal
       + '<span style="font-size:14px;font-weight:400;color:rgba(' + rgb + ',0.5);margin-left:3px;">' + mainUnit + '</span></div>'
@@ -1756,7 +1554,7 @@ function openEnrProduction(){
       + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.85);">' + s.capacityMw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWc</span></div></div>';
     html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
       + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Livr\u00e9</div>'
-      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (isDay ? formatEnrProd(fd.deliveredKwh) : (fd.deliveredKwh/1000).toFixed(1)) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">' + mainUnit + '</span></div></div>';
+      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (fd.deliveredKwh/1000).toFixed(1) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">' + mainUnit + '</span></div></div>';
     html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
       + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Pic</div>'
       + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + fd.peakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
@@ -1797,7 +1595,6 @@ function openEnrSiteDetail(siteIndex){
   var col = _enrColors[siteIndex % _enrColors.length];
   var rgb = _enrRgbs[siteIndex % _enrRgbs.length];
   var fd = getEnrFilteredSiteData(s);
-  var isDay = enrCurrentFilter === '24h';
   var filterLabel = getEnrFilterLabel();
 
   var html = '';
@@ -1819,13 +1616,13 @@ function openEnrSiteDetail(siteIndex){
     + '</div>';
 
   /* ── KPIs (5 cartes) — filtered ── */
-  var prodVal = isDay ? formatEnrProd(fd.prodKwh) : (fd.prodKwh/1000).toFixed(1);
-  var prodUnit = isDay ? 'kWh' : 'MWh';
+  var prodVal = (fd.prodKwh/1000).toFixed(1);
+  var prodUnit = 'MWh';
   html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;">';
   var kpis = [
     ['Capacit\u00e9', s.capacityMw, 'MWc'],
     ['Production', prodVal, prodUnit],
-    ['Livr\u00e9', isDay ? formatEnrProd(fd.deliveredKwh) : (fd.deliveredKwh/1000).toFixed(1), prodUnit],
+    ['Livr\u00e9', (fd.deliveredKwh/1000).toFixed(1), prodUnit],
     ['Pic', fd.peakKw, 'kW'],
     ['Jours', fd.days, '']
   ];
@@ -1842,39 +1639,7 @@ function openEnrSiteDetail(siteIndex){
   /* ── Period label ── */
   html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:14px;">' + filterLabel + '</div>';
 
-  if (isDay) {
-    /* ── Single day detail ── */
-    if (fd.prodKwh > 0) {
-      html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;">';
-      var dayKpis = [
-        ['Irradiance', '—', 'kWh/m\u00B2'],
-        ['Disponibilit\u00e9', '—', 'h'],
-        ['Consomm\u00e9', formatEnrProd(fd.consumedKwh), 'kWh']
-      ];
-      // Try to get irradiance/avail from daily data
-      var year = new Date().getFullYear();
-      var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
-      var di = enrSelectedDayIndex;
-      var dateStr = di !== null ? year + '-' + String(mi+1).padStart(2,'0') + '-' + String(di+1).padStart(2,'0') : (s.daily.length ? s.daily[s.daily.length-1].date : '');
-      for (var i = 0; i < s.daily.length; i++) {
-        if (s.daily[i].date === dateStr) {
-          var dd = s.daily[i];
-          if (dd.irradiance) dayKpis[0][1] = dd.irradiance;
-          if (dd.availHours) dayKpis[1][1] = dd.availHours;
-          break;
-        }
-      }
-      dayKpis.forEach(function(k) {
-        html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.12);border-radius:14px;padding:16px 10px;text-align:center;">'
-          + '<div style="font-size:7px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">' + k[0] + '</div>'
-          + '<div style="font-size:22px;font-weight:800;color:rgba(255,255,255,0.85);line-height:1;">' + k[1]
-          + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.3);margin-left:3px;">' + k[2] + '</span></div></div>';
-      });
-      html += '</div>';
-    } else {
-      html += '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:13px;">Pas de donn\u00e9es pour cette date</div>';
-    }
-  } else if (enrCurrentFilter === 'month') {
+  if (enrCurrentFilter === 'month') {
     /* ── Monthly detail with sparkline ── */
     var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
     var monthStr = new Date().getFullYear() + '-' + String(mi + 1).padStart(2,'0');
@@ -2120,7 +1885,7 @@ function closeHfoProjets(){
 <!-- ══ PANEL PRODUCTION EnR ══ -->
 <div id="panel-enr-production" style="position:fixed;inset:0;z-index:260;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
   <div class="nav-back"><button class="back-btn" onclick="closeEnrProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← Energy</button></div>
-  <div class="nav-filter"><div class="time-filter"><span class="enr-day-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrDayDropdown(event,this)">24h</button><div class="day-dropdown enr-day-dropdown"></div></span><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter" onclick="setEnrFilter('year',this)">Cette année</button></div></div>
+  <div class="nav-filter"><div class="time-filter"><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">M</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter tf-quarter" data-q="1" onclick="setEnrFilterQuarter(1,this)">Q1</button><button class="tfilter enr-filter tf-quarter" data-q="2" onclick="setEnrFilterQuarter(2,this)">Q2</button><button class="tfilter enr-filter tf-quarter" data-q="3" onclick="setEnrFilterQuarter(3,this)">Q3</button><button class="tfilter enr-filter tf-quarter" data-q="4" onclick="setEnrFilterQuarter(4,this)">Q4</button><button class="tfilter enr-filter tf-year" data-year="2025" onclick="setEnrFilterYear(2025,this)">2025</button><button class="tfilter enr-filter tf-year" data-year="2026" onclick="setEnrFilterYear(2026,this)">2026</button></div></div>
   <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
     <div class="inner-topbar" style="border-bottom-color:rgba(0,171,99,0.15);margin-bottom:36px;">
       <div style="text-align:center;width:100%;">
@@ -3610,7 +3375,7 @@ function closeDiegoDetail() {
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closeDetail()">HFO</button></div>
     <div class="sd-site-name" id="detail-site-name">—</div>
-    <div class="nav-filter"><div class="time-filter"><span class="day-btn-wrap"><button class="tfilter" onclick="toggleDayDropdown(event,this)">24h</button><div class="day-dropdown"></div></span><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown"></div></span><button class="tfilter" onclick="setFilter('year',this)">Cette année</button></div></div>
+    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><button class="tfilter tf-quarter" data-q="1" onclick="setFilterQuarter(1,this)">Q1</button><button class="tfilter tf-quarter" data-q="2" onclick="setFilterQuarter(2,this)">Q2</button><button class="tfilter tf-quarter" data-q="3" onclick="setFilterQuarter(3,this)">Q3</button><button class="tfilter tf-quarter" data-q="4" onclick="setFilterQuarter(4,this)">Q4</button><button class="tfilter tf-year" data-year="2025" onclick="setFilterYear(2025,this)">2025</button><button class="tfilter tf-year" data-year="2026" onclick="setFilterYear(2026,this)">2026</button></div></div>
   </div>
   <div class="detail-inner">
 
@@ -5821,22 +5586,13 @@ function updateEnergyHfoCard() {
   const moisFR = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
   const filter = currentFilter || 'month';
   let filterLabel;
-  if (filter === '24h') {
-    if (selectedDayIndex !== null) {
-      const year = new Date().getFullYear();
-      filterLabel = String(selectedDayIndex + 1).padStart(2,'0') + ' ' + MONTH_NAMES[selectedMonthIndex] + ' ' + year;
-    } else {
-      const active = siteOrder.filter(id => siteData[id] && siteData[id].latestDate && siteData[id].status !== 'construction' && siteData[id].status !== 'reconstruction');
-      const dates = active.map(id => siteData[id].latestDate);
-      const allSame = dates.length > 0 && dates.every(d => d === dates[0]);
-      filterLabel = allSame ? getFullDateLabel(dates[0]) : '24 dernières heures';
-    }
-  } else if (filter === 'month') {
+  if (filter === 'month') {
     filterLabel = MONTH_NAMES[selectedMonthIndex];
+  } else if (filter === 'quarter') {
+    filterLabel = 'Q' + selectedQuarter;
   } else {
-    filterLabel = String(new Date().getFullYear());
+    filterLabel = String(selectedYear);
   }
-  const kpiFilter = filter === 'month' ? getMonthKpiKey() : filter;
 
   // ── Agréger uniquement les sites actifs (pas construction/reconstruction) ──
   let totalMW = 0, totalContrat = 0, totalArret = 0, totalMoteurs = 0;
@@ -5847,7 +5603,7 @@ function updateEnergyHfoCard() {
     const s = siteData[id];
     if (!s || !s.groupes || !s.kpi) return;
     if (s.status === 'construction' || s.status === 'reconstruction') return;
-    const k = (filter === '24h' && selectedDayIndex !== null) ? getSiteKpiForDay(id, selectedDayIndex) : (s.kpi[kpiFilter] || s.kpi[filter]);
+    const k = _getKpiForSite(id);
     if (!k) return;
 
     totalMW      += s.mw || 0;
@@ -5883,7 +5639,7 @@ function updateEnergyHfoCard() {
   const now = new Date();
   const dayOfMonth = now.getDate();
   const monthIdx = now.getMonth();
-  const daysElapsed = filter === '24h' ? 1 : filter === 'month' ? dayOfMonth : dayOfMonth + monthIdx * 30;
+  const daysElapsed = filter === 'month' ? dayOfMonth : filter === 'quarter' ? dayOfMonth + ((selectedQuarter - 1) * 91) : dayOfMonth + monthIdx * 30;
   const lostToDate = lostPerDay * daysElapsed;
 
   el('e-hfo-arret-count').textContent = totalArret;
@@ -5891,7 +5647,7 @@ function updateEnergyHfoCard() {
   el('e-hfo-arret-total').textContent = totalMoteurs;
   el('e-hfo-arret-mwhj').textContent  = totalArret > 0 ? '−' + lostPerDay.toLocaleString() : '0';
   el('e-hfo-arret-mwh-date').textContent = totalArret > 0 ? '−' + lostToDate.toLocaleString() : '0';
-  el('e-hfo-arret-period').textContent   = filter === 'year' ? now.getFullYear() : moisFR[monthIdx];
+  el('e-hfo-arret-period').textContent   = filter === 'year' ? selectedYear : filter === 'quarter' ? 'Q' + selectedQuarter : moisFR[monthIdx];
 
   // ── KPI 3 — Production vs Prévisionnelle ──
   const prodDelta = totalProdObj > 0 ? (((totalProd / totalProdObj) - 1) * 100) : null;
@@ -5979,18 +5735,7 @@ function openDetail(id) {
   panel.classList.add('active');
   document.body.style.overflow = 'hidden';
   scrollTop(panel);
-  // Update 24h buttons: keep selected day label if a day is selected, otherwise show site's latest date
-  if (selectedDayIndex !== null) {
-    const dayLabel = String(selectedDayIndex + 1).padStart(2, '0');
-    document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => {
-      b.textContent = dayLabel;
-    });
-  } else {
-    const sDate = getSiteDateLabel(id);
-    document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => {
-      b.textContent = sDate;
-    });
-  }
+  syncHfoFilterActive();
   renderDetail(id);
 }
 function closeDetail() {
@@ -5999,19 +5744,13 @@ function closeDetail() {
   panel.classList.remove('hfo-style');
   document.body.style.overflow = '';
   currentSite = null;
-  // Restore consolidated date label on 24h buttons
-  const cDate = getConsolidatedDateLabel();
-  document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => {
-    b.textContent = cDate;
-  });
 }
 
 // ══ STATE ══
 let currentFilter = 'month', currentSite = null;
-const filterLabels = {'24h':'24 dernières heures','month':'Ce mois','year':'Cette année'}; // Note: month/year labels overridden dynamically
 let selectedMonthIndex = new Date().getMonth(); // 0-based (0=Jan, 11=Dec)
-let selectedDayIndex = null; // null = latest day (default 24h), 0-based (0=day 1)
-let dayDropdownMonth = null; // which month is shown in day dropdown (0-based), null = auto
+let selectedQuarter = Math.floor(new Date().getMonth() / 3) + 1;
+let selectedYear = new Date().getFullYear();
 const MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const MONTH_SHORT = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
@@ -6328,27 +6067,8 @@ function isCurrentMonth(monthIdx) {
   return (monthIdx + 1) === getDataMonth();
 }
 
-function formatLatestDate(isoDate) {
-  // "2026-03-03" → "03"
-  if (!isoDate) return '24H';
-  const parts = isoDate.split('-');
-  return parts[2];
-}
 
-function getConsolidatedDateLabel() {
-  // Returns the oldest latestDate = last date where ALL sites have data
-  const active = siteOrder.filter(id => siteData[id] && siteData[id].latestDate && siteData[id].status !== 'construction' && siteData[id].status !== 'reconstruction');
-  if (active.length === 0) return '24H';
-  const dates = active.map(id => siteData[id].latestDate).sort();
-  return formatLatestDate(dates[0]);
-}
 
-function getFullDateLabel(isoDate) {
-  // "2026-03-03" → "03 Mars 2026"
-  if (!isoDate) return '24 dernières heures';
-  const parts = isoDate.split('-');
-  return parts[2] + ' ' + MONTH_NAMES[parseInt(parts[1])-1] + ' ' + parts[0];
-}
 
 // Compute how many consecutive days a generator has been stopped (0 hours)
 function getDaysStopped(g) {
@@ -6371,35 +6091,6 @@ function getDaysStopped(g) {
   return count;
 }
 
-// Compute site-level KPIs for a specific day from generator daily arrays
-function getSiteKpiForDay(siteId, dayIdx) {
-  const s = siteData[siteId];
-  if (!s || !s.groupes) return null;
-  const HFO_D = 0.96, OIL_D = 0.90;
-  let totalProdKwh = 0, totalHFO = 0, totalOil = 0;
-  s.groupes.forEach(g => {
-    totalProdKwh += (g.dailyProd || [])[dayIdx] || 0;
-    totalHFO += (g.dailyHFO || [])[dayIdx] || 0;
-    totalOil += (g.dailyOilConso || [])[dayIdx] || 0;
-  });
-  const prodMwh = totalProdKwh / 1000;
-  const sfoc = totalProdKwh > 0 ? Math.round((totalHFO * HFO_D / totalProdKwh) * 1000 * 10) / 10 : 0;
-  const sloc = totalProdKwh > 0 ? Math.round((totalOil * OIL_D / totalProdKwh) * 1000 * 10) / 10 : 0;
-  // prodObj: use 24h objective as approximate
-  const baseKpi = s.kpi && s.kpi['24h'] ? s.kpi['24h'] : {};
-  return {
-    prod: Math.round(prodMwh * 10) / 10,
-    prodObj: baseKpi.prodObj || 0,
-    dispo: baseKpi.dispo || 0, // can't compute per-day dispo easily
-    sfoc: sfoc,
-    sloc: sloc
-  };
-}
-
-function getSiteDateLabel(siteId) {
-  const s = siteData[siteId];
-  return s && s.latestDate ? formatLatestDate(s.latestDate) : '24H';
-}
 
 function closeAllMonthDropdowns() {
   _clearDropdownTimer();
@@ -6452,229 +6143,12 @@ function toggleMonthDropdown(event, btn) {
 // Close dropdowns on click outside or scroll
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.month-btn-wrap')) closeAllMonthDropdowns();
-  if (!e.target.closest('.day-btn-wrap')) closeAllDayDropdowns();
 });
-document.addEventListener('scroll', function() { closeAllMonthDropdowns(); closeAllDayDropdowns(); }, true);
-
-// ══ DAY DROPDOWN ══
-let _dayDropdownTimer = null;
-let _dayDropdownHovered = false;
-
-function _startDayAutoClose(dd) {
-  _clearDayTimer();
-  _dayDropdownHovered = false;
-  dd.onmouseenter = function() { _dayDropdownHovered = true; _clearDayTimer(); };
-  dd.onmouseleave = function() { _dayDropdownHovered = false; _startDayAutoClose(dd); };
-  _dayDropdownTimer = setTimeout(function() {
-    if (!_dayDropdownHovered) closeAllDayDropdowns();
-  }, 2000);
-}
-
-function _clearDayTimer() {
-  if (_dayDropdownTimer) { clearTimeout(_dayDropdownTimer); _dayDropdownTimer = null; }
-}
-
-function closeAllDayDropdowns() {
-  _clearDayTimer();
-  document.querySelectorAll('.day-dropdown.open').forEach(dd => {
-    dd.classList.remove('open');
-    dd.onmouseenter = null;
-    dd.onmouseleave = null;
-  });
-}
+document.addEventListener('scroll', function() { closeAllMonthDropdowns(); }, true);
 
 function getDaysInMonth(monthIdx, year) {
   // monthIdx is 0-based
   return new Date(year || new Date().getFullYear(), monthIdx + 1, 0).getDate();
-}
-
-function getFirstDayOfWeek(monthIdx, year) {
-  // Returns 0=Mon, 1=Tue, ..., 6=Sun (ISO week)
-  const d = new Date(year || new Date().getFullYear(), monthIdx, 1).getDay();
-  return d === 0 ? 6 : d - 1; // Convert Sun=0 to Mon-based
-}
-
-function getMaxDayForMonth(monthIdx) {
-  // For the current data month, return the latest day with data
-  // For past months, return all days of that month
-  const dataMonth = getDataMonth() - 1; // 0-based
-  if (monthIdx === dataMonth) {
-    // Current data month: find latest day from sites
-    let maxDay = 1;
-    siteOrder.forEach(id => {
-      const s = siteData[id];
-      if (s && s.latestDate && s.status !== 'construction' && s.status !== 'reconstruction') {
-        const day = parseInt(s.latestDate.split('-')[2]);
-        if (day > maxDay) maxDay = day;
-      }
-    });
-    return maxDay;
-  }
-  return getDaysInMonth(monthIdx);
-}
-
-function populateDayDropdowns() {
-  const dataMonth = getDataMonth() - 1; // 0-based
-  const viewMonth = dayDropdownMonth !== null ? dayDropdownMonth : dataMonth;
-  const year = new Date().getFullYear();
-  const totalDays = getDaysInMonth(viewMonth, year);
-  const maxDataDay = getMaxDayForMonth(viewMonth);
-  const firstDow = getFirstDayOfWeek(viewMonth, year);
-  const isPastMonth = viewMonth < dataMonth;
-  const isFutureMonth = viewMonth > dataMonth;
-
-  // Determine active day
-  let activeDay = -1;
-  if (currentFilter === '24h' && selectedDayIndex !== null) {
-    // Only highlight if we're viewing the month that matches the selected day
-    const selMonth = selectedMonthIndex; // the month of the selected day
-    if (viewMonth === selMonth) activeDay = selectedDayIndex; // 0-based
-  } else if (currentFilter === '24h' && selectedDayIndex === null && viewMonth === dataMonth) {
-    // Default: latest day
-    activeDay = maxDataDay - 1; // 0-based
-  }
-
-  document.querySelectorAll('.day-dropdown').forEach(dd => {
-    let html = '';
-    // Header with month name and arrows
-    html += '<div class="day-dd-header">';
-    html += '<button class="day-dd-arrow" onclick="navigateDayDropdown(-1, event)"' + (viewMonth <= 0 ? ' disabled' : '') + '>‹</button>';
-    html += '<span>' + MONTH_NAMES[viewMonth] + '</span>';
-    html += '<button class="day-dd-arrow" onclick="navigateDayDropdown(1, event)"' + (viewMonth >= dataMonth ? ' disabled' : '') + '>›</button>';
-    html += '</div>';
-    // Day of week headers
-    html += '<div class="day-dd-grid">';
-    const dows = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
-    dows.forEach(d => { html += '<div class="day-dd-dow">' + d + '</div>'; });
-    // Empty cells before first day
-    for (let i = 0; i < firstDow; i++) {
-      html += '<div class="day-dd-item dd-empty"></div>';
-    }
-    // Day cells
-    for (let d = 1; d <= totalDays; d++) {
-      const dayIdx = d - 1; // 0-based
-      let cls = 'day-dd-item';
-      if (dayIdx === activeDay) cls += ' dd-active';
-      if ((viewMonth === dataMonth && d > maxDataDay) || isFutureMonth) cls += ' dd-disabled';
-      html += '<div class="' + cls + '" onclick="selectDay(' + dayIdx + ',' + viewMonth + ',event)">' + d + '</div>';
-    }
-    html += '</div>';
-    dd.innerHTML = html;
-  });
-}
-
-function navigateDayDropdown(dir, event) {
-  if (event) event.stopPropagation();
-  const dataMonth = getDataMonth() - 1;
-  const cur = dayDropdownMonth !== null ? dayDropdownMonth : dataMonth;
-  const next = cur + dir;
-  if (next < 0 || next > dataMonth) return;
-  dayDropdownMonth = next;
-  populateDayDropdowns();
-}
-
-function selectDay(dayIdx, monthIdx, event) {
-  if (event) event.stopPropagation();
-  closeAllDayDropdowns();
-  const dataMonth = getDataMonth() - 1;
-
-  // If past month: switch to month filter for that month
-  if (monthIdx < dataMonth) {
-    selectedDayIndex = null;
-    selectedMonthIndex = monthIdx;
-    currentFilter = 'month';
-    // Update month button labels
-    document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
-      b.textContent = MONTH_SHORT[monthIdx];
-    });
-    populateMonthDropdowns();
-    // Sync active state
-    function syncActive(b) {
-      const mw = b.closest('.month-btn-wrap');
-      b.classList.toggle('active', !!mw);
-    }
-    document.querySelectorAll('.tfilter:not(.gd-tfilter):not(.enr-filter)').forEach(syncActive);
-    document.querySelectorAll('.gd-tfilter').forEach(syncActive);
-    // Update dropdown active states
-    document.querySelectorAll('.month-dropdown .md-item').forEach(item => {
-      item.classList.toggle('md-active', parseInt(item.dataset.month) === monthIdx);
-    });
-    const lbl = document.getElementById('filter-label-text');
-    if (lbl) lbl.textContent = MONTH_NAMES[monthIdx];
-    if (currentSite) renderDetail(currentSite);
-    else if (currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
-    else { renderSites(); renderConsolidated(); }
-    requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
-    return;
-  }
-
-  // Current data month: select specific day
-  selectedDayIndex = dayIdx;
-  selectedMonthIndex = monthIdx;
-  currentFilter = '24h';
-
-  // Update day button label to show selected day number
-  const dayLabel = String(dayIdx + 1).padStart(2, '0');
-  document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => {
-    b.textContent = dayLabel;
-  });
-  document.querySelectorAll('.day-btn-wrap .gd-tfilter').forEach(b => {
-    b.textContent = dayLabel;
-  });
-
-  // Also sync month filter to match
-  document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
-    b.textContent = MONTH_SHORT[monthIdx];
-  });
-  populateMonthDropdowns();
-
-  // Sync active state: day buttons active
-  function syncActive(b) {
-    const dw = b.closest('.day-btn-wrap');
-    b.classList.toggle('active', !!dw);
-  }
-  document.querySelectorAll('.tfilter:not(.gd-tfilter):not(.enr-filter)').forEach(syncActive);
-  document.querySelectorAll('.gd-tfilter').forEach(syncActive);
-
-  // Update filter label
-  const lbl = document.getElementById('filter-label-text');
-  if (lbl) {
-    const year = new Date().getFullYear();
-    lbl.textContent = dayLabel + ' ' + MONTH_NAMES[monthIdx] + ' ' + year;
-  }
-
-  if (currentSite) renderDetail(currentSite);
-  else if (currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
-  else { renderSites(); renderConsolidated(); }
-  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
-}
-
-function toggleDayDropdown(event, btn) {
-  event.stopPropagation();
-  closeAllMonthDropdowns(); // close month dropdown if open
-  const wrap = btn.closest('.day-btn-wrap');
-  const dd = wrap ? wrap.querySelector('.day-dropdown') : null;
-
-  // First click: activate 24h filter (latest day) + open dropdown 2s
-  if (currentFilter !== '24h') {
-    closeAllDayDropdowns();
-    const isGd = btn.classList.contains('gd-tfilter');
-    if (isGd) { setGdFilter('24h', btn); } else { setFilter('24h', btn); }
-    dayDropdownMonth = getDataMonth() - 1; // reset to current data month
-    populateDayDropdowns();
-    if (dd) { dd.classList.add('open'); _startDayAutoClose(dd); }
-    return;
-  }
-  // Already on 24h filter: toggle dropdown
-  if (!dd) return;
-  const wasOpen = dd.classList.contains('open');
-  closeAllDayDropdowns();
-  if (!wasOpen) {
-    dayDropdownMonth = dayDropdownMonth !== null ? dayDropdownMonth : getDataMonth() - 1;
-    populateDayDropdowns();
-    dd.classList.add('open');
-    _startDayAutoClose(dd);
-  }
 }
 
 function populateMonthDropdowns() {
@@ -6696,27 +6170,15 @@ function selectMonth(monthIdx, event) {
   if (event) event.stopPropagation();
   closeAllMonthDropdowns();
   selectedMonthIndex = monthIdx;
-  selectedDayIndex = null;
   currentFilter = 'month';
-
-  // Reset day button text to default
-  const sId = currentSite || (currentGroupe ? currentGroupe.siteId : null);
-  const defLabel = sId ? getSiteDateLabel(sId) : getConsolidatedDateLabel();
-  document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => { b.textContent = defLabel; });
-  document.querySelectorAll('.day-btn-wrap .gd-tfilter').forEach(b => { b.textContent = sId ? getSiteDateLabel(sId) : defLabel; });
 
   // Update all month button labels
   document.querySelectorAll('.month-btn-wrap .tfilter').forEach(btn => {
     btn.textContent = MONTH_SHORT[monthIdx];
   });
 
-  // Sync active state: month buttons active, others not
-  function syncActive(b) {
-    const mw = b.closest('.month-btn-wrap');
-    b.classList.toggle('active', !!mw);
-  }
-  document.querySelectorAll('.tfilter:not(.gd-tfilter):not(.enr-filter)').forEach(syncActive);
-  document.querySelectorAll('.gd-tfilter').forEach(syncActive);
+  // Sync active state
+  syncHfoFilterActive();
 
   // Update dropdown active states
   document.querySelectorAll('.month-dropdown .md-item').forEach(item => {
@@ -6735,50 +6197,34 @@ function selectMonth(monthIdx, event) {
 }
 
 // ══ FILTER ══
+function syncHfoFilterActive() {
+  document.querySelectorAll('.time-filter .tfilter:not(.enr-filter)').forEach(function(b) {
+    var mw = b.closest('.month-btn-wrap');
+    var isQ = b.classList.contains('tf-quarter');
+    var isY = b.classList.contains('tf-year');
+    if (currentFilter === 'month') b.classList.toggle('active', !!mw);
+    else if (currentFilter === 'quarter') b.classList.toggle('active', isQ && parseInt(b.dataset.q) === selectedQuarter);
+    else if (currentFilter === 'year') b.classList.toggle('active', isY && parseInt(b.dataset.year) === selectedYear);
+    else b.classList.remove('active');
+  });
+}
+
 function setFilter(f, btn) {
   currentFilter = f;
-  if (f !== '24h') {
-    selectedDayIndex = null;
-    // Reset day button text to default (site date or consolidated date)
-    const sId = currentSite || (currentGroupe ? currentGroupe.siteId : null);
-    const defLabel = sId ? getSiteDateLabel(sId) : getConsolidatedDateLabel();
-    document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => { b.textContent = defLabel; });
-    document.querySelectorAll('.day-btn-wrap .gd-tfilter').forEach(b => { b.textContent = sId ? getSiteDateLabel(sId) : defLabel; });
-  }
   // When clicking month button directly, reset to current month
   if (f === 'month') {
     selectedMonthIndex = getDataMonth() - 1;
-    document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
+    document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => {
       b.textContent = MONTH_SHORT[selectedMonthIndex];
     });
     populateMonthDropdowns();
   }
-  // Sync active state for all filter buttons
-  function syncActive(b) {
-    const dw = b.closest('.day-btn-wrap');
-    const mw = b.closest('.month-btn-wrap');
-    if (f === '24h') b.classList.toggle('active', !!dw);
-    else if (f === 'month') b.classList.toggle('active', !!mw);
-    else b.classList.toggle('active', !dw && !mw); // year
-  }
-  document.querySelectorAll('.tfilter:not(.gd-tfilter):not(.enr-filter)').forEach(syncActive);
-  document.querySelectorAll('.gd-tfilter').forEach(syncActive);
+  syncHfoFilterActive();
   const lbl = document.getElementById('filter-label-text');
   if(lbl) {
     if (f === 'month') lbl.textContent = MONTH_NAMES[selectedMonthIndex];
-    else if (f === 'year') lbl.textContent = String(new Date().getFullYear());
-    else if (f === '24h') {
-      // Show site-specific date if in detail view, consolidated otherwise
-      const sId = currentSite || (currentGroupe ? currentGroupe.siteId : null);
-      if (sId && siteData[sId] && siteData[sId].latestDate) {
-        lbl.textContent = getFullDateLabel(siteData[sId].latestDate);
-      } else {
-        const active = siteOrder.filter(id => siteData[id] && siteData[id].latestDate && siteData[id].status !== 'construction' && siteData[id].status !== 'reconstruction');
-        const dates = active.map(id => siteData[id].latestDate);
-        const allSame = dates.length > 0 && dates.every(d => d === dates[0]);
-        lbl.textContent = allSame ? getFullDateLabel(dates[0]) : '24 dernières heures';
-      }
-    }
+    else if (f === 'quarter') lbl.textContent = 'Q' + selectedQuarter;
+    else if (f === 'year') lbl.textContent = String(selectedYear);
   }
   // Render visible view first, defer background updates
   if(currentSite) renderDetail(currentSite);
@@ -6787,17 +6233,88 @@ function setFilter(f, btn) {
   requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
 }
 
+function setFilterQuarter(q, btn) {
+  currentFilter = 'quarter';
+  selectedQuarter = q;
+  syncHfoFilterActive();
+  const lbl = document.getElementById('filter-label-text');
+  if (lbl) lbl.textContent = 'Q' + q;
+  if(currentSite) renderDetail(currentSite);
+  else if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else { renderSites(); renderConsolidated(); }
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
+}
+
+function setFilterYear(year, btn) {
+  currentFilter = 'year';
+  selectedYear = year;
+  syncHfoFilterActive();
+  const lbl = document.getElementById('filter-label-text');
+  if (lbl) lbl.textContent = String(year);
+  if(currentSite) renderDetail(currentSite);
+  else if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else { renderSites(); renderConsolidated(); }
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
+}
+
+// ══ QUARTER KPI COMPUTATION ══
+function getQuarterKpi(siteId, quarter) {
+  const s = siteData[siteId];
+  if (!s || !s.kpi) return {prod:0, prodObj:0, dispo:0, sfoc:0, sloc:0, heures:0};
+  const startMonth = (quarter - 1) * 3 + 1;
+  const endMonth = startMonth + 2;
+  const dm = getDataMonth(); // 1-based current data month
+  let totalProd = 0, totalProdObj = 0, totalHeures = 0;
+  let dispoSum = 0, sfocWeighted = 0, slocWeighted = 0, dispoCount = 0;
+  for (let m = startMonth; m <= endMonth; m++) {
+    let mk;
+    if (m === dm) mk = s.kpi['month'];
+    else mk = s.kpi['month_' + m];
+    if (!mk) continue;
+    totalProd += mk.prod || 0;
+    totalProdObj += mk.prodObj || 0;
+    totalHeures += mk.heures || 0;
+    if (mk.dispo > 0) { dispoSum += mk.dispo; dispoCount++; }
+    sfocWeighted += (mk.sfoc || 0) * (mk.prod || 0);
+    slocWeighted += (mk.sloc || 0) * (mk.prod || 0);
+  }
+  return {
+    prod: totalProd,
+    prodObj: totalProdObj,
+    heures: totalHeures,
+    dispo: dispoCount > 0 ? dispoSum / dispoCount : 0,
+    sfoc: totalProd > 0 ? sfocWeighted / totalProd : 0,
+    sloc: totalProd > 0 ? slocWeighted / totalProd : 0
+  };
+}
+
+// ══ KPI HELPER ══
+function _getKpiForSite(siteId) {
+  const s = siteData[siteId];
+  if (!s || !s.kpi) return {};
+  if (currentFilter === 'month') {
+    const kpiKey = getMonthKpiKey();
+    return s.kpi[kpiKey] || s.kpi['month'] || {};
+  }
+  if (currentFilter === 'quarter') {
+    return getQuarterKpi(siteId, selectedQuarter);
+  }
+  if (currentFilter === 'year') {
+    return s.kpi['year'] || {};
+  }
+  return {};
+}
+
 // ══ RENDER SITES ══
 function renderSites() {
   const el = document.getElementById('sites-grid-hfo');
   if(!el) return;
   // ── Total production across active sites for % share ──
-  const _kpiKeyS = currentFilter === 'month' ? getMonthKpiKey() : currentFilter;
   let _totalProdAll = 0;
   siteOrder.forEach(sid => {
     const _s = siteData[sid];
     if (_s.status === 'construction' || _s.status === 'reconstruction') return;
-    const _k = (currentFilter === '24h' && selectedDayIndex !== null) ? getSiteKpiForDay(sid, selectedDayIndex) : (_s.kpi[_kpiKeyS] || _s.kpi[currentFilter]);
+    const _k = _getKpiForSite(sid);
     _totalProdAll += (_k && _k.prod) || 0;
   });
 
@@ -6824,10 +6341,8 @@ function renderSites() {
       </div>`;
     }
 
-    const kpiKey = currentFilter === 'month' ? getMonthKpiKey() : currentFilter;
-    const k     = (currentFilter === '24h' && selectedDayIndex !== null) ? getSiteKpiForDay(id, selectedDayIndex) : (s.kpi[kpiKey] || s.kpi[currentFilter]);
-    const is24h = currentFilter === '24h';
-    const fmt   = v => is24h ? (+v).toFixed(1) : Math.round(+v).toLocaleString();
+    const k     = _getKpiForSite(id);
+    const fmt   = v => Math.round(+v).toLocaleString();
 
     // ── Detect full arrêt (toutes unités KO) ──
     const allKO = s.groupes.length > 0 && s.groupes.every(g => g.statut === 'ko');
@@ -6982,11 +6497,9 @@ function renderConsolidated() {
   const el = document.getElementById('kpi-consolidated-grid');
   if(!el) return;
   const active = siteOrder.filter(id => siteData[id].status !== 'construction' && siteData[id].status !== 'reconstruction');
-  const kpiKey = currentFilter === 'month' ? getMonthKpiKey() : currentFilter;
-  const kpis  = (currentFilter === '24h' && selectedDayIndex !== null) ?
-    active.map(id => getSiteKpiForDay(id, selectedDayIndex)) :
-    active.map(id => siteData[id].kpi[kpiKey] || siteData[id].kpi[currentFilter]);
-  const prevs = active.map(id => siteData[id].prev2025[currentFilter]);
+  const kpis  = active.map(id => _getKpiForSite(id));
+  const prevFilterKey = currentFilter === 'quarter' ? 'year' : (currentFilter === 'year' ? 'year' : currentFilter);
+  const prevs = active.map(id => (siteData[id].prev2025 || {})[prevFilterKey] || {prod:0,dispo:0,sfoc:0,sloc:0});
   const tProd = kpis.reduce((s,k)=>s+k.prod,0), pProd = prevs.reduce((s,k)=>s+k.prod,0);
   const aDispo = kpis.reduce((s,k)=>s+k.dispo,0)/kpis.length, pDispo = prevs.reduce((s,k)=>s+k.dispo,0)/prevs.length;
   // Weighted average SFOC/SLOC by production (correct: sum(sfoc_i*prod_i)/sum(prod_i))
@@ -7046,9 +6559,7 @@ function renderBlackouts(siteId) {
   const now = new Date();
   const dataYear = now.getFullYear();
   let filterMonth = null;
-  if (currentFilter === '24h') {
-    filterMonth = getDataMonth();
-  } else if (currentFilter === 'month') {
+  if (currentFilter === 'month') {
     filterMonth = selectedMonthIndex + 1;
   }
 
@@ -7151,9 +6662,9 @@ function renderDetail(id) {
   }
 
   const f = currentFilter;
-  const fKey = f === 'month' ? getMonthKpiKey() : f;
-  const k = (f === '24h' && selectedDayIndex !== null) ? getSiteKpiForDay(id, selectedDayIndex) : (s.kpi[fKey] || s.kpi[f] || {});
-  const p = (s.prev2025 || {})[f] || {};
+  const k = _getKpiForSite(id);
+  const prevKey = f === 'quarter' ? 'year' : (f === 'year' ? 'year' : f);
+  const p = (s.prev2025 || {})[prevKey] || {};
 
   // ── SECTION 1 — DONNÉES GÉNÉRALES ──
   document.getElementById('d-contrat').textContent = s.contrat;
@@ -7185,35 +6696,29 @@ function renderDetail(id) {
     // Heures selon filtre
     let hVal;
     const _isCurMonth = isCurrentMonth(selectedMonthIndex);
-    const _isDaySelect = (f === '24h' && selectedDayIndex !== null);
-    if(f === '24h') {
-      const v = _isDaySelect ? ((g.dailyHours||[])[selectedDayIndex]||0) : (parseFloat(g.hToday)||0);
-      hVal = v > 0 ? v.toFixed(1) + ' h' : '—';
-    }
-    else if(f === 'month') {
+    if(f === 'month') {
       const v = _isCurMonth ? (g.dailyHours||[]).reduce((a,b)=>a+b,0) : (g.monthlyHours||[])[selectedMonthIndex]||0;
       hVal = v > 0 ? v.toFixed(1) + ' h' : '—';
     }
-    else                   { const v = (g.monthlyHours||[]).reduce((a,b)=>a+b,0); hVal = v > 0 ? v.toFixed(1) + ' h' : '—'; }
+    else if(f === 'quarter') {
+      const startM = (selectedQuarter - 1) * 3; let v = 0;
+      for (let mi = startM; mi < startM + 3; mi++) v += (g.monthlyHours||[])[mi]||0;
+      hVal = v > 0 ? v.toFixed(1) + ' h' : '—';
+    }
+    else { const v = (g.monthlyHours||[]).reduce((a,b)=>a+b,0); hVal = v > 0 ? v.toFixed(1) + ' h' : '—'; }
     // Production selon filtre
     let prodRaw;
-    if(f === '24h')        prodRaw = _isDaySelect ? ((g.dailyProd||[])[selectedDayIndex]||0) : (parseFloat(g.energieProd)||0);
-    else if(f === 'month') prodRaw = _isCurMonth ? (g.dailyProd||[]).reduce((a,b)=>a+b,0) : (g.monthlyProd||[])[selectedMonthIndex]||0;
-    else                   prodRaw = (g.monthlyProd||[]).reduce((a,b)=>a+b,0);
+    if(f === 'month') prodRaw = _isCurMonth ? (g.dailyProd||[]).reduce((a,b)=>a+b,0) : (g.monthlyProd||[])[selectedMonthIndex]||0;
+    else if(f === 'quarter') {
+      const startM = (selectedQuarter - 1) * 3; prodRaw = 0;
+      for (let mi = startM; mi < startM + 3; mi++) prodRaw += (g.monthlyProd||[])[mi]||0;
+    }
+    else prodRaw = (g.monthlyProd||[]).reduce((a,b)=>a+b,0);
     const prodVal = prodRaw > 0 ? (prodRaw/1000).toFixed(1) + ' MWh' : '—';
     // SFOC/SLOC selon filtre
     let gSfocVal = '—', gSlocVal = '—';
     const HFO_D = 0.96, OIL_D = 0.90;
-    if(f === '24h' && !_isDaySelect) {
-      gSfocVal = g.sfoc > 0 ? parseFloat(g.sfoc).toFixed(1) + ' g/kWh' : '—';
-      gSlocVal = g.sloc > 0 ? g.sloc.toFixed(1) + ' g/kWh' : '—';
-    } else if(f === '24h' && _isDaySelect) {
-      const pKwh = (g.dailyProd||[])[selectedDayIndex]||0;
-      const hfoL = (g.dailyHFO||[])[selectedDayIndex]||0;
-      const oilL = (g.dailyOilConso||[])[selectedDayIndex]||0;
-      if(pKwh > 0 && hfoL > 0) gSfocVal = (Math.round((hfoL*HFO_D)/pKwh*1000*10)/10).toFixed(1) + ' g/kWh';
-      if(pKwh > 0 && oilL > 0) gSlocVal = (Math.round((oilL*OIL_D)/pKwh*1000*10)/10).toFixed(1) + ' g/kWh';
-    } else {
+    {
       let pKwh, hfoL, oilL;
       if(f === 'month' && _isCurMonth) {
         pKwh = (g.dailyProd||[]).reduce((a,b)=>a+b,0);
@@ -7223,6 +6728,13 @@ function renderDetail(id) {
         pKwh = (g.monthlyProd||[])[selectedMonthIndex]||0;
         hfoL = (g.monthlyHFO||[])[selectedMonthIndex]||0;
         oilL = (g.monthlyOilConso||[])[selectedMonthIndex]||0;
+      } else if(f === 'quarter') {
+        const startM = (selectedQuarter - 1) * 3; pKwh = 0; hfoL = 0; oilL = 0;
+        for (let mi = startM; mi < startM + 3; mi++) {
+          pKwh += (g.monthlyProd||[])[mi]||0;
+          hfoL += (g.monthlyHFO||[])[mi]||0;
+          oilL += (g.monthlyOilConso||[])[mi]||0;
+        }
       } else {
         pKwh = (g.monthlyProd||[]).reduce((a,b)=>a+b,0);
         hfoL = (g.monthlyHFO||[]).reduce((a,b)=>a+b,0);
@@ -7261,45 +6773,42 @@ let currentGroupe = null;
 
 function setGdFilter(f, btn) {
   currentFilter = f;
-  if (f !== '24h') {
-    selectedDayIndex = null;
-    // Reset day button text to default
-    const sId = currentGroupe ? currentGroupe.siteId : currentSite;
-    const defLabel = sId ? getSiteDateLabel(sId) : getConsolidatedDateLabel();
-    document.querySelectorAll('.day-btn-wrap .tfilter:not(.gd-tfilter)').forEach(b => { b.textContent = defLabel; });
-    document.querySelectorAll('.day-btn-wrap .gd-tfilter').forEach(b => { b.textContent = sId ? getSiteDateLabel(sId) : defLabel; });
-  }
-  // When clicking month button directly, reset to current month
   if (f === 'month') {
     selectedMonthIndex = getDataMonth() - 1;
-    document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
+    document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => {
       b.textContent = MONTH_SHORT[selectedMonthIndex];
     });
     populateMonthDropdowns();
   }
-  // Sync active state for all filter buttons
-  function syncActive(b) {
-    const dw = b.closest('.day-btn-wrap');
-    const mw = b.closest('.month-btn-wrap');
-    if (f === '24h') b.classList.toggle('active', !!dw);
-    else if (f === 'month') b.classList.toggle('active', !!mw);
-    else b.classList.toggle('active', !dw && !mw); // year
-  }
-  document.querySelectorAll('.tfilter:not(.gd-tfilter):not(.enr-filter)').forEach(syncActive);
-  document.querySelectorAll('.gd-tfilter').forEach(syncActive);
+  syncHfoFilterActive();
   const lbl = document.getElementById('filter-label-text');
   if(lbl) {
     if (f === 'month') lbl.textContent = MONTH_NAMES[selectedMonthIndex];
-    else if (f === 'year') lbl.textContent = String(new Date().getFullYear());
-    else if (f === '24h') {
-      const sId = currentGroupe ? currentGroupe.siteId : currentSite;
-      if (sId && siteData[sId] && siteData[sId].latestDate) {
-        lbl.textContent = getFullDateLabel(siteData[sId].latestDate);
-      } else {
-        lbl.textContent = '24 dernières heures';
-      }
-    }
+    else if (f === 'quarter') lbl.textContent = 'Q' + selectedQuarter;
+    else if (f === 'year') lbl.textContent = String(selectedYear);
   }
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  renderSites(); renderConsolidated();
+  if(currentSite) renderDetail(currentSite);
+}
+
+function setGdFilterQuarter(q, btn) {
+  currentFilter = 'quarter';
+  selectedQuarter = q;
+  syncHfoFilterActive();
+  const lbl = document.getElementById('filter-label-text');
+  if (lbl) lbl.textContent = 'Q' + q;
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  renderSites(); renderConsolidated();
+  if(currentSite) renderDetail(currentSite);
+}
+
+function setGdFilterYear(year, btn) {
+  currentFilter = 'year';
+  selectedYear = year;
+  syncHfoFilterActive();
+  const lbl = document.getElementById('filter-label-text');
+  if (lbl) lbl.textContent = String(year);
   if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
   renderSites(); renderConsolidated();
   if(currentSite) renderDetail(currentSite);
@@ -7310,18 +6819,7 @@ function openGroupeDetail(siteId, grpId) {
   const s = siteData[siteId];
   const backBtn = document.getElementById('gd-back-btn');
   if(backBtn) backBtn.textContent = s.name;
-  // Update gd-tfilter 24h button: keep selected day label if a day is selected, otherwise show site's latest date
-  if (selectedDayIndex !== null) {
-    const dayLabel = String(selectedDayIndex + 1).padStart(2, '0');
-    document.querySelectorAll('.day-btn-wrap .gd-tfilter').forEach(b => {
-      b.textContent = dayLabel;
-    });
-  } else {
-    const sDate = getSiteDateLabel(siteId);
-    document.querySelectorAll('.day-btn-wrap .gd-tfilter').forEach(b => {
-      b.textContent = sDate;
-    });
-  }
+  syncHfoFilterActive();
   renderGroupeDetail(siteId, grpId);
   const panel = document.getElementById('panel-groupe-detail');
   panel.scrollTop = 0;
@@ -7395,19 +6893,7 @@ function renderGroupeDetail(siteId, grpId) {
   // ── Section 1 — Heures & Exploitation (filter-aware) ──
   html += '<div class="gd-section">Heures de marche & Exploitation</div>';
   let s1_hVal, s1_hUnit, s1_hSub, s1_hColor, s1_sbVal, s1_sbSub, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel;
-  if (f === '24h') {
-    const _isDaySel = selectedDayIndex !== null;
-    const _dHours = _isDaySel ? ((g.dailyHours||[])[selectedDayIndex]||0) : (parseFloat(g.hToday)||0);
-    const _dSb = _isDaySel ? ((g.dailyStandby||[])[selectedDayIndex]||0) : (parseFloat(g.hStandby)||0);
-    const _dAf = _isDaySel ? ((g.dailyArretForce||[])[selectedDayIndex]||0) : (parseFloat(g.arretForce)||0);
-    const _dAp = _isDaySel ? ((g.dailyArretPlanifie||[])[selectedDayIndex]||0) : (parseFloat(g.arretPlanifie)||0);
-    s1_hLabel = _isDaySel ? 'Jour ' + (selectedDayIndex+1) : 'Marche aujourd\'hui';
-    s1_hVal = _dHours.toFixed(1); s1_hUnit = 'h';
-    s1_sbSub = _dSb > 0 ? 'Standby : ' + _dSb.toFixed(1) + ' h' : 'Arrêt : ' + (24 - _dHours).toFixed(1) + ' h';
-    s1_hColor = _dHours >= 20 ? 'var(--energy)' : _dHours > 0 ? 'var(--orange)' : 'var(--red)';
-    s1_afVal = _dAf.toFixed(1); s1_afSub = 'Non planifié';
-    s1_apVal = _dAp.toFixed(1); s1_apSub = 'Maintenance préventive';
-  } else if (f === 'month') {
+  if (f === 'month') {
     const _cm = isCurrentMonth(selectedMonthIndex);
     const mLabel = _cm ? 'ce mois' : MONTH_SHORT[selectedMonthIndex];
     s1_hLabel = 'Marche ' + mLabel;
@@ -7431,14 +6917,29 @@ function renderGroupeDetail(siteId, grpId) {
     s1_hColor = jours > 20 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)';
     s1_afVal = totalAf.toFixed(1); s1_afSub = 'Total arrêts forcés ' + mLabel;
     s1_apVal = totalAp.toFixed(1); s1_apSub = 'Maintenance préventive ' + mLabel;
+  } else if (f === 'quarter') {
+    s1_hLabel = 'Marche Q' + selectedQuarter;
+    const startM = (selectedQuarter - 1) * 3;
+    const mh = g.monthlyHours || [];
+    let totalH = 0, totalAf = 0, totalAp = 0;
+    for (let mi = startM; mi < startM + 3 && mi < mh.length; mi++) {
+      totalH += mh[mi] || 0;
+      totalAf += (g.monthlyArretForce||[])[mi] || 0;
+      totalAp += (g.monthlyArretPlanifie||[])[mi] || 0;
+    }
+    const jours = totalH > 0 ? Math.round(totalH / 24) : 0;
+    s1_hVal = totalH.toFixed(1); s1_hUnit = 'h';
+    s1_sbSub = jours + ' jours en marche';
+    s1_hColor = jours > 60 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)';
+    s1_afVal = totalAf.toFixed(1); s1_afSub = 'Total arrêts forcés Q' + selectedQuarter;
+    s1_apVal = totalAp.toFixed(1); s1_apSub = 'Maintenance préventive Q' + selectedQuarter;
   } else {
-    s1_hLabel = 'Marche cette année';
+    s1_hLabel = 'Marche ' + selectedYear;
     const mh = g.monthlyHours || []; const totalH = mh.reduce((a,b) => a+b, 0);
     const moisActifs = mh.filter(v => v > 0).length;
     s1_hVal = totalH.toFixed(1); s1_hUnit = 'h';
     s1_sbSub = moisActifs + ' mois en marche sur 12';
     s1_hColor = moisActifs > 6 ? 'var(--energy)' : moisActifs > 0 ? 'var(--orange)' : 'var(--red)';
-    // Yearly forced/planned stops are not meaningful per DG — show 24h values
     s1_afVal = parseFloat(g.arretForce).toFixed(1); s1_afSub = 'Non planifié (dernières 24h)';
     s1_apVal = parseFloat(g.arretPlanifie).toFixed(1); s1_apSub = 'Maintenance préventive (dernières 24h)';
   }
@@ -7464,19 +6965,7 @@ function renderGroupeDetail(siteId, grpId) {
   // Chart card — filter-aware (24h: hourly kW, month: daily kWh, year: monthly kWh)
   let chartData, chartLabels, chartTitle, chartUnit;
 
-  if (f === '24h' && selectedDayIndex === null) {
-    chartData = g.hourlyLoad || Array(24).fill(0);
-    chartLabels = ['07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','00','01','02','03','04','05','06'];
-    chartTitle = 'Profil de charge — 24h (07h → 06h)';
-    chartUnit = 'kW';
-  } else if (f === '24h' && selectedDayIndex !== null) {
-    // Specific day selected: show daily production chart for the month up to that day
-    const raw = g.dailyProd || Array(31).fill(0);
-    chartData = raw.slice(0, selectedDayIndex + 1);
-    chartLabels = chartData.map((_, i) => String(i + 1));
-    chartTitle = 'Production journalière — Jour ' + (selectedDayIndex + 1);
-    chartUnit = 'kWh';
-  } else if (f === 'month') {
+  if (f === 'month') {
     const _cm2 = isCurrentMonth(selectedMonthIndex);
     if (_cm2) {
       const raw = g.dailyProd || Array(31).fill(0);
@@ -7494,10 +6983,17 @@ function renderGroupeDetail(siteId, grpId) {
     const mName = _cm2 ? 'Ce mois' : MONTH_NAMES[selectedMonthIndex];
     chartTitle = 'Production journalière — ' + mName;
     chartUnit = 'kWh';
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3;
+    const qMonths = (g.monthlyProd || Array(12).fill(0)).slice(startM, startM + 3);
+    chartData = qMonths;
+    chartLabels = [MONTH_NAMES[startM], MONTH_NAMES[startM+1], MONTH_NAMES[startM+2]];
+    chartTitle = 'Production mensuelle — Q' + selectedQuarter;
+    chartUnit = 'kWh';
   } else { // year
     chartData = g.monthlyProd || Array(12).fill(0);
     chartLabels = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-    chartTitle = 'Production mensuelle — ' + new Date().getFullYear();
+    chartTitle = 'Production mensuelle — ' + selectedYear;
     chartUnit = 'kWh';
   }
 
@@ -7530,17 +7026,11 @@ function renderGroupeDetail(siteId, grpId) {
     const x = PAD_L + i * barGap;
     const barH = val > 0 ? Math.max(2, (val / maxChartVal) * chartH) : 0;
     const y = PAD_T + chartH - barH;
-    let barColor;
-    if (f === '24h') {
-      const isNight = i >= 15; // 22:00-06:00
-      barColor = val === 0 ? 'rgba(255,255,255,0.03)' : isNight ? 'rgba(138,146,171,0.7)' : 'rgba(174,193,205,0.75)';
-    } else {
-      barColor = val === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(174,193,205,0.75)';
-    }
+    const barColor = val === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(174,193,205,0.75)';
     bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + Math.max(barH, 0) + '" rx="2" fill="' + barColor + '"/>';
     if (val > 0) bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="2" rx="1" fill="rgba(174,193,205,0.9)"/>';
     if (i % labelFreq === 0) {
-      labels += '<text x="' + (x + barW/2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)">' + chartLabels[i] + (f === '24h' ? 'h' : '') + '</text>';
+      labels += '<text x="' + (x + barW/2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)">' + chartLabels[i] + '</text>';
     }
   });
 
@@ -7550,9 +7040,9 @@ function renderGroupeDetail(siteId, grpId) {
   // Format summary values
   const prodColor = isKO ? 'var(--red)' : 'var(--energy)';
   const peakVal = Math.max(...chartData);
-  const peakFmt = peakVal >= 1000 ? (peakVal/1000).toFixed(1) + ' MW' + (f !== '24h' ? 'h' : '') : peakVal.toFixed(1) + ' ' + chartUnit;
+  const peakFmt = peakVal >= 1000 ? (peakVal/1000).toFixed(1) + ' MWh' : peakVal.toFixed(1) + ' ' + chartUnit;
   const totalFmt = totalChartVal >= 1000 ? (totalChartVal/1000).toFixed(1) + ' MWh' : totalChartVal.toFixed(1) + ' ' + chartUnit;
-  const peakLabel = f === '24h' ? 'Charge max' : 'Pic';
+  const peakLabel = 'Pic';
 
   html += '<div class="gd-chart-card">' +
     '<div class="gd-chart-title">' +
@@ -7565,21 +7055,7 @@ function renderGroupeDetail(siteId, grpId) {
   // Production KPIs — fully filter-aware
   let prodVal, prodUnit, prodSub, hVal, hUnit, hSub, hColor;
   let loadVal, loadUnit, loadSub, lvmvVal, lvmvUnit, lvmvSub;
-  if (f === '24h') {
-    const _ds = selectedDayIndex !== null;
-    const _eprod = _ds ? ((g.dailyProd||[])[selectedDayIndex]||0) : (parseFloat(g.energieProd)||0);
-    const _eH = _ds ? ((g.dailyHours||[])[selectedDayIndex]||0) : (parseFloat(g.hToday)||0);
-    const _eML = _ds ? ((g.dailyMaxLoad||[])[selectedDayIndex]||0) : (parseFloat(g.maxLoad)||0);
-    const _eLV = _ds ? ((g.dailyConsLVMV||[])[selectedDayIndex]||0) : (parseFloat(g.consLVMV)||0);
-    const _dayLbl = _ds ? 'Jour ' + (selectedDayIndex + 1) : '24h';
-    prodVal = _eprod > 0 ? _eprod.toFixed(1) : '0';
-    prodUnit = 'kWh'; prodSub = 'Production ' + _dayLbl;
-    hVal = _eH.toFixed(1); hUnit = 'h / 24';
-    hSub = 'Taux : ' + Math.round(_eH/24*100) + '%';
-    hColor = _eH >= 20 ? 'var(--energy)' : _eH > 0 ? 'var(--orange)' : 'var(--red)';
-    loadVal = _eML.toFixed(1); loadUnit = 'kW'; loadSub = 'Puissance de pointe';
-    lvmvVal = _eLV > 0 ? _eLV.toFixed(1) : '—'; lvmvUnit = _eLV > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires';
-  } else if (f === 'month') {
+  if (f === 'month') {
     const _cm3 = isCurrentMonth(selectedMonthIndex);
     const _mLbl = _cm3 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex];
     let mProd, jours;
@@ -7602,17 +7078,33 @@ function renderGroupeDetail(siteId, grpId) {
     if (_cm3) { const dlv = g.dailyConsLVMV || []; mLvmv = dlv.reduce((a,b) => a+b, 0); }
     else { mLvmv = (g.monthlyConsLVMV||[])[selectedMonthIndex]||0; }
     lvmvVal = mLvmv > 0 ? mLvmv.toFixed(1) : '—'; lvmvUnit = mLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + _mLbl;
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3;
+    let qProd = 0, qJours = 0, qMaxLoad = 0, qLvmv = 0;
+    for (let mi = startM; mi < startM + 3; mi++) {
+      qProd += (g.monthlyProd||[])[mi]||0;
+      qJours += ((g.monthlyHours||[])[mi]||0) > 0 ? Math.ceil((g.monthlyHours||[])[mi] / 24) : 0;
+      const ml = (g.monthlyMaxLoad||[])[mi]||0; if (ml > qMaxLoad) qMaxLoad = ml;
+      qLvmv += (g.monthlyConsLVMV||[])[mi]||0;
+    }
+    const qLbl = 'Q' + selectedQuarter;
+    prodVal = qProd > 1000 ? (qProd/1000).toFixed(1) : qProd.toFixed(1);
+    prodUnit = qProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + qLbl;
+    hVal = qJours; hUnit = 'jours'; hSub = 'Jours de production';
+    hColor = qJours > 60 ? 'var(--energy)' : qJours > 0 ? 'var(--orange)' : 'var(--red)';
+    loadVal = qMaxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + qLbl;
+    lvmvVal = qLvmv > 0 ? qLvmv.toFixed(1) : '—'; lvmvUnit = qLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + qLbl;
   } else {
     const mp = g.monthlyProd || []; const yProd = mp.reduce((a,b) => a + b, 0);
     const mois = mp.filter(v => v > 0).length;
     prodVal = yProd > 1000 ? (yProd/1000).toFixed(1) : yProd.toFixed(1);
-    prodUnit = yProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production cette année';
+    prodUnit = yProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + selectedYear;
     hVal = mois; hUnit = 'mois'; hSub = 'Mois de production sur 12';
     hColor = mois > 6 ? 'var(--energy)' : mois > 0 ? 'var(--orange)' : 'var(--red)';
     const yml = g.monthlyMaxLoad || []; const mxLoad = Math.max(...yml, 0);
-    loadVal = mxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge cette année';
+    loadVal = mxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + selectedYear;
     const ylv = g.monthlyConsLVMV || []; const yLvmv = ylv.reduce((a,b) => a+b, 0);
-    lvmvVal = yLvmv > 0 ? yLvmv.toFixed(1) : '—'; lvmvUnit = yLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires cette année';
+    lvmvVal = yLvmv > 0 ? yLvmv.toFixed(1) : '—'; lvmvUnit = yLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + selectedYear;
   }
   const prodRow = [
     { label:'Énergie produite',  value: prodVal, unit: prodUnit, sub: prodSub, color: isKO ? 'var(--red)' : null },
@@ -7634,12 +7126,7 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-section">Combustible</div>';
   html += '<div class="gd-metrics-grid">';
   let fHFO, fLFO, fuelPeriod;
-  if (f === '24h') {
-    const _ds3 = selectedDayIndex !== null;
-    fHFO = _ds3 ? ((g.dailyHFO||[])[selectedDayIndex]||0) : g.consoHFO;
-    fLFO = _ds3 ? ((g.dailyLFO||[])[selectedDayIndex]||0) : g.consoLFO;
-    fuelPeriod = _ds3 ? 'Jour ' + (selectedDayIndex+1) : '24h';
-  } else if (f === 'month') {
+  if (f === 'month') {
     const _cm4 = isCurrentMonth(selectedMonthIndex);
     if (_cm4) {
       const dhfo = g.dailyHFO || []; fHFO = dhfo.reduce((a,b) => a+b, 0);
@@ -7649,10 +7136,17 @@ function renderGroupeDetail(siteId, grpId) {
       fLFO = (g.monthlyLFO||[])[selectedMonthIndex]||0;
     }
     fuelPeriod = _cm4 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex];
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3; fHFO = 0; fLFO = 0;
+    for (let mi = startM; mi < startM + 3; mi++) {
+      fHFO += (g.monthlyHFO||[])[mi]||0;
+      fLFO += (g.monthlyLFO||[])[mi]||0;
+    }
+    fuelPeriod = 'Q' + selectedQuarter;
   } else {
     const mhfo = g.monthlyHFO || []; fHFO = mhfo.reduce((a,b) => a+b, 0);
     const mlfo = g.monthlyLFO || []; fLFO = mlfo.reduce((a,b) => a+b, 0);
-    fuelPeriod = 'cette année';
+    fuelPeriod = String(selectedYear);
   }
   const fuelMetrics = [
     { label:'Conso HFO',   icon:'🛢️', value: fHFO > 0 ? parseFloat(fHFO).toFixed(1) : '—', unit: fHFO > 0 ? 'L' : '', sub:'Heavy Fuel Oil · ' + fuelPeriod },
@@ -7673,12 +7167,7 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-section">Huile moteur</div>';
   html += '<div class="gd-metrics-grid" style="grid-template-columns:repeat(4,1fr);">';
   let fOilC, fOilT, oilPeriod;
-  if (f === '24h') {
-    const _ds4 = selectedDayIndex !== null;
-    fOilC = _ds4 ? ((g.dailyOilConso||[])[selectedDayIndex]||0) : g.oilConso;
-    fOilT = _ds4 ? ((g.dailyOilTopUp||[])[selectedDayIndex]||0) : g.oilTopUp;
-    oilPeriod = _ds4 ? 'Jour ' + (selectedDayIndex+1) : '24h';
-  } else if (f === 'month') {
+  if (f === 'month') {
     const _cm5 = isCurrentMonth(selectedMonthIndex);
     if (_cm5) {
       const doc = g.dailyOilConso || []; fOilC = doc.reduce((a,b) => a+b, 0);
@@ -7688,10 +7177,17 @@ function renderGroupeDetail(siteId, grpId) {
       fOilT = (g.monthlyOilTopUp||[])[selectedMonthIndex]||0;
     }
     oilPeriod = _cm5 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex];
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3; fOilC = 0; fOilT = 0;
+    for (let mi = startM; mi < startM + 3; mi++) {
+      fOilC += (g.monthlyOilConso||[])[mi]||0;
+      fOilT += (g.monthlyOilTopUp||[])[mi]||0;
+    }
+    oilPeriod = 'Q' + selectedQuarter;
   } else {
     const moc = g.monthlyOilConso || []; fOilC = moc.reduce((a,b) => a+b, 0);
     const mot = g.monthlyOilTopUp || []; fOilT = mot.reduce((a,b) => a+b, 0);
-    oilPeriod = 'cette année';
+    oilPeriod = String(selectedYear);
   }
   const oilMetrics = [
     { label:'Consommation huile', icon:'🛢️', value: fOilC > 0 ? fOilC.toFixed(1) : '—', unit: fOilC > 0 ? 'L' : '', sub:'Conso · ' + oilPeriod },
@@ -7718,16 +7214,7 @@ function renderGroupeDetail(siteId, grpId) {
   // Recalculate SFOC/SLOC from aggregated data based on filter
   const HFO_DENSITY = 0.96, OIL_DENSITY = 0.90;
   let calcSfoc = null, calcSloc = null;
-  if (f === '24h' && selectedDayIndex === null) {
-    calcSfoc = g.sfoc > 0 ? g.sfoc : null;
-    calcSloc = g.sloc > 0 ? g.sloc : null;
-  } else if (f === '24h' && selectedDayIndex !== null) {
-    const _dProd = (g.dailyProd||[])[selectedDayIndex]||0;
-    const _dHfo = (g.dailyHFO||[])[selectedDayIndex]||0;
-    const _dOil = (g.dailyOilConso||[])[selectedDayIndex]||0;
-    if (_dProd > 0 && _dHfo > 0) calcSfoc = Math.round((_dHfo * HFO_DENSITY) / _dProd * 1000 * 10) / 10;
-    if (_dProd > 0 && _dOil > 0) calcSloc = Math.round((_dOil * OIL_DENSITY) / _dProd * 1000 * 100) / 100;
-  } else if (f === 'month') {
+  if (f === 'month') {
     const _cm6 = isCurrentMonth(selectedMonthIndex);
     let mProdKwh, mHfoL, mOilL;
     if (_cm6) {
@@ -7741,6 +7228,16 @@ function renderGroupeDetail(siteId, grpId) {
     }
     if (mProdKwh > 0 && mHfoL > 0) calcSfoc = Math.round((mHfoL * HFO_DENSITY) / mProdKwh * 1000 * 10) / 10;
     if (mProdKwh > 0 && mOilL > 0) calcSloc = Math.round((mOilL * OIL_DENSITY) / mProdKwh * 1000 * 100) / 100;
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3;
+    let qProd = 0, qHfo = 0, qOil = 0;
+    for (let mi = startM; mi < startM + 3; mi++) {
+      qProd += (g.monthlyProd||[])[mi]||0;
+      qHfo += (g.monthlyHFO||[])[mi]||0;
+      qOil += (g.monthlyOilConso||[])[mi]||0;
+    }
+    if (qProd > 0 && qHfo > 0) calcSfoc = Math.round((qHfo * HFO_DENSITY) / qProd * 1000 * 10) / 10;
+    if (qProd > 0 && qOil > 0) calcSloc = Math.round((qOil * OIL_DENSITY) / qProd * 1000 * 100) / 100;
   } else {
     const yProdKwh = (g.monthlyProd || []).reduce((a,b) => a+b, 0);
     const yHfoL = (g.monthlyHFO || []).reduce((a,b) => a+b, 0);
@@ -7800,35 +7297,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize month dropdown with data month
   selectedMonthIndex = getDataMonth() - 1;
   populateMonthDropdowns();
-  const curYear = String(new Date().getFullYear());
-  const dateLabel = getConsolidatedDateLabel();
   // Set month button labels to current month number
   document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
     b.textContent = MONTH_SHORT[selectedMonthIndex];
   });
-  // Set year button labels to current year
-  document.querySelectorAll('.tfilter:not(.enr-filter)').forEach(b => {
-    if (b.textContent.trim() === 'Cette année') b.textContent = curYear;
-  });
-  // Set 24h day buttons to date label
-  document.querySelectorAll('.day-btn-wrap .tfilter').forEach(b => {
-    if (b.textContent.trim() === '24h') b.textContent = dateLabel;
-  });
   // Initialize ENR filter
   enrSelectedMonthIndex = getEnrDataMonth() - 1;
   populateEnrMonthDropdowns();
-  var enrDateLabel = getEnrDateLabel();
   document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(b => {
     b.textContent = MONTH_SHORT[enrSelectedMonthIndex];
   });
-  document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(b => {
-    b.textContent = enrDateLabel;
-  });
-  document.querySelectorAll('.enr-filter').forEach(b => {
-    if (b.textContent.trim() === 'Cette année') b.textContent = curYear;
-  });
-  // Initialize day dropdowns
-  populateDayDropdowns();
   // Set filter label
   const lbl = document.getElementById('filter-label-text');
   if(lbl) lbl.textContent = MONTH_NAMES[selectedMonthIndex];
@@ -7919,9 +7397,13 @@ function closeInvDetail() { document.getElementById('inv-detail-view').style.dis
     </div>
     <div class="nav-filter">
       <div class="time-filter">
-        <span class="day-btn-wrap"><button class="tfilter gd-tfilter" onclick="toggleDayDropdown(event,this)">24h</button><div class="day-dropdown"></div></span>
-        <span class="month-btn-wrap"><button class="tfilter gd-tfilter active" onclick="toggleMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown"></div></span>
-        <button class="tfilter gd-tfilter" onclick="setGdFilter('year',this)">Cette année</button>
+        <span class="month-btn-wrap"><button class="tfilter gd-tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span>
+        <button class="tfilter gd-tfilter tf-quarter" data-q="1" onclick="setGdFilterQuarter(1,this)">Q1</button>
+        <button class="tfilter gd-tfilter tf-quarter" data-q="2" onclick="setGdFilterQuarter(2,this)">Q2</button>
+        <button class="tfilter gd-tfilter tf-quarter" data-q="3" onclick="setGdFilterQuarter(3,this)">Q3</button>
+        <button class="tfilter gd-tfilter tf-quarter" data-q="4" onclick="setGdFilterQuarter(4,this)">Q4</button>
+        <button class="tfilter gd-tfilter tf-year" data-year="2025" onclick="setGdFilterYear(2025,this)">2025</button>
+        <button class="tfilter gd-tfilter tf-year" data-year="2026" onclick="setGdFilterYear(2026,this)">2026</button>
       </div>
     </div>
   </div>
