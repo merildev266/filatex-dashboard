@@ -6934,15 +6934,15 @@ function renderDetail(id) {
     banner.innerHTML = `<span style="font-size:20px;">${s.notice || ''}</span>
       <span style="font-size:13px;color:var(--text-muted);margin-top:6px;">Les données opérationnelles seront disponibles dès la remise en service.</span>`;
     // Hide ALL data sections
-    ['detail-s1-top','detail-s1-conso','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-list'].forEach(x => {
+    ['detail-s1-top','detail-s1-conso','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-card','detail-blackout-list'].forEach(x => {
       const e = document.getElementById(x); if(e) e.style.display='none';
     });
     document.querySelectorAll('.detail-section-label').forEach(e => e.style.display='none');
     return;
   } else {
     banner.style.display = 'none';
-    ['detail-s1-top','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-list'].forEach(x => {
-      const e = document.getElementById(x); if(e) e.style.display = x === 'detail-gen-cards' ? 'flex' : '';
+    ['detail-s1-top','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-card'].forEach(x => {
+      const e = document.getElementById(x); if(e) e.style.display = x === 'detail-gen-cards' ? 'flex' : (x === 'detail-blackout-card' ? 'flex' : '');
     });
     document.querySelectorAll('.detail-section-label').forEach(e => e.style.display='');
   }
