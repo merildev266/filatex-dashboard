@@ -8,20 +8,20 @@
 
 /* Square card */
 #page-investments .e-card.inv-card{width:100%;aspect-ratio:1/1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;}
-#page-investments .capex-section-card{padding:clamp(12px,1.8vw,28px);border-radius:clamp(12px,1.5vw,22px);}
+#page-investments .capex-section-card{padding:clamp(8px,1.2vw,20px);border-radius:clamp(12px,1.5vw,22px);}
 
 /* Sections inside card */
-#page-investments .e-card .e-sec{padding:clamp(4px,0.6vw,10px) 4px;border-bottom:1px solid rgba(138,146,171,0.08);}
+#page-investments .e-card .e-sec{padding:clamp(2px,0.4vw,6px) 4px;border-bottom:1px solid rgba(138,146,171,0.08);}
 #page-investments .e-card .e-sec:last-child{border-bottom:none;}
 #page-investments .e-card .e-sec-label{font-size:clamp(6px,0.6vw,9px);margin-bottom:clamp(2px,0.3vw,5px);}
 
 /* Big project count */
-#page-investments .e-card .inv-proj-count{font-size:clamp(32px,3.5vw,56px);font-weight:800;letter-spacing:-1px;}
+#page-investments .e-card .inv-proj-count{font-size:clamp(24px,2.8vw,44px);font-weight:800;letter-spacing:-1px;}
 
 /* Stacked CAPEX layout */
 .inv-capex-stack{display:flex;flex-direction:column;align-items:center;gap:clamp(2px,0.3vw,5px);}
 .inv-capex-line{display:flex;align-items:baseline;gap:clamp(4px,0.4vw,8px);justify-content:center;}
-.inv-capex-val{font-size:clamp(16px,1.8vw,28px);font-weight:800;color:rgba(255,255,255,0.9);}
+.inv-capex-val{font-size:clamp(14px,1.5vw,24px);font-weight:800;color:rgba(255,255,255,0.9);}
 .inv-capex-unit{font-size:clamp(7px,0.65vw,10px);color:rgba(255,255,255,0.4);font-weight:400;}
 .inv-capex-label{font-size:clamp(6px,0.55vw,9px);color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;}
 .inv-capex-pct{font-size:clamp(10px,1vw,16px);font-weight:800;}
