@@ -1859,108 +1859,74 @@ function openHfoProjets(){
   var hfp = (typeof HFO_PROJECTS !== 'undefined') ? HFO_PROJECTS : null;
   if (!hfp) return;
   var catLabels = {overhaul:'Overhaul',remise:'Remise en service',maintenance:'Maintenance',scada:'SCADA',installation:'Installation',autre:'Autre'};
-  var statusLabels = {urgent:'Urgent',en_cours:'En cours',termine:'Termin\u00e9',indefini:'Ind\u00e9fini'};
+  var statusLabels = {urgent:'Urgent',en_cours:'En cours',termine:'Terminé',indefini:'Indéfini'};
   var statusColors = {urgent:'#f37056',en_cours:'#FDB823',termine:'#00ab63',indefini:'rgba(138,146,171,0.5)'};
+
+  /* Total CAPEX */
+  var capex = (typeof capexData !== 'undefined' && capexData.hfo) ? capexData.hfo : null;
+  var totalCapex = '—';
+  if (capex && capex.projects) {
+    var sum = 0;
+    capex.projects.forEach(function(cp) {
+      var m = (cp.etatTotal || '').replace(/[^0-9.,]/g, '').replace(',', '.');
+      sum += parseFloat(m) || 0;
+    });
+    totalCapex = sum >= 1 ? sum.toFixed(1) + ' M$' : Math.round(sum * 1000) + ' k$';
+  }
 
   var html = '';
 
-  /* KPIs */
+  /* KPIs — 4 colonnes */
   html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;">';
   var kpis = [
-    ['Total projets', hfp.total, ''],
-    ['Overhauls', hfp.overhauls, 'moteurs'],
-    ['Urgents', hfp.urgents, '< 30j'],
-    ['En cours', hfp.enCours, '']
+    ['Total projets', hfp.total, '', 'rgba(255,255,255,0.9)'],
+    ['Overhauls', hfp.overhauls, 'moteurs', 'rgba(255,255,255,0.9)'],
+    ['En cours', hfp.enCours, '', '#FDB823'],
+    ['Total CAPEX', totalCapex, '', 'rgba(100,136,255,0.9)']
   ];
-  kpis.forEach(function(k, i) {
-    var col = i === 2 ? '#f37056' : (i === 3 ? '#FDB823' : 'rgba(255,255,255,0.9)');
+  kpis.forEach(function(k) {
     html += '<div style="background:rgba(138,146,171,0.06);border:1px solid rgba(138,146,171,0.12);border-radius:16px;padding:20px 14px;text-align:center;">'
       + '<div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin-bottom:8px;">' + k[0] + '</div>'
-      + '<div style="font-size:32px;font-weight:800;color:' + col + ';line-height:1;">' + k[1] + '</div>'
+      + '<div style="font-size:32px;font-weight:800;color:' + k[3] + ';line-height:1;">' + k[1] + '</div>'
       + (k[2] ? '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + k[2] + '</div>' : '')
       + '</div>';
   });
   html += '</div>';
 
-  /* CAPEX Budget section */
-  var capex = (typeof capexData !== 'undefined' && capexData.hfo) ? capexData.hfo : null;
-  if (capex && capex.projects) {
-    html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(100,136,255,0.5);margin-bottom:14px;">Budget CAPEX</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px;">';
-    capex.projects.forEach(function(cp){
-      var barW = Math.min(cp.etatPct, 100);
-      var sCol = cp.status === 'over-budget' ? '#f37056' : 'rgba(100,136,255,0.8)';
-      html += '<div style="background:rgba(100,136,255,0.04);border:1px solid rgba(100,136,255,0.12);border-radius:14px;padding:16px 18px;">'
-        + '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + cp.name + '</div>'
-        + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">'
-        + '<div style="font-size:9px;color:rgba(255,255,255,0.4);">Budget: <span style="color:rgba(255,255,255,0.7);">' + cp.etatTotal + '</span></div>'
-        + '<div style="font-size:9px;color:rgba(255,255,255,0.4);">Réalisé: <span style="color:' + sCol + ';">' + cp.etatEnCours + '</span></div>'
-        + '</div>'
-        + '<div style="height:4px;background:rgba(100,136,255,0.1);border-radius:2px;overflow:hidden;margin-bottom:6px;">'
-        + '<div style="height:100%;width:' + barW + '%;background:' + sCol + ';border-radius:2px;"></div></div>'
-        + '<div style="display:flex;justify-content:space-between;align-items:baseline;">'
-        + '<div style="font-size:9px;color:rgba(255,255,255,0.3);">Init: ' + cp.investInit + '</div>'
-        + '<div style="font-size:11px;font-weight:700;color:' + sCol + ';">' + cp.etatPct + '%</div>'
-        + (cp.triInit !== '\u2014' ? '<div style="font-size:9px;color:rgba(255,255,255,0.3);">TRI: ' + cp.triInit + '</div>' : '')
-        + '</div>'
-        + '</div>';
-    });
-    html += '</div>';
-  }
+  /* Cartes cliquables — 8 cartes */
+  var allCards = [
+    {key:'OVERHAUL', label:'Overhauls', total:hfp.overhauls, oh:null, enCours: hfp.projects.filter(function(p){return p.categorie==='overhaul' && p.status==='en_cours';}).length, isCategory:true},
+    {key:'TAMATAVE', label:'Tamatave'},
+    {key:'MAJUNGA', label:'Majunga'},
+    {key:'DIEGO', label:'Diego'},
+    {key:'TULEAR', label:'Tuléar'},
+    {key:'ANTSIRABE', label:'Antsirabe'},
+    {key:'VESTOP', label:'Vestop'},
+    {key:'AUTRE', label:'Autre'}
+  ];
+  allCards.forEach(function(c) {
+    if (!c.isCategory) {
+      var bs = hfp.bySite[c.key] || {total:0, overhaul:0, enCours:0};
+      c.total = bs.total; c.oh = bs.overhaul; c.enCours = bs.enCours;
+    }
+  });
 
-  /* Par site */
-  var mainSites = ['TAMATAVE','MAJUNGA','DIEGO','TULEAR','ANTSIRABE'];
-  html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(138,146,171,0.4);margin-bottom:14px;">Par site</div>';
-  html += '<div style="display:grid;grid-template-columns:repeat(' + mainSites.length + ',1fr);gap:12px;margin-bottom:32px;">';
-  mainSites.forEach(function(site) {
-    var bs = hfp.bySite[site];
-    if (!bs) return;
-    html += '<div style="background:rgba(138,146,171,0.05);border:1px solid rgba(138,146,171,0.12);border-radius:14px;padding:16px 10px;text-align:center;">'
-      + '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:8px;">' + site.charAt(0) + site.slice(1).toLowerCase() + '</div>'
-      + '<div style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.85);line-height:1;">' + bs.total + '</div>'
-      + '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + bs.overhaul + ' OH' + (bs.urgent > 0 ? ' \xB7 <span style="color:#f37056;">' + bs.urgent + ' urgent</span>' : '') + '</div>'
-      + '</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px;" id="hfp-cards-grid">';
+  allCards.forEach(function(c) {
+    var borderCol = 'rgba(138,146,171,0.15)';
+    html += '<div class="hfp-card" data-key="' + c.key + '" onclick="filterHfpByCard(\'' + c.key + '\',\'' + (c.isCategory ? 'cat' : 'site') + '\')" style="background:rgba(138,146,171,0.05);border:1px solid ' + borderCol + ';border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s;" '
+      + 'onmouseenter="this.style.borderColor=\'rgba(138,146,171,0.5)\';this.style.background=\'rgba(138,146,171,0.1)\'" '
+      + 'onmouseleave="if(!this.classList.contains(\'hfp-active\')){this.style.borderColor=\'' + borderCol + '\';this.style.background=\'rgba(138,146,171,0.05)\';}">'
+      + '<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:6px;">' + c.label + '</div>'
+      + '<div style="font-size:26px;font-weight:800;color:rgba(255,255,255,0.9);line-height:1;">' + c.total + '</div>'
+      + '<div style="font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;">'
+      + (c.oh !== null ? c.oh + ' OH · ' : '') + c.enCours + ' en cours'
+      + '</div></div>';
   });
   html += '</div>';
 
-  /* Liste des projets par site */
-  mainSites.concat(['VESTOP','AUTRE']).forEach(function(site) {
-    var siteProjects = hfp.projects.filter(function(p) { return p.site === site; });
-    if (!siteProjects.length) return;
-
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin:24px 0 12px;border-bottom:1px solid rgba(138,146,171,0.1);padding-bottom:8px;">'
-      + site.charAt(0) + site.slice(1).toLowerCase() + ' \u2014 ' + siteProjects.length + ' projets</div>';
-
-    siteProjects.forEach(function(p) {
-      var sCol = statusColors[p.status] || 'rgba(138,146,171,0.5)';
-      var sLabel = statusLabels[p.status] || p.status;
-      var cLabel = catLabels[p.categorie] || p.categorie;
-
-      html += '<div style="background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.1);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;">';
-
-      /* Left: projet info */
-      html += '<div style="flex:1;min-width:0;">'
-        + '<div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.projet + '</div>'
-        + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-top:3px;">'
-        + cLabel
-        + (p.moteur ? ' \xB7 ' + p.moteur : '')
-        + (p.resp ? ' \xB7 ' + p.resp : '')
-        + '</div></div>';
-
-      /* Right: status + day to go */
-      html += '<div style="text-align:right;flex:0 0 auto;">'
-        + '<div style="font-size:9px;font-weight:700;color:' + sCol + ';letter-spacing:0.1em;text-transform:uppercase;">' + sLabel + '</div>';
-      if (p.dayToGo !== null && p.dayToGo > 0) {
-        html += '<div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.7);margin-top:2px;">' + p.dayToGo + ' <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.3);">jours</span></div>';
-      }
-      if (p.dlRevu) {
-        html += '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:2px;">DL: ' + p.dlRevu.split('-')[2] + '/' + p.dlRevu.split('-')[1] + '/' + p.dlRevu.split('-')[0] + '</div>';
-      }
-      html += '</div>';
-
-      html += '</div>';
-    });
-  });
+  /* Container pour la liste filtrée */
+  html += '<div id="hfp-filtered-list"></div>';
 
   document.getElementById('hfo-proj-detail-content').innerHTML = html;
   var panel = document.getElementById('panel-hfo-projets');
@@ -1968,6 +1934,67 @@ function openHfoProjets(){
   panel.style.transform = 'translateX(0)';
   panel.scrollTop = 0;
   document.body.style.overflow = 'hidden';
+}
+
+/* Filtre la liste par carte cliquée */
+function filterHfpByCard(key, type) {
+  var hfp = HFO_PROJECTS;
+  var catLabels = {overhaul:'Overhaul',remise:'Remise en service',maintenance:'Maintenance',scada:'SCADA',installation:'Installation',autre:'Autre'};
+  var statusLabels = {urgent:'Urgent',en_cours:'En cours',termine:'Terminé',indefini:'Indéfini'};
+  var statusColors = {urgent:'#f37056',en_cours:'#FDB823',termine:'#00ab63',indefini:'rgba(138,146,171,0.5)'};
+
+  /* Highlight carte active */
+  document.querySelectorAll('.hfp-card').forEach(function(c) {
+    c.classList.remove('hfp-active');
+    c.style.borderColor = 'rgba(138,146,171,0.15)';
+    c.style.background = 'rgba(138,146,171,0.05)';
+  });
+  var activeCard = document.querySelector('.hfp-card[data-key="' + key + '"]');
+  if (activeCard) {
+    activeCard.classList.add('hfp-active');
+    activeCard.style.borderColor = '#00ab63';
+    activeCard.style.background = 'rgba(0,171,99,0.08)';
+  }
+
+  /* Filtrer les projets */
+  var filtered;
+  var title;
+  if (type === 'cat') {
+    filtered = hfp.projects.filter(function(p) { return p.categorie === 'overhaul'; });
+    title = 'Overhauls — ' + filtered.length + ' projets';
+  } else {
+    filtered = hfp.projects.filter(function(p) { return p.site === key; });
+    title = key.charAt(0) + key.slice(1).toLowerCase() + ' — ' + filtered.length + ' projets';
+  }
+
+  var html = '<div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.6);margin:20px 0 12px;border-bottom:1px solid rgba(0,171,99,0.15);padding-bottom:8px;">'
+    + title + '</div>';
+
+  filtered.forEach(function(p) {
+    var sCol = statusColors[p.status] || 'rgba(138,146,171,0.5)';
+    var sLabel = statusLabels[p.status] || p.status;
+    var cLabel = catLabels[p.categorie] || p.categorie;
+
+    html += '<div style="background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.1);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;">';
+    html += '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.projet + '</div>'
+      + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-top:3px;">'
+      + cLabel + (p.moteur ? ' · ' + p.moteur : '') + (p.resp ? ' · ' + p.resp : '')
+      + '</div></div>';
+    html += '<div style="text-align:right;flex:0 0 auto;">'
+      + '<div style="font-size:9px;font-weight:700;color:' + sCol + ';letter-spacing:0.1em;text-transform:uppercase;">' + sLabel + '</div>';
+    if (p.dayToGo !== null && p.dayToGo > 0) {
+      html += '<div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.7);margin-top:2px;">' + p.dayToGo + ' <span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.3);">jours</span></div>';
+    }
+    if (p.dlRevu) {
+      html += '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:2px;">DL: ' + p.dlRevu.split('-')[2] + '/' + p.dlRevu.split('-')[1] + '/' + p.dlRevu.split('-')[0] + '</div>';
+    }
+    html += '</div></div>';
+  });
+
+  document.getElementById('hfp-filtered-list').innerHTML = html;
+  /* Scroll to list */
+  document.getElementById('hfp-filtered-list').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function closeHfoProjets(){
