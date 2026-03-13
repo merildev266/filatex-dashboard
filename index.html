@@ -942,28 +942,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
         </div>
 
         <div class="e-sec">
-          <div class="e-sec-label">Moteurs à l'arrêt</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
-              <div id="e-hfo-arret-count" class="e-arret-num">—</div>
-              <div class="e-arret-sub">/ <span id="e-hfo-arret-total">—</span> moteurs</div>
-            </div>
-            <div style="width:1px;height:30px;background:rgba(138,146,171,0.2);"></div>
-            <div style="text-align:center;flex:1;display:flex;flex-direction:column;gap:2px;">
-              <div>
-                <div class="e-mid" style="color:rgba(243,112,86,0.8);"><span id="e-hfo-arret-mwhj">—</span> <span class="e-mid-unit" style="color:rgba(243,112,86,0.5);">MWh/j</span></div>
-                <div class="e-arret-sub2">manque / jour</div>
-              </div>
-              <div style="height:1px;background:rgba(138,146,171,0.15);width:60%;margin:0 auto;"></div>
-              <div>
-                <div class="e-mid" style="color:rgba(243,112,86,0.8);"><span id="e-hfo-arret-mwh-date">—</span> <span class="e-mid-unit" style="color:rgba(243,112,86,0.5);">MWh</span></div>
-                <div class="e-arret-sub3">manque à date · <span id="e-hfo-arret-period">—</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="e-sec">
           <div class="e-sec-label">SFOC · SLOC (pondérés par production)</div>
           <div style="display:flex;align-items:center;justify-content:space-around;">
             <div style="text-align:center;">
@@ -974,6 +952,21 @@ if(sessionStorage.getItem('dash_auth')==='1'){
             <div style="text-align:center;">
               <div class="e-big"><span id="e-hfo-sloc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
               <div class="e-sub">SLOC moyen</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="e-sec">
+          <div class="e-sec-label">Moteurs à l'arrêt</div>
+          <div style="display:flex;align-items:center;justify-content:space-around;">
+            <div style="text-align:center;">
+              <div id="e-hfo-arret-count" class="e-arret-num">—</div>
+              <div class="e-arret-sub">/ <span id="e-hfo-arret-total">—</span> moteurs</div>
+            </div>
+            <div style="width:1px;height:30px;background:rgba(138,146,171,0.2);"></div>
+            <div style="text-align:center;">
+              <div class="e-mid" style="color:rgba(243,112,86,0.8);"><span id="e-hfo-arret-mwh-date">—</span> <span class="e-mid-unit" style="color:rgba(243,112,86,0.5);">MWh</span></div>
+              <div class="e-arret-sub2">manque · <span id="e-hfo-arret-period">—</span></div>
             </div>
           </div>
         </div>
@@ -5770,7 +5763,6 @@ function updateEnergyHfoCard() {
   el('e-hfo-arret-count').textContent = totalArret;
   el('e-hfo-arret-count').style.color = arretCol;
   el('e-hfo-arret-total').textContent = totalMoteurs;
-  el('e-hfo-arret-mwhj').textContent  = totalArret > 0 ? '−' + lostPerDay.toLocaleString() : '0';
   el('e-hfo-arret-mwh-date').textContent = totalArret > 0 ? '−' + lostToDate.toLocaleString() : '0';
   el('e-hfo-arret-period').textContent   = filter === 'year' ? selectedYear : filter === 'quarter' ? 'Q' + selectedQuarter : moisFR[monthIdx];
 
