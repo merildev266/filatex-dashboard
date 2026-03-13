@@ -963,6 +963,20 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           </div>
         </div>
 
+        <div class="e-sec">
+          <div class="e-sec-label">SFOC · SLOC (pondérés par production)</div>
+          <div style="display:flex;align-items:center;justify-content:space-around;">
+            <div style="text-align:center;">
+              <div class="e-big"><span id="e-hfo-sfoc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
+              <div class="e-sub">SFOC moyen</div>
+            </div>
+            <div style="width:1px;height:24px;background:rgba(138,146,171,0.15);"></div>
+            <div style="text-align:center;">
+              <div class="e-big"><span id="e-hfo-sloc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
+              <div class="e-sub">SLOC moyen</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- HFO Projets -->
@@ -5706,6 +5720,7 @@ function updateEnergyHfoCard() {
   let totalMW = 0, totalContrat = 0, totalArret = 0, totalMoteurs = 0;
   let totalProd = 0, totalProdObj = 0;
   let arretMW = 0;
+  let sfocWeighted = 0, slocWeighted = 0;
 
   siteOrder.forEach(id => {
     const s = siteData[id];
@@ -5724,6 +5739,8 @@ function updateEnergyHfoCard() {
 
     totalProd    += k.prod || 0;
     totalProdObj += k.prodObj || 0;
+    if (k.sfoc && k.prod) sfocWeighted += k.sfoc * k.prod;
+    if (k.sloc && k.prod) slocWeighted += k.sloc * k.prod;
   });
 
   // ── KPI 1 — Puissance dispo vs Contrat ──
@@ -5772,6 +5789,12 @@ function updateEnergyHfoCard() {
   el('e-hfo-prod-arrow').textContent  = prodArrow;
   el('e-hfo-prod-arrow').style.color  = prodColDim;
   el('e-hfo-prod-filter').textContent = filterLabel;
+
+  // ── KPI 4 — SFOC + SLOC pondérés par production ──
+  const avgSfoc = totalProd > 0 ? (sfocWeighted / totalProd) : 0;
+  const avgSloc = totalProd > 0 ? (slocWeighted / totalProd) : 0;
+  el('e-hfo-sfoc-avg').textContent = avgSfoc > 0 ? avgSfoc.toFixed(1) : '—';
+  el('e-hfo-sloc-avg').textContent = avgSloc > 0 ? avgSloc.toFixed(1) : '—';
 }
 function closePage(pageId) {
   const el = document.getElementById(pageId);
