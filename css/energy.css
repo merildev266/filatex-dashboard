@@ -33,7 +33,7 @@
 
 /* == ENERGY PAGE -- 2x2 grid, no scroll == */
 #page-energy{overflow:hidden;}
-#page-energy .inner-page-inner{min-height:calc(100vh - 70px);padding:6px clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:center;}
+#page-energy .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
 #page-energy .capex-section-card{padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);border-radius:clamp(12px,1.5vw,22px);}
 /* Base e-* classes (shared across pages) */
 .e-wrap{display:flex;gap:clamp(10px,1.5vw,20px);padding:0;align-items:stretch;}
