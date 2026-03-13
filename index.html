@@ -886,11 +886,11 @@ if(sessionStorage.getItem('dash_auth')==='1'){
     <span>Properties</span>
   </button>
   <button class="bnav-item" data-pole="capex" onclick="navTo('capex')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="16" width="4" height="6" rx="0.5"/><rect x="8" y="11" width="4" height="11" rx="0.5"/><rect x="14" y="6" width="4" height="16" rx="0.5"/><path d="M20 2l2 2-2 2" stroke-width="1.5"/><path d="M22 4h-4v5" stroke-width="1.5"/></svg>
     <span>CAPEX</span>
   </button>
   <button class="bnav-item" data-pole="csi" onclick="navTo('csi')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="2.5"/><path d="M12 10.5v2"/><path d="M8 16l4-3.5 4 3.5"/><path d="M4 20l4-4"/><path d="M20 20l-4-4"/><path d="M4 20h16"/><path d="M2 3l5 4L12 4l5 3 5-4" stroke-width="1.5"/></svg>
     <span>CSI</span>
   </button>
 </div>
@@ -4946,6 +4946,7 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
 .bnav-item[data-pole="investments"].active{color:#f37056;}
 .bnav-item[data-pole="properties"].active{color:#FDB823;}
 .bnav-item[data-pole="capex"].active{color:#5e4c9f;}
+.bnav-item[data-pole="csi"].active{color:#0096c7;}
 .bnav-item[data-pole="home"].active{color:rgba(255,255,255,0.7);}
 .bnav-item.active::after{content:'';position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:currentColor;}
 #login-screen:not(.hidden) ~ #bottom-nav{display:none!important;}
