@@ -3527,24 +3527,8 @@ function closeDiegoDetail() {
     <div class="detail-s1-conso" id="detail-s1-conso" style="display:none;"></div>
 
     <!-- ══ SECTION 2 — DÉTAIL GÉNÉRATEURS ══ -->
-    <div class="detail-section-label" id="detail-s2-label" style="margin-top:32px;">Section 2 — État des générateurs</div>
-    <div class="table-wrap" id="detail-s2-table">
-      <table class="groups-table">
-        <thead>
-          <tr>
-            <th>Générateur</th>
-            <th>Puissance</th>
-            <th>Statut</th>
-            <th>Heures de marche</th>
-            <th>Production</th>
-            <th>SFOC</th>
-            <th>SLOC</th>
-            <th>Prochaine maintenance</th>
-          </tr>
-        </thead>
-        <tbody id="detail-groups-tbody"></tbody>
-      </table>
-    </div>
+    <div class="detail-section-label" id="detail-s2-label" style="margin-top:32px;">État des générateurs</div>
+    <div id="detail-gen-cards" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
 
     <!-- ══ SECTION 3 — BLACKOUTS ══ -->
     <div class="detail-section-label" id="detail-s3-label" style="margin-top:32px;">Section 3 — Blackouts</div>
@@ -5836,6 +5820,8 @@ function openDetail(id) {
   const s = siteData[id];
   // Toujours style HFO (fond vert foncé + cartes transparentes)
   panel.style.background = '';
+  panel.style.display = '';
+  panel.style.transform = '';
   panel.classList.add('hfo-style');
   panel.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -6881,15 +6867,15 @@ function renderDetail(id) {
     banner.innerHTML = `<span style="font-size:20px;">${s.notice || ''}</span>
       <span style="font-size:13px;color:var(--text-muted);margin-top:6px;">Les données opérationnelles seront disponibles dès la remise en service.</span>`;
     // Hide ALL data sections
-    ['detail-s1-top','detail-s1-conso','detail-s2-label','detail-s2-table','detail-s3-label','detail-blackout-list'].forEach(x => {
+    ['detail-s1-top','detail-s1-conso','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-list'].forEach(x => {
       const e = document.getElementById(x); if(e) e.style.display='none';
     });
     document.querySelectorAll('.detail-section-label').forEach(e => e.style.display='none');
     return;
   } else {
     banner.style.display = 'none';
-    ['detail-s1-top','detail-s2-label','detail-s2-table','detail-s3-label','detail-blackout-list'].forEach(x => {
-      const e = document.getElementById(x); if(e) e.style.display='';
+    ['detail-s1-top','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-list'].forEach(x => {
+      const e = document.getElementById(x); if(e) e.style.display = x === 'detail-gen-cards' ? 'flex' : '';
     });
     document.querySelectorAll('.detail-section-label').forEach(e => e.style.display='');
   }
@@ -6905,95 +6891,64 @@ function renderDetail(id) {
   document.getElementById('d-sfoc').textContent = k.sfoc != null ? parseFloat(k.sfoc).toFixed(1) : '—';
   document.getElementById('d-sloc').textContent = k.sloc != null ? parseFloat(k.sloc).toFixed(1) : '—';
 
-  // ── SECTION 2 — GÉNÉRATEURS (filtrés) ──
-  document.getElementById('detail-groups-tbody').innerHTML = s.groupes.map(g => {
-    // Violet dot if contradictory data, otherwise normal status color
+  // ── SECTION 2 — GÉNÉRATEURS (cartes compactes) ──
+  document.getElementById('detail-gen-cards').innerHTML = s.groupes.map(g => {
     const isContra = g.contradictory === true;
     const sc = isContra ? 'status-check' : g.statut==='ok'?'status-ok':g.statut==='warn'?'status-warn':'status-ko';
+    const dotColor = isContra ? '#7b5fbf' : g.statut==='ok'?'var(--energy)':g.statut==='warn'?'#f0a030':'var(--red)';
     let sl;
-    if(isContra) {
-      const _ld = s.latestDate;
-      const _dp = _ld ? _ld.split('-') : null;
-      const _dtStr = _dp ? _dp[2]+'/'+_dp[1] : '';
-      sl = 'À vérifier';
-      var _contraDate = _dtStr ? '<br><span style="font-size:9px;color:#7b5fbf;font-weight:400;opacity:0.7;">le ' + _dtStr + '</span>' : '';
-    } else {
-      sl = g.statut==='ok'?'En marche':g.statut==='warn'?'Maintenance':'Arrêt';
-      var _contraDate = '';
-    }
-    // Days stopped counter
+    if(isContra) { sl = 'À vérifier'; }
+    else { sl = g.statut==='ok'?'En marche':g.statut==='warn'?'Maintenance':'Arrêt'; }
     const _daysStopped = getDaysStopped(g);
-    const _daysLabel = (_daysStopped > 0 && !isContra) ? '<br><span style="font-size:9px;color:var(--red);font-weight:400;opacity:0.7;">depuis ' + _daysStopped + 'j</span>' : '';
-    const gSfocColor = g.sfoc ? (g.sfoc<=250?'var(--energy)':'var(--red)') : 'var(--text-dim)';
-    const gSlocColor = g.sloc ? (g.sloc<=1.0?'var(--energy)':'var(--red)') : 'var(--text-dim)';
-    // Heures selon filtre
-    let hVal;
+    const _daysLabel = (_daysStopped > 0 && !isContra) ? ' · ' + _daysStopped + 'j' : '';
+    // SFOC selon filtre
+    let gSfocVal = '—';
+    const HFO_D = 0.96;
     const _isCurMonth = isCurrentMonth(selectedMonthIndex);
-    if(f === 'month') {
-      const v = _isCurMonth ? (g.dailyHours||[]).reduce((a,b)=>a+b,0) : (g.monthlyHours||[])[selectedMonthIndex]||0;
-      hVal = v > 0 ? v.toFixed(1) + ' h' : '—';
-    }
-    else if(f === 'quarter') {
-      const startM = (selectedQuarter - 1) * 3; let v = 0;
-      for (let mi = startM; mi < startM + 3; mi++) v += (g.monthlyHours||[])[mi]||0;
-      hVal = v > 0 ? v.toFixed(1) + ' h' : '—';
-    }
-    else { const v = (g.monthlyHours||[]).reduce((a,b)=>a+b,0); hVal = v > 0 ? v.toFixed(1) + ' h' : '—'; }
-    // Production selon filtre
-    let prodRaw;
-    if(f === 'month') prodRaw = _isCurMonth ? (g.dailyProd||[]).reduce((a,b)=>a+b,0) : (g.monthlyProd||[])[selectedMonthIndex]||0;
-    else if(f === 'quarter') {
-      const startM = (selectedQuarter - 1) * 3; prodRaw = 0;
-      for (let mi = startM; mi < startM + 3; mi++) prodRaw += (g.monthlyProd||[])[mi]||0;
-    }
-    else prodRaw = (g.monthlyProd||[]).reduce((a,b)=>a+b,0);
-    const prodVal = prodRaw > 0 ? (prodRaw/1000).toFixed(1) + ' MWh' : '—';
-    // SFOC/SLOC selon filtre
-    let gSfocVal = '—', gSlocVal = '—';
-    const HFO_D = 0.96, OIL_D = 0.90;
     {
-      let pKwh, hfoL, oilL;
+      let pKwh, hfoL;
       if(f === 'month' && _isCurMonth) {
         pKwh = (g.dailyProd||[]).reduce((a,b)=>a+b,0);
         hfoL = (g.dailyHFO||[]).reduce((a,b)=>a+b,0);
-        oilL = (g.dailyOilConso||[]).reduce((a,b)=>a+b,0);
       } else if(f === 'month') {
         pKwh = (g.monthlyProd||[])[selectedMonthIndex]||0;
         hfoL = (g.monthlyHFO||[])[selectedMonthIndex]||0;
-        oilL = (g.monthlyOilConso||[])[selectedMonthIndex]||0;
       } else if(f === 'quarter') {
-        const startM = (selectedQuarter - 1) * 3; pKwh = 0; hfoL = 0; oilL = 0;
+        const startM = (selectedQuarter - 1) * 3; pKwh = 0; hfoL = 0;
         for (let mi = startM; mi < startM + 3; mi++) {
           pKwh += (g.monthlyProd||[])[mi]||0;
           hfoL += (g.monthlyHFO||[])[mi]||0;
-          oilL += (g.monthlyOilConso||[])[mi]||0;
         }
       } else {
         pKwh = (g.monthlyProd||[]).reduce((a,b)=>a+b,0);
         hfoL = (g.monthlyHFO||[]).reduce((a,b)=>a+b,0);
-        oilL = (g.monthlyOilConso||[]).reduce((a,b)=>a+b,0);
       }
-      if(pKwh > 0 && hfoL > 0) gSfocVal = (Math.round((hfoL*HFO_D)/pKwh*1000*10)/10).toFixed(1) + ' g/kWh';
-      if(pKwh > 0 && oilL > 0) gSlocVal = (Math.round((oilL*OIL_D)/pKwh*1000*10)/10).toFixed(1) + ' g/kWh';
+      if(pKwh > 0 && hfoL > 0) gSfocVal = (Math.round((hfoL*HFO_D)/pKwh*1000*10)/10).toFixed(0);
     }
-    const gSfocNum = parseFloat(gSfocVal)||0, gSlocNum = parseFloat(gSlocVal)||0;
-    const gSfocColor2 = gSfocNum > 0 ? (gSfocNum<=250?'var(--energy)':'var(--red)') : 'var(--text-dim)';
-    const gSlocColor2 = gSlocNum > 0 ? (gSlocNum<=1.0?'var(--energy)':'var(--red)') : 'var(--text-dim)';
-    return `<tr style="cursor:pointer;${isContra?'background:rgba(160,90,255,0.04);':''}" onclick="openGroupeDetail('${id}','${g.id}')">
-      <td style="font-weight:700;color:${isContra?'#7b5fbf':'var(--text)'};">
-        ${g.id}
-      </td>
-      <td>${parseFloat(g.mw).toFixed(1)} MW</td>
-      <td><span style="display:inline-flex;align-items:center;gap:6px;">
-        <span class="status-dot ${sc}"></span>
-        <span style="font-size:11px;font-weight:600;${isContra?'color:#7b5fbf;':''}">${sl}${_daysLabel}${_contraDate}</span>
-      </span></td>
-      <td>${hVal}</td>
-      <td style="color:var(--text-muted);font-weight:500;">${prodVal}</td>
-      <td style="color:${gSfocColor2};font-weight:600;">${gSfocVal}</td>
-      <td style="color:${gSlocColor2};font-weight:600;">${gSlocVal}</td>
-      <td style="color:var(--text-dim);">${g.maint}</td>
-    </tr>`;
+    const gSfocNum = parseFloat(gSfocVal)||0;
+    const sfocColor = gSfocNum > 0 ? (gSfocNum<=250?'var(--energy)':'var(--red)') : 'var(--text-dim)';
+    // SLOC
+    const gSlocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '—';
+    const borderColor = isContra ? 'rgba(160,90,255,0.3)' : (g.statut==='ok'?'rgba(0,171,99,0.2)':g.statut==='warn'?'rgba(240,160,48,0.2)':'rgba(243,112,86,0.2)');
+    const mw = parseFloat(g.mw).toFixed(1);
+    return `<div style="cursor:pointer;display:flex;flex-direction:column;width:calc((100% - 32px)/5);" onclick="openGroupeDetail('${id}','${g.id}')">
+      <div style="text-align:center;font-size:11px;font-weight:700;color:${isContra?'#7b5fbf':'var(--text)'};margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px;"><span class="status-dot ${sc}" style="width:6px;height:6px;flex-shrink:0;"></span>${g.id}</div>
+      <div class="s1-card" style="flex:1;padding:10px 6px;transition:border-color 0.2s;border-color:${borderColor};cursor:pointer;" onmouseenter="this.style.borderColor='${dotColor}'" onmouseleave="this.style.borderColor='${borderColor}'">
+        <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:4px;">Puissance</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1;">${mw}<span style="font-size:9px;color:var(--text-muted);font-weight:400;"> MW</span></div>
+        <div style="font-size:8px;font-weight:700;color:${dotColor};margin-top:6px;">${sl}${_daysLabel}</div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:6px;">
+          <div style="text-align:center;">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);">SFOC</div>
+            <div style="font-size:12px;font-weight:700;color:${sfocColor};">${gSfocVal}</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);">SLOC</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);">${gSlocVal}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
   }).join('');
 
   // ── SECTION 3 — BLACKOUTS ──
