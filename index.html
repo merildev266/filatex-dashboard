@@ -856,17 +856,94 @@
     </div>
     <!-- LEVEL 1: Landing Externe / Interne -->
     <div id="inv-landing" class="page-inner" style="padding-top:0;">
-      <div class="e-wrap" id="inv-wrap" style="max-width:1000px;margin:0 auto;padding:24px 0;">
-        <div class="e-col-title" style="color:#f37056;">Externe <span class="e-col-title-sub" style="color:rgba(243,112,86,0.5);">Ventures</span></div>
-        <div class="e-col-title" style="color:#f37056;">Interne <span class="e-col-title-sub" style="color:rgba(243,112,86,0.5);">Groupe</span></div>
-        <div class="capex-section-card e-card" onclick="openInvLevel('externe')" style="border-color:rgba(243,112,86,0.35);cursor:pointer;" onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'" onmouseleave="this.style.borderColor='rgba(243,112,86,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-          <div class="e-sec"><div class="e-sec-label">Projets</div><div style="display:flex;align-items:center;justify-content:space-around;"><div style="text-align:center;"><div class="e-big" style="color:#f37056;">10</div><div class="e-sub">Total</div></div></div></div>
-          <div class="e-sec"><div class="e-sec-label">Investissement CAPEX</div><div style="display:flex;align-items:center;justify-content:space-around;"><div style="text-align:center;"><div class="e-mid" style="color:#f37056;">29.7 M$</div><div class="e-sub">Budget r&eacute;vis&eacute;</div></div><div style="text-align:center;"><div class="e-pct" style="color:#4ecdc4;">67%</div><div class="e-sub">D&eacute;caiss&eacute;</div></div><div style="text-align:center;"><div class="e-mid">19.9 M$</div><div class="e-sub">Montant d&eacute;caiss&eacute;</div></div></div></div>
+      <div class="e-wrap" id="inv-wrap">
+
+        <!-- ═══ COLONNE GAUCHE · EXTERNE ═══ -->
+        <div class="e-col">
+        <div class="e-col-title" style="color:#f37056;">Externe</div>
+        <div class="capex-section-card e-card inv-card" onclick="openInvLevel('externe')"
+          style="border-color:rgba(243,112,86,0.35);cursor:pointer;"
+          onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'"
+          onmouseleave="this.style.borderColor='rgba(243,112,86,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+
+          <div class="e-sec">
+            <div class="e-sec-label" style="color:rgba(243,112,86,0.55);">Projets</div>
+            <div class="e-kpi-row">
+              <div class="e-kpi-left">
+                <div class="e-big" style="color:#f37056;"><span id="inv-ext-total">—</span></div>
+                <div class="e-sub">Total</div>
+              </div>
+              <div class="e-kpi-center"><div class="e-kpi-sep" style="background:rgba(243,112,86,0.2);"></div></div>
+              <div class="e-kpi-right">
+                <div class="e-big"><span id="inv-ext-encours">—</span></div>
+                <div class="e-sub">En cours</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="e-sec">
+            <div class="e-sec-label" style="color:rgba(243,112,86,0.55);">Investissement CAPEX</div>
+            <div class="e-kpi-row">
+              <div class="e-kpi-left">
+                <div class="e-big" style="color:#f37056;"><span id="inv-ext-budget">—</span></div>
+                <div class="e-sub">Budget révisé</div>
+              </div>
+              <div class="e-kpi-center">
+                <div class="e-pct" style="color:#4ecdc4;" id="inv-ext-pct">—</div>
+                <div class="e-pct-arrow" style="color:rgba(78,205,196,0.5);">décaissé</div>
+              </div>
+              <div class="e-kpi-right">
+                <div class="e-big"><span id="inv-ext-decaisse">—</span></div>
+                <div class="e-sub">Montant décaissé</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="capex-section-card e-card" onclick="openInvLevel('interne')" style="border-color:rgba(243,112,86,0.35);cursor:pointer;" onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'" onmouseleave="this.style.borderColor='rgba(243,112,86,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-          <div class="e-sec"><div class="e-sec-label">Projets</div><div style="display:flex;align-items:center;justify-content:space-around;"><div style="text-align:center;"><div class="e-big" style="color:#f37056;">9</div><div class="e-sub">Total</div></div></div></div>
-          <div class="e-sec"><div class="e-sec-label">Investissement CAPEX</div><div style="display:flex;align-items:center;justify-content:space-around;"><div style="text-align:center;"><div class="e-mid" style="color:#f37056;">X</div><div class="e-sub">Budget r&eacute;vis&eacute;</div></div><div style="text-align:center;"><div class="e-pct" style="color:#4ecdc4;">X</div><div class="e-sub">D&eacute;caiss&eacute;</div></div><div style="text-align:center;"><div class="e-mid">X</div><div class="e-sub">Montant d&eacute;caiss&eacute;</div></div></div></div>
+        </div><!-- /e-col Externe -->
+
+        <!-- ═══ COLONNE DROITE · INTERNE ═══ -->
+        <div class="e-col">
+        <div class="e-col-title" style="color:#f37056;">Interne</div>
+        <div class="capex-section-card e-card inv-card" onclick="openInvLevel('interne')"
+          style="border-color:rgba(243,112,86,0.35);cursor:pointer;"
+          onmouseenter="this.style.borderColor='rgba(243,112,86,0.7)';this.style.background='rgba(243,112,86,0.06)';this.style.boxShadow='0 16px 40px rgba(243,112,86,0.2)';this.style.transform='translateY(-3px)'"
+          onmouseleave="this.style.borderColor='rgba(243,112,86,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
+
+          <div class="e-sec">
+            <div class="e-sec-label" style="color:rgba(243,112,86,0.55);">Projets</div>
+            <div class="e-kpi-row">
+              <div class="e-kpi-left">
+                <div class="e-big" style="color:#f37056;"><span id="inv-int-total">—</span></div>
+                <div class="e-sub">Total</div>
+              </div>
+              <div class="e-kpi-center"><div class="e-kpi-sep" style="background:rgba(243,112,86,0.2);"></div></div>
+              <div class="e-kpi-right">
+                <div class="e-big"><span id="inv-int-encours">—</span></div>
+                <div class="e-sub">En cours</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="e-sec">
+            <div class="e-sec-label" style="color:rgba(243,112,86,0.55);">Investissement CAPEX</div>
+            <div class="e-kpi-row">
+              <div class="e-kpi-left">
+                <div class="e-big" style="color:#f37056;"><span id="inv-int-budget">—</span></div>
+                <div class="e-sub">Budget révisé</div>
+              </div>
+              <div class="e-kpi-center">
+                <div class="e-pct" style="color:#4ecdc4;" id="inv-int-pct">—</div>
+                <div class="e-pct-arrow" style="color:rgba(78,205,196,0.5);">décaissé</div>
+              </div>
+              <div class="e-kpi-right">
+                <div class="e-big"><span id="inv-int-decaisse">—</span></div>
+                <div class="e-sub">Montant décaissé</div>
+              </div>
+            </div>
+          </div>
         </div>
+        </div><!-- /e-col Interne -->
+
       </div>
     </div>
     <!-- LEVEL 2: Project cards grid -->
