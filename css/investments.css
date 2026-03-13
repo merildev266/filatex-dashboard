@@ -4,24 +4,33 @@
 #page-investments{overflow:hidden;}
 #page-investments .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
 #page-investments .e-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;align-items:start;}
-#page-investments .e-col{flex:1;}
+#page-investments .e-col{flex:1;display:flex;flex-direction:column;align-items:center;}
 
-/* Square card — same width as Energy cards, aspect-ratio 1:1 */
-#page-investments .e-card.inv-card{width:350px;height:350px;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;}
+/* Square card 350×350 */
+#page-investments .e-card.inv-card{width:350px;height:350px;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;}
 #page-investments .capex-section-card{padding:clamp(16px,2vw,32px);border-radius:clamp(14px,2vw,28px);}
 
-/* Sections inside card */
-#page-investments .e-card .e-sec{padding:clamp(8px,1.2vw,18px) 8px;border-bottom:1px solid rgba(138,146,171,0.08);}
+/* Sections inside card — all centered */
+#page-investments .e-card .e-sec{padding:clamp(8px,1.2vw,18px) 8px;border-bottom:1px solid rgba(138,146,171,0.08);width:100%;text-align:center;}
 #page-investments .e-card .e-sec:last-child{border-bottom:none;}
 #page-investments .e-card .e-sec-label{font-size:clamp(8px,0.8vw,12px);margin-bottom:clamp(4px,0.5vw,8px);}
 
 /* Big project count */
 #page-investments .e-card .inv-proj-count{font-size:clamp(42px,5vw,80px);font-weight:800;letter-spacing:-2px;}
 
-/* Stacked CAPEX layout */
+/* Stacked CAPEX layout — all centered */
 .inv-capex-stack{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,0.6vw,10px);}
 .inv-capex-line{display:flex;align-items:baseline;gap:clamp(6px,0.6vw,12px);justify-content:center;}
 .inv-capex-val{font-size:clamp(22px,2.5vw,40px);font-weight:800;color:rgba(255,255,255,0.9);}
 .inv-capex-unit{font-size:clamp(9px,1vw,15px);color:rgba(255,255,255,0.4);font-weight:400;}
 .inv-capex-label{font-size:clamp(7px,0.7vw,11px);color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;}
-.inv-capex-pct{font-size:clamp(16px,1.8vw,28px);font-weight:800;}
+.inv-capex-pct{font-size:clamp(14px,1.4vw,22px);font-weight:800;}
+
+/* ═══ INNER PAGES (grid view / detail) — compact like HFO ═══ */
+#inv-grid-view .kpi-grid{grid-template-columns:repeat(4,minmax(0,180px));gap:10px;}
+#inv-grid-view .kpi-box{padding:8px 10px;border-radius:10px;background:rgba(243,112,86,0.04);border:1px solid rgba(243,112,86,0.18);}
+#inv-grid-view .kpi-label{font-size:6px;margin-bottom:4px;}
+#inv-grid-view .kpi-value{font-size:22px;}
+#inv-grid-view .kpi-unit{font-size:9px;}
+#inv-grid-view .section-title{font-size:9px;}
+#inv-cards-container{grid-template-columns:repeat(auto-fill,minmax(240px,1fr)) !important;gap:12px !important;}
