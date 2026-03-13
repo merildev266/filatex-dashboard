@@ -603,33 +603,6 @@ var capexData = {
   }
 };
 
-/* Populate HFO CAPEX card on Energy page */
-(function(){
-  var hfo = capexData.hfo;
-  if (!hfo || !hfo.projects) return;
-  var totalBudget = 0, totalIncurred = 0;
-  hfo.projects.forEach(function(p){
-    var b = parseFloat(p.etatTotal.replace(/[^0-9.]/g,'')) || 0;
-    if (p.etatTotal.indexOf('M$') > -1) b *= 1000000;
-    else if (p.etatTotal.indexOf('k$') > -1) b *= 1000;
-    totalBudget += b;
-    var i = parseFloat(p.etatEnCours.replace(/[^0-9.]/g,'')) || 0;
-    if (p.etatEnCours.indexOf('M$') > -1) i *= 1000000;
-    else if (p.etatEnCours.indexOf('k$') > -1) i *= 1000;
-    totalIncurred += i;
-  });
-  var pct = totalBudget > 0 ? Math.round(totalIncurred / totalBudget * 100) : 0;
-  function fmt(n){ return n >= 1000000 ? (n/1000000).toFixed(1) + ' M$' : Math.round(n/1000) + ' k$'; }
-  var eB = document.getElementById('e-hfo-proj-budget');
-  var eI = document.getElementById('e-hfo-proj-incurred');
-  var eP = document.getElementById('e-hfo-proj-pct');
-  var eBar = document.getElementById('e-hfo-proj-bar');
-  if (eB) eB.textContent = fmt(totalBudget);
-  if (eI) eI.textContent = fmt(totalIncurred);
-  if (eP) eP.textContent = pct;
-  if (eBar) eBar.style.width = pct + '%';
-})();
-
 function openCapexSection(pole) {
   const data = capexData[pole];
   const panel = document.getElementById('capex-section-panel');

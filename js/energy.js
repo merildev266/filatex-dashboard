@@ -3226,4 +3226,13 @@ function renderGroupeDetail(siteId, grpId) {
   document.getElementById('gd-body').innerHTML = html;
 }
 
+// ══ ENR DOMContentLoaded initialization ══
+document.addEventListener('DOMContentLoaded', function() {
+  enrSelectedMonthIndex = getEnrDataMonth() - 1;
+  populateEnrMonthDropdowns();
+  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) {
+    b.textContent = MONTH_SHORT[enrSelectedMonthIndex];
+  });
+});
+
 

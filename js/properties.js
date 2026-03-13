@@ -417,6 +417,10 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
   if (btnMinus) btnMinus.addEventListener('click', () => applyZoom(zoom - opts.zoomStep));
   if (btnReset) btnReset.addEventListener('click', () => { applyZoom(1); viewport.scrollLeft = 0; });
 
+  // Remove previous document-level handlers to prevent listener accumulation
+  if (window._ganttMouseMove) document.removeEventListener('mousemove', window._ganttMouseMove);
+  if (window._ganttMouseUp) document.removeEventListener('mouseup', window._ganttMouseUp);
+
   let panning = false, px0 = 0, py0 = 0, sx0 = 0, sy0 = 0;
   viewport.addEventListener('mousedown', function(e) {
     if (e.button !== 0 || e.target.closest('button,[onclick],.sg-warn,a')) return;
@@ -425,16 +429,18 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
     viewport.style.cursor = 'grabbing'; viewport.style.userSelect = 'none';
     e.preventDefault();
   });
-  document.addEventListener('mousemove', function(e) {
+  window._ganttMouseMove = function(e) {
     if (!panning) return;
     viewport.scrollLeft = sx0 + (px0 - e.clientX);
     viewport.scrollTop = sy0 + (py0 - e.clientY);
     syncHeader();
-  });
-  document.addEventListener('mouseup', function() {
+  };
+  window._ganttMouseUp = function() {
     if (!panning) return;
     panning = false; viewport.style.cursor = 'grab'; viewport.style.userSelect = '';
-  });
+  };
+  document.addEventListener('mousemove', window._ganttMouseMove);
+  document.addEventListener('mouseup', window._ganttMouseUp);
 
   function syncHeader() {
     if (!header) return;

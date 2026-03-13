@@ -1,8 +1,5 @@
 /* === Energy Styles === */
 
-.enr-filter:hover{color:#00ab63;background:rgba(0,171,99,0.08);}
-.enr-filter.active{background:linear-gradient(135deg,rgba(0,171,99,0.28),rgba(60,140,60,0.18));color:#a8d98a;border:none;box-shadow:0 0 12px rgba(0,171,99,0.15);}
-
 /* -- EnR Projects panel -- */
 #panel-enr-projets{position:fixed;inset:0;z-index:250;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);}
 #panel-enr-projets.active{transform:translateX(0);}
@@ -35,32 +32,6 @@
 #page-energy{overflow:hidden;}
 #page-energy .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
 #page-energy .capex-section-card{padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);border-radius:clamp(12px,1.5vw,22px);}
-/* Base e-* classes (shared across pages) */
-.e-wrap{display:flex;gap:clamp(10px,1.5vw,20px);padding:0;align-items:stretch;}
-.e-col{flex:1;display:flex;flex-direction:column;gap:clamp(8px,0.8vw,12px);min-width:0;}
-.e-col-title{font-size:clamp(14px,1.5vw,20px);font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:0;}
-.e-col-title-proj{margin-top:clamp(10px,1.5vw,20px);font-size:clamp(10px,1vw,14px);}
-.e-card{width:100%;display:flex;flex-direction:column;justify-content:space-evenly;box-sizing:border-box;overflow:hidden;}
-.e-card .e-sec{border-bottom:1px solid rgba(138,146,171,0.12);padding:clamp(3px,0.4vw,6px) 4px;}
-.e-card .e-sec:last-child{border-bottom:none;}
-.e-card .e-sec-label{font-size:clamp(6px,0.55vw,9px);font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin-bottom:clamp(2px,0.4vw,6px);text-align:center;}
-.e-card .e-big{font-size:clamp(14px,1.4vw,22px);font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:-0.5px;}
-.e-card .e-big-unit{font-size:clamp(7px,0.65vw,10px);font-weight:400;color:rgba(255,255,255,0.4);}
-.e-card .e-sub{font-size:clamp(6px,0.5vw,8px);color:rgba(255,255,255,0.3);margin-top:1px;}
-.e-card .e-mid{font-size:clamp(12px,1.2vw,18px);font-weight:800;letter-spacing:-0.5px;}
-.e-card .e-mid-unit{font-size:clamp(7px,0.65vw,10px);font-weight:400;}
-.e-card .e-pct{font-size:clamp(10px,1vw,15px);font-weight:800;}
-.e-card .e-pct-arrow{font-size:clamp(6px,0.5vw,8px);}
-.e-card-mini{flex:0 0 auto !important;height:auto !important;min-height:0 !important;overflow:visible !important;padding:clamp(8px,1vw,14px) clamp(10px,1.5vw,20px) !important;}
-.e-section-label{font-size:clamp(7px,0.6vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-align:center;margin:0;}
-.e-card-hdr{display:flex;align-items:baseline;gap:6px;padding:clamp(2px,0.3vw,5px) clamp(6px,0.8vw,12px) 0;}
-.e-card-hdr-title{font-size:clamp(13px,1.3vw,18px);font-weight:800;letter-spacing:-0.5px;}
-.e-card-hdr-sub{font-size:clamp(5px,0.45vw,7px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;}
-/* KPI row alignment */
-.e-kpi-row{display:flex;align-items:center;}
-.e-kpi-left,.e-kpi-right{flex:1;text-align:center;}
-.e-kpi-center{flex:0 0 clamp(50px,6vw,80px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.e-kpi-sep{width:1px;height:30px;background:rgba(138,146,171,0.2);}
 /* Energy page overrides (larger sizes) */
 #page-energy .e-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
 #page-energy .e-card{flex:1;}
@@ -86,4 +57,3 @@
 
 .enr-kpi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;transition:all 0.25s;}
 .enr-kpi-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);box-shadow:0 8px 30px rgba(0,0,0,0.2);}
-.neutral-card{background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.18);border-radius:20px;padding:28px 24px;}

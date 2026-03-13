@@ -75,98 +75,6 @@ function openPage(pole) {
   updateNavActive(pole);
 }
 
-// ── Met à jour la card HFO de la page Énergie depuis les données live ──
-function updateEnergyHfoCard() {
-  const moisFR = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-  const filter = currentFilter || 'month';
-  let filterLabel;
-  if (filter === 'month') {
-    filterLabel = MONTH_NAMES[selectedMonthIndex];
-  } else if (filter === 'quarter') {
-    filterLabel = 'Q' + selectedQuarter;
-  } else {
-    filterLabel = String(selectedYear);
-  }
-
-  // ── Agréger uniquement les sites actifs (pas construction/reconstruction) ──
-  let totalMW = 0, totalContrat = 0, totalArret = 0, totalMoteurs = 0;
-  let totalProd = 0, totalProdObj = 0;
-  let arretMW = 0;
-  let sfocWeighted = 0, slocWeighted = 0;
-
-  siteOrder.forEach(id => {
-    const s = siteData[id];
-    if (!s || !s.groupes || !s.kpi) return;
-    if (s.status === 'construction' || s.status === 'reconstruction') return;
-    const k = _getKpiForSite(id);
-    if (!k) return;
-
-    totalMW      += s.mw || 0;
-    totalContrat += s.contrat || 0;
-    totalMoteurs += s.groupes.length;
-
-    s.groupes.forEach(g => {
-      if (g.statut !== 'ok') { totalArret++; arretMW += g.mw || 0; }
-    });
-
-    totalProd    += k.prod || 0;
-    totalProdObj += k.prodObj || 0;
-    if (k.sfoc && k.prod) sfocWeighted += k.sfoc * k.prod;
-    if (k.sloc && k.prod) slocWeighted += k.sloc * k.prod;
-  });
-
-  // ── KPI 1 — Puissance dispo vs Contrat ──
-  const pct = totalContrat > 0 ? ((totalMW / totalContrat) * 100) : 0;
-  const pctOk = pct >= 100;
-  const pctCol = pctOk ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)';
-  const pctColDim = pctOk ? 'rgba(0,171,99,0.5)' : 'rgba(243,112,86,0.5)';
-  const pctArrow = pctOk ? '↑ contrat' : '↓ contrat';
-
-  const el = id => document.getElementById(id);
-  el('e-hfo-mw-dispo').textContent    = totalMW.toFixed(1);
-  el('e-hfo-mw-contrat').textContent  = totalContrat % 1 === 0 ? totalContrat.toFixed(0) : totalContrat.toFixed(1);
-  el('e-hfo-pct-contrat').textContent = pct.toFixed(1) + '%';
-  el('e-hfo-pct-contrat').style.color = pctCol;
-  el('e-hfo-pct-arrow').textContent   = pctArrow;
-  el('e-hfo-pct-arrow').style.color   = pctColDim;
-
-  // ── KPI 2 — Moteurs à l'arrêt ──
-  const arretCol = totalArret === 0 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)';
-  const lostPerDay = Math.round(arretMW * 24); // MWh/j estimé
-  const now = new Date();
-  const dayOfMonth = now.getDate();
-  const monthIdx = now.getMonth();
-  const daysElapsed = filter === 'month' ? dayOfMonth : filter === 'quarter' ? dayOfMonth + ((selectedQuarter - 1) * 91) : dayOfMonth + monthIdx * 30;
-  const lostToDate = lostPerDay * daysElapsed;
-
-  el('e-hfo-arret-count').textContent = totalArret;
-  el('e-hfo-arret-count').style.color = arretCol;
-  el('e-hfo-arret-total').textContent = totalMoteurs;
-  el('e-hfo-arret-mwh-date').textContent = totalArret > 0 ? '−' + lostToDate.toLocaleString() : '0';
-  el('e-hfo-arret-period').textContent   = filter === 'year' ? selectedYear : filter === 'quarter' ? 'Q' + selectedQuarter : moisFR[monthIdx];
-
-  // ── KPI 3 — Production vs Prévisionnelle ──
-  const prodDelta = totalProdObj > 0 ? (((totalProd / totalProdObj) - 1) * 100) : null;
-  const prodOk = prodDelta !== null && prodDelta >= 0;
-  const prodCol = prodDelta === null ? 'rgba(255,255,255,0.3)' : prodOk ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)';
-  const prodColDim = prodDelta === null ? 'rgba(255,255,255,0.2)' : prodOk ? 'rgba(0,171,99,0.5)' : 'rgba(243,112,86,0.5)';
-  const prodSign = prodDelta !== null && prodDelta > 0 ? '+' : '';
-  const prodArrow = prodDelta === null ? '—' : prodOk ? '↑ prévu' : '↓ prévu';
-
-  el('e-hfo-prod-reel').textContent   = Math.round(totalProd).toLocaleString();
-  el('e-hfo-prod-prev').textContent   = Math.round(totalProdObj).toLocaleString();
-  el('e-hfo-prod-pct').textContent    = prodDelta !== null ? prodSign + prodDelta.toFixed(0) + '%' : '—';
-  el('e-hfo-prod-pct').style.color    = prodCol;
-  el('e-hfo-prod-arrow').textContent  = prodArrow;
-  el('e-hfo-prod-arrow').style.color  = prodColDim;
-  el('e-hfo-prod-filter').textContent = filterLabel;
-
-  // ── KPI 4 — SFOC + SLOC pondérés par production ──
-  const avgSfoc = totalProd > 0 ? (sfocWeighted / totalProd) : 0;
-  const avgSloc = totalProd > 0 ? (slocWeighted / totalProd) : 0;
-  el('e-hfo-sfoc-avg').textContent = avgSfoc > 0 ? avgSfoc.toFixed(1) : '—';
-  el('e-hfo-sloc-avg').textContent = avgSloc > 0 ? avgSloc.toFixed(1) : '—';
-}
 function closePage(pageId) {
   const el = document.getElementById(pageId);
   if(el) { el.classList.remove('active'); document.body.style.overflow = ''; scrollTop(el); }
@@ -239,13 +147,4 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
     b.textContent = MONTH_SHORT[selectedMonthIndex];
   });
-  // Initialize ENR filter
-  enrSelectedMonthIndex = getEnrDataMonth() - 1;
-  populateEnrMonthDropdowns();
-  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(b => {
-    b.textContent = MONTH_SHORT[enrSelectedMonthIndex];
-  });
-  // Set filter label
-  const lbl = document.getElementById('filter-label-text');
-  if(lbl) lbl.textContent = MONTH_NAMES[selectedMonthIndex];
 });
