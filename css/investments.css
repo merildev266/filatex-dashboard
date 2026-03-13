@@ -4,7 +4,7 @@
 #page-investments{overflow:hidden;}
 #page-investments .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
 #page-investments .e-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
-#page-investments .e-card.inv-card{flex:1;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;}
+#page-investments .e-card.inv-card{flex:1;aspect-ratio:1/1;max-height:clamp(280px,38vh,480px);display:flex;flex-direction:column;justify-content:center;}
 #page-investments .capex-section-card{padding:clamp(20px,3vw,50px) clamp(20px,3vw,45px);border-radius:clamp(12px,1.5vw,22px);}
 #page-investments .e-card .e-sec{padding:clamp(12px,1.5vw,24px) 6px;border-bottom:1px solid rgba(138,146,171,0.08);}
 #page-investments .e-card .e-sec:last-child{border-bottom:none;}
