@@ -1180,7 +1180,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 <div id="inner-enr" class="inner-page" style="background:#080d18;">
 
   <div class="nav-back"><button class="back-btn" onclick="closeInner('enr')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
-  <div class="nav-filter"><div class="time-filter"><button class="tfilter enr-filter active" onclick="setEnrFilter('24h',this)">24h</button><button class="tfilter enr-filter" onclick="setEnrFilter('month',this)">Ce mois</button><button class="tfilter enr-filter" onclick="setEnrFilter('year',this)">Cette année</button></div></div>
+  <div class="nav-filter"><div class="time-filter"><span class="enr-day-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrDayDropdown(event,this)">24h</button><div class="day-dropdown enr-day-dropdown"></div></span><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter" onclick="setEnrFilter('year',this)">Cette année</button></div></div>
 
   <div class="inner-page-inner" style="position:relative;z-index:1;">
 
@@ -1296,11 +1296,450 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 </div>
 
 <script>
-function setEnrFilter(f, btn){
-  document.querySelectorAll('.enr-filter').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const labels = {'24h':'24h','month':MONTH_SHORT[selectedMonthIndex],'year':String(new Date().getFullYear())};
+/* ── ENR Filter State ── */
+var enrCurrentFilter = 'month';
+var enrSelectedMonthIndex = null; // 0-based, null = current
+var enrSelectedDayIndex = null;   // 0-based day, null = latest
+var enrDayDropdownMonth = null;
+
+function getEnrDataMonth() {
+  // Returns 1-based month of latest ENR data
+  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
+  var maxMonth = 1;
+  sites.forEach(function(s) {
+    if (s.latestDate) {
+      var m = parseInt(s.latestDate.split('-')[1]);
+      if (m > maxMonth) maxMonth = m;
+    }
+  });
+  return maxMonth;
 }
+
+function getEnrLatestDay() {
+  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
+  var maxDay = 1;
+  var dataMonth = getEnrDataMonth();
+  sites.forEach(function(s) {
+    if (s.latestDate) {
+      var parts = s.latestDate.split('-');
+      var m = parseInt(parts[1]);
+      if (m === dataMonth) {
+        var d = parseInt(parts[2]);
+        if (d > maxDay) maxDay = d;
+      }
+    }
+  });
+  return maxDay;
+}
+
+function getEnrMaxDayForMonth(monthIdx) {
+  var dataMonth = getEnrDataMonth() - 1;
+  if (monthIdx === dataMonth) return getEnrLatestDay();
+  return getDaysInMonth(monthIdx);
+}
+
+function getEnrDateLabel() {
+  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
+  var latest = null;
+  sites.forEach(function(s) {
+    if (s.latestDate && (!latest || s.latestDate > latest)) latest = s.latestDate;
+  });
+  if (!latest) return '24H';
+  var parts = latest.split('-');
+  return parts[2];
+}
+
+function setEnrFilter(f, btn) {
+  enrCurrentFilter = f;
+  if (f !== '24h') {
+    enrSelectedDayIndex = null;
+    var defLabel = getEnrDateLabel();
+    document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(function(b) { b.textContent = defLabel; });
+  }
+  if (f === 'month') {
+    enrSelectedMonthIndex = getEnrDataMonth() - 1;
+    document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) {
+      b.textContent = MONTH_SHORT[enrSelectedMonthIndex];
+    });
+    populateEnrMonthDropdowns();
+  }
+  // Sync active state
+  document.querySelectorAll('.enr-filter').forEach(function(b) {
+    var dw = b.closest('.enr-day-btn-wrap');
+    var mw = b.closest('.enr-month-btn-wrap');
+    if (f === '24h') b.classList.toggle('active', !!dw);
+    else if (f === 'month') b.classList.toggle('active', !!mw);
+    else b.classList.toggle('active', !dw && !mw);
+  });
+  // Re-render ENR views
+  refreshEnrView();
+}
+
+/* ── ENR Month Dropdown ── */
+var _enrMonthDDTimer = null;
+var _enrMonthDDHovered = false;
+
+function closeAllEnrMonthDropdowns() {
+  if (_enrMonthDDTimer) { clearTimeout(_enrMonthDDTimer); _enrMonthDDTimer = null; }
+  document.querySelectorAll('.enr-month-dropdown.open').forEach(function(dd) {
+    dd.classList.remove('open');
+    dd.onmouseenter = null;
+    dd.onmouseleave = null;
+  });
+}
+
+function _startEnrMonthAutoClose(dd) {
+  if (_enrMonthDDTimer) clearTimeout(_enrMonthDDTimer);
+  _enrMonthDDHovered = false;
+  dd.onmouseenter = function() { _enrMonthDDHovered = true; if (_enrMonthDDTimer) clearTimeout(_enrMonthDDTimer); };
+  dd.onmouseleave = function() { _enrMonthDDHovered = false; _startEnrMonthAutoClose(dd); };
+  _enrMonthDDTimer = setTimeout(function() {
+    if (!_enrMonthDDHovered) closeAllEnrMonthDropdowns();
+  }, 2000);
+}
+
+function toggleEnrMonthDropdown(event, btn) {
+  event.stopPropagation();
+  closeAllEnrDayDropdowns();
+  var wrap = btn.closest('.enr-month-btn-wrap');
+  var dd = wrap ? wrap.querySelector('.enr-month-dropdown') : null;
+  if (enrCurrentFilter !== 'month') {
+    closeAllEnrMonthDropdowns();
+    setEnrFilter('month', btn);
+    if (dd) { dd.classList.add('open'); _startEnrMonthAutoClose(dd); }
+    return;
+  }
+  if (!dd) return;
+  var wasOpen = dd.classList.contains('open');
+  closeAllEnrMonthDropdowns();
+  if (!wasOpen) { dd.classList.add('open'); _startEnrMonthAutoClose(dd); }
+}
+
+function populateEnrMonthDropdowns() {
+  var maxMonth = getEnrDataMonth();
+  var selIdx = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (maxMonth - 1);
+  document.querySelectorAll('.enr-month-dropdown').forEach(function(dd) {
+    dd.innerHTML = '';
+    for (var m = 0; m < maxMonth; m++) {
+      var item = document.createElement('div');
+      item.className = 'md-item' + (m === selIdx ? ' md-active' : '');
+      item.textContent = MONTH_NAMES[m];
+      item.dataset.month = m;
+      item.onclick = (function(mi) { return function(e) { selectEnrMonth(mi, e); }; })(m);
+      dd.appendChild(item);
+    }
+  });
+}
+
+function selectEnrMonth(monthIdx, event) {
+  if (event) event.stopPropagation();
+  closeAllEnrMonthDropdowns();
+  enrSelectedMonthIndex = monthIdx;
+  enrSelectedDayIndex = null;
+  enrCurrentFilter = 'month';
+  var defLabel = getEnrDateLabel();
+  document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(function(b) { b.textContent = defLabel; });
+  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
+  populateEnrMonthDropdowns();
+  document.querySelectorAll('.enr-filter').forEach(function(b) {
+    var mw = b.closest('.enr-month-btn-wrap');
+    b.classList.toggle('active', !!mw);
+  });
+  refreshEnrView();
+}
+
+/* ── ENR Day Dropdown ── */
+var _enrDayDDTimer = null;
+var _enrDayDDHovered = false;
+
+function closeAllEnrDayDropdowns() {
+  if (_enrDayDDTimer) { clearTimeout(_enrDayDDTimer); _enrDayDDTimer = null; }
+  document.querySelectorAll('.enr-day-dropdown.open').forEach(function(dd) {
+    dd.classList.remove('open');
+    dd.onmouseenter = null;
+    dd.onmouseleave = null;
+  });
+}
+
+function _startEnrDayAutoClose(dd) {
+  if (_enrDayDDTimer) clearTimeout(_enrDayDDTimer);
+  _enrDayDDHovered = false;
+  dd.onmouseenter = function() { _enrDayDDHovered = true; if (_enrDayDDTimer) clearTimeout(_enrDayDDTimer); };
+  dd.onmouseleave = function() { _enrDayDDHovered = false; _startEnrDayAutoClose(dd); };
+  _enrDayDDTimer = setTimeout(function() {
+    if (!_enrDayDDHovered) closeAllEnrDayDropdowns();
+  }, 2000);
+}
+
+function toggleEnrDayDropdown(event, btn) {
+  event.stopPropagation();
+  closeAllEnrMonthDropdowns();
+  var wrap = btn.closest('.enr-day-btn-wrap');
+  var dd = wrap ? wrap.querySelector('.enr-day-dropdown') : null;
+  if (enrCurrentFilter !== '24h') {
+    closeAllEnrDayDropdowns();
+    setEnrFilter('24h', btn);
+    enrDayDropdownMonth = getEnrDataMonth() - 1;
+    populateEnrDayDropdowns();
+    if (dd) { dd.classList.add('open'); _startEnrDayAutoClose(dd); }
+    return;
+  }
+  if (!dd) return;
+  var wasOpen = dd.classList.contains('open');
+  closeAllEnrDayDropdowns();
+  if (!wasOpen) {
+    enrDayDropdownMonth = enrDayDropdownMonth !== null ? enrDayDropdownMonth : getEnrDataMonth() - 1;
+    populateEnrDayDropdowns();
+    dd.classList.add('open');
+    _startEnrDayAutoClose(dd);
+  }
+}
+
+function populateEnrDayDropdowns() {
+  var dataMonth = getEnrDataMonth() - 1;
+  var viewMonth = enrDayDropdownMonth !== null ? enrDayDropdownMonth : dataMonth;
+  var year = new Date().getFullYear();
+  var totalDays = getDaysInMonth(viewMonth, year);
+  var maxDataDay = getEnrMaxDayForMonth(viewMonth);
+  var firstDow = getFirstDayOfWeek(viewMonth, year);
+  var isPastMonth = viewMonth < dataMonth;
+  var isFutureMonth = viewMonth > dataMonth;
+
+  var activeDay = -1;
+  if (enrCurrentFilter === '24h' && enrSelectedDayIndex !== null) {
+    var selMonth = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : dataMonth;
+    if (viewMonth === selMonth) activeDay = enrSelectedDayIndex;
+  } else if (enrCurrentFilter === '24h' && enrSelectedDayIndex === null && viewMonth === dataMonth) {
+    activeDay = maxDataDay - 1;
+  }
+
+  document.querySelectorAll('.enr-day-dropdown').forEach(function(dd) {
+    var html = '';
+    html += '<div class="day-dd-header">';
+    html += '<button class="day-dd-arrow" onclick="navigateEnrDayDropdown(-1, event)"' + (viewMonth <= 0 ? ' disabled' : '') + '>‹</button>';
+    html += '<span>' + MONTH_NAMES[viewMonth] + '</span>';
+    html += '<button class="day-dd-arrow" onclick="navigateEnrDayDropdown(1, event)"' + (viewMonth >= dataMonth ? ' disabled' : '') + '>›</button>';
+    html += '</div>';
+    html += '<div class="day-dd-grid">';
+    var dows = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
+    dows.forEach(function(d) { html += '<div class="day-dd-dow">' + d + '</div>'; });
+    for (var i = 0; i < firstDow; i++) html += '<div class="day-dd-item dd-empty"></div>';
+    for (var d = 1; d <= totalDays; d++) {
+      var dayIdx = d - 1;
+      var cls = 'day-dd-item';
+      if (dayIdx === activeDay) cls += ' dd-active';
+      // Check if this day has data in any ENR site
+      var hasData = enrDayHasData(viewMonth, d);
+      if ((!hasData && viewMonth === dataMonth) || isFutureMonth || (viewMonth === dataMonth && d > maxDataDay)) cls += ' dd-disabled';
+      html += '<div class="' + cls + '" onclick="selectEnrDay(' + dayIdx + ',' + viewMonth + ',event)">' + d + '</div>';
+    }
+    html += '</div>';
+    dd.innerHTML = html;
+  });
+}
+
+function enrDayHasData(monthIdx, dayNum) {
+  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
+  var year = new Date().getFullYear();
+  var dateStr = year + '-' + String(monthIdx + 1).padStart(2,'0') + '-' + String(dayNum).padStart(2,'0');
+  for (var i = 0; i < sites.length; i++) {
+    for (var j = 0; j < sites[i].daily.length; j++) {
+      if (sites[i].daily[j].date === dateStr) return true;
+    }
+  }
+  return false;
+}
+
+function navigateEnrDayDropdown(dir, event) {
+  if (event) event.stopPropagation();
+  var dataMonth = getEnrDataMonth() - 1;
+  var cur = enrDayDropdownMonth !== null ? enrDayDropdownMonth : dataMonth;
+  var next = cur + dir;
+  if (next < 0 || next > dataMonth) return;
+  enrDayDropdownMonth = next;
+  populateEnrDayDropdowns();
+}
+
+function selectEnrDay(dayIdx, monthIdx, event) {
+  if (event) event.stopPropagation();
+  closeAllEnrDayDropdowns();
+  var dataMonth = getEnrDataMonth() - 1;
+
+  if (monthIdx < dataMonth) {
+    // Past month: switch to month filter
+    enrSelectedDayIndex = null;
+    enrSelectedMonthIndex = monthIdx;
+    enrCurrentFilter = 'month';
+    document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
+    populateEnrMonthDropdowns();
+    document.querySelectorAll('.enr-filter').forEach(function(b) {
+      var mw = b.closest('.enr-month-btn-wrap');
+      b.classList.toggle('active', !!mw);
+    });
+    refreshEnrView();
+    return;
+  }
+
+  // Current data month: select specific day
+  enrSelectedDayIndex = dayIdx;
+  enrSelectedMonthIndex = monthIdx;
+  enrCurrentFilter = '24h';
+
+  var dayLabel = String(dayIdx + 1).padStart(2, '0');
+  document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(function(b) { b.textContent = dayLabel; });
+  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
+  populateEnrMonthDropdowns();
+
+  document.querySelectorAll('.enr-filter').forEach(function(b) {
+    var dw = b.closest('.enr-day-btn-wrap');
+    b.classList.toggle('active', !!dw);
+  });
+
+  refreshEnrView();
+}
+
+// Close ENR dropdowns on click outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.enr-month-btn-wrap')) closeAllEnrMonthDropdowns();
+  if (!e.target.closest('.enr-day-btn-wrap')) closeAllEnrDayDropdowns();
+});
+
+/* ── ENR Filtered Data Helpers ── */
+function getEnrFilteredSiteData(site) {
+  // Returns {prodKwh, deliveredKwh, consumedKwh, peakKw, avgDailyKwh, days, label} based on current ENR filter
+  var result = {prodKwh:0, deliveredKwh:0, consumedKwh:0, peakKw:0, avgDailyKwh:0, days:0, label:''};
+  if (enrCurrentFilter === '24h') {
+    // Find day data
+    var monthIdx = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
+    var dayIdx = enrSelectedDayIndex;
+    var year = new Date().getFullYear();
+    var dateStr;
+    if (dayIdx !== null) {
+      dateStr = year + '-' + String(monthIdx + 1).padStart(2,'0') + '-' + String(dayIdx + 1).padStart(2,'0');
+    } else {
+      // Latest day for this site
+      if (site.daily.length) dateStr = site.daily[site.daily.length - 1].date;
+      else return result;
+    }
+    var dayData = null;
+    for (var i = 0; i < site.daily.length; i++) {
+      if (site.daily[i].date === dateStr) { dayData = site.daily[i]; break; }
+    }
+    if (dayData) {
+      result.prodKwh = dayData.prodKwh;
+      result.deliveredKwh = dayData.deliveredKwh;
+      result.consumedKwh = dayData.consumedKwh;
+      result.peakKw = dayData.peakKw;
+      result.avgDailyKwh = dayData.prodKwh;
+      result.days = 1;
+      result.label = dateStr.split('-')[2] + '/' + dateStr.split('-')[1] + '/' + dateStr.split('-')[0];
+    }
+    return result;
+  }
+  if (enrCurrentFilter === 'month') {
+    var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
+    var monthStr = new Date().getFullYear() + '-' + String(mi + 1).padStart(2,'0');
+    for (var i = 0; i < site.monthly.length; i++) {
+      if (site.monthly[i].month === monthStr) {
+        var m = site.monthly[i];
+        result.prodKwh = m.totalProdKwh;
+        result.deliveredKwh = m.totalDeliveredKwh;
+        result.consumedKwh = m.totalConsumedKwh;
+        result.peakKw = m.maxPeakKw;
+        result.avgDailyKwh = m.avgDailyProdKwh;
+        result.days = m.daysWithData;
+        result.label = MONTH_NAMES[mi] + ' ' + new Date().getFullYear();
+        break;
+      }
+    }
+    return result;
+  }
+  // year
+  var totalProd = 0, totalDel = 0, totalCon = 0, maxPeak = 0, totalDays = 0;
+  site.monthly.forEach(function(m) {
+    totalProd += m.totalProdKwh;
+    totalDel += m.totalDeliveredKwh;
+    totalCon += m.totalConsumedKwh;
+    if (m.maxPeakKw > maxPeak) maxPeak = m.maxPeakKw;
+    totalDays += m.daysWithData;
+  });
+  result.prodKwh = totalProd;
+  result.deliveredKwh = totalDel;
+  result.consumedKwh = totalCon;
+  result.peakKw = maxPeak;
+  result.avgDailyKwh = totalDays > 0 ? totalProd / totalDays : 0;
+  result.days = totalDays;
+  result.label = String(new Date().getFullYear());
+  return result;
+}
+
+function getEnrFilterLabel() {
+  if (enrCurrentFilter === '24h') {
+    if (enrSelectedDayIndex !== null) {
+      var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
+      return String(enrSelectedDayIndex + 1).padStart(2,'0') + ' ' + MONTH_NAMES[mi];
+    }
+    return 'Dernier jour';
+  }
+  if (enrCurrentFilter === 'month') {
+    var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
+    return MONTH_NAMES[mi] + ' ' + new Date().getFullYear();
+  }
+  return String(new Date().getFullYear());
+}
+
+function getEnrProdUnit() {
+  return enrCurrentFilter === '24h' ? 'kWh' : 'MWh';
+}
+
+function formatEnrProd(kwh) {
+  if (enrCurrentFilter === '24h') return Math.round(kwh).toLocaleString('fr-FR');
+  return (kwh / 1000).toFixed(1);
+}
+
+function refreshEnrView() {
+  // Re-render whichever ENR view is currently open
+  var panel = document.getElementById('panel-enr-production');
+  if (panel && (panel.style.transform === 'translateX(0)' || panel.style.transform === 'translateX(0px)')) {
+    // Check if site detail is shown (title != 'Production EnR')
+    var titleEl = panel.querySelector('.inner-title');
+    if (titleEl && titleEl.textContent !== 'Production EnR') {
+      // Find which site is shown
+      var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
+      for (var i = 0; i < sites.length; i++) {
+        if (sites[i].name === titleEl.textContent) { openEnrSiteDetail(i); return; }
+      }
+    }
+    openEnrProduction();
+    return;
+  }
+  // Also update the inner-enr card KPIs
+  updateEnrCards();
+}
+
+function updateEnrCards() {
+  var sites = typeof ENR_SITES !== 'undefined' ? ENR_SITES : [];
+  if (!sites.length) return;
+  var totalProd = 0, totalCap = 0, totalAvgDaily = 0;
+  sites.forEach(function(s) {
+    var fd = getEnrFilteredSiteData(s);
+    totalProd += fd.prodKwh;
+    totalAvgDaily += fd.avgDailyKwh;
+    totalCap += s.capacityMw;
+  });
+  var el;
+  el = document.getElementById('enr-prod-total');
+  if (el) {
+    if (enrCurrentFilter === '24h') {
+      el.textContent = (totalProd / 1000).toFixed(1);
+    } else {
+      el.textContent = (totalAvgDaily / 1000).toFixed(1);
+    }
+  }
+  el = document.getElementById('enr-prod-cumul');
+  if (el) el.textContent = (totalProd / 1000).toFixed(0);
+}
+
 function openEnrDetail(){ openEnrProduction(); }
 
 /* ── Shared EnR helpers ── */
@@ -1312,25 +1751,41 @@ function openEnrProduction(){
   var sites = window._enrSites || (typeof ENR_SITES !== 'undefined' ? ENR_SITES : []);
   if (!sites.length) return;
 
-  /* ── Aggregates ── */
+  /* ── Filtered aggregates ── */
   var totalCapMw = 0, totalProdKwh = 0, totalAvgDaily = 0;
-  sites.forEach(function(s){ totalCapMw += s.capacityMw; totalProdKwh += s.totalProdKwh; totalAvgDaily += s.avgDailyKwh; });
+  var siteFiltered = [];
+  sites.forEach(function(s){
+    totalCapMw += s.capacityMw;
+    var fd = getEnrFilteredSiteData(s);
+    totalProdKwh += fd.prodKwh;
+    totalAvgDaily += fd.avgDailyKwh;
+    siteFiltered.push(fd);
+  });
   var mixPct = document.getElementById('enr-prod-mix') ? document.getElementById('enr-prod-mix').textContent : '\u2014';
+  var filterLabel = getEnrFilterLabel();
+  var isDay = enrCurrentFilter === '24h';
+  var prodUnit = getEnrProdUnit();
 
   var html = '';
 
   /* ══════════ GLOBAL KPIs (3 cartes) ══════════ */
   html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">';
+  // KPI 1: Production
+  var kpi1Label = isDay ? 'Production' : 'Production totale';
+  var kpi1Value = isDay ? formatEnrProd(totalProdKwh) : (totalProdKwh/1000).toFixed(1);
+  var kpi1Unit = isDay ? 'kWh' : 'MWh';
   html += '<div style="background:rgba(0,171,99,0.07);border:1px solid rgba(0,171,99,0.2);border-radius:18px;padding:24px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.55);margin-bottom:8px;">Production moyenne</div>'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.55);margin-bottom:8px;">' + kpi1Label + '</div>'
+    + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + kpi1Value
+    + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">' + kpi1Unit + '</span></div>'
+    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">' + filterLabel + ' \xB7 ' + sites.length + ' centrales</div></div>';
+  // KPI 2: Moyenne journalière
+  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:24px 16px;text-align:center;">'
+    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Moy. journali\u00e8re</div>'
     + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + (totalAvgDaily/1000).toFixed(1)
     + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">MWh/j</span></div>'
-    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">' + sites.length + ' centrales solaires \xB7 ' + totalCapMw.toFixed(1) + ' MWc</div></div>';
-  html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:24px 16px;text-align:center;">'
-    + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Production cumul\u00e9e</div>'
-    + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + (totalProdKwh/1000).toFixed(0)
-    + '<span style="font-size:16px;font-weight:400;color:rgba(0,171,99,0.5);margin-left:4px;">MWh</span></div>'
-    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">Depuis janvier 2026</div></div>';
+    + '<div style="font-size:10px;color:rgba(0,171,99,0.4);margin-top:6px;">' + totalCapMw.toFixed(1) + ' MWc install\u00e9s</div></div>';
+  // KPI 3: Mix EnR
   html += '<div style="background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:24px 16px;text-align:center;">'
     + '<div style="font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:8px;">Part EnR dans le mix</div>'
     + '<div style="font-size:42px;font-weight:800;color:#00ab63;line-height:1;">' + mixPct
@@ -1343,9 +1798,8 @@ function openEnrProduction(){
   sites.forEach(function(s, si){
     var col = _enrColors[si % _enrColors.length];
     var rgb = _enrRgbs[si % _enrRgbs.length];
-    var pct = totalAvgDaily > 0 ? (s.avgDailyKwh / totalAvgDaily * 100).toFixed(0) : 0;
-    var lastDay = s.daily.length ? s.daily[s.daily.length - 1] : null;
-    var lastDayLabel = lastDay ? lastDay.date.split('-')[2] + '/' + lastDay.date.split('-')[1] : '';
+    var fd = siteFiltered[si];
+    var pct = totalProdKwh > 0 ? (fd.prodKwh / totalProdKwh * 100).toFixed(0) : 0;
 
     html += '<div onclick="openEnrSiteDetail(' + si + ')" style="background:rgba(' + rgb + ',0.05);border:1px solid rgba(' + rgb + ',0.18);border-radius:20px;padding:24px 20px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;"'
       + ' onmouseenter="this.style.background=\'rgba(' + rgb + ',0.1)\';this.style.borderColor=\'rgba(' + rgb + ',0.35)\';this.style.transform=\'translateY(-2px)\'"'
@@ -1357,11 +1811,14 @@ function openEnrProduction(){
       + '<div style="background:rgba(' + rgb + ',0.15);border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;color:' + col + ';">' + pct + '%</div>'
       + '</div>';
 
-    /* Main KPI */
+    /* Main KPI — filtered */
+    var mainVal = isDay ? formatEnrProd(fd.prodKwh) : (fd.prodKwh/1000).toFixed(1);
+    var mainUnit = isDay ? 'kWh' : 'MWh';
+    var mainLabel = isDay ? filterLabel : (enrCurrentFilter === 'month' ? MONTH_NAMES[enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth()-1)] : String(new Date().getFullYear()));
     html += '<div style="text-align:center;margin-bottom:16px;">'
-      + '<div style="font-size:36px;font-weight:800;color:' + col + ';line-height:1;">' + (s.avgDailyKwh/1000).toFixed(1)
-      + '<span style="font-size:14px;font-weight:400;color:rgba(' + rgb + ',0.5);margin-left:3px;">MWh/j</span></div>'
-      + '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">Moy. journali\u00e8re</div>'
+      + '<div style="font-size:36px;font-weight:800;color:' + col + ';line-height:1;">' + mainVal
+      + '<span style="font-size:14px;font-weight:400;color:rgba(' + rgb + ',0.5);margin-left:3px;">' + mainUnit + '</span></div>'
+      + '<div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;">' + mainLabel + '</div>'
       + '</div>';
 
     /* Sub KPIs — 2x2 grid */
@@ -1370,23 +1827,15 @@ function openEnrProduction(){
       + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Capacit\u00e9</div>'
       + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.85);">' + s.capacityMw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWc</span></div></div>';
     html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
-      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Cumul\u00e9</div>'
-      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (s.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Livr\u00e9</div>'
+      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (isDay ? formatEnrProd(fd.deliveredKwh) : (fd.deliveredKwh/1000).toFixed(1)) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">' + mainUnit + '</span></div></div>';
     html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
       + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Pic</div>'
-      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + s.maxPeakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
+      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + fd.peakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
     html += '<div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 6px;text-align:center;">'
-      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Donn\u00e9es</div>'
-      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + s.totalDays + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">jours</span></div></div>';
+      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:3px;">Jours</div>'
+      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + fd.days + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">j</span></div></div>';
     html += '</div>';
-
-    /* Dernier jour */
-    if (lastDay) {
-      html += '<div style="background:rgba(' + rgb + ',0.08);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
-        + '<span style="font-size:9px;color:rgba(255,255,255,0.35);">Dernier relev\u00e9 \xB7 ' + lastDayLabel + '</span>'
-        + '<span style="font-size:14px;font-weight:800;color:' + col + ';">' + (lastDay.prodKwh/1000).toFixed(1) + ' MWh</span>'
-        + '</div>';
-    }
 
     /* CTA */
     html += '<div style="display:flex;align-items:center;gap:6px;color:rgba(' + rgb + ',0.7);font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;">'
@@ -1419,6 +1868,9 @@ function openEnrSiteDetail(siteIndex){
   if (!s) return;
   var col = _enrColors[siteIndex % _enrColors.length];
   var rgb = _enrRgbs[siteIndex % _enrRgbs.length];
+  var fd = getEnrFilteredSiteData(s);
+  var isDay = enrCurrentFilter === '24h';
+  var filterLabel = getEnrFilterLabel();
 
   var html = '';
 
@@ -1438,14 +1890,16 @@ function openEnrSiteDetail(siteIndex){
     + '<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;">\uD83D\uDCCD ' + s.loc + ' \xB7 ' + s.centrale + '</div>'
     + '</div>';
 
-  /* ── KPIs (5 cartes) ── */
+  /* ── KPIs (5 cartes) — filtered ── */
+  var prodVal = isDay ? formatEnrProd(fd.prodKwh) : (fd.prodKwh/1000).toFixed(1);
+  var prodUnit = isDay ? 'kWh' : 'MWh';
   html += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;">';
   var kpis = [
     ['Capacit\u00e9', s.capacityMw, 'MWc'],
-    ['Prod. totale', (s.totalProdKwh/1000).toFixed(0), 'MWh'],
-    ['Moy / jour', (s.avgDailyKwh/1000).toFixed(1), 'MWh/j'],
-    ['Pic puissance', s.maxPeakKw, 'kW'],
-    ['Jours', s.totalDays, '']
+    ['Production', prodVal, prodUnit],
+    ['Livr\u00e9', isDay ? formatEnrProd(fd.deliveredKwh) : (fd.deliveredKwh/1000).toFixed(1), prodUnit],
+    ['Pic', fd.peakKw, 'kW'],
+    ['Jours', fd.days, '']
   ];
   kpis.forEach(function(k, ki){
     var kCol = ki < 3 ? col : 'rgba(255,255,255,0.85)';
@@ -1457,61 +1911,108 @@ function openEnrSiteDetail(siteIndex){
   });
   html += '</div>';
 
-  /* ── Monthly cards ── */
-  html += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(s.monthly.length, 3) + ',1fr);gap:14px;margin-bottom:28px;">';
-  s.monthly.forEach(function(m){
-    var monthNum = parseInt(m.month.split('-')[1]);
-    var monthName = _enrMonths[monthNum] || m.month;
-    var maxDayProd = Math.max.apply(null, m.dailyProd.length ? m.dailyProd : [0]);
+  /* ── Period label ── */
+  html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:14px;">' + filterLabel + '</div>';
 
-    html += '<div style="background:rgba(' + rgb + ',0.05);border:1px solid rgba(' + rgb + ',0.12);border-radius:16px;padding:18px 16px;">';
-
-    /* Month header */
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'
-      + '<div style="font-size:13px;font-weight:800;color:rgba(255,255,255,0.8);">' + monthName + '</div>'
-      + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + (m.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.3);">MWh</span></div>'
-      + '</div>';
-
-    /* Sparkline */
-    html += '<div style="display:flex;align-items:flex-end;gap:1px;height:55px;margin-bottom:14px;">';
-    m.dailyProd.forEach(function(dv){
-      var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * 55), 2) : 2;
-      html += '<div style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.5;border-radius:2px 2px 0 0;"></div>';
-    });
-    html += '</div>';
-
-    /* Sub KPIs */
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-    html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
-      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Moy/j</div>'
-      + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (m.avgDailyProdKwh/1000).toFixed(1) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
-    html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
-      + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Pic</div>'
-      + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + m.maxPeakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
-    html += '</div>';
-
-    if (m.totalUnschedInterrupt > 0) {
-      html += '<div style="margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);border-radius:8px;padding:6px 10px;text-align:center;font-size:9px;color:#ff5050;font-weight:600;">'
-        + '\u26A0 ' + m.totalUnschedInterrupt.toFixed(1) + 'h interruptions</div>';
+  if (isDay) {
+    /* ── Single day detail ── */
+    if (fd.prodKwh > 0) {
+      html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;">';
+      var dayKpis = [
+        ['Irradiance', '—', 'kWh/m\u00B2'],
+        ['Disponibilit\u00e9', '—', 'h'],
+        ['Consomm\u00e9', formatEnrProd(fd.consumedKwh), 'kWh']
+      ];
+      // Try to get irradiance/avail from daily data
+      var year = new Date().getFullYear();
+      var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
+      var di = enrSelectedDayIndex;
+      var dateStr = di !== null ? year + '-' + String(mi+1).padStart(2,'0') + '-' + String(di+1).padStart(2,'0') : (s.daily.length ? s.daily[s.daily.length-1].date : '');
+      for (var i = 0; i < s.daily.length; i++) {
+        if (s.daily[i].date === dateStr) {
+          var dd = s.daily[i];
+          if (dd.irradiance) dayKpis[0][1] = dd.irradiance;
+          if (dd.availHours) dayKpis[1][1] = dd.availHours;
+          break;
+        }
+      }
+      dayKpis.forEach(function(k) {
+        html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.12);border-radius:14px;padding:16px 10px;text-align:center;">'
+          + '<div style="font-size:7px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">' + k[0] + '</div>'
+          + '<div style="font-size:22px;font-weight:800;color:rgba(255,255,255,0.85);line-height:1;">' + k[1]
+          + '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.3);margin-left:3px;">' + k[2] + '</span></div></div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:13px;">Pas de donn\u00e9es pour cette date</div>';
     }
-    html += '</div>';
-  });
-  html += '</div>';
-
-  /* ── 7 derniers jours ── */
-  var last7 = s.daily.slice(-7);
-  if (last7.length > 0) {
-    html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;">7 derniers jours</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(' + last7.length + ',1fr);gap:8px;">';
-    last7.forEach(function(d){
-      var dayParts = d.date.split('-');
-      var dayLabel = dayParts[2] + '/' + dayParts[1];
-      html += '<div style="background:rgba(' + rgb + ',0.06);border:1px solid rgba(' + rgb + ',0.1);border-radius:12px;padding:12px 6px;text-align:center;">'
-        + '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:5px;">' + dayLabel + '</div>'
-        + '<div style="font-size:18px;font-weight:800;color:' + col + ';">' + (d.prodKwh/1000).toFixed(1) + '</div>'
-        + '<div style="font-size:8px;color:rgba(255,255,255,0.2);margin-top:2px;">MWh</div>'
-        + (d.peakKw ? '<div style="font-size:8px;color:rgba(255,255,255,0.25);margin-top:4px;">' + Math.round(d.peakKw) + ' kW</div>' : '')
+  } else if (enrCurrentFilter === 'month') {
+    /* ── Monthly detail with sparkline ── */
+    var mi = enrSelectedMonthIndex !== null ? enrSelectedMonthIndex : (getEnrDataMonth() - 1);
+    var monthStr = new Date().getFullYear() + '-' + String(mi + 1).padStart(2,'0');
+    var monthData = null;
+    for (var i = 0; i < s.monthly.length; i++) {
+      if (s.monthly[i].month === monthStr) { monthData = s.monthly[i]; break; }
+    }
+    if (monthData && monthData.dailyProd.length > 0) {
+      var maxDayProd = Math.max.apply(null, monthData.dailyProd);
+      html += '<div style="background:rgba(' + rgb + ',0.05);border:1px solid rgba(' + rgb + ',0.12);border-radius:16px;padding:18px 16px;margin-bottom:28px;">';
+      html += '<div style="display:flex;align-items:flex-end;gap:1px;height:80px;margin-bottom:14px;">';
+      monthData.dailyProd.forEach(function(dv, di){
+        var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * 80), 2) : 2;
+        html += '<div title="J' + (di+1) + ': ' + (dv/1000).toFixed(1) + ' MWh" style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.6;border-radius:2px 2px 0 0;cursor:default;"></div>';
+      });
+      html += '</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Moy/j</div>'
+        + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (monthData.avgDailyProdKwh/1000).toFixed(1) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Disponibilit\u00e9</div>'
+        + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + monthData.totalAvailHours.toFixed(0) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">h</span></div></div>';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Irradiance moy.</div>'
+        + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + (monthData.avgIrradiance || '\u2014') + '</div></div>';
+      html += '</div>';
+      if (monthData.totalUnschedInterrupt > 0) {
+        html += '<div style="margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);border-radius:8px;padding:6px 10px;text-align:center;font-size:9px;color:#ff5050;font-weight:600;">'
+          + '\u26A0 ' + monthData.totalUnschedInterrupt.toFixed(1) + 'h interruptions</div>';
+      }
+      html += '</div>';
+    } else {
+      html += '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);font-size:13px;">Pas de donn\u00e9es pour ce mois</div>';
+    }
+  } else {
+    /* ── Year view: all monthly cards ── */
+    html += '<div style="display:grid;grid-template-columns:repeat(' + Math.min(s.monthly.length, 3) + ',1fr);gap:14px;margin-bottom:28px;">';
+    s.monthly.forEach(function(m){
+      var monthNum = parseInt(m.month.split('-')[1]);
+      var monthName = _enrMonths[monthNum] || m.month;
+      var maxDayProd = Math.max.apply(null, m.dailyProd.length ? m.dailyProd : [0]);
+      html += '<div style="background:rgba(' + rgb + ',0.05);border:1px solid rgba(' + rgb + ',0.12);border-radius:16px;padding:18px 16px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'
+        + '<div style="font-size:13px;font-weight:800;color:rgba(255,255,255,0.8);">' + monthName + '</div>'
+        + '<div style="font-size:20px;font-weight:800;color:' + col + ';">' + (m.totalProdKwh/1000).toFixed(0) + ' <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.3);">MWh</span></div>'
         + '</div>';
+      html += '<div style="display:flex;align-items:flex-end;gap:1px;height:55px;margin-bottom:14px;">';
+      m.dailyProd.forEach(function(dv){
+        var bh = maxDayProd > 0 ? Math.max(Math.round(dv / maxDayProd * 55), 2) : 2;
+        html += '<div style="flex:1;height:' + bh + 'px;background:' + col + ';opacity:0.5;border-radius:2px 2px 0 0;"></div>';
+      });
+      html += '</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Moy/j</div>'
+        + '<div style="font-size:16px;font-weight:800;color:' + col + ';">' + (m.avgDailyProdKwh/1000).toFixed(1) + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">MWh</span></div></div>';
+      html += '<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">'
+        + '<div style="font-size:7px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Pic</div>'
+        + '<div style="font-size:16px;font-weight:800;color:rgba(255,255,255,0.7);">' + m.maxPeakKw + ' <span style="font-size:9px;color:rgba(255,255,255,0.3);">kW</span></div></div>';
+      html += '</div>';
+      if (m.totalUnschedInterrupt > 0) {
+        html += '<div style="margin-top:8px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);border-radius:8px;padding:6px 10px;text-align:center;font-size:9px;color:#ff5050;font-weight:600;">'
+          + '\u26A0 ' + m.totalUnschedInterrupt.toFixed(1) + 'h interruptions</div>';
+      }
+      html += '</div>';
     });
     html += '</div>';
   }
@@ -1691,6 +2192,7 @@ function closeHfoProjets(){
 <!-- ══ PANEL PRODUCTION EnR ══ -->
 <div id="panel-enr-production" style="position:fixed;inset:0;z-index:260;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
   <div class="nav-back"><button class="back-btn" onclick="closeEnrProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← Energy</button></div>
+  <div class="nav-filter"><div class="time-filter"><span class="enr-day-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrDayDropdown(event,this)">24h</button><div class="day-dropdown enr-day-dropdown"></div></span><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">Ce mois</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter" onclick="setEnrFilter('year',this)">Cette année</button></div></div>
   <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
     <div class="inner-topbar" style="border-bottom-color:rgba(0,171,99,0.15);margin-bottom:36px;">
       <div style="text-align:center;width:100%;">
@@ -7394,9 +7896,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.day-btn-wrap .tfilter').forEach(b => {
     if (b.textContent.trim() === '24h') b.textContent = dateLabel;
   });
+  // Initialize ENR filter
+  enrSelectedMonthIndex = getEnrDataMonth() - 1;
+  populateEnrMonthDropdowns();
+  var enrDateLabel = getEnrDateLabel();
+  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(b => {
+    b.textContent = MONTH_SHORT[enrSelectedMonthIndex];
+  });
+  document.querySelectorAll('.enr-day-btn-wrap .tfilter').forEach(b => {
+    b.textContent = enrDateLabel;
+  });
   document.querySelectorAll('.enr-filter').forEach(b => {
     if (b.textContent.trim() === 'Cette année') b.textContent = curYear;
-    if (b.textContent.trim() === 'Ce mois') b.textContent = MONTH_SHORT[selectedMonthIndex];
   });
   // Initialize day dropdowns
   populateDayDropdowns();
