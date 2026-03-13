@@ -1374,9 +1374,11 @@ function toggleEnrQuarterDropdown(event, btn) {
 }
 
 function populateEnrQuarterDropdowns() {
+  var maxMonth = getEnrDataMonth();
+  var maxQ = Math.ceil(maxMonth / 3);
   document.querySelectorAll('.enr-quarter-dropdown').forEach(function(dd) {
     dd.innerHTML = '';
-    for (var q = 1; q <= 4; q++) {
+    for (var q = 1; q <= maxQ; q++) {
       var item = document.createElement('div');
       item.className = 'md-item' + (enrCurrentFilter === 'quarter' && q === enrSelectedQuarter ? ' md-active' : '');
       item.textContent = 'Q' + q;
@@ -6294,9 +6296,11 @@ function toggleQuarterDropdown(event, btn) {
 }
 
 function populateQuarterDropdowns() {
+  const maxMonth = getDataMonth();
+  const maxQ = Math.ceil(maxMonth / 3);
   document.querySelectorAll('.quarter-dropdown:not(.enr-quarter-dropdown)').forEach(dd => {
     dd.innerHTML = '';
-    for (let q = 1; q <= 4; q++) {
+    for (let q = 1; q <= maxQ; q++) {
       const item = document.createElement('div');
       item.className = 'md-item' + (currentFilter === 'quarter' && q === selectedQuarter ? ' md-active' : '');
       item.textContent = 'Q' + q;
