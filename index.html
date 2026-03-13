@@ -6350,6 +6350,22 @@ function getDaysInMonth(monthIdx, year) {
   return new Date(year || new Date().getFullYear(), monthIdx + 1, 0).getDate();
 }
 
+function getMaxDayForMonth(monthIdx) {
+  const dataMonth = getDataMonth() - 1;
+  if (monthIdx === dataMonth) {
+    let maxDay = 1;
+    siteOrder.forEach(id => {
+      const s = siteData[id];
+      if (s && s.latestDate && s.status !== 'construction' && s.status !== 'reconstruction') {
+        const day = parseInt(s.latestDate.split('-')[2]);
+        if (day > maxDay) maxDay = day;
+      }
+    });
+    return maxDay;
+  }
+  return getDaysInMonth(monthIdx);
+}
+
 function populateMonthDropdowns() {
   const maxMonth = getDataMonth(); // 1-based, e.g. 3 for March
   document.querySelectorAll('.month-dropdown').forEach(dd => {
