@@ -963,20 +963,6 @@ if(sessionStorage.getItem('dash_auth')==='1'){
           </div>
         </div>
 
-        <div class="e-sec">
-          <div class="e-sec-label">SFOC Moyen · Disponibilité</div>
-          <div style="display:flex;align-items:center;justify-content:space-around;">
-            <div style="text-align:center;">
-              <div class="e-big"><span id="e-hfo-sfoc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
-              <div class="e-sub">SFOC moyen</div>
-            </div>
-            <div style="width:1px;height:24px;background:rgba(138,146,171,0.15);"></div>
-            <div style="text-align:center;">
-              <div id="e-hfo-dispo-pct" class="e-big">—</div>
-              <div class="e-sub">Disponibilité</div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- HFO Projets -->
@@ -5720,7 +5706,6 @@ function updateEnergyHfoCard() {
   let totalMW = 0, totalContrat = 0, totalArret = 0, totalMoteurs = 0;
   let totalProd = 0, totalProdObj = 0;
   let arretMW = 0;
-  let totalFuel = 0; // for SFOC computation
 
   siteOrder.forEach(id => {
     const s = siteData[id];
@@ -5739,7 +5724,6 @@ function updateEnergyHfoCard() {
 
     totalProd    += k.prod || 0;
     totalProdObj += k.prodObj || 0;
-    if (k.sfoc && k.prod) totalFuel += k.sfoc * k.prod;
   });
 
   // ── KPI 1 — Puissance dispo vs Contrat ──
@@ -5788,18 +5772,6 @@ function updateEnergyHfoCard() {
   el('e-hfo-prod-arrow').textContent  = prodArrow;
   el('e-hfo-prod-arrow').style.color  = prodColDim;
   el('e-hfo-prod-filter').textContent = filterLabel;
-
-  // ── KPI 4 — SFOC moyen + Disponibilité ──
-  const avgSfoc = totalProd > 0 ? (totalFuel / totalProd) : 0;
-  const sfocOk = avgSfoc > 0 && avgSfoc <= 260;
-  el('e-hfo-sfoc-avg').textContent = avgSfoc > 0 ? avgSfoc.toFixed(1) : '—';
-  if (avgSfoc > 0) el('e-hfo-sfoc-avg').parentElement.querySelector('.e-big-unit').style.color = sfocOk ? 'rgba(0,171,99,0.5)' : 'rgba(243,112,86,0.5)';
-
-  const motOk = totalMoteurs - totalArret;
-  const dispoPct = totalMoteurs > 0 ? ((motOk / totalMoteurs) * 100) : 0;
-  const dispoCol = dispoPct >= 70 ? '#00ab63' : dispoPct >= 50 ? '#FDB823' : '#f37056';
-  el('e-hfo-dispo-pct').textContent = dispoPct.toFixed(0) + '%';
-  el('e-hfo-dispo-pct').style.color = dispoCol;
 }
 function closePage(pageId) {
   const el = document.getElementById(pageId);
