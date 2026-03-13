@@ -176,12 +176,13 @@ body::-webkit-scrollbar{display:none;}
 .tfilter{background:none;border:none;color:rgba(0,171,99,0.5);padding:5px 8px;border-radius:7px;font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;font-family:'Aeonik','DM Sans',sans-serif;transition:all 0.2s;min-width:28px;text-align:center;box-sizing:border-box;}
 .tfilter:hover{color:#00ab63;background:rgba(0,171,99,0.08);}
 .tfilter.active{background:rgba(0,171,99,0.15);color:#00ab63;border:1px solid rgba(0,171,99,0.3);}
-.month-btn-wrap{position:relative;display:inline-block;}
-.month-dropdown{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:rgba(8,11,24,0.97);border:1px solid rgba(0,171,99,0.3);border-radius:10px;padding:6px;z-index:100;flex-direction:column;gap:2px;min-width:130px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-top:4px;}
-.month-dropdown.open{display:flex;}
-.month-dropdown .md-item{padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-muted);white-space:nowrap;text-align:center;transition:all 0.15s;}
-.month-dropdown .md-item:hover{background:rgba(0,171,99,0.15);color:#00ab63;}
-.month-dropdown .md-item.md-active{background:rgba(0,171,99,0.25);color:#00ab63;font-weight:600;}
+.month-btn-wrap,.quarter-btn-wrap,.year-btn-wrap{position:relative;display:inline-block;}
+.month-dropdown,.quarter-dropdown,.year-dropdown{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:rgba(8,11,24,0.97);border:1px solid rgba(0,171,99,0.3);border-radius:10px;padding:6px;z-index:100;flex-direction:column;gap:2px;min-width:80px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-top:4px;}
+.month-dropdown{min-width:130px;}
+.month-dropdown.open,.quarter-dropdown.open,.year-dropdown.open{display:flex;}
+.month-dropdown .md-item,.quarter-dropdown .md-item,.year-dropdown .md-item{padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text-muted);white-space:nowrap;text-align:center;transition:all 0.15s;}
+.month-dropdown .md-item:hover,.quarter-dropdown .md-item:hover,.year-dropdown .md-item:hover{background:rgba(0,171,99,0.15);color:#00ab63;}
+.month-dropdown .md-item.md-active,.quarter-dropdown .md-item.md-active,.year-dropdown .md-item.md-active{background:rgba(0,171,99,0.25);color:#00ab63;font-weight:600;}
 
 .enr-filter:hover{color:#00ab63;background:rgba(0,171,99,0.08);}
 .enr-filter.active{background:linear-gradient(135deg,rgba(0,171,99,0.28),rgba(60,140,60,0.18));color:#a8d98a;border:none;box-shadow:0 0 12px rgba(0,171,99,0.15);}
@@ -886,7 +887,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closePage('page-energy')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Accueil</button></div>
     <div class="sd-site-name" style="color:#00ab63;">Energy</div>
-    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><button class="tfilter tf-quarter" data-q="1" onclick="setFilterQuarter(1,this)">Q1</button><button class="tfilter tf-quarter" data-q="2" onclick="setFilterQuarter(2,this)">Q2</button><button class="tfilter tf-quarter" data-q="3" onclick="setFilterQuarter(3,this)">Q3</button><button class="tfilter tf-quarter" data-q="4" onclick="setFilterQuarter(4,this)">Q4</button><button class="tfilter tf-year" data-year="2025" onclick="setFilterYear(2025,this)">2025</button><button class="tfilter tf-year" data-year="2026" onclick="setFilterYear(2026,this)">2026</button></div></div>
+    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
   </div>
   <div class="inner-page-inner">
 
@@ -1080,7 +1081,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closeInner('hfo')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
     <div class="sd-site-name">HFO</div>
-    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><button class="tfilter tf-quarter" data-q="1" onclick="setFilterQuarter(1,this)">Q1</button><button class="tfilter tf-quarter" data-q="2" onclick="setFilterQuarter(2,this)">Q2</button><button class="tfilter tf-quarter" data-q="3" onclick="setFilterQuarter(3,this)">Q3</button><button class="tfilter tf-quarter" data-q="4" onclick="setFilterQuarter(4,this)">Q4</button><button class="tfilter tf-year" data-year="2025" onclick="setFilterYear(2025,this)">2025</button><button class="tfilter tf-year" data-year="2026" onclick="setFilterYear(2026,this)">2026</button></div></div>
+    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
   </div>
   <div class="inner-page-inner">
     <div class="section-title" style="text-align:center;">Consolidé HFO — Tous sites actifs</div>
@@ -1094,7 +1095,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 <div id="inner-enr" class="inner-page" style="background:#080d18;">
 
   <div class="nav-back"><button class="back-btn" onclick="closeInner('enr')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
-  <div class="nav-filter"><div class="time-filter"><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">M</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter tf-quarter" data-q="1" onclick="setEnrFilterQuarter(1,this)">Q1</button><button class="tfilter enr-filter tf-quarter" data-q="2" onclick="setEnrFilterQuarter(2,this)">Q2</button><button class="tfilter enr-filter tf-quarter" data-q="3" onclick="setEnrFilterQuarter(3,this)">Q3</button><button class="tfilter enr-filter tf-quarter" data-q="4" onclick="setEnrFilterQuarter(4,this)">Q4</button><button class="tfilter enr-filter tf-year" data-year="2025" onclick="setEnrFilterYear(2025,this)">2025</button><button class="tfilter enr-filter tf-year" data-year="2026" onclick="setEnrFilterYear(2026,this)">2026</button></div></div>
+  <div class="nav-filter"><div class="time-filter"><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">M</button><div class="month-dropdown enr-month-dropdown"></div></span><span class="enr-quarter-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown enr-quarter-dropdown"></div></span><span class="enr-year-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrYearDropdown(event,this)">A</button><div class="year-dropdown enr-year-dropdown"></div></span></div></div>
 
   <div class="inner-page-inner" style="position:relative;z-index:1;">
 
@@ -1237,6 +1238,8 @@ function setEnrFilter(f, btn) {
     document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) {
       b.textContent = MONTH_SHORT[enrSelectedMonthIndex];
     });
+    document.querySelectorAll('.enr-quarter-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'Q'; });
+    document.querySelectorAll('.enr-year-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'A'; });
     populateEnrMonthDropdowns();
   }
   syncEnrFilterActive();
@@ -1246,11 +1249,11 @@ function setEnrFilter(f, btn) {
 function syncEnrFilterActive() {
   document.querySelectorAll('.enr-filter').forEach(function(b) {
     var mw = b.closest('.enr-month-btn-wrap');
-    var isQ = b.classList.contains('tf-quarter');
-    var isY = b.classList.contains('tf-year');
+    var qw = b.closest('.enr-quarter-btn-wrap');
+    var yw = b.closest('.enr-year-btn-wrap');
     if (enrCurrentFilter === 'month') b.classList.toggle('active', !!mw);
-    else if (enrCurrentFilter === 'quarter') b.classList.toggle('active', isQ && parseInt(b.dataset.q) === enrSelectedQuarter);
-    else if (enrCurrentFilter === 'year') b.classList.toggle('active', isY && parseInt(b.dataset.year) === enrSelectedYear);
+    else if (enrCurrentFilter === 'quarter') b.classList.toggle('active', !!qw);
+    else if (enrCurrentFilter === 'year') b.classList.toggle('active', !!yw);
     else b.classList.remove('active');
   });
 }
@@ -1258,14 +1261,22 @@ function syncEnrFilterActive() {
 function setEnrFilterQuarter(q, btn) {
   enrCurrentFilter = 'quarter';
   enrSelectedQuarter = q;
+  document.querySelectorAll('.enr-quarter-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'Q' + q; });
+  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'M'; });
+  document.querySelectorAll('.enr-year-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'A'; });
   syncEnrFilterActive();
+  populateEnrQuarterDropdowns();
   refreshEnrView();
 }
 
 function setEnrFilterYear(year, btn) {
   enrCurrentFilter = 'year';
   enrSelectedYear = year;
+  document.querySelectorAll('.enr-year-btn-wrap .tfilter').forEach(function(b) { b.textContent = String(year); });
+  document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'M'; });
+  document.querySelectorAll('.enr-quarter-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'Q'; });
   syncEnrFilterActive();
+  populateEnrYearDropdowns();
   refreshEnrView();
 }
 
@@ -1294,6 +1305,8 @@ function _startEnrMonthAutoClose(dd) {
 
 function toggleEnrMonthDropdown(event, btn) {
   event.stopPropagation();
+  closeAllEnrQuarterDropdowns();
+  closeAllEnrYearDropdowns();
   var wrap = btn.closest('.enr-month-btn-wrap');
   var dd = wrap ? wrap.querySelector('.enr-month-dropdown') : null;
   if (enrCurrentFilter !== 'month') {
@@ -1330,14 +1343,106 @@ function selectEnrMonth(monthIdx, event) {
   enrSelectedMonthIndex = monthIdx;
   enrCurrentFilter = 'month';
   document.querySelectorAll('.enr-month-btn-wrap .tfilter').forEach(function(b) { b.textContent = MONTH_SHORT[monthIdx]; });
+  document.querySelectorAll('.enr-quarter-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'Q'; });
+  document.querySelectorAll('.enr-year-btn-wrap .tfilter').forEach(function(b) { b.textContent = 'A'; });
   populateEnrMonthDropdowns();
   syncEnrFilterActive();
   refreshEnrView();
 }
 
+/* ── ENR Quarter Dropdown ── */
+function closeAllEnrQuarterDropdowns() {
+  document.querySelectorAll('.enr-quarter-dropdown.open').forEach(function(dd) { dd.classList.remove('open'); dd.onmouseenter = null; dd.onmouseleave = null; });
+}
+
+function toggleEnrQuarterDropdown(event, btn) {
+  event.stopPropagation();
+  closeAllEnrMonthDropdowns();
+  closeAllEnrYearDropdowns();
+  var wrap = btn.closest('.enr-quarter-btn-wrap');
+  var dd = wrap ? wrap.querySelector('.enr-quarter-dropdown') : null;
+  if (enrCurrentFilter !== 'quarter') {
+    closeAllEnrQuarterDropdowns();
+    var curQ = Math.floor(new Date().getMonth() / 3) + 1;
+    setEnrFilterQuarter(curQ, btn);
+    populateEnrQuarterDropdowns();
+    if (dd) { dd.classList.add('open'); _startEnrMonthAutoClose(dd); }
+    return;
+  }
+  if (!dd) return;
+  var wasOpen = dd.classList.contains('open');
+  closeAllEnrQuarterDropdowns();
+  if (!wasOpen) { populateEnrQuarterDropdowns(); dd.classList.add('open'); _startEnrMonthAutoClose(dd); }
+}
+
+function populateEnrQuarterDropdowns() {
+  document.querySelectorAll('.enr-quarter-dropdown').forEach(function(dd) {
+    dd.innerHTML = '';
+    for (var q = 1; q <= 4; q++) {
+      var item = document.createElement('div');
+      item.className = 'md-item' + (enrCurrentFilter === 'quarter' && q === enrSelectedQuarter ? ' md-active' : '');
+      item.textContent = 'Q' + q;
+      item.onclick = (function(qi) { return function(e) { selectEnrQuarter(qi, e); }; })(q);
+      dd.appendChild(item);
+    }
+  });
+}
+
+function selectEnrQuarter(q, event) {
+  if (event) event.stopPropagation();
+  closeAllEnrQuarterDropdowns();
+  setEnrFilterQuarter(q);
+}
+
+/* ── ENR Year Dropdown ── */
+function closeAllEnrYearDropdowns() {
+  document.querySelectorAll('.enr-year-dropdown.open').forEach(function(dd) { dd.classList.remove('open'); dd.onmouseenter = null; dd.onmouseleave = null; });
+}
+
+function toggleEnrYearDropdown(event, btn) {
+  event.stopPropagation();
+  closeAllEnrMonthDropdowns();
+  closeAllEnrQuarterDropdowns();
+  var wrap = btn.closest('.enr-year-btn-wrap');
+  var dd = wrap ? wrap.querySelector('.enr-year-dropdown') : null;
+  if (enrCurrentFilter !== 'year') {
+    closeAllEnrYearDropdowns();
+    var curY = new Date().getFullYear();
+    setEnrFilterYear(curY, btn);
+    populateEnrYearDropdowns();
+    if (dd) { dd.classList.add('open'); _startEnrMonthAutoClose(dd); }
+    return;
+  }
+  if (!dd) return;
+  var wasOpen = dd.classList.contains('open');
+  closeAllEnrYearDropdowns();
+  if (!wasOpen) { populateEnrYearDropdowns(); dd.classList.add('open'); _startEnrMonthAutoClose(dd); }
+}
+
+function populateEnrYearDropdowns() {
+  document.querySelectorAll('.enr-year-dropdown').forEach(function(dd) {
+    dd.innerHTML = '';
+    [2025, 2026].forEach(function(y) {
+      var item = document.createElement('div');
+      item.className = 'md-item' + (enrCurrentFilter === 'year' && y === enrSelectedYear ? ' md-active' : '');
+      item.textContent = String(y);
+      item.onclick = (function(yi) { return function(e) { selectEnrYear(yi, e); }; })(y);
+      dd.appendChild(item);
+    });
+  });
+}
+
+function selectEnrYear(year, event) {
+  if (event) event.stopPropagation();
+  closeAllEnrYearDropdowns();
+  setEnrFilterYear(year);
+}
+
 // Close ENR dropdowns on click outside
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.enr-month-btn-wrap')) closeAllEnrMonthDropdowns();
+  if (!e.target.closest('.enr-quarter-btn-wrap')) closeAllEnrQuarterDropdowns();
+  if (!e.target.closest('.enr-year-btn-wrap')) closeAllEnrYearDropdowns();
 });
 
 /* ── ENR Filtered Data Helpers ── */
@@ -1885,7 +1990,7 @@ function closeHfoProjets(){
 <!-- ══ PANEL PRODUCTION EnR ══ -->
 <div id="panel-enr-production" style="position:fixed;inset:0;z-index:260;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
   <div class="nav-back"><button class="back-btn" onclick="closeEnrProduction()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← Energy</button></div>
-  <div class="nav-filter"><div class="time-filter"><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">M</button><div class="month-dropdown enr-month-dropdown"></div></span><button class="tfilter enr-filter tf-quarter" data-q="1" onclick="setEnrFilterQuarter(1,this)">Q1</button><button class="tfilter enr-filter tf-quarter" data-q="2" onclick="setEnrFilterQuarter(2,this)">Q2</button><button class="tfilter enr-filter tf-quarter" data-q="3" onclick="setEnrFilterQuarter(3,this)">Q3</button><button class="tfilter enr-filter tf-quarter" data-q="4" onclick="setEnrFilterQuarter(4,this)">Q4</button><button class="tfilter enr-filter tf-year" data-year="2025" onclick="setEnrFilterYear(2025,this)">2025</button><button class="tfilter enr-filter tf-year" data-year="2026" onclick="setEnrFilterYear(2026,this)">2026</button></div></div>
+  <div class="nav-filter"><div class="time-filter"><span class="enr-month-btn-wrap"><button class="tfilter enr-filter active" onclick="toggleEnrMonthDropdown(event,this)">M</button><div class="month-dropdown enr-month-dropdown"></div></span><span class="enr-quarter-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown enr-quarter-dropdown"></div></span><span class="enr-year-btn-wrap"><button class="tfilter enr-filter" onclick="toggleEnrYearDropdown(event,this)">A</button><div class="year-dropdown enr-year-dropdown"></div></span></div></div>
   <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
     <div class="inner-topbar" style="border-bottom-color:rgba(0,171,99,0.15);margin-bottom:36px;">
       <div style="text-align:center;width:100%;">
@@ -3375,7 +3480,7 @@ function closeDiegoDetail() {
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closeDetail()">HFO</button></div>
     <div class="sd-site-name" id="detail-site-name">—</div>
-    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><button class="tfilter tf-quarter" data-q="1" onclick="setFilterQuarter(1,this)">Q1</button><button class="tfilter tf-quarter" data-q="2" onclick="setFilterQuarter(2,this)">Q2</button><button class="tfilter tf-quarter" data-q="3" onclick="setFilterQuarter(3,this)">Q3</button><button class="tfilter tf-quarter" data-q="4" onclick="setFilterQuarter(4,this)">Q4</button><button class="tfilter tf-year" data-year="2025" onclick="setFilterYear(2025,this)">2025</button><button class="tfilter tf-year" data-year="2026" onclick="setFilterYear(2026,this)">2026</button></div></div>
+    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
   </div>
   <div class="detail-inner">
 
@@ -6120,6 +6225,8 @@ function _clearDropdownTimer() {
 
 function toggleMonthDropdown(event, btn) {
   event.stopPropagation();
+  closeAllQuarterDropdowns();
+  closeAllYearDropdowns();
   const wrap = btn.closest('.month-btn-wrap');
   const dd = wrap ? wrap.querySelector('.month-dropdown') : null;
   // First click: activate month filter + open dropdown 2s
@@ -6140,11 +6247,103 @@ function toggleMonthDropdown(event, btn) {
   }
 }
 
+// ══ QUARTER DROPDOWN ══
+function closeAllQuarterDropdowns() {
+  document.querySelectorAll('.quarter-dropdown.open').forEach(dd => { dd.classList.remove('open'); dd.onmouseenter = null; dd.onmouseleave = null; });
+}
+
+function toggleQuarterDropdown(event, btn) {
+  event.stopPropagation();
+  closeAllMonthDropdowns();
+  closeAllYearDropdowns();
+  const wrap = btn.closest('.quarter-btn-wrap');
+  const dd = wrap ? wrap.querySelector('.quarter-dropdown') : null;
+  if (currentFilter !== 'quarter') {
+    closeAllQuarterDropdowns();
+    const isGd = btn.classList.contains('gd-tfilter');
+    const curQ = Math.floor(new Date().getMonth() / 3) + 1;
+    if (isGd) { setGdFilterQuarter(curQ, btn); } else { setFilterQuarter(curQ, btn); }
+    populateQuarterDropdowns();
+    if (dd) { dd.classList.add('open'); _startDropdownAutoClose(dd); }
+    return;
+  }
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  closeAllQuarterDropdowns();
+  if (!wasOpen) { populateQuarterDropdowns(); dd.classList.add('open'); _startDropdownAutoClose(dd); }
+}
+
+function populateQuarterDropdowns() {
+  document.querySelectorAll('.quarter-dropdown:not(.enr-quarter-dropdown)').forEach(dd => {
+    dd.innerHTML = '';
+    for (let q = 1; q <= 4; q++) {
+      const item = document.createElement('div');
+      item.className = 'md-item' + (currentFilter === 'quarter' && q === selectedQuarter ? ' md-active' : '');
+      item.textContent = 'Q' + q;
+      item.onclick = (function(qi) { return function(e) { selectQuarter(qi, e); }; })(q);
+      dd.appendChild(item);
+    }
+  });
+}
+
+function selectQuarter(q, event) {
+  if (event) event.stopPropagation();
+  closeAllQuarterDropdowns();
+  setFilterQuarter(q);
+}
+
+// ══ YEAR DROPDOWN ══
+function closeAllYearDropdowns() {
+  document.querySelectorAll('.year-dropdown.open').forEach(dd => { dd.classList.remove('open'); dd.onmouseenter = null; dd.onmouseleave = null; });
+}
+
+function toggleYearDropdown(event, btn) {
+  event.stopPropagation();
+  closeAllMonthDropdowns();
+  closeAllQuarterDropdowns();
+  const wrap = btn.closest('.year-btn-wrap');
+  const dd = wrap ? wrap.querySelector('.year-dropdown') : null;
+  if (currentFilter !== 'year') {
+    closeAllYearDropdowns();
+    const isGd = btn.classList.contains('gd-tfilter');
+    const curY = new Date().getFullYear();
+    if (isGd) { setGdFilterYear(curY, btn); } else { setFilterYear(curY, btn); }
+    populateYearDropdowns();
+    if (dd) { dd.classList.add('open'); _startDropdownAutoClose(dd); }
+    return;
+  }
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  closeAllYearDropdowns();
+  if (!wasOpen) { populateYearDropdowns(); dd.classList.add('open'); _startDropdownAutoClose(dd); }
+}
+
+function populateYearDropdowns() {
+  document.querySelectorAll('.year-dropdown:not(.enr-year-dropdown)').forEach(dd => {
+    dd.innerHTML = '';
+    [2025, 2026].forEach(y => {
+      const item = document.createElement('div');
+      item.className = 'md-item' + (currentFilter === 'year' && y === selectedYear ? ' md-active' : '');
+      item.textContent = String(y);
+      item.onclick = (function(yi) { return function(e) { selectYear(yi, e); }; })(y);
+      dd.appendChild(item);
+    });
+  });
+}
+
+function selectYear(year, event) {
+  if (event) event.stopPropagation();
+  closeAllYearDropdowns();
+  setFilterYear(year);
+}
+
 // Close dropdowns on click outside or scroll
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.month-btn-wrap')) closeAllMonthDropdowns();
+  if (!e.target.closest('.quarter-btn-wrap')) closeAllQuarterDropdowns();
+  if (!e.target.closest('.year-btn-wrap')) closeAllYearDropdowns();
 });
-document.addEventListener('scroll', function() { closeAllMonthDropdowns(); }, true);
+document.addEventListener('scroll', function() { closeAllMonthDropdowns(); closeAllQuarterDropdowns(); closeAllYearDropdowns(); }, true);
 
 function getDaysInMonth(monthIdx, year) {
   // monthIdx is 0-based
@@ -6173,9 +6372,12 @@ function selectMonth(monthIdx, event) {
   currentFilter = 'month';
 
   // Update all month button labels
-  document.querySelectorAll('.month-btn-wrap .tfilter').forEach(btn => {
+  document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(btn => {
     btn.textContent = MONTH_SHORT[monthIdx];
   });
+  // Reset Q and A
+  document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q'; });
+  document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'A'; });
 
   // Sync active state
   syncHfoFilterActive();
@@ -6200,11 +6402,11 @@ function selectMonth(monthIdx, event) {
 function syncHfoFilterActive() {
   document.querySelectorAll('.time-filter .tfilter:not(.enr-filter)').forEach(function(b) {
     var mw = b.closest('.month-btn-wrap');
-    var isQ = b.classList.contains('tf-quarter');
-    var isY = b.classList.contains('tf-year');
+    var qw = b.closest('.quarter-btn-wrap');
+    var yw = b.closest('.year-btn-wrap');
     if (currentFilter === 'month') b.classList.toggle('active', !!mw);
-    else if (currentFilter === 'quarter') b.classList.toggle('active', isQ && parseInt(b.dataset.q) === selectedQuarter);
-    else if (currentFilter === 'year') b.classList.toggle('active', isY && parseInt(b.dataset.year) === selectedYear);
+    else if (currentFilter === 'quarter') b.classList.toggle('active', !!qw);
+    else if (currentFilter === 'year') b.classList.toggle('active', !!yw);
     else b.classList.remove('active');
   });
 }
@@ -6217,6 +6419,9 @@ function setFilter(f, btn) {
     document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => {
       b.textContent = MONTH_SHORT[selectedMonthIndex];
     });
+    // Reset Q and A buttons
+    document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q'; });
+    document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'A'; });
     populateMonthDropdowns();
   }
   syncHfoFilterActive();
@@ -6236,7 +6441,13 @@ function setFilter(f, btn) {
 function setFilterQuarter(q, btn) {
   currentFilter = 'quarter';
   selectedQuarter = q;
+  // Update Q button labels
+  document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q' + q; });
+  // Reset M and A buttons
+  document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'M'; });
+  document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'A'; });
   syncHfoFilterActive();
+  populateQuarterDropdowns();
   const lbl = document.getElementById('filter-label-text');
   if (lbl) lbl.textContent = 'Q' + q;
   if(currentSite) renderDetail(currentSite);
@@ -6248,7 +6459,13 @@ function setFilterQuarter(q, btn) {
 function setFilterYear(year, btn) {
   currentFilter = 'year';
   selectedYear = year;
+  // Update A button labels
+  document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = String(year); });
+  // Reset M and Q buttons
+  document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'M'; });
+  document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q'; });
   syncHfoFilterActive();
+  populateYearDropdowns();
   const lbl = document.getElementById('filter-label-text');
   if (lbl) lbl.textContent = String(year);
   if(currentSite) renderDetail(currentSite);
@@ -6778,6 +6995,8 @@ function setGdFilter(f, btn) {
     document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => {
       b.textContent = MONTH_SHORT[selectedMonthIndex];
     });
+    document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q'; });
+    document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'A'; });
     populateMonthDropdowns();
   }
   syncHfoFilterActive();
@@ -6795,7 +7014,11 @@ function setGdFilter(f, btn) {
 function setGdFilterQuarter(q, btn) {
   currentFilter = 'quarter';
   selectedQuarter = q;
+  document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q' + q; });
+  document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'M'; });
+  document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'A'; });
   syncHfoFilterActive();
+  populateQuarterDropdowns();
   const lbl = document.getElementById('filter-label-text');
   if (lbl) lbl.textContent = 'Q' + q;
   if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
@@ -6806,7 +7029,11 @@ function setGdFilterQuarter(q, btn) {
 function setGdFilterYear(year, btn) {
   currentFilter = 'year';
   selectedYear = year;
+  document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = String(year); });
+  document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'M'; });
+  document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q'; });
   syncHfoFilterActive();
+  populateYearDropdowns();
   const lbl = document.getElementById('filter-label-text');
   if (lbl) lbl.textContent = String(year);
   if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
@@ -7398,12 +7625,8 @@ function closeInvDetail() { document.getElementById('inv-detail-view').style.dis
     <div class="nav-filter">
       <div class="time-filter">
         <span class="month-btn-wrap"><button class="tfilter gd-tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span>
-        <button class="tfilter gd-tfilter tf-quarter" data-q="1" onclick="setGdFilterQuarter(1,this)">Q1</button>
-        <button class="tfilter gd-tfilter tf-quarter" data-q="2" onclick="setGdFilterQuarter(2,this)">Q2</button>
-        <button class="tfilter gd-tfilter tf-quarter" data-q="3" onclick="setGdFilterQuarter(3,this)">Q3</button>
-        <button class="tfilter gd-tfilter tf-quarter" data-q="4" onclick="setGdFilterQuarter(4,this)">Q4</button>
-        <button class="tfilter gd-tfilter tf-year" data-year="2025" onclick="setGdFilterYear(2025,this)">2025</button>
-        <button class="tfilter gd-tfilter tf-year" data-year="2026" onclick="setGdFilterYear(2026,this)">2026</button>
+        <span class="quarter-btn-wrap"><button class="tfilter gd-tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span>
+        <span class="year-btn-wrap"><button class="tfilter gd-tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span>
       </div>
     </div>
   </div>
