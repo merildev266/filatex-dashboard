@@ -3690,7 +3690,6 @@ function closeDiegoDetail() {
     <div class="inner-topbar" style="border-bottom-color:rgba(243,112,86,0.15);">
       <div style="text-align:center;width:100%;">
         <div class="inner-title" id="inv-banner-title" style="color:#f37056;font-size:clamp(24px,3vw,40px);font-weight:800;letter-spacing:-1px;">Ventures</div>
-        <div class="inner-subtitle" id="inv-banner-subtitle" style="color:rgba(243,112,86,0.5);">Portefeuille d'investissements · Groupe Filatex</div>
       </div>
     </div>
     <!-- LEVEL 1: Landing Externe / Interne -->
@@ -4624,7 +4623,6 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
     <div class="inner-topbar" style="border-bottom-color:rgba(94,76,159,0.15);">
       <div style="text-align:center;width:100%;">
         <div class="inner-title" style="color:#8a7cc4;font-size:clamp(24px,3vw,40px);font-weight:800;letter-spacing:-1px;">CAPEX</div>
-        <div class="inner-subtitle" style="color:rgba(94,76,159,0.5);">Suivi des investissements · Portefeuille global</div>
       </div>
     </div>
 
@@ -4841,7 +4839,6 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
     <div class="inner-topbar" style="border-bottom-color:rgba(0,150,199,0.15);">
       <div style="text-align:center;width:100%;">
         <div class="inner-title" style="color:#0096c7;font-size:clamp(24px,3vw,40px);font-weight:800;letter-spacing:-1px;">CSI</div>
-        <div class="inner-subtitle" style="color:rgba(0,150,199,0.5);">Comit&eacute; Strat&eacute;gique d'Investissement</div>
       </div>
     </div>
     <div class="page-inner" style="padding-top:0;">
@@ -4858,7 +4855,6 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
       <div class="inner-topbar" style="border-bottom-color:rgba(94,76,159,0.15);margin-bottom:0;">
         <div style="text-align:center;width:100%;">
           <div class="inner-title" id="capex-panel-title" style="color:#8a7cc4;"></div>
-          <div class="inner-subtitle" style="color:rgba(94,76,159,0.5);">Suivi CAPEX · Détail du pôle</div>
         </div>
       </div>
     </div>
@@ -7861,7 +7857,7 @@ var invProjects = [
   {id:'Inv_I_TAXI BROUSSE PIZZA',nom:'Taxi Brousse Pizza',resp:'Imtiaz',type:'interne',status:'En cours',week:10,capex:null}
 ];
 var _invCurrentType = 'externe';
-function _setInvBanner(title, subtitle) { document.getElementById('inv-banner-title').textContent = title; document.getElementById('inv-banner-subtitle').textContent = subtitle; }
+function _setInvBanner(title) { document.getElementById('inv-banner-title').textContent = title; }
 function _renderInvKpi(type) {
   var filtered = invProjects.filter(function(p){ return p.type === type; });
   var total = filtered.length;
@@ -7874,8 +7870,8 @@ function _renderInvKpi(type) {
   if (withCapex.length === 0) { budgetStr = 'X'; decaisseStr = 'X'; pctDecaisse = 'X'; }
   document.getElementById('inv-grid-kpi').innerHTML = [{lbl:'Projets',val:total,unit:'Total'},{lbl:'Budget r\u00e9vis\u00e9',val:budgetStr,unit:'Investissement CAPEX'},{lbl:'D\u00e9caiss\u00e9',val:(pctDecaisse==='X'?'X':pctDecaisse+'%'),unit:"Taux d'ex\u00e9cution"},{lbl:'Montant d\u00e9caiss\u00e9',val:decaisseStr,unit:'R\u00e9alis\u00e9'}].map(function(k){ return '<div class="s1-card"><div class="s1-card-label">'+k.lbl+'</div><div class="s1-card-value">'+k.val+'</div><div class="s1-card-unit-line">'+k.unit+'</div></div>'; }).join('');
 }
-function invNavType(type) { _invCurrentType = type; document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); }); document.getElementById('inv-detail-view').style.display = 'none'; document.getElementById('inv-grid-view').style.display = ''; _setInvBanner(type === 'externe' ? 'Externe' : 'Interne', type === 'externe' ? 'Ventures \u00b7 Investissements Externes' : 'Groupe \u00b7 Investissements Internes'); _renderInvKpi(type); _renderInvCards(invProjects.filter(function(p){ return p.type === type; })); document.getElementById('page-investments').scrollTop = 0; }
-function openInvLevel(type) { _invCurrentType = type; document.getElementById('inv-back-accueil').style.display = 'none'; document.getElementById('inv-landing').style.display = 'none'; document.getElementById('inv-grid-view').style.display = ''; document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); }); _setInvBanner(type === 'externe' ? 'Externe' : 'Interne', type === 'externe' ? 'Ventures \u00b7 Investissements Externes' : 'Groupe \u00b7 Investissements Internes'); _renderInvKpi(type); _renderInvCards(invProjects.filter(function(p){ return p.type === type; })); document.getElementById('page-investments').scrollTop = 0; }
+function invNavType(type) { _invCurrentType = type; document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); }); document.getElementById('inv-detail-view').style.display = 'none'; document.getElementById('inv-grid-view').style.display = ''; _setInvBanner(type === 'externe' ? 'Externe' : 'Interne'); _renderInvKpi(type); _renderInvCards(invProjects.filter(function(p){ return p.type === type; })); document.getElementById('page-investments').scrollTop = 0; }
+function openInvLevel(type) { _invCurrentType = type; document.getElementById('inv-back-accueil').style.display = 'none'; document.getElementById('inv-landing').style.display = 'none'; document.getElementById('inv-grid-view').style.display = ''; document.querySelectorAll('#inv-type-nav .inv-nav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.inv === type); }); _setInvBanner(type === 'externe' ? 'Externe' : 'Interne'); _renderInvKpi(type); _renderInvCards(invProjects.filter(function(p){ return p.type === type; })); document.getElementById('page-investments').scrollTop = 0; }
 function _renderInvCards(filtered) {
   var c = document.getElementById('inv-cards-container'); c.innerHTML = '';
   filtered.forEach(function(p){
@@ -7886,11 +7882,11 @@ function _renderInvCards(filtered) {
     c.innerHTML += '<div class="capex-section-card" onclick="openInvDetail(\''+p.id+'\')" style="border-color:rgba(243,112,86,0.2);cursor:pointer;padding:16px;transition:all 0.2s;" onmouseenter="this.style.borderColor=\'rgba(243,112,86,0.5)\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 24px rgba(243,112,86,0.15)\'" onmouseleave="this.style.borderColor=\'rgba(243,112,86,0.2)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'+'<div style="display:flex;justify-content:space-between;align-items:center;">'+'<div style="font-size:clamp(14px,1.2vw,18px);font-weight:800;color:rgba(255,255,255,0.9);">'+p.nom+'</div>'+'<div style="font-size:9px;font-weight:700;color:'+statusColor+';border:1px solid;border-radius:4px;padding:2px 6px;">'+p.status+'</div>'+'</div>'+'<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;">S'+p.week+' \u00b7 '+p.resp+'</div>'+cxHtml+'</div>';
   });
 }
-function closeInvLevel() { document.getElementById('inv-grid-view').style.display = 'none'; document.getElementById('inv-landing').style.display = ''; document.getElementById('inv-back-accueil').style.display = ''; _setInvBanner('Ventures', "Portefeuille d'investissements \u00b7 Groupe Filatex"); document.getElementById('page-investments').scrollTop = 0; }
+function closeInvLevel() { document.getElementById('inv-grid-view').style.display = 'none'; document.getElementById('inv-landing').style.display = ''; document.getElementById('inv-back-accueil').style.display = ''; _setInvBanner('Ventures'); document.getElementById('page-investments').scrollTop = 0; }
 function openInvDetail(id) {
   var p = invProjects.find(function(x){ return x.id === id; }); if (!p) return;
   document.getElementById('inv-grid-view').style.display = 'none'; document.getElementById('inv-detail-view').style.display = '';
-  _setInvBanner(p.nom, p.type === 'externe' ? 'Ventures \u00b7 Projet Externe' : 'Groupe \u00b7 Projet Interne');
+  _setInvBanner(p.nom);
   document.getElementById('inv-detail-back').textContent = p.type === 'externe' ? 'Externe' : 'Interne';
   var nav = document.getElementById('inv-proj-nav'); var filtered = invProjects.filter(function(x){ return x.type === p.type; }); nav.innerHTML = '';
   filtered.forEach(function(fp){ nav.innerHTML += '<button class="site-nav-btn inv-nav-btn'+(fp.id===id?' active':'')+'" onclick="openInvDetail(\''+fp.id+'\')" style="white-space:nowrap;">'+fp.nom+'</button>'; });
@@ -7908,7 +7904,7 @@ function openInvDetail(id) {
   document.getElementById('inv-detail-content').innerHTML = html;
   document.getElementById('page-investments').scrollTop = 0;
 }
-function closeInvDetail() { document.getElementById('inv-detail-view').style.display = 'none'; document.getElementById('inv-grid-view').style.display = ''; _setInvBanner(_invCurrentType === 'externe' ? 'Externe' : 'Interne', _invCurrentType === 'externe' ? 'Ventures \u00b7 Investissements Externes' : 'Groupe \u00b7 Investissements Internes'); document.getElementById('page-investments').scrollTop = 0; }
+function closeInvDetail() { document.getElementById('inv-detail-view').style.display = 'none'; document.getElementById('inv-grid-view').style.display = ''; _setInvBanner(_invCurrentType === 'externe' ? 'Externe' : 'Interne'); document.getElementById('page-investments').scrollTop = 0; }
 
 
 
