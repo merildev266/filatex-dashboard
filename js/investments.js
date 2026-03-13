@@ -39,8 +39,8 @@ function _invCalcCapex(type) {
     budgetTotal += invNum * mult; decaisseTotal += etaNum * multE;
   });
   var pctDecaisse = budgetTotal > 0 ? Math.round(decaisseTotal / budgetTotal * 100) : 0;
-  var budgetStr = budgetTotal >= 1 ? budgetTotal.toFixed(1) + ' M$' : (budgetTotal * 1000).toFixed(0) + ' k$';
-  var decaisseStr = decaisseTotal >= 1 ? decaisseTotal.toFixed(1) + ' M$' : (decaisseTotal * 1000).toFixed(0) + ' k$';
+  var budgetStr = budgetTotal >= 1 ? budgetTotal.toFixed(1) : (budgetTotal * 1000).toFixed(0) + ' k';
+  var decaisseStr = decaisseTotal >= 1 ? decaisseTotal.toFixed(1) : (decaisseTotal * 1000).toFixed(0) + ' k';
   if (withCapex.length === 0) { budgetStr = '—'; decaisseStr = '—'; pctDecaisse = '—'; }
   return { total: total, encours: encours, budget: budgetStr, decaisse: decaisseStr, pct: pctDecaisse === '—' ? '—' : pctDecaisse + '%' };
 }
@@ -49,14 +49,12 @@ function updateInvLanding() {
   var g = function(id){ return document.getElementById(id); };
   var ext = _invCalcCapex('externe');
   g('inv-ext-total').textContent = ext.total;
-  g('inv-ext-encours').textContent = ext.encours;
   g('inv-ext-budget').textContent = ext.budget;
   g('inv-ext-decaisse').textContent = ext.decaisse;
   g('inv-ext-pct').textContent = ext.pct;
 
   var int = _invCalcCapex('interne');
   g('inv-int-total').textContent = int.total;
-  g('inv-int-encours').textContent = int.encours;
   g('inv-int-budget').textContent = int.budget;
   g('inv-int-decaisse').textContent = int.decaisse;
   g('inv-int-pct').textContent = int.pct;
