@@ -458,6 +458,8 @@ body::-webkit-scrollbar{display:none;}
 #page-energy .capex-section-card{padding:clamp(6px,1vw,16px) clamp(10px,1.5vw,20px) clamp(4px,0.8vw,12px);border-radius:clamp(10px,1.2vw,18px);}
 .e-wrap{display:flex;gap:clamp(10px,1.5vw,20px);padding:0;align-items:stretch;}
 .e-col{flex:1;display:flex;flex-direction:column;gap:clamp(8px,0.8vw,12px);}
+.e-col-title{font-size:clamp(14px,1.5vw,20px);font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:0;}
+.e-col-title-proj{margin-top:clamp(30px,4vw,50px);font-size:clamp(10px,1vw,14px);}
 .e-card-mini{flex:0 0 auto !important;height:auto !important;min-height:0 !important;overflow:visible !important;padding:clamp(8px,1vw,14px) clamp(10px,1.5vw,20px) !important;}
 .e-section-label{font-size:clamp(7px,0.6vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-align:center;margin:0;}
 .e-card-hdr{display:flex;align-items:baseline;gap:6px;padding:clamp(2px,0.3vw,5px) clamp(6px,0.8vw,12px) 0;}
@@ -896,12 +898,12 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
       <!-- ═══ COLONNE GAUCHE · HFO ═══ -->
       <div class="e-col">
+      <div class="e-col-title" style="color:rgba(138,146,171,0.8);">HFO</div>
       <!-- HFO Production -->
       <div class="capex-section-card e-card" onclick="openInner('hfo')" data-pole="hfo"
         style="border-color:rgba(138,146,171,0.35);"
         onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 16px 40px rgba(138,146,171,0.25)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-card-hdr"><span class="e-card-hdr-title" style="color:#1e4d63;">HFO</span><span class="e-card-hdr-sub" style="color:rgba(138,146,171,0.5);">Thermique</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label">Puissance dispo vs Contractuel</div>
@@ -960,36 +962,45 @@ if(sessionStorage.getItem('dash_auth')==='1'){
             </div>
           </div>
         </div>
+
+        <div class="e-sec">
+          <div class="e-sec-label">SFOC Moyen · Disponibilité</div>
+          <div style="display:flex;align-items:center;justify-content:space-around;">
+            <div style="text-align:center;">
+              <div class="e-big"><span id="e-hfo-sfoc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
+              <div class="e-sub">SFOC moyen</div>
+            </div>
+            <div style="width:1px;height:24px;background:rgba(138,146,171,0.15);"></div>
+            <div style="text-align:center;">
+              <div id="e-hfo-dispo-pct" class="e-big">—</div>
+              <div class="e-sub">Disponibilité</div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- HFO Projets (mini-card) -->
+      <!-- HFO Projets -->
+      <div class="e-col-title e-col-title-proj" style="color:rgba(138,146,171,0.8);">Projets</div>
       <div class="capex-section-card e-card e-card-mini" onclick="openHfoProjets()" data-pole="hfo"
         style="border-color:rgba(138,146,171,0.35);cursor:pointer;"
         onmouseenter="this.style.borderColor='rgba(138,146,171,0.7)';this.style.background='rgba(138,146,171,0.08)';this.style.boxShadow='0 16px 40px rgba(138,146,171,0.25)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(138,146,171,0.35)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:0.5px;">Projets HFO</div>
-            <div style="font-size:9px;color:rgba(138,146,171,0.5);margin-top:2px;">Thermique</div>
+        <div style="display:flex;align-items:center;justify-content:space-around;">
+          <div style="text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:rgba(255,255,255,0.9);" id="e-hfo-proj-total">—</div>
+            <div style="font-size:7px;color:rgba(138,146,171,0.5);text-transform:uppercase;">projets</div>
           </div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="text-align:center;">
-              <div style="font-size:22px;font-weight:800;color:rgba(255,255,255,0.9);" id="e-hfo-proj-total">—</div>
-              <div style="font-size:7px;color:rgba(138,146,171,0.5);text-transform:uppercase;">projets</div>
-            </div>
-            <div style="width:1px;height:24px;background:rgba(138,146,171,0.15);"></div>
-            <div style="display:flex;gap:8px;">
-              <div style="text-align:center;">
-                <div style="font-size:14px;font-weight:700;color:rgba(243,112,86,0.9);" id="e-hfo-proj-urgent">—</div>
-                <div style="font-size:6px;color:rgba(243,112,86,0.5);text-transform:uppercase;">urgent</div>
-              </div>
-              <div style="text-align:center;">
-                <div style="font-size:14px;font-weight:700;color:rgba(253,184,35,0.8);" id="e-hfo-proj-encours">—</div>
-                <div style="font-size:6px;color:rgba(253,184,35,0.5);text-transform:uppercase;">en cours</div>
-              </div>
-            </div>
-            <div style="font-size:14px;color:rgba(138,146,171,0.35);">›</div>
+          <div style="width:1px;height:24px;background:rgba(138,146,171,0.15);"></div>
+          <div style="text-align:center;">
+            <div style="font-size:18px;font-weight:700;color:rgba(243,112,86,0.9);" id="e-hfo-proj-urgent">—</div>
+            <div style="font-size:7px;color:rgba(243,112,86,0.5);text-transform:uppercase;">urgent</div>
           </div>
+          <div style="width:1px;height:24px;background:rgba(138,146,171,0.15);"></div>
+          <div style="text-align:center;">
+            <div style="font-size:18px;font-weight:700;color:rgba(253,184,35,0.8);" id="e-hfo-proj-encours">—</div>
+            <div style="font-size:7px;color:rgba(253,184,35,0.5);text-transform:uppercase;">en cours</div>
+          </div>
+          <div style="font-size:14px;color:rgba(138,146,171,0.35);">›</div>
         </div>
       </div>
 
@@ -997,12 +1008,12 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 
       <!-- ═══ COLONNE DROITE · EnR ═══ -->
       <div class="e-col">
+      <div class="e-col-title" style="color:#00ab63;">EnR</div>
       <!-- EnR Production -->
       <div class="capex-section-card e-card e-enr" onclick="openEnrProduction()" data-pole="enr"
         style="border-color:rgba(0,171,99,0.15);"
         onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div class="e-card-hdr"><span class="e-card-hdr-title">EnR</span><span class="e-card-hdr-sub">Renouvelables</span></div>
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production moyenne vs Capacité</div>
@@ -1046,28 +1057,23 @@ if(sessionStorage.getItem('dash_auth')==='1'){
         </div>
       </div>
 
-      <!-- EnR Projets (mini-card) -->
+      <!-- EnR Projets -->
+      <div class="e-col-title e-col-title-proj" style="color:#00ab63;">Projets</div>
       <div class="capex-section-card e-card e-enr e-card-mini" onclick="openEnrProjets()" data-pole="enr"
         style="border-color:rgba(0,171,99,0.15);cursor:pointer;"
         onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:0.5px;">Projets EnR</div>
-            <div style="font-size:9px;color:rgba(0,171,99,0.5);margin-top:2px;">Renouvelables</div>
+        <div style="display:flex;align-items:center;justify-content:space-around;">
+          <div style="text-align:center;">
+            <div style="font-size:22px;font-weight:800;color:#00ab63;" id="e-enr-proj-total">—</div>
+            <div style="font-size:7px;color:rgba(0,171,99,0.5);text-transform:uppercase;">projets</div>
           </div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="text-align:center;">
-              <div style="font-size:22px;font-weight:800;color:#00ab63;" id="e-enr-proj-total">—</div>
-              <div style="font-size:7px;color:rgba(0,171,99,0.5);text-transform:uppercase;">projets</div>
-            </div>
-            <div style="width:1px;height:24px;background:rgba(0,171,99,0.15);"></div>
-            <div style="text-align:center;">
-              <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.8);" id="e-enr-proj-mw">—</div>
-              <div style="font-size:6px;color:rgba(0,171,99,0.4);text-transform:uppercase;">MWc</div>
-            </div>
-            <div style="font-size:14px;color:rgba(0,171,99,0.35);">›</div>
+          <div style="width:1px;height:24px;background:rgba(0,171,99,0.15);"></div>
+          <div style="text-align:center;">
+            <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.8);" id="e-enr-proj-mw">—</div>
+            <div style="font-size:7px;color:rgba(0,171,99,0.4);text-transform:uppercase;">MWc</div>
           </div>
+          <div style="font-size:14px;color:rgba(0,171,99,0.35);">›</div>
         </div>
       </div>
       </div><!-- /e-col EnR -->
@@ -5686,7 +5692,8 @@ function updateEnergyHfoCard() {
   // ── Agréger uniquement les sites actifs (pas construction/reconstruction) ──
   let totalMW = 0, totalContrat = 0, totalArret = 0, totalMoteurs = 0;
   let totalProd = 0, totalProdObj = 0;
-  let arretMW = 0; // MW des moteurs à l'arrêt (pour estimer le manque)
+  let arretMW = 0;
+  let totalFuel = 0; // for SFOC computation
 
   siteOrder.forEach(id => {
     const s = siteData[id];
@@ -5705,6 +5712,7 @@ function updateEnergyHfoCard() {
 
     totalProd    += k.prod || 0;
     totalProdObj += k.prodObj || 0;
+    if (k.sfoc && k.prod) totalFuel += k.sfoc * k.prod;
   });
 
   // ── KPI 1 — Puissance dispo vs Contrat ──
@@ -5753,6 +5761,18 @@ function updateEnergyHfoCard() {
   el('e-hfo-prod-arrow').textContent  = prodArrow;
   el('e-hfo-prod-arrow').style.color  = prodColDim;
   el('e-hfo-prod-filter').textContent = filterLabel;
+
+  // ── KPI 4 — SFOC moyen + Disponibilité ──
+  const avgSfoc = totalProd > 0 ? (totalFuel / totalProd) : 0;
+  const sfocOk = avgSfoc > 0 && avgSfoc <= 260;
+  el('e-hfo-sfoc-avg').textContent = avgSfoc > 0 ? avgSfoc.toFixed(1) : '—';
+  if (avgSfoc > 0) el('e-hfo-sfoc-avg').parentElement.querySelector('.e-big-unit').style.color = sfocOk ? 'rgba(0,171,99,0.5)' : 'rgba(243,112,86,0.5)';
+
+  const motOk = totalMoteurs - totalArret;
+  const dispoPct = totalMoteurs > 0 ? ((motOk / totalMoteurs) * 100) : 0;
+  const dispoCol = dispoPct >= 70 ? '#00ab63' : dispoPct >= 50 ? '#FDB823' : '#f37056';
+  el('e-hfo-dispo-pct').textContent = dispoPct.toFixed(0) + '%';
+  el('e-hfo-dispo-pct').style.color = dispoCol;
 }
 function closePage(pageId) {
   const el = document.getElementById(pageId);
