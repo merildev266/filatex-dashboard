@@ -3,13 +3,16 @@
 /* Page layout — mirrors Energy page structure */
 #page-investments{overflow:hidden;}
 #page-investments .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
-#page-investments .e-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
+#page-investments .e-wrap{gap:clamp(40px,8vw,120px);width:80%;margin:0 auto;}
 #page-investments .e-card.inv-card{flex:1;}
-#page-investments .e-card .e-sec{padding:clamp(4px,0.5vw,8px) 6px;}
-#page-investments .e-card .e-sec-label{font-size:clamp(7px,0.65vw,10px);margin-bottom:clamp(3px,0.5vw,8px);}
-#page-investments .e-card .e-big{font-size:clamp(18px,1.8vw,28px);}
-#page-investments .e-card .e-big-unit{font-size:clamp(8px,0.75vw,12px);}
-#page-investments .e-card .e-sub{font-size:clamp(7px,0.6vw,10px);}
-#page-investments .e-card .e-mid{font-size:clamp(18px,1.8vw,28px);}
-#page-investments .e-card .e-pct{font-size:clamp(12px,1.2vw,18px);}
-#page-investments .e-card .e-pct-arrow{font-size:clamp(7px,0.6vw,9px);}
+#page-investments .capex-section-card{padding:clamp(16px,2vw,32px) clamp(20px,2.5vw,40px) clamp(14px,1.8vw,28px);border-radius:clamp(14px,1.8vw,26px);}
+#page-investments .e-card .e-sec{padding:clamp(8px,1vw,16px) 10px;}
+#page-investments .e-card .e-sec-label{font-size:clamp(9px,0.85vw,14px);margin-bottom:clamp(6px,0.8vw,14px);}
+#page-investments .e-card .e-big{font-size:clamp(26px,2.8vw,46px);}
+#page-investments .e-card .e-big-unit{font-size:clamp(10px,1vw,16px);}
+#page-investments .e-card .e-sub{font-size:clamp(9px,0.8vw,14px);}
+#page-investments .e-card .e-mid{font-size:clamp(26px,2.8vw,46px);}
+#page-investments .e-card .e-pct{font-size:clamp(16px,1.6vw,26px);}
+#page-investments .e-card .e-pct-arrow{font-size:clamp(9px,0.8vw,13px);}
+#page-investments .e-kpi-sep{height:44px;}
+#page-investments .e-col-title{font-size:clamp(18px,2vw,28px);}
