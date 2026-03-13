@@ -63,7 +63,7 @@
 .e-kpi-sep{width:1px;height:30px;background:rgba(138,146,171,0.2);}
 /* Energy page overrides (larger sizes) */
 #page-energy .e-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
-#page-energy .e-card{flex:1;}
+#page-energy .e-card{width:400px;max-width:100%;}
 #page-energy .e-card .e-sec{padding:clamp(4px,0.5vw,8px) 6px;}
 #page-energy .e-card .e-sec-label{font-size:clamp(7px,0.65vw,10px);margin-bottom:clamp(3px,0.5vw,8px);}
 #page-energy .e-card .e-big{font-size:clamp(18px,1.8vw,28px);}
