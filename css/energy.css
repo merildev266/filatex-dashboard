@@ -1,0 +1,84 @@
+/* === Energy Styles === */
+
+.enr-filter:hover{color:#00ab63;background:rgba(0,171,99,0.08);}
+.enr-filter.active{background:linear-gradient(135deg,rgba(0,171,99,0.28),rgba(60,140,60,0.18));color:#a8d98a;border:none;box-shadow:0 0 12px rgba(0,171,99,0.15);}
+
+/* -- EnR Projects panel -- */
+#panel-enr-projets{position:fixed;inset:0;z-index:250;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);}
+#panel-enr-projets.active{transform:translateX(0);}
+.enrp-topbar{display:flex;align-items:center;justify-content:center;padding:28px 36px;}
+.enrp-col-header{font-size:11px;font-weight:800;letter-spacing:0.35em;text-transform:uppercase;padding:10px 16px 10px 0;margin-bottom:16px;border-bottom:1px solid rgba(0,171,99,0.15);}
+.enrp-proj-card{background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:16px;padding:20px;margin-bottom:12px;transition:border-color 0.25s,background 0.25s,transform 0.25s;}
+.enrp-proj-card:hover{border-color:rgba(0,171,99,0.3);background:rgba(0,171,99,0.08);transform:translateY(-2px);}
+.enrp-proj-name{font-size:13px;font-weight:700;color:rgba(255,255,255,0.88);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.enrp-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.enrp-kpi{background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 12px;}
+.enrp-kpi-label{font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(0,171,99,0.5);margin-bottom:4px;}
+.enrp-kpi-main{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:3px;}
+.enrp-kpi-init{font-size:11px;color:rgba(255,255,255,0.35);}
+.enrp-kpi-reel{font-size:14px;font-weight:800;color:rgba(255,255,255,0.85);}
+.enrp-kpi-sub{font-size:9px;color:rgba(255,255,255,0.28);}
+.enrp-phase-dev{color:#00ab63;}
+.enrp-phase-const{color:#FDB823;}
+
+/* -- HFO inner page -- transparent card style -- */
+#inner-hfo .kpi-consolidated{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:18px;}
+#inner-hfo .kpi-box{background:rgba(138,146,171,0.06);border:1px solid rgba(138,146,171,0.18);border-radius:12px;}
+#inner-hfo .site-card{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:20px;}
+#inner-hfo .site-card:hover{background:rgba(var(--card-status-rgb,30,77,99),0.08);border-color:rgba(var(--card-status-rgb,30,77,99),0.45);box-shadow:0 16px 40px rgba(var(--card-status-rgb,30,77,99),0.22);}
+#inner-hfo .dkpi{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:14px;}
+#inner-hfo .conso-card{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:14px;}
+#inner-hfo .s1-card{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
+#inner-hfo .contrib-banner{background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.18);border-radius:16px;}
+
+/* == ENERGY PAGE -- 2x2 grid, no scroll == */
+#page-energy{overflow:hidden;}
+#page-energy .inner-page-inner{min-height:calc(100vh - 70px);padding:6px clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:center;}
+#page-energy .capex-section-card{padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);border-radius:clamp(12px,1.5vw,22px);}
+/* Base e-* classes (shared across pages) */
+.e-wrap{display:flex;gap:clamp(10px,1.5vw,20px);padding:0;align-items:stretch;}
+.e-col{flex:1;display:flex;flex-direction:column;gap:clamp(8px,0.8vw,12px);min-width:0;}
+.e-col-title{font-size:clamp(14px,1.5vw,20px);font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:0;}
+.e-col-title-proj{margin-top:clamp(30px,4vw,50px);font-size:clamp(10px,1vw,14px);}
+.e-card{width:100%;display:flex;flex-direction:column;justify-content:space-evenly;box-sizing:border-box;overflow:hidden;}
+.e-card .e-sec{border-bottom:1px solid rgba(138,146,171,0.12);padding:clamp(3px,0.4vw,6px) 4px;}
+.e-card .e-sec:last-child{border-bottom:none;}
+.e-card .e-sec-label{font-size:clamp(6px,0.55vw,9px);font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(138,146,171,0.5);margin-bottom:clamp(2px,0.4vw,6px);text-align:center;}
+.e-card .e-big{font-size:clamp(14px,1.4vw,22px);font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:-0.5px;}
+.e-card .e-big-unit{font-size:clamp(7px,0.65vw,10px);font-weight:400;color:rgba(255,255,255,0.4);}
+.e-card .e-sub{font-size:clamp(6px,0.5vw,8px);color:rgba(255,255,255,0.3);margin-top:1px;}
+.e-card .e-mid{font-size:clamp(12px,1.2vw,18px);font-weight:800;letter-spacing:-0.5px;}
+.e-card .e-mid-unit{font-size:clamp(7px,0.65vw,10px);font-weight:400;}
+.e-card .e-pct{font-size:clamp(10px,1vw,15px);font-weight:800;}
+.e-card .e-pct-arrow{font-size:clamp(6px,0.5vw,8px);}
+.e-card-mini{flex:0 0 auto !important;height:auto !important;min-height:0 !important;overflow:visible !important;padding:clamp(8px,1vw,14px) clamp(10px,1.5vw,20px) !important;}
+.e-section-label{font-size:clamp(7px,0.6vw,9px);font-weight:700;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.25);text-align:center;margin:0;}
+.e-card-hdr{display:flex;align-items:baseline;gap:6px;padding:clamp(2px,0.3vw,5px) clamp(6px,0.8vw,12px) 0;}
+.e-card-hdr-title{font-size:clamp(13px,1.3vw,18px);font-weight:800;letter-spacing:-0.5px;}
+.e-card-hdr-sub{font-size:clamp(5px,0.45vw,7px);font-weight:700;letter-spacing:0.4em;text-transform:uppercase;}
+/* Energy page overrides (larger sizes) */
+#page-energy .e-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
+#page-energy .e-card{flex:1;}
+#page-energy .e-card .e-sec{padding:clamp(4px,0.5vw,8px) 6px;}
+#page-energy .e-card .e-sec-label{font-size:clamp(7px,0.65vw,10px);margin-bottom:clamp(3px,0.5vw,8px);}
+#page-energy .e-card .e-big{font-size:clamp(18px,1.8vw,28px);}
+#page-energy .e-card .e-big-unit{font-size:clamp(8px,0.75vw,12px);}
+#page-energy .e-card .e-sub{font-size:clamp(7px,0.6vw,10px);}
+#page-energy .e-card .e-mid{font-size:clamp(15px,1.5vw,24px);}
+#page-energy .e-card .e-mid-unit{font-size:clamp(8px,0.75vw,12px);}
+#page-energy .e-card .e-pct{font-size:clamp(12px,1.2vw,18px);}
+#page-energy .e-card .e-pct-arrow{font-size:clamp(7px,0.6vw,9px);}
+#page-energy .e-card .e-arret-num{font-size:clamp(22px,2.4vw,38px);font-weight:800;letter-spacing:-1px;}
+#page-energy .e-card .e-arret-sub{font-size:clamp(7px,0.6vw,10px);color:rgba(255,255,255,0.3);margin-top:1px;}
+#page-energy .e-card .e-arret-sub2{font-size:clamp(7px,0.55vw,9px);color:rgba(255,255,255,0.25);margin-top:0;}
+#page-energy .e-card .e-arret-sub3{font-size:clamp(7px,0.55vw,9px);color:rgba(255,255,255,0.2);margin-top:0;}
+/* EnR card overrides */
+#page-energy .e-card.e-enr .e-sec{border-color:rgba(0,171,99,0.08);}
+#page-energy .e-card.e-enr .e-card-hdr-title{color:#a8d98a;}
+#page-energy .e-card.e-enr .e-card-hdr-sub{color:rgba(0,171,99,0.4);}
+#page-energy .e-card.e-enr .csec-kpi-label{font-size:clamp(8px,0.75vw,11px);}
+#page-energy .e-card.e-enr .csec-kpi-val{font-size:clamp(22px,2.4vw,40px);}
+
+.enr-kpi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;transition:all 0.25s;}
+.enr-kpi-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);box-shadow:0 8px 30px rgba(0,0,0,0.2);}
+.neutral-card{background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.18);border-radius:20px;padding:28px 24px;}

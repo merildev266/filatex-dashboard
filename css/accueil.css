@@ -1,0 +1,72 @@
+/* === Accueil / Home Styles === */
+
+/* == HOME == */
+#home{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;gap:0;width:100%;box-sizing:border-box;}
+.home-header{position:absolute;top:48px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 24px;box-sizing:border-box;animation:fadeIn 0.8s ease both;}
+.logo-groupe{height:90px;width:auto;pointer-events:none;}
+.header-divider{width:48px;height:1px;background:var(--border);}
+.header-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--text-dim);}
+.cards-grid{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;padding:0 40px;margin:0 auto;animation:slideIn 0.7s 0.15s ease both;}
+.cards-row1{display:inline-grid;grid-template-columns:repeat(5,220px);gap:20px;justify-self:center;}
+
+
+.card{position:relative;background:rgba(58,57,92,0.18);border:1px solid rgba(58,57,92,0.35);border-radius:20px;padding:34px 24px;cursor:pointer;transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease,background 0.3s ease;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.card-sm{position:relative;background:var(--dark2);border:1px solid var(--border);border-radius:18px;padding:20px 14px 16px;cursor:pointer;transition:transform 0.28s ease,box-shadow 0.28s ease,border-color 0.28s ease,background 0.28s ease;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;gap:8px;}
+.card:hover{transform:translateY(-10px);}
+.card:active{transform:translateY(-5px) scale(0.99);}
+.card-accent{display:none;}
+.card *{pointer-events:none;}
+.card-energy:hover{box-shadow:0 28px 80px rgba(0,171,99,0.22);border-color:rgba(0,171,99,0.45);background:rgba(0,171,99,0.06);}
+.card-invest:hover{box-shadow:0 28px 80px rgba(243,112,86,0.22);border-color:rgba(243,112,86,0.45);background:rgba(243,112,86,0.06);}
+.card-props:hover {box-shadow:0 28px 80px rgba(253,184,35,0.18);border-color:rgba(253,184,35,0.38);background:rgba(253,184,35,0.04);}
+.card-capex:hover{box-shadow:0 28px 80px rgba(94,76,159,0.25);border-color:rgba(94,76,159,0.48);background:rgba(94,76,159,0.06);}
+.card-csi:hover{box-shadow:0 28px 80px rgba(0,150,199,0.22);border-color:rgba(0,150,199,0.45);background:rgba(0,150,199,0.06);}
+
+.card-sm-sub{font-size:8.5px;color:var(--text-dim);letter-spacing:0.04em;}
+.card-logo-wrap{display:flex;justify-content:center;align-items:center;width:100%;padding:0;box-sizing:border-box;}
+.card-logo-wrap svg{height:56px;width:auto;max-width:100%;pointer-events:none;}
+.card-logo-wrap img{height:72px;width:auto;pointer-events:none;}
+.card-energy .card-logo-wrap svg{height:62px;}
+.card-invest .card-logo-wrap svg{height:50px;}
+.card-props .card-logo-wrap svg{height:57px;}
+.card-capex .card-logo-wrap svg{height:50px;}
+.card-csi .card-logo-wrap svg{height:50px;}
+.card-kpi-label{font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-dim);margin-top:28px;margin-bottom:6px;}
+.card-kpi-val{font-size:14px;font-weight:600;color:var(--text-muted);}
+
+/* == RESPONSIVE HOME == */
+@media (max-width:900px) {
+  .cards-row1{grid-template-columns:repeat(2,1fr)!important;gap:16px!important;max-width:400px;margin:0 auto;}
+  .card{padding:22px 12px!important;border-radius:14px!important;}
+  .card-logo-wrap{padding:0!important;}
+  .card-energy .card-logo-wrap svg{height:48px!important;}
+  .card-invest .card-logo-wrap svg{height:38px!important;}
+  .card-props .card-logo-wrap svg{height:44px!important;}
+  .card-capex .card-logo-wrap svg{height:38px!important;}
+  .card-csi .card-logo-wrap svg{height:38px!important;}
+  .cards-grid{padding:0 24px!important;}
+  .home-header svg[aria-label="Groupe Filatex"]{height:80px!important;}
+  .home-header .home-values{gap:0!important;flex-wrap:wrap;justify-content:center;}
+  .home-header .home-values span{font-size:8px!important;letter-spacing:0.3em!important;}
+  .home-header .home-values .home-val-sep{width:16px!important;margin:0 8px!important;}
+  #home-footer-magritte{font-size:9px!important;}
+  #home-footer-pmo{font-size:8px!important;}
+}
+@media (max-width:600px) {
+  .cards-row1{gap:10px!important;max-width:300px;}
+  .card{padding:16px 10px!important;border-radius:12px!important;}
+  .card-logo-wrap{padding:0!important;}
+  .card-energy .card-logo-wrap svg{height:34px!important;}
+  .card-invest .card-logo-wrap svg{height:27px!important;}
+  .card-props .card-logo-wrap svg{height:31px!important;}
+  .card-capex .card-logo-wrap svg{height:27px!important;}
+  .card-csi .card-logo-wrap svg{height:27px!important;}
+  .cards-grid{padding:0 16px!important;}
+  .home-header{margin-bottom:20px!important;}
+  .home-header svg[aria-label="Groupe Filatex"]{height:56px!important;}
+  .home-header .home-values span{font-size:7px!important;letter-spacing:0.2em!important;}
+  .home-header .home-values .home-val-sep{width:10px!important;margin:0 5px!important;}
+  #home-footer-magritte{font-size:8px!important;}
+  #home-footer-pmo{font-size:7px!important;}
+  #home{padding:24px 0 50px!important;}
+}

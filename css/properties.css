@@ -1,0 +1,33 @@
+/* === Properties Styles === */
+
+/* == PROPERTIES GRID == */
+.p-wrap{min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;padding:0 clamp(16px,4vw,60px) 40px;}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2.5vw,40px);width:100%;max-width:clamp(600px,72vw,1100px);}
+.p-col{display:flex;flex-direction:column;align-items:center;}
+.p-title{font-size:clamp(16px,2vw,28px);font-weight:800;letter-spacing:-0.5px;line-height:1;margin-bottom:4px;text-align:center;}
+.p-subtitle{font-size:clamp(6px,0.5vw,9px);letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:clamp(8px,1vw,16px);color:#fff;}
+.p-card{width:100%;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;}
+.p-card .csec-kpi-label{font-size:clamp(6px,0.55vw,9px);}
+.p-card .csec-kpi-val{font-size:clamp(14px,1.5vw,24px);}
+.capex-section-card[data-pole="foncier"]:hover{border-color:rgba(253,184,35,0.5);background:rgba(253,184,35,0.06);box-shadow:0 16px 50px rgba(253,184,35,0.15);}
+.capex-section-card[data-pole="dev"]:hover{border-color:rgba(66,106,179,0.5);background:rgba(66,106,179,0.06);box-shadow:0 16px 50px rgba(66,106,179,0.15);}
+.capex-section-card[data-pole="travaux"]:hover{border-color:rgba(243,112,86,0.5);background:rgba(243,112,86,0.06);box-shadow:0 16px 50px rgba(243,112,86,0.15);}
+.capex-section-card[data-pole="commercial"]:hover{border-color:rgba(0,171,99,0.5);background:rgba(0,171,99,0.06);box-shadow:0 16px 50px rgba(0,171,99,0.15);}
+.capex-section-card[data-pole="recouvrement"]:hover{border-color:rgba(94,76,159,0.5);background:rgba(94,76,159,0.06);box-shadow:0 16px 50px rgba(94,76,159,0.15);}
+.capex-section-card[data-pole="sav"]:hover{border-color:rgba(0,146,158,0.5);background:rgba(0,146,158,0.06);box-shadow:0 16px 50px rgba(0,146,158,0.15);}
+
+/* Properties inner-page KPI cards */
+.props-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.props-kpi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;text-align:center;}
+.props-kpi-label{font-size:9px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:8px;}
+.props-kpi-val{font-size:28px;font-weight:800;color:#fff;}
+.props-kpi-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;}
+.props-placeholder{background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.08);border-radius:16px;padding:40px;text-align:center;color:rgba(255,255,255,0.2);font-size:13px;margin-bottom:24px;}
+#inner-props-commercial .groups-table{table-layout:fixed;width:100%;}
+#inner-props-commercial .groups-table th:nth-child(1),#inner-props-commercial .groups-table td:nth-child(1){width:7%;}
+#inner-props-commercial .groups-table th:nth-child(2),#inner-props-commercial .groups-table td:nth-child(2){width:24%;}
+#inner-props-commercial .groups-table th:nth-child(3),#inner-props-commercial .groups-table td:nth-child(3){width:14%;}
+#inner-props-commercial .groups-table th:nth-child(4),#inner-props-commercial .groups-table td:nth-child(4){width:10%;}
+#inner-props-commercial .groups-table th:nth-child(5),#inner-props-commercial .groups-table td:nth-child(5){width:22%;}
+#inner-props-commercial .groups-table th:nth-child(6),#inner-props-commercial .groups-table td:nth-child(6){width:23%;}
+#inner-props-commercial .groups-table td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
