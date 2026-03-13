@@ -340,16 +340,16 @@
 
         <div class="e-sec">
           <div class="e-sec-label">Puissance dispo vs Contractuel</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
+          <div class="e-kpi-row">
+            <div class="e-kpi-left">
               <div class="e-big"><span id="e-hfo-mw-dispo">—</span> <span class="e-big-unit">MW</span></div>
               <div class="e-sub">Disponible</div>
             </div>
-            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+            <div class="e-kpi-center">
               <div id="e-hfo-pct-contrat" class="e-pct">—</div>
               <div id="e-hfo-pct-arrow" class="e-pct-arrow">—</div>
             </div>
-            <div style="text-align:center;flex:1;">
+            <div class="e-kpi-right">
               <div class="e-big"><span id="e-hfo-mw-contrat">—</span> <span class="e-big-unit">MW</span></div>
               <div class="e-sub">Contractuel</div>
             </div>
@@ -358,16 +358,16 @@
 
         <div class="e-sec">
           <div class="e-sec-label">Production à date vs Prévisionnelle</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
+          <div class="e-kpi-row">
+            <div class="e-kpi-left">
               <div class="e-big"><span id="e-hfo-prod-reel">—</span> <span class="e-big-unit">MWh</span></div>
               <div class="e-sub">Réel · <span id="e-hfo-prod-filter">—</span></div>
             </div>
-            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+            <div class="e-kpi-center">
               <div id="e-hfo-prod-pct" class="e-pct">—</div>
               <div id="e-hfo-prod-arrow" class="e-pct-arrow">—</div>
             </div>
-            <div style="text-align:center;flex:1;">
+            <div class="e-kpi-right">
               <div class="e-big"><span id="e-hfo-prod-prev">—</span> <span class="e-big-unit">MWh</span></div>
               <div class="e-sub">Prévisionnel</div>
             </div>
@@ -376,13 +376,13 @@
 
         <div class="e-sec">
           <div class="e-sec-label">SFOC · SLOC (pondérés par production)</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
+          <div class="e-kpi-row">
+            <div class="e-kpi-left">
               <div class="e-big"><span id="e-hfo-sfoc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
               <div class="e-sub">SFOC moyen</div>
             </div>
-            <div style="width:1px;height:30px;background:rgba(138,146,171,0.2);flex:0 0 auto;"></div>
-            <div style="text-align:center;flex:1;">
+            <div class="e-kpi-center"><div class="e-kpi-sep"></div></div>
+            <div class="e-kpi-right">
               <div class="e-big"><span id="e-hfo-sloc-avg">—</span> <span class="e-big-unit">g/kWh</span></div>
               <div class="e-sub">SLOC moyen</div>
             </div>
@@ -391,13 +391,13 @@
 
         <div class="e-sec">
           <div class="e-sec-label">Moteurs à l'arrêt</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
+          <div class="e-kpi-row">
+            <div class="e-kpi-left">
               <div id="e-hfo-arret-count" class="e-arret-num">—</div>
               <div class="e-arret-sub">/ <span id="e-hfo-arret-total">—</span> moteurs</div>
             </div>
-            <div style="width:1px;height:30px;background:rgba(138,146,171,0.2);flex:0 0 auto;"></div>
-            <div style="text-align:center;flex:1;">
+            <div class="e-kpi-center"><div class="e-kpi-sep"></div></div>
+            <div class="e-kpi-right">
               <div class="e-mid" style="color:rgba(243,112,86,0.8);"><span id="e-hfo-arret-mwh-date">—</span> <span class="e-mid-unit" style="color:rgba(243,112,86,0.5);">MWh</span></div>
               <div class="e-arret-sub2">manque · <span id="e-hfo-arret-period">—</span></div>
             </div>
@@ -426,7 +426,6 @@
             <div style="font-size:18px;font-weight:700;color:rgba(253,184,35,0.8);" id="e-hfo-proj-encours">—</div>
             <div style="font-size:7px;color:rgba(253,184,35,0.5);text-transform:uppercase;">en cours</div>
           </div>
-          <div style="font-size:14px;color:rgba(138,146,171,0.35);">›</div>
         </div>
       </div>
 
@@ -443,16 +442,16 @@
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production moyenne vs Capacité</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
+          <div class="e-kpi-row">
+            <div class="e-kpi-left">
               <div class="e-big"><span id="e-enr-mwhj">—</span> <span class="e-big-unit">MWh/j</span></div>
               <div class="e-sub">Moy. journalière</div>
             </div>
-            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+            <div class="e-kpi-center">
               <div id="e-enr-ratio" class="e-pct" style="color:#00ab63;">—</div>
               <div class="e-pct-arrow" style="color:rgba(0,171,99,0.5);">kWh/kWc</div>
             </div>
-            <div style="text-align:center;flex:1;">
+            <div class="e-kpi-right">
               <div class="e-big"><span id="e-enr-cap">—</span> <span class="e-big-unit">MWc</span></div>
               <div class="e-sub">Installés</div>
             </div>
@@ -461,16 +460,16 @@
 
         <div class="e-sec">
           <div class="e-sec-label" style="color:rgba(0,171,99,0.55);">Production cumulée · Mix EnR</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="text-align:center;flex:1;">
+          <div class="e-kpi-row">
+            <div class="e-kpi-left">
               <div class="e-big" style="color:#00ab63;"><span id="e-enr-cumul">—</span> <span class="e-big-unit" style="color:rgba(0,171,99,0.5);">MWh</span></div>
               <div class="e-sub">Depuis janvier</div>
             </div>
-            <div style="text-align:center;flex:0 0 auto;padding:0 4px;">
+            <div class="e-kpi-center">
               <div id="e-enr-mix" class="e-pct" style="color:#00ab63;">—</div>
               <div class="e-pct-arrow" style="color:rgba(0,171,99,0.5);">du mix</div>
             </div>
-            <div style="text-align:center;flex:1;">
+            <div class="e-kpi-right">
               <div class="e-big"><span id="e-enr-sites-count">—</span> <span class="e-big-unit">sites</span></div>
               <div class="e-sub">En production</div>
             </div>
@@ -499,7 +498,6 @@
             <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.8);" id="e-enr-proj-mw">—</div>
             <div style="font-size:7px;color:rgba(0,171,99,0.4);text-transform:uppercase;">MWc</div>
           </div>
-          <div style="font-size:14px;color:rgba(0,171,99,0.35);">›</div>
         </div>
       </div>
       </div><!-- /e-col EnR -->
