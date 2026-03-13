@@ -63,7 +63,8 @@ function checkLogin(){
 }
 // Auto-login if already authenticated in this session
 if(sessionStorage.getItem('dash_auth')==='1'){
-  document.getElementById('login-screen').classList.add('hidden');
+  var ls = document.getElementById('login-screen');
+  if(ls) ls.classList.add('hidden');
 }
 
 // ══ NAVIGATION ══
