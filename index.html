@@ -3531,8 +3531,9 @@ function closeDiegoDetail() {
     <div id="detail-gen-cards" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
 
     <!-- ══ SECTION 3 — BLACKOUTS ══ -->
-    <div class="detail-section-label" id="detail-s3-label" style="margin-top:32px;">Section 3 — Blackouts</div>
-    <div id="detail-blackout-list"></div>
+    <div class="detail-section-label" id="detail-s3-label" style="margin-top:32px;">Blackouts</div>
+    <div id="detail-blackout-card" style="display:flex;justify-content:center;margin-bottom:16px;"></div>
+    <div id="detail-blackout-list" style="display:none;"></div>
 
   </div>
 </div>
@@ -6769,27 +6770,83 @@ function _calcBoDur(e) {
   }
   return '—';
 }
+function _calcBoDurMinutes(e) {
+  if (e.duration) {
+    const dm = e.duration.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (dm) return parseInt(dm[1]) * 60 + parseInt(dm[2]);
+  }
+  if (e.start && e.end) {
+    const sm = e.start.match(/(\d{1,2}):(\d{2})/);
+    const em = e.end.match(/(\d{1,2}):(\d{2})/);
+    if (sm && em) {
+      let diff = (parseInt(em[1])*60+parseInt(em[2])) - (parseInt(sm[1])*60+parseInt(sm[2]));
+      if (diff <= 0) diff += 1440;
+      return diff;
+    }
+  }
+  return 0;
+}
+function _fmtDurFromMin(min) {
+  if (min <= 0) return '—';
+  const h = Math.floor(min/60), m = Math.round(min%60);
+  if (h > 0) return h + 'h' + (m > 0 ? String(m).padStart(2,'0') : '');
+  return m + 'min';
+}
+
 function renderBlackouts(siteId) {
   const el = document.getElementById('detail-blackout-list');
+  const cardEl = document.getElementById('detail-blackout-card');
   if (!el) return;
   const s = siteData[siteId];
-  if (!s) { el.innerHTML = ''; return; }
+  if (!s) { el.innerHTML = ''; if(cardEl) cardEl.innerHTML = ''; return; }
 
   const now = new Date();
-  const dataYear = now.getFullYear();
-  let filterMonth = null;
-  if (currentFilter === 'month') {
-    filterMonth = selectedMonthIndex + 1;
-  }
+  const dataYear = selectedYear || now.getFullYear();
 
   const bos = (s.blackouts || []).filter(b => {
     if (!b.date) return false;
     const parts = b.date.split('-');
     const y = parseInt(parts[0]), m = parseInt(parts[1]);
     if (y !== dataYear) return false;
-    if (filterMonth !== null && m !== filterMonth) return false;
+    if (currentFilter === 'month' && m !== selectedMonthIndex + 1) return false;
+    if (currentFilter === 'quarter') {
+      const qStart = (selectedQuarter - 1) * 3 + 1;
+      if (m < qStart || m > qStart + 2) return false;
+    }
     return true;
   });
+
+  // Calculate KPIs
+  const count = bos.length;
+  let totalMin = 0;
+  bos.forEach(b => { totalMin += _calcBoDurMinutes(b); });
+  const avgMin = count > 0 ? totalMin / count : 0;
+  const avgDur = _fmtDurFromMin(Math.round(avgMin));
+  const totalDur = _fmtDurFromMin(totalMin);
+
+  // Render summary card
+  if (cardEl) {
+    cardEl.innerHTML = `<div class="s1-card" style="cursor:pointer;padding:14px 24px;max-width:360px;width:100%;transition:border-color 0.2s;" onclick="toggleBlackoutList()" onmouseenter="this.style.borderColor='var(--orange)'" onmouseleave="this.style.borderColor=''">
+      <div style="display:flex;justify-content:center;gap:24px;">
+        <div style="text-align:center;">
+          <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:4px;">Nombre</div>
+          <div style="font-size:22px;font-weight:700;color:${count>0?'var(--orange)':'var(--text)'};">${count}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:4px;">Durée moy.</div>
+          <div style="font-size:22px;font-weight:700;color:var(--text);">${avgDur}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:4px;">Durée totale</div>
+          <div style="font-size:22px;font-weight:700;color:var(--text);">${totalDur}</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:8px;font-size:8px;color:var(--text-dim);">Cliquez pour voir le détail ▾</div>
+    </div>`;
+  }
+
+  // Hide list by default
+  el.style.display = 'none';
 
   // Group by month
   const byMonth = {};
@@ -6840,6 +6897,16 @@ function renderBlackouts(siteId) {
       <tbody>${rows}</tbody>
     </table>
   </div>`;
+}
+
+function toggleBlackoutList() {
+  const el = document.getElementById('detail-blackout-list');
+  if (!el) return;
+  if (el.style.display === 'none') {
+    el.style.display = '';
+  } else {
+    el.style.display = 'none';
+  }
 }
 
 // ══ RENDER DETAIL ══
