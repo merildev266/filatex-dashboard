@@ -42,7 +42,10 @@ function _invCalcCapex(type) {
   var budgetStr = budgetTotal >= 1 ? budgetTotal.toFixed(1) : (budgetTotal * 1000).toFixed(0) + ' k';
   var decaisseStr = decaisseTotal >= 1 ? decaisseTotal.toFixed(1) : (decaisseTotal * 1000).toFixed(0) + ' k';
   if (withCapex.length === 0) { budgetStr = '—'; decaisseStr = '—'; pctDecaisse = '—'; }
-  return { total: total, encours: encours, budget: budgetStr, decaisse: decaisseStr, pct: pctDecaisse === '—' ? '—' : pctDecaisse + '%' };
+  var reste = budgetTotal - decaisseTotal;
+  var resteStr = reste.toFixed(1);
+  if (withCapex.length === 0) resteStr = '—';
+  return { total: total, encours: encours, budget: budgetStr, decaisse: decaisseStr, pct: pctDecaisse === '—' ? '—' : pctDecaisse + '%', withCapex: withCapex.length, sansCapex: total - withCapex.length, reste: resteStr };
 }
 
 function updateInvLanding() {
@@ -53,6 +56,11 @@ function updateInvLanding() {
   g('inv-ext-budget').textContent = ext.budget;
   g('inv-ext-decaisse').textContent = ext.decaisse;
   g('inv-ext-pct').textContent = ext.pct;
+  g('inv-ext-with-capex').textContent = ext.withCapex;
+  g('inv-ext-total2').textContent = ext.total;
+  g('inv-ext-sans-capex').textContent = ext.sansCapex;
+  g('inv-ext-exec-pct').textContent = ext.pct;
+  g('inv-ext-reste').textContent = ext.reste;
 
   var int = _invCalcCapex('interne');
   g('inv-int-total').textContent = int.total;
@@ -60,6 +68,11 @@ function updateInvLanding() {
   g('inv-int-budget').textContent = int.budget;
   g('inv-int-decaisse').textContent = int.decaisse;
   g('inv-int-pct').textContent = int.pct;
+  g('inv-int-with-capex').textContent = int.withCapex;
+  g('inv-int-total2').textContent = int.total;
+  g('inv-int-sans-capex').textContent = int.sansCapex;
+  g('inv-int-exec-pct').textContent = int.pct;
+  g('inv-int-reste').textContent = int.reste;
 }
 // Populate landing on load — call directly since script runs after DOM
 updateInvLanding();
