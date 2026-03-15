@@ -1,7 +1,7 @@
 /* === Investments Styles === */
 
 /* Page layout — same as Energy */
-#page-investments{overflow:hidden;}
+#page-investments{overflow:hidden;overflow-y:auto;scrollbar-width:none;}
 #page-investments .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
 #page-investments .e-wrap{gap:clamp(40px,8vw,120px);width:90%;margin:0 auto;align-items:stretch;}
 #page-investments .e-col{flex:1;display:flex;flex-direction:column;}
