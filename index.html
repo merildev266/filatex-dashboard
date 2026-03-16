@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="css/properties.css">
 <link rel="stylesheet" href="css/capex.css">
 <link rel="stylesheet" href="css/csi.css">
+<link rel="stylesheet" href="css/reporting.css">
 </head>
 <body>
 
@@ -278,6 +279,14 @@
 </svg></div>
     </div>
 
+    <!-- CARD REPORTING -->
+    <div class="card card-reporting" id="btn-reporting" onclick="openPage('reporting')">
+      <div class="card-accent"></div>
+      <div class="card-logo-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
+  <text fill="#ffffff" x="90" y="38" text-anchor="middle" font-family="'Larken','Playfair Display',serif" font-size="32" font-weight="400" font-style="italic">Reporting</text>
+</svg></div>
+    </div>
+
     </div><!-- end cards-row1 -->
 
   </div>
@@ -315,6 +324,10 @@
   <button class="bnav-item" data-pole="csi" onclick="navTo('csi')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="2.5"/><path d="M12 10.5v2"/><path d="M8 16l4-3.5 4 3.5"/><path d="M4 20l4-4"/><path d="M20 20l-4-4"/><path d="M4 20h16"/><path d="M2 3l5 4L12 4l5 3 5-4" stroke-width="1.5"/></svg>
     <span>CSI</span>
+  </button>
+  <button class="bnav-item" data-pole="reporting" onclick="navTo('reporting')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <span>Reporting</span>
   </button>
 </div>
 
@@ -1758,12 +1771,79 @@
   </div>
 </div>
 
+<!-- ══════════════ PAGE REPORTING ══════════════ -->
+<div id="page-reporting" class="placeholder-page" style="background:#080d18;">
+  <div class="sd-sticky-bar" style="border-bottom:1px solid rgba(90,175,175,0.15);">
+    <div class="nav-back"><button class="back-btn" onclick="closePage('page-reporting')" style="border-color:rgba(90,175,175,0.3);color:#5aafaf;">Accueil</button></div>
+    <div class="sd-site-name" style="color:#5aafaf;">Reporting Hebdomadaire</div>
+    <div class="nav-filter"></div>
+  </div>
+  <div class="inner-page-inner">
+
+    <!-- GLOBAL SUMMARY -->
+    <div id="rpt-global-summary" class="rpt-summary-grid"></div>
+
+    <!-- 3 POLES -->
+    <div class="rpt-poles-grid">
+
+      <!-- POLE 1: ENERGY ENR -->
+      <div class="rpt-pole-card rpt-pole-enr" onclick="openReportingPole('enr')">
+        <div class="rpt-pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <div class="rpt-pole-title" style="color:#00ab63;">Energy EnR</div>
+        <div class="rpt-pole-sub">21 projets</div>
+        <div class="rpt-pole-kpis" id="rpt-pole-enr-kpis"></div>
+      </div>
+
+      <!-- POLE 2: PROPERTIES -->
+      <div class="rpt-pole-card rpt-pole-props" style="opacity:0.4;pointer-events:none;">
+        <div class="rpt-pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="8" y2="6.01"/><line x1="12" y1="6" x2="12" y2="6.01"/><line x1="16" y1="6" x2="16" y2="6.01"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/></svg>
+        </div>
+        <div class="rpt-pole-title" style="color:#FDB823;">Properties</div>
+        <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
+      </div>
+
+      <!-- POLE 3: INVESTMENTS -->
+      <div class="rpt-pole-card rpt-pole-inv" style="opacity:0.4;pointer-events:none;">
+        <div class="rpt-pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f37056" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+        </div>
+        <div class="rpt-pole-title" style="color:#f37056;">Investments</div>
+        <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
+      </div>
+
+    </div>
+
+    <!-- DETAIL POLE ENR -->
+    <div id="rpt-enr-detail" class="rpt-detail-section" style="display:none;">
+      <div class="rpt-detail-header">
+        <button class="rpt-back-btn" onclick="closeReportingPole()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+        <h2 style="color:#00ab63;margin:0;font-size:18px;">Reporting EnR - Semaine du <span id="rpt-enr-week"></span></h2>
+      </div>
+
+      <!-- KPI SUMMARY BAR -->
+      <div id="rpt-enr-kpi-bar" class="rpt-kpi-bar"></div>
+
+      <!-- PROJECTS TABLE -->
+      <div id="rpt-enr-table-wrap" class="rpt-table-wrap"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/reporting.js"></script>
 <script src="js/energy.js"></script>
 <script src="js/capex.js"></script>
 <script src="js/properties.js"></script>
 <script src="js/projects.js"></script>
 <script src="js/investments.js"></script>
 <script src="js/csi.js"></script>
+<script src="reporting_data.js"></script>
 <script src="js/accueil.js"></script>
 </body>
 </html>
