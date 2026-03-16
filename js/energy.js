@@ -1071,7 +1071,7 @@ function closeHfoProjets(){
         </div>
         <div class="enrp-kpi">
           <div class="enrp-kpi-label">Construction</div>
-          ${p.constProg > 0 ? '<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px 0 4px;"><div style="height:100%;width:'+Math.round(p.constProg*100)+'%;background:'+(p.glissement>0?'#ff5050':color)+';border-radius:3px;"></div></div><div style="font-size:16px;font-weight:800;color:'+(p.glissement>0?'#ff5050':color)+';">'+Math.round(p.constProg*100)+'%</div>' : ''}
+          ${p.constProg > 0 ? '<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px 0 4px;"><div style="height:100%;width:'+Math.round(p.constProg*100)+'%;background:#4a9eff;border-radius:3px;"></div></div><div style="font-size:16px;font-weight:800;color:#4a9eff;">'+Math.round(p.constProg*100)+'%</div>' : ''}
           <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:1.8;">
             <div>Début: <span style="color:${color};">${fmtDate(p.constStart)}</span></div>
             <div>COD: <span style="color:${p.glissement > 0 ? '#ff5050' : color};">${fmtDate(p.constEnd)}</span></div>
