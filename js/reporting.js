@@ -32,9 +32,9 @@ function openReportingPole(pole) {
   document.querySelector('.rpt-poles-grid').style.display = 'none';
   document.getElementById('rpt-global-summary').style.display = 'none';
 
-  // Update sticky bar: Accueil -> Retour
   var backBtn = document.getElementById('rpt-back-btn');
   var title = document.getElementById('rpt-sticky-title');
+  var filters = document.getElementById('rpt-sticky-filters');
 
   if (pole === 'enr') {
     var detail = document.getElementById('rpt-enr-detail');
@@ -45,6 +45,13 @@ function openReportingPole(pole) {
     backBtn.style.color = '#00ab63';
     title.textContent = 'Reporting EnR';
     title.style.color = '#00ab63';
+    // Inject week selector into sticky bar
+    filters.innerHTML =
+      '<select id="rpt-enr-week-select" onchange="switchEnrWeek(this.value)" ' +
+        'style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);' +
+        'border-radius:8px;color:#00ab63;font-size:12px;font-weight:600;padding:5px 12px;' +
+        'cursor:pointer;outline:none;font-family:Arial,sans-serif;">' +
+      '</select>';
     populateWeekSelector();
     renderEnrDetail();
   } else if (pole === 'inv') {
@@ -56,6 +63,19 @@ function openReportingPole(pole) {
     backBtn.style.color = '#f37056';
     title.textContent = 'Reporting Investments';
     title.style.color = '#f37056';
+    // Inject week selector + tabs into sticky bar
+    filters.innerHTML =
+      '<select id="rpt-inv-week-select" onchange="switchInvWeek(this.value)" ' +
+        'style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);' +
+        'border-radius:8px;color:#f37056;font-size:12px;font-weight:600;padding:5px 12px;' +
+        'cursor:pointer;outline:none;font-family:Arial,sans-serif;">' +
+      '</select>' +
+      '<button class="rpt-inv-tab active" onclick="switchInvTab(\'externe\')" data-tab="externe" ' +
+        'style="background:rgba(243,112,86,0.15);color:#f37056;border:1px solid rgba(243,112,86,0.3);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Externe</button>' +
+      '<button class="rpt-inv-tab" onclick="switchInvTab(\'interne\')" data-tab="interne" ' +
+        'style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Interne</button>';
     populateInvWeekSelector();
     renderInvReportingKpis('externe');
     renderInvReportingTable('externe');
@@ -71,12 +91,14 @@ function closeReportingPole() {
   // Restore sticky bar
   var backBtn = document.getElementById('rpt-back-btn');
   var title = document.getElementById('rpt-sticky-title');
+  var filters = document.getElementById('rpt-sticky-filters');
   backBtn.textContent = 'Accueil';
   backBtn.onclick = function() { closePage('page-reporting'); };
   backBtn.style.borderColor = 'rgba(90,175,175,0.3)';
   backBtn.style.color = '#5aafaf';
   title.textContent = 'Reporting Hebdomadaire';
   title.style.color = '#5aafaf';
+  filters.innerHTML = '';
 }
 
 // ══ WEEK SELECTOR ══
