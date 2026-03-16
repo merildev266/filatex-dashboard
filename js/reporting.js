@@ -1418,8 +1418,8 @@ function renderHfoPoleCard() {
   el.innerHTML =
     '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + total + '</span><span class="kl">Projets</span></div>' +
     '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + overhauls + '</span><span class="kl">Overhauls</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + projets + '</span><span class="kl">Annexes</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#4ecdc4;">' + Object.keys(sites).length + '</span><span class="kl">Sites</span></div>';
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + projets + '</span><span class="kl">Annexes</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + Object.keys(sites).length + '</span><span class="kl">Sites</span></div>';
 }
 
 function renderHfoOverhaulsTable(siteFilter) {
@@ -1737,9 +1737,9 @@ function renderLfoPoleCard() {
   if (!el) return;
   el.innerHTML =
     '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + total + '</span><span class="kl">Moteurs</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#4ecdc4;">' + installes + '</span><span class="kl">Install\u00e9s</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + auF23 + '</span><span class="kl">Au F23</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + aRapatrier + '</span><span class="kl">A rapatrier</span></div>';
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + installes + '</span><span class="kl">Install\u00e9s</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + auF23 + '</span><span class="kl">Au F23</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + aRapatrier + '</span><span class="kl">A rapatrier</span></div>';
 }
 
 function renderLfoReportingKpis(filter) {
