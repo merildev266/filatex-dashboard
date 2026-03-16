@@ -1924,6 +1924,7 @@ function saveLfoDgField(moteurId, fieldType, btnEl) {
 
 var _currentPropsSub = null;
 var _rptPropsSiteFilter = 'all';
+var _propsDelayFilter = false;
 
 function propsGroupByProject(rows) {
   var projects = [];
@@ -1983,8 +1984,14 @@ function buildPropsSiteFilterHtml(sub) {
   return html;
 }
 
+function togglePropsDelayFilter() {
+  _propsDelayFilter = !_propsDelayFilter;
+  renderPropsTable(_currentPropsSub, _rptPropsSiteFilter);
+}
+
 function switchPropsSiteFilter(sub, site) {
   _rptPropsSiteFilter = site;
+  _propsDelayFilter = false;
   var allBtn = document.getElementById('rpt-props-all-btn');
   var sel = document.getElementById('rpt-props-site-select');
   if (site === 'all') {
@@ -2028,6 +2035,7 @@ function openPropsSub(sub, fromDirect) {
 
   document.getElementById('rpt-props-' + sub + '-detail').style.display = 'block';
   _rptPropsSiteFilter = 'all';
+  _propsDelayFilter = false;
   renderPropsTable(sub, 'all');
 }
 
@@ -2048,20 +2056,29 @@ function renderPropsTable(sub, siteFilter) {
     rows = rows.filter(function(r) { return r.site === siteFilter; });
   }
 
+  // Delay filter - filter to only show projects that have delayed étapes
+  var allRows = rows;
+  if (_propsDelayFilter) {
+    rows = rows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; });
+  }
+
   var projects = propsGroupByProject(rows);
 
-  // KPIs
-  var totalProjects = projects.length;
-  var totalEtapes = rows.length;
-  var onTime = rows.filter(function(r) { return r.timing_var === 'On Time'; }).length;
-  var delayed = rows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
+  // KPIs (always based on allRows, not delay-filtered)
+  var kpiRows = allRows || rows;
+  var kpiProjects = propsGroupByProject(kpiRows);
+  var totalProjects = kpiProjects.length;
+  var totalEtapes = kpiRows.length;
+  var onTime = kpiRows.filter(function(r) { return r.timing_var === 'On Time'; }).length;
+  var delayed = kpiRows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
 
   var bar = document.getElementById('rpt-props-' + sub + '-kpi-bar');
+  var delayActive = _propsDelayFilter ? 'background:rgba(224,92,92,0.15);border:1px solid rgba(224,92,92,0.4);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
   bar.innerHTML =
     '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + totalProjects + '</div><div class="kl">Projets</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + totalEtapes + '</div><div class="kl">\u00c9tapes</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + onTime + '</div><div class="kl">On Time</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#E05C5C;">' + delayed + '</div><div class="kl">En retard</div></div>';
+    '<div class="rpt-kpi-item" onclick="togglePropsDelayFilter()" style="' + delayActive + '"><div class="kv" style="color:#E05C5C;">' + delayed + '</div><div class="kl">En retard \u25BC</div></div>';
 
   // Table
   var html = '<table class="rpt-table"><thead><tr>' +
