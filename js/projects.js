@@ -354,12 +354,23 @@ function renderPdGantt(p, phase, color, rgb) {
   const today = new Date();
   const todayPct = Math.max(0, Math.min(100, ((today - tlStart) / tlSpan) * 100));
 
-  /* Build month headers */
+  /* Build timeline headers — use quarters for spans > 12 months, else months */
+  const spanMonths = Math.round(tlSpan / (30.44 * 864e5));
+  const useQuarters = spanMonths > 14;
   const months = [];
-  let mCur = new Date(tlStart.getFullYear(), tlStart.getMonth(), 1);
-  while (mCur <= tlEnd) {
-    months.push(new Date(mCur));
-    mCur = new Date(mCur.getFullYear(), mCur.getMonth() + 1, 1);
+  if (useQuarters) {
+    /* Quarterly markers */
+    let qCur = new Date(tlStart.getFullYear(), Math.floor(tlStart.getMonth() / 3) * 3, 1);
+    while (qCur <= tlEnd) {
+      months.push(new Date(qCur));
+      qCur = new Date(qCur.getFullYear(), qCur.getMonth() + 3, 1);
+    }
+  } else {
+    let mCur = new Date(tlStart.getFullYear(), tlStart.getMonth(), 1);
+    while (mCur <= tlEnd) {
+      months.push(new Date(mCur));
+      mCur = new Date(mCur.getFullYear(), mCur.getMonth() + 1, 1);
+    }
   }
 
   const stageHex = ['#74b859','#5aafaf','#8b7cf6','#f8c100','#ff8758','#6488ff'];
@@ -376,17 +387,18 @@ function renderPdGantt(p, phase, color, rgb) {
   };
 
   let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Timeline</div>
-  <div class="neutral-card" style="margin-bottom:32px;overflow-x:auto;">
-    <div style="min-width:600px;">`;
+  <div class="neutral-card" style="margin-bottom:32px;">
+    <div>`;
 
   /* Month header row */
   html += `<div style="display:flex;align-items:center;margin-bottom:8px;">
     <div style="flex:0 0 160px;"></div>
     <div style="flex:1;position:relative;height:22px;">`;
   months.forEach(m => {
-    const mEnd = new Date(m.getFullYear(), m.getMonth() + 1, 0);
     const left = Math.max(0, ((m - tlStart) / tlSpan) * 100);
-    const label = m.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'});
+    const label = useQuarters
+      ? 'Q' + (Math.floor(m.getMonth()/3)+1) + ' ' + m.getFullYear()
+      : m.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'});
     html += `<div style="position:absolute;left:${left}%;font-size:8px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:0.05em;white-space:nowrap;border-left:1px solid rgba(255,255,255,0.06);padding-left:4px;height:22px;line-height:22px;">${label}</div>`;
   });
   html += `</div></div>`;
