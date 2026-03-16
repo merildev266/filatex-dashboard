@@ -1073,9 +1073,9 @@ function renderInvReportingTable(filter) {
   var ps = filter === 'all' ? invProjects : invProjects.filter(function(p) { return p.type === filter; });
 
   var html = '<table class="rpt-table"><thead><tr>' +
-    '<th>Projet</th><th>Type</th><th>Avancement</th>' +
+    '<th>Projet</th><th>Avancement</th>' +
     '<th>Point de blocage</th><th>Actions Prevues</th><th>Actions Realisees</th>' +
-    '<th>Mise a jour</th><th>Commentaires DG</th><th>Reponse</th>' +
+    '<th>Commentaires DG</th><th>Reponse</th>' +
     '</tr></thead><tbody>';
 
   var sorted = ps.slice().sort(function(a, b) {
@@ -1083,25 +1083,18 @@ function renderInvReportingTable(filter) {
   });
 
   sorted.forEach(function(p) {
-    var typeBadge = p.type === 'externe'
-      ? '<span class="rpt-badge rpt-badge-blue">Externe</span>'
-      : '<span class="rpt-badge rpt-badge-orange">Interne</span>';
-
     var rd = getInvReportingData()[p.id] || {};
     var avancement = rd.avancement || '';
     var blocage = rd.blocage || '';
     var actionsPrev = rd.actions_prevues || '';
     var actionsReal = rd.actions_realisees || '';
-    var maj = rd.maj || 'S' + p.week;
 
     html += '<tr>' +
       '<td class="nowrap" style="font-weight:600;">' + escapeHtml(p.nom) + '</td>' +
-      '<td>' + typeBadge + '</td>' +
       '<td style="font-size:11px;color:#4ecdc4;">' + escapeHtml(avancement) + '</td>' +
       '<td style="font-size:11px;color:#ff8a80;">' + escapeHtml(blocage) + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(actionsPrev) + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(actionsReal) + '</td>' +
-      '<td class="nowrap" style="color:rgba(255,255,255,0.5);">' + escapeHtml(maj) + '</td>' +
       '<td style="min-width:200px;">' +
         '<div class="rpt-dg-comment" data-pid="' + p.id + '" contenteditable="true" ' +
           'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
