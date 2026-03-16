@@ -1,8 +1,11 @@
 /* === Energy Styles === */
 
 /* -- EnR Projects panel (style HFO) -- */
-#panel-enr-projets{position:fixed;inset:0;z-index:250;background:#080d18;overflow-y:auto;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);}
+#panel-enr-projets{position:fixed;inset:0;z-index:250;background:#080d18;overflow-y:auto;scrollbar-width:none;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);}
+#panel-enr-projets::-webkit-scrollbar{display:none;}
 #panel-enr-projets.active{transform:translateX(0);}
+#panel-project-detail{scrollbar-width:none;}
+#panel-project-detail::-webkit-scrollbar{display:none;}
 
 /* KPI Consolidé (même style que HFO kpi-consolidated) */
 .enrp-consolidated{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
