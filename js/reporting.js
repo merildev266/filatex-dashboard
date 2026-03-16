@@ -133,7 +133,7 @@ function openReportingPole(pole) {
     filters.innerHTML = '';
     // Show the sub-cards, hide sub-details
     document.getElementById('rpt-props-cards').style.display = '';
-    ['sav', 'tvx', 'dev'].forEach(function(s) {
+    ['sav', 'tvx', 'dev', 'com'].forEach(function(s) {
       document.getElementById('rpt-props-' + s + '-detail').style.display = 'none';
     });
   }
@@ -2025,23 +2025,28 @@ function openPropsSub(sub, fromDirect) {
   backBtn.textContent = 'Retour';
   backBtn.onclick = function() { closePropsSub(); };
 
-  var titles = { sav: 'Properties - SAV', tvx: 'Properties - Travaux', dev: 'Properties - D\u00e9veloppement' };
+  var titles = { sav: 'Properties - SAV', tvx: 'Properties - Travaux', dev: 'Properties - D\u00e9veloppement', com: 'Properties - Commercial' };
   title.textContent = titles[sub] || 'Properties';
   title.style.color = '#FDB823';
   backBtn.style.borderColor = 'rgba(253,184,35,0.3)';
   backBtn.style.color = '#FDB823';
 
-  filters.innerHTML = buildPropsSiteFilterHtml(sub);
-
   document.getElementById('rpt-props-' + sub + '-detail').style.display = 'block';
-  _rptPropsSiteFilter = 'all';
-  _propsDelayFilter = false;
-  renderPropsTable(sub, 'all');
+
+  if (sub === 'com') {
+    filters.innerHTML = '';
+    renderComTable();
+  } else {
+    filters.innerHTML = buildPropsSiteFilterHtml(sub);
+    _rptPropsSiteFilter = 'all';
+    _propsDelayFilter = false;
+    renderPropsTable(sub, 'all');
+  }
 }
 
 function closePropsSub() {
   _currentPropsSub = null;
-  ['sav', 'tvx', 'dev'].forEach(function(s) {
+  ['sav', 'tvx', 'dev', 'com'].forEach(function(s) {
     document.getElementById('rpt-props-' + s + '-detail').style.display = 'none';
   });
   document.getElementById('rpt-props-detail').style.display = 'none';
@@ -2125,6 +2130,132 @@ function renderPropsTable(sub, siteFilter) {
   document.getElementById('rpt-props-' + sub + '-table-wrap').innerHTML = html;
 }
 
+// ══════════════════════════════════════════════════════════════
+// ══ COMMERCIAL REPORTING (Vente Immo / Vente Foncière / Location) ══
+// ══════════════════════════════════════════════════════════════
+
+function fmtEur(v) {
+  if (v == null || v === '') return '\u2014';
+  return v.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' \u20ac';
+}
+
+function renderComTable() {
+  var bar = document.getElementById('rpt-props-com-kpi-bar');
+  bar.innerHTML =
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</div><div class="kl">Obj. Vente Immo</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</div><div class="kl">Obj. Vente Fonci\u00e8re</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + fmtEur(comData_locationTotal) + ' /mois</div><div class="kl">Obj. Location</div></div>';
+
+  var html = '';
+
+  // === SECTION 1: Vente Immobilière ===
+  html += '<div style="margin-bottom:32px;">' +
+    '<h3 style="color:#FDB823;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(253,184,35,0.08);border-radius:10px;border-left:3px solid #FDB823;">' +
+    'Vente Immobili\u00e8re \u2014 Objectif: ' + fmtEur(comData_venteImmoTotal) + '</h3>' +
+    '<table class="rpt-table"><thead><tr>' +
+    '<th style="min-width:150px;">Projet</th>' +
+    '<th>Objectif</th>' +
+    '<th>Obj. T1</th><th>R\u00e9alis\u00e9 T1</th>' +
+    '<th>Obj. T2</th><th>R\u00e9alis\u00e9 T2</th>' +
+    '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
+    '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
+    '</tr></thead><tbody>';
+
+  comData_venteImmo.forEach(function(p) {
+    html += '<tr>' +
+      '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(p.name) + '</td>' +
+      '<td style="font-weight:700;color:#FDB823;font-size:11px;">' + fmtEur(p.objectif) + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t1 ? fmtEur(p.t1) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t2 ? fmtEur(p.t2) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t3 ? fmtEur(p.t3) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t4 ? fmtEur(p.t4) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '</tr>';
+  });
+
+  // Total row
+  html += '<tr style="background:rgba(253,184,35,0.08);font-weight:700;">' +
+    '<td style="color:#FDB823;">TOTAL</td>' +
+    '<td style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</td>' +
+    '<td colspan="8"></td></tr>';
+  html += '</tbody></table></div>';
+
+  // === SECTION 2: Vente Foncière ===
+  html += '<div style="margin-bottom:32px;">' +
+    '<h3 style="color:#00ab63;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(0,171,99,0.08);border-radius:10px;border-left:3px solid #00ab63;">' +
+    'Vente Fonci\u00e8re \u2014 Objectif: ' + fmtEur(comData_venteFonciereTotal) + '</h3>' +
+    '<table class="rpt-table"><thead><tr>' +
+    '<th style="min-width:150px;">Projet</th>' +
+    '<th>Objectif</th>' +
+    '<th>Obj. T1</th><th>R\u00e9alis\u00e9 T1</th>' +
+    '<th>Obj. T2</th><th>R\u00e9alis\u00e9 T2</th>' +
+    '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
+    '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
+    '</tr></thead><tbody>';
+
+  comData_venteFonciere.forEach(function(p) {
+    html += '<tr>' +
+      '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(p.name) + '</td>' +
+      '<td style="font-weight:700;color:#00ab63;font-size:11px;">' + fmtEur(p.objectif) + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t1 ? fmtEur(p.t1) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t2 ? fmtEur(p.t2) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t3 ? fmtEur(p.t3) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t4 ? fmtEur(p.t4) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '</tr>';
+  });
+
+  html += '<tr style="background:rgba(0,171,99,0.08);font-weight:700;">' +
+    '<td style="color:#00ab63;">TOTAL</td>' +
+    '<td style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</td>' +
+    '<td colspan="8"></td></tr>';
+  html += '</tbody></table></div>';
+
+  // === SECTION 3: Location ===
+  html += '<div style="margin-bottom:32px;">' +
+    '<h3 style="color:#5aafaf;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(90,175,175,0.08);border-radius:10px;border-left:3px solid #5aafaf;">' +
+    'Location \u2014 Objectif mensuel: ' + fmtEur(comData_locationTotal) + ' /mois</h3>' +
+    '<table class="rpt-table"><thead><tr>' +
+    '<th style="min-width:150px;">Site</th>' +
+    '<th>Obj. T1</th><th>R\u00e9alis\u00e9 T1</th>' +
+    '<th>Obj. T2</th><th>R\u00e9alis\u00e9 T2</th>' +
+    '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
+    '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
+    '<th>Total Obj.</th>' +
+    '</tr></thead><tbody>';
+
+  comData_location.forEach(function(loc) {
+    html += '<tr>' +
+      '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(loc.name) + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t1 ? fmtEur(loc.t1) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t2 ? fmtEur(loc.t2) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t3 ? fmtEur(loc.t3) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t4 ? fmtEur(loc.t4) : '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
+      '<td style="font-weight:700;color:#5aafaf;font-size:11px;">' + fmtEur(loc.total) + '</td>' +
+      '</tr>';
+  });
+
+  var locTotalObj = comData_location.reduce(function(s, l) { return s + (l.total || 0); }, 0);
+  html += '<tr style="background:rgba(90,175,175,0.08);font-weight:700;">' +
+    '<td style="color:#5aafaf;">TOTAL</td>' +
+    '<td colspan="8"></td>' +
+    '<td style="color:#5aafaf;">' + fmtEur(locTotalObj) + '</td>' +
+    '</tr>';
+  html += '</tbody></table></div>';
+
+  document.getElementById('rpt-props-com-table-wrap').innerHTML = html;
+}
+
 function renderPropsPoleCards() {
   // SAV card
   var savProjects = propsGroupByProject(propsData_sav);
@@ -2164,6 +2295,15 @@ function renderPropsPoleCards() {
   }
   var devSub = document.getElementById('rpt-pole-dev-sub');
   if (devSub) devSub.textContent = devProjects.length + ' projets \u2022 ' + propsData_dev.length + ' \u00e9tapes';
+
+  // COM card
+  var comEl = document.getElementById('rpt-pole-com-kpis');
+  if (comEl) {
+    comEl.innerHTML =
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + (comData_venteImmoTotal / 1000000).toFixed(1) + 'M</span><span class="kl">Vente Immo</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + (comData_venteFonciereTotal / 1000000).toFixed(1) + 'M</span><span class="kl">Vente Fonc.</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + (comData_locationTotal / 1000).toFixed(0) + 'k/m</span><span class="kl">Location</span></div>';
+  }
 }
 
 // Init on DOMContentLoaded

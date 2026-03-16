@@ -1897,9 +1897,13 @@
           <div class="rpt-pole-kpis" id="rpt-pole-dev-kpis"></div>
         </div>
         <!-- Commercial -->
-        <div class="rpt-pole-card rpt-pole-props" style="margin:0;opacity:0.4;pointer-events:none;">
+        <div class="rpt-pole-card rpt-pole-props" onclick="openPropsDirectSub('com')" style="margin:0;cursor:pointer;">
+          <div class="rpt-pole-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:32px;height:32px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
           <div class="rpt-pole-title" style="color:#FDB823;font-size:15px;">Commercial</div>
-          <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
+          <div class="rpt-pole-sub" id="rpt-pole-com-sub" style="color:var(--text-muted);">Objectifs 2026</div>
+          <div class="rpt-pole-kpis" id="rpt-pole-com-kpis"></div>
         </div>
       </div>
 
@@ -2008,12 +2012,18 @@
         <div id="rpt-props-dev-kpi-bar" class="rpt-kpi-bar"></div>
         <div id="rpt-props-dev-table-wrap" class="rpt-table-wrap"></div>
       </div>
+      <!-- Commercial detail -->
+      <div id="rpt-props-com-detail" style="display:none;">
+        <div id="rpt-props-com-kpi-bar" class="rpt-kpi-bar"></div>
+        <div id="rpt-props-com-table-wrap" class="rpt-table-wrap"></div>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script src="js/props_data.js"></script>
+<script src="js/com_data.js"></script>
 <script src="js/reporting.js"></script>
 <script src="enr_projects_data.js"></script>
 <script src="js/energy.js"></script>
