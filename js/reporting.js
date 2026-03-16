@@ -119,7 +119,7 @@ function renderEnrDetail() {
   // Table
   var wrap = document.getElementById('rpt-enr-table-wrap');
   var html = '<table class="rpt-table"><thead><tr>' +
-    '<th>Projet</th><th>Resp.</th><th>Type</th><th>MWc</th><th>Phase</th>' +
+    '<th>Projet</th><th>MWc</th><th>Phase</th>' +
     '<th>Avancement</th><th>Glissement</th><th>EPC</th>' +
     '<th>Blocages & Risques</th><th>Actions S</th><th>Commentaires DG</th><th>Reponse</th>' +
     '</tr></thead><tbody>';
@@ -141,8 +141,6 @@ function renderEnrDetail() {
 
     html += '<tr>' +
       '<td class="nowrap" style="font-weight:600;">' + p.projet + '</td>' +
-      '<td class="nowrap">' + (p.responsable || '') + '</td>' +
-      '<td class="nowrap">' + (p.type || '') + '</td>' +
       '<td class="nowrap" style="text-align:right;">' + (p.puissance || 0) + '</td>' +
       '<td>' + phaseBadge + '</td>' +
       '<td><span style="font-weight:600;color:' + progColor + ';">' + (p.avancement || 0) + '%</span>' +
