@@ -1967,33 +1967,33 @@ function buildPropsSiteFilterHtml(sub) {
   rows.forEach(function(r) { sites[r.site] = true; });
   var siteList = Object.keys(sites).sort();
 
-  var html = '<button class="rpt-props-site-btn" onclick="switchPropsSiteFilter(\'' + sub + '\',\'all\')" ' +
-    'data-site="all" style="background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' +
-    'border-radius:8px;padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;">Tous</button>';
+  var html = '<button id="rpt-props-all-btn" onclick="switchPropsSiteFilter(\'' + sub + '\',\'all\')" ' +
+    'style="background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' +
+    'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Tous</button>' +
+    '<select id="rpt-props-site-select" onchange="switchPropsSiteFilter(\'' + sub + '\',this.value)" ' +
+    'style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);' +
+    'border-radius:8px;color:#FDB823;font-size:11px;font-weight:600;padding:5px 12px;' +
+    'cursor:pointer;outline:none;font-family:Arial,sans-serif;">' +
+    '<option value="all">Filtrer par site...</option>';
 
   siteList.forEach(function(s) {
-    var label = s.length > 20 ? s.substring(0, 18) + '..' : s;
-    html += '<button class="rpt-props-site-btn" onclick="switchPropsSiteFilter(\'' + sub + '\',\'' + s.replace(/'/g, "\\'") + '\')" ' +
-      'data-site="' + escapeHtml(s) + '" style="background:rgba(255,255,255,0.04);color:var(--text-muted);' +
-      'border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;">' +
-      escapeHtml(label) + '</button>';
+    html += '<option value="' + escapeHtml(s) + '">' + escapeHtml(s) + '</option>';
   });
+  html += '</select>';
   return html;
 }
 
 function switchPropsSiteFilter(sub, site) {
   _rptPropsSiteFilter = site;
-  document.querySelectorAll('.rpt-props-site-btn').forEach(function(btn) {
-    if (btn.getAttribute('data-site') === site) {
-      btn.style.background = 'rgba(253,184,35,0.15)';
-      btn.style.color = '#FDB823';
-      btn.style.borderColor = 'rgba(253,184,35,0.3)';
-    } else {
-      btn.style.background = 'rgba(255,255,255,0.04)';
-      btn.style.color = 'var(--text-muted)';
-      btn.style.borderColor = 'rgba(255,255,255,0.1)';
-    }
-  });
+  var allBtn = document.getElementById('rpt-props-all-btn');
+  var sel = document.getElementById('rpt-props-site-select');
+  if (site === 'all') {
+    if (allBtn) { allBtn.style.background = 'rgba(253,184,35,0.15)'; allBtn.style.color = '#FDB823'; allBtn.style.borderColor = 'rgba(253,184,35,0.3)'; }
+    if (sel) sel.value = 'all';
+  } else {
+    if (allBtn) { allBtn.style.background = 'rgba(255,255,255,0.04)'; allBtn.style.color = 'var(--text-muted)'; allBtn.style.borderColor = 'rgba(255,255,255,0.1)'; }
+    if (sel) sel.value = site;
+  }
   renderPropsTable(sub, site);
 }
 
@@ -2115,8 +2115,8 @@ function renderPropsPoleCards() {
   if (savEl) {
     var savDelayed = propsData_sav.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
     savEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + savProjects.length + '</span><span class="kl">Projets</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + propsData_sav.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + savProjects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + propsData_sav.length + '</span><span class="kl">\u00c9tapes</span></div>' +
       '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + savDelayed + '</span><span class="kl">Retard</span></div>';
   }
   var savSub = document.getElementById('rpt-pole-sav-sub');
@@ -2128,8 +2128,8 @@ function renderPropsPoleCards() {
   if (tvxEl) {
     var tvxDelayed = propsData_tvx.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
     tvxEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + tvxProjects.length + '</span><span class="kl">Projets</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + propsData_tvx.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + tvxProjects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + propsData_tvx.length + '</span><span class="kl">\u00c9tapes</span></div>' +
       '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + tvxDelayed + '</span><span class="kl">Retard</span></div>';
   }
   var tvxSub = document.getElementById('rpt-pole-tvx-sub');
@@ -2141,8 +2141,8 @@ function renderPropsPoleCards() {
   if (devEl) {
     var devDelayed = propsData_dev.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
     devEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + devProjects.length + '</span><span class="kl">Projets</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + propsData_dev.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + devProjects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + propsData_dev.length + '</span><span class="kl">\u00c9tapes</span></div>' +
       '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + devDelayed + '</span><span class="kl">Retard</span></div>';
   }
   var devSub = document.getElementById('rpt-pole-dev-sub');
