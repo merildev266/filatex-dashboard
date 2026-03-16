@@ -126,7 +126,7 @@ projects = [
      "", "", "", ""],
 ]
 
-BASE_DIR = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\05_Reporting\02_Avancemement\01_Energy\02_EnR"
+BASE_DIR = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\01_Energy\Projet\EnR"
 os.makedirs(BASE_DIR, exist_ok=True)
 
 # =============================================
