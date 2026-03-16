@@ -1403,6 +1403,25 @@ function closeHfoSub() {
   filters.innerHTML = '';
 }
 
+function renderHfoPoleCard() {
+  var total = hfoProjects.length;
+  var overhauls = hfoProjects.filter(function(p) { return p.type === 'overhaul'; }).length;
+  var projets = hfoProjects.filter(function(p) { return p.type === 'projet'; }).length;
+  var sites = {};
+  hfoProjects.forEach(function(p) { sites[p.site] = true; });
+
+  var subEl = document.getElementById('rpt-pole-hfo-sub');
+  if (subEl) subEl.textContent = total + ' projets';
+
+  var el = document.getElementById('rpt-pole-hfo-kpis');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + total + '</span><span class="kl">Projets</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + overhauls + '</span><span class="kl">Overhauls</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + projets + '</span><span class="kl">Annexes</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#4ecdc4;">' + Object.keys(sites).length + '</span><span class="kl">Sites</span></div>';
+}
+
 function renderHfoOverhaulsTable(siteFilter) {
   var ms = hfoProjects.filter(function(p) { return p.type === 'overhaul'; });
   if (siteFilter && siteFilter !== 'all') ms = ms.filter(function(p) { return p.site === siteFilter; });
@@ -1888,5 +1907,6 @@ document.addEventListener('DOMContentLoaded', function() {
   initReporting();
   renderInvReportingPoleCard();
   renderLfoPoleCard();
+  renderHfoPoleCard();
   setTimeout(syncReportingToEnrProjects, 100);
 });
