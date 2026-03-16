@@ -1875,7 +1875,12 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
           Retour
         </button>
-        <h2 style="color:#f37056;margin:0;font-size:18px;">Reporting Investments</h2>
+        <h2 style="color:#f37056;margin:0;font-size:18px;">Reporting Investments - <span id="rpt-inv-week"></span></h2>
+        <select id="rpt-inv-week-select" onchange="switchInvWeek(this.value)"
+          style="margin-left:auto;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+          border-radius:8px;color:#f37056;font-size:13px;font-weight:600;padding:6px 14px;
+          cursor:pointer;outline:none;font-family:Arial,sans-serif;min-width:200px;">
+        </select>
       </div>
       <div id="rpt-inv-kpi-bar" class="rpt-kpi-bar"></div>
       <div id="rpt-inv-filter-tabs" style="display:flex;gap:8px;margin-bottom:20px;">
