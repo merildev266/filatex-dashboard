@@ -121,6 +121,21 @@ function openReportingPole(pole) {
     populateInvWeekSelector();
     renderInvReportingKpis('externe');
     renderInvReportingTable('externe');
+  } else if (pole === 'props') {
+    var detail = document.getElementById('rpt-props-detail');
+    detail.style.display = 'block';
+    backBtn.textContent = 'Retour';
+    backBtn.onclick = function() { closeReportingPole(); };
+    backBtn.style.borderColor = 'rgba(253,184,35,0.3)';
+    backBtn.style.color = '#FDB823';
+    title.textContent = 'Reporting Properties';
+    title.style.color = '#FDB823';
+    filters.innerHTML = '';
+    // Show the sub-cards, hide sub-details
+    document.getElementById('rpt-props-cards').style.display = '';
+    ['sav', 'tvx', 'dev'].forEach(function(s) {
+      document.getElementById('rpt-props-' + s + '-detail').style.display = 'none';
+    });
   }
 }
 
@@ -129,6 +144,7 @@ function closeReportingPole() {
   document.getElementById('rpt-inv-detail').style.display = 'none';
   document.getElementById('rpt-hfo-detail').style.display = 'none';
   document.getElementById('rpt-lfo-detail').style.display = 'none';
+  document.getElementById('rpt-props-detail').style.display = 'none';
   document.querySelector('.rpt-poles-grid').style.display = '';
   document.getElementById('rpt-global-summary').style.display = '';
 
@@ -1902,11 +1918,243 @@ function saveLfoDgField(moteurId, fieldType, btnEl) {
   });
 }
 
+// ══════════════════════════════════════════════════════════════
+// ══ PROPERTIES REPORTING (SAV / TVX / DEV) ══
+// ══════════════════════════════════════════════════════════════
+
+var _currentPropsSub = null;
+var _rptPropsSiteFilter = 'all';
+
+function propsGroupByProject(rows) {
+  var projects = [];
+  var map = {};
+  rows.forEach(function(r) {
+    if (!map[r.site]) {
+      map[r.site] = { name: r.site, etapes: [] };
+      projects.push(map[r.site]);
+    }
+    map[r.site].etapes.push(r);
+  });
+  return projects;
+}
+
+function propsTimingBadge(v) {
+  if (!v) return '<span style="color:var(--text-dim);">\u2014</span>';
+  if (v === 'On Time') return '<span style="color:#00ab63;font-weight:700;font-size:10px;">\u25CF On Time</span>';
+  if (v.indexOf('<30') >= 0) return '<span style="color:#F5A623;font-weight:700;font-size:10px;">\u25CF Delay &lt;30j</span>';
+  if (v.indexOf('>=30') >= 0) return '<span style="color:#E05C5C;font-weight:700;font-size:10px;">\u25CF Delay \u226530j</span>';
+  return '<span style="color:var(--text-muted);font-size:10px;">' + escapeHtml(v) + '</span>';
+}
+
+function propsBudgetBadge(v) {
+  if (!v) return '<span style="color:var(--text-dim);">\u2014</span>';
+  if (v === 'No overrun') return '<span style="color:#00ab63;font-weight:700;font-size:10px;">\u25CF OK</span>';
+  if (v.indexOf('Overrun') >= 0) return '<span style="color:#E05C5C;font-weight:700;font-size:10px;">\u25CF ' + escapeHtml(v) + '</span>';
+  return '<span style="color:var(--text-muted);font-size:10px;">' + escapeHtml(v) + '</span>';
+}
+
+function propsCpsBadge(v) {
+  if (!v) return '<span style="color:var(--text-dim);">\u2014</span>';
+  if (v === 'All CPs met') return '<span style="color:#00ab63;font-size:10px;">\u2713 All CPs met</span>';
+  if (v.indexOf('Management') >= 0) return '<span style="color:#F5A623;font-size:10px;">\u26A0 Mgmt decision</span>';
+  return '<span style="color:var(--text-muted);font-size:10px;">' + escapeHtml(v) + '</span>';
+}
+
+function buildPropsSiteFilterHtml(sub) {
+  var dataMap = { sav: propsData_sav, tvx: propsData_tvx, dev: propsData_dev };
+  var rows = dataMap[sub] || [];
+  var sites = {};
+  rows.forEach(function(r) { sites[r.site] = true; });
+  var siteList = Object.keys(sites).sort();
+
+  var html = '<button class="rpt-props-site-btn" onclick="switchPropsSiteFilter(\'' + sub + '\',\'all\')" ' +
+    'data-site="all" style="background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' +
+    'border-radius:8px;padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;">Tous</button>';
+
+  siteList.forEach(function(s) {
+    var label = s.length > 20 ? s.substring(0, 18) + '..' : s;
+    html += '<button class="rpt-props-site-btn" onclick="switchPropsSiteFilter(\'' + sub + '\',\'' + s.replace(/'/g, "\\'") + '\')" ' +
+      'data-site="' + escapeHtml(s) + '" style="background:rgba(255,255,255,0.04);color:var(--text-muted);' +
+      'border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;">' +
+      escapeHtml(label) + '</button>';
+  });
+  return html;
+}
+
+function switchPropsSiteFilter(sub, site) {
+  _rptPropsSiteFilter = site;
+  document.querySelectorAll('.rpt-props-site-btn').forEach(function(btn) {
+    if (btn.getAttribute('data-site') === site) {
+      btn.style.background = 'rgba(253,184,35,0.15)';
+      btn.style.color = '#FDB823';
+      btn.style.borderColor = 'rgba(253,184,35,0.3)';
+    } else {
+      btn.style.background = 'rgba(255,255,255,0.04)';
+      btn.style.color = 'var(--text-muted)';
+      btn.style.borderColor = 'rgba(255,255,255,0.1)';
+    }
+  });
+  renderPropsTable(sub, site);
+}
+
+function openPropsDirectSub(sub) {
+  // Direct from reporting home to props sub-detail (no intermediate sub-cards)
+  document.querySelector('.rpt-poles-grid').style.display = 'none';
+  document.getElementById('rpt-global-summary').style.display = 'none';
+  var detail = document.getElementById('rpt-props-detail');
+  detail.style.display = 'block';
+  document.getElementById('rpt-props-cards').style.display = 'none';
+  openPropsSub(sub, true);
+}
+
+function openPropsSub(sub, fromDirect) {
+  _currentPropsSub = sub;
+  document.getElementById('rpt-props-cards').style.display = 'none';
+
+  var backBtn = document.getElementById('rpt-back-btn');
+  var title = document.getElementById('rpt-sticky-title');
+  var filters = document.getElementById('rpt-sticky-filters');
+
+  backBtn.textContent = 'Retour';
+  backBtn.onclick = function() { closePropsSub(); };
+
+  var titles = { sav: 'Properties - SAV', tvx: 'Properties - Travaux', dev: 'Properties - D\u00e9veloppement' };
+  title.textContent = titles[sub] || 'Properties';
+  title.style.color = '#FDB823';
+  backBtn.style.borderColor = 'rgba(253,184,35,0.3)';
+  backBtn.style.color = '#FDB823';
+
+  filters.innerHTML = buildPropsSiteFilterHtml(sub);
+
+  document.getElementById('rpt-props-' + sub + '-detail').style.display = 'block';
+  _rptPropsSiteFilter = 'all';
+  renderPropsTable(sub, 'all');
+}
+
+function closePropsSub() {
+  _currentPropsSub = null;
+  ['sav', 'tvx', 'dev'].forEach(function(s) {
+    document.getElementById('rpt-props-' + s + '-detail').style.display = 'none';
+  });
+  document.getElementById('rpt-props-detail').style.display = 'none';
+  // Go back to reporting home directly
+  closeReportingPole();
+}
+
+function renderPropsTable(sub, siteFilter) {
+  var dataMap = { sav: propsData_sav, tvx: propsData_tvx, dev: propsData_dev };
+  var rows = dataMap[sub] || [];
+  if (siteFilter && siteFilter !== 'all') {
+    rows = rows.filter(function(r) { return r.site === siteFilter; });
+  }
+
+  var projects = propsGroupByProject(rows);
+
+  // KPIs
+  var totalProjects = projects.length;
+  var totalEtapes = rows.length;
+  var onTime = rows.filter(function(r) { return r.timing_var === 'On Time'; }).length;
+  var delayed = rows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
+
+  var bar = document.getElementById('rpt-props-' + sub + '-kpi-bar');
+  bar.innerHTML =
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + totalProjects + '</div><div class="kl">Projets</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + totalEtapes + '</div><div class="kl">\u00c9tapes</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + onTime + '</div><div class="kl">On Time</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#E05C5C;">' + delayed + '</div><div class="kl">En retard</div></div>';
+
+  // Table
+  var html = '<table class="rpt-table"><thead><tr>' +
+    '<th style="min-width:60px;">Resp.</th>' +
+    '<th style="min-width:200px;">\u00c9tape / Objet</th>' +
+    '<th style="min-width:80px;">Timing</th>' +
+    '<th style="min-width:70px;">Budget</th>' +
+    '<th style="min-width:90px;">Status CPS</th>' +
+    '<th style="min-width:200px;">Dernier commentaire</th>' +
+    '<th style="min-width:90px;">Semaine</th>' +
+    '</tr></thead><tbody>';
+
+  projects.forEach(function(proj) {
+    // Project header row
+    var onTimeP = proj.etapes.filter(function(e) { return e.timing_var === 'On Time'; }).length;
+    var delayedP = proj.etapes.filter(function(e) { return e.timing_var && e.timing_var.indexOf('Delay') >= 0; }).length;
+    var statusIcon = delayedP > 0 ? '<span style="color:#E05C5C;">\u25CF</span>' : '<span style="color:#00ab63;">\u25CF</span>';
+
+    html += '<tr style="background:rgba(253,184,35,0.08);cursor:pointer;" onclick="this.classList.toggle(\'rpt-proj-collapsed\');var s=this.nextElementSibling;while(s&&!s.classList.contains(\'rpt-proj-header\')){s.style.display=s.style.display===\'none\'?\'\':\'none\';s=s.nextElementSibling;}"' +
+      ' class="rpt-proj-header">' +
+      '<td colspan="7" style="font-weight:700;color:#FDB823;font-size:12px;padding:10px 12px;">' +
+      '<span style="margin-right:6px;">\u25BE</span>' +
+      statusIcon + ' ' +
+      escapeHtml(proj.name) +
+      ' <span style="color:var(--text-muted);font-weight:400;font-size:11px;">(' + proj.etapes.length + ' \u00e9tapes' +
+      (delayedP > 0 ? ' \u2022 <span style="color:#E05C5C;">' + delayedP + ' en retard</span>' : '') +
+      ')</span></td></tr>';
+
+    // Étape rows
+    proj.etapes.forEach(function(et) {
+      html += '<tr>' +
+        '<td class="nowrap" style="font-size:11px;">' + escapeHtml(et.resp) + '</td>' +
+        '<td style="font-size:11px;color:var(--text-main);">' + escapeHtml(et.etape) + '</td>' +
+        '<td style="text-align:center;">' + propsTimingBadge(et.timing_var) + '</td>' +
+        '<td style="text-align:center;">' + propsBudgetBadge(et.budget_var) + '</td>' +
+        '<td style="text-align:center;">' + propsCpsBadge(et.status_cps) + '</td>' +
+        '<td style="font-size:10px;color:var(--text-muted);max-width:300px;white-space:pre-wrap;word-break:break-word;">' + escapeHtml(et.latest_comment) + '</td>' +
+        '<td class="nowrap" style="font-size:10px;color:var(--text-dim);">' + escapeHtml(et.latest_week) + '</td>' +
+        '</tr>';
+    });
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('rpt-props-' + sub + '-table-wrap').innerHTML = html;
+}
+
+function renderPropsPoleCards() {
+  // SAV card
+  var savProjects = propsGroupByProject(propsData_sav);
+  var savEl = document.getElementById('rpt-pole-sav-kpis');
+  if (savEl) {
+    var savDelayed = propsData_sav.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
+    savEl.innerHTML =
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + savProjects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + propsData_sav.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + savDelayed + '</span><span class="kl">Retard</span></div>';
+  }
+  var savSub = document.getElementById('rpt-pole-sav-sub');
+  if (savSub) savSub.textContent = savProjects.length + ' projets \u2022 ' + propsData_sav.length + ' \u00e9tapes';
+
+  // TVX card
+  var tvxProjects = propsGroupByProject(propsData_tvx);
+  var tvxEl = document.getElementById('rpt-pole-tvx-kpis');
+  if (tvxEl) {
+    var tvxDelayed = propsData_tvx.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
+    tvxEl.innerHTML =
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + tvxProjects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + propsData_tvx.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + tvxDelayed + '</span><span class="kl">Retard</span></div>';
+  }
+  var tvxSub = document.getElementById('rpt-pole-tvx-sub');
+  if (tvxSub) tvxSub.textContent = tvxProjects.length + ' projets \u2022 ' + propsData_tvx.length + ' \u00e9tapes';
+
+  // DEV card
+  var devProjects = propsGroupByProject(propsData_dev);
+  var devEl = document.getElementById('rpt-pole-dev-kpis');
+  if (devEl) {
+    var devDelayed = propsData_dev.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
+    devEl.innerHTML =
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + devProjects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + propsData_dev.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + devDelayed + '</span><span class="kl">Retard</span></div>';
+  }
+  var devSub = document.getElementById('rpt-pole-dev-sub');
+  if (devSub) devSub.textContent = devProjects.length + ' projets \u2022 ' + propsData_dev.length + ' \u00e9tapes';
+}
+
 // Init on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
   initReporting();
   renderInvReportingPoleCard();
   renderLfoPoleCard();
   renderHfoPoleCard();
+  renderPropsPoleCards();
   setTimeout(syncReportingToEnrProjects, 100);
 });
