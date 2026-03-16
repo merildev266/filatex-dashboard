@@ -9,6 +9,7 @@ Sources (01_Energy/Projet/EnR/):
                                       PROJECT STATUS (constProg)
   - ENR_Status_Etudes.xlsx          → DEVELOPMENT (study progress per category)
   - Weekly_EnR_Avancement.xlsx      → weekly overrides (avancement, blocages, actions)
+  - Weekly_EnR_Paiements.xlsx       → payment tracking (montants, statuts, alertes)
 """
 import json, os, sys, io
 from datetime import datetime, date
@@ -81,6 +82,14 @@ NAME_MAP = {
     "majunga phase 2": "mahajanga",
     "lidera phase3 toamasina 2mwc": "lidera-toamasina-3",
     "lidera toamasina phase 3": "lidera-toamasina-3",
+    # Paiements sheet names
+    "diego wind ph1": "diego-wind-1",
+    "lidera diego": "diego-lidera",
+    "lidera majunga": "mahajanga",
+    "vestop fihaonana": "fihaonana-1",
+    "bongatsara ph1": "bongatsara-1",
+    "oursun zfi ph1": "oursun-1",
+    "moramanga ph1": "moramanga-1",
     # Cost Control RECAP names
     "bongatsara ph1 5mw": "bongatsara-1",
     "tulear ground 1mw": "tulear-2",
@@ -385,7 +394,9 @@ def read_status_etudes(projects):
 # FILE 5: Weekly_EnR_Avancement.xlsx
 # ══════════════════════════════════════════
 def read_weekly(projects):
-    path = os.path.join(BASE, "Weekly_EnR_Avancement.xlsx")
+    path = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Avancement.xlsx")
+    if not os.path.exists(path):
+        path = os.path.join(BASE, "Weekly_EnR_Avancement.xlsx")
     if not os.path.exists(path):
         print(f"  SKIP: {path}")
         return None
@@ -438,6 +449,91 @@ def read_weekly(projects):
 
 
 # ══════════════════════════════════════════
+# FILE 6: Weekly_EnR_Paiements.xlsx
+# ══════════════════════════════════════════
+def read_paiements(projects):
+    path = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Paiements.xlsx")
+    if not os.path.exists(path):
+        path = os.path.join(BASE, "Weekly_EnR_Paiements.xlsx")
+    if not os.path.exists(path):
+        print(f"  SKIP: {path}")
+        return
+    wb = openpyxl.load_workbook(path, data_only=True)
+    ws = wb["Paiements"]
+
+    # Per-project payment aggregation
+    pmt_data = {}  # pid -> {lines: [], totalUSD: 0, totalMGA: 0, ok: 0, nok: 0}
+
+    for row in range(5, ws.max_row + 1):
+        pid_raw = safe_str(ws.cell(row, 1).value)
+        projet_name = safe_str(ws.cell(row, 2).value)
+        if not pid_raw and not projet_name:
+            continue
+        # Skip TOTAL rows
+        if "total" in (pid_raw + projet_name).lower():
+            continue
+
+        pid = pid_raw if pid_raw in projects else resolve_id(pid_raw) or resolve_id(projet_name)
+        if not pid:
+            continue
+
+        contractant = safe_str(ws.cell(row, 3).value)
+        prestation = safe_str(ws.cell(row, 4).value)
+        description = safe_str(ws.cell(row, 5).value)
+        montant = safe_float(ws.cell(row, 6).value, 0)
+        devise = safe_str(ws.cell(row, 7).value).upper()
+        echeance = safe_date(ws.cell(row, 8).value)
+        statut = safe_str(ws.cell(row, 9).value).upper()
+        actions = safe_str(ws.cell(row, 10).value)
+
+        if pid not in pmt_data:
+            pmt_data[pid] = {"lines": [], "totalUSD": 0, "totalMGA": 0, "ok": 0, "nok": 0}
+        d = pmt_data[pid]
+
+        line = {}
+        if contractant: line["contractant"] = contractant
+        if prestation: line["prestation"] = prestation
+        if description: line["desc"] = description
+        if montant: line["montant"] = montant
+        if devise: line["devise"] = devise
+        if echeance: line["echeance"] = echeance
+        if statut: line["statut"] = statut
+        if actions: line["actions"] = actions
+        d["lines"].append(line)
+
+        if "USD" in devise:
+            d["totalUSD"] += montant
+        else:
+            d["totalMGA"] += montant
+        if statut == "OK":
+            d["ok"] += 1
+        else:
+            d["nok"] += 1
+
+    # Merge into projects
+    count = 0
+    for pid, d in pmt_data.items():
+        if pid not in projects:
+            projects[pid] = {"id": pid}
+        p = projects[pid]
+        pmt = {
+            "count": len(d["lines"]),
+            "ok": d["ok"],
+            "nok": d["nok"],
+        }
+        if d["totalUSD"] > 0:
+            pmt["totalUSD"] = round(d["totalUSD"], 2)
+        if d["totalMGA"] > 0:
+            pmt["totalMGA"] = round(d["totalMGA"])
+        pmt["lines"] = d["lines"]
+        p["paiements"] = pmt
+        count += 1
+
+    wb.close()
+    print(f"  Paiements: {count} projects, {sum(len(d['lines']) for d in pmt_data.values())} lines")
+
+
+# ══════════════════════════════════════════
 # MAIN
 # ══════════════════════════════════════════
 def determine_phase(p):
@@ -467,6 +563,7 @@ def main():
     read_dashboard_master(projects)
     read_status_etudes(projects)
     week_str = read_weekly(projects)
+    read_paiements(projects)
 
     # Finalize
     for pid, p in projects.items():

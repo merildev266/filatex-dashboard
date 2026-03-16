@@ -501,7 +501,8 @@
         style="border-color:rgba(0,171,99,0.15);cursor:pointer;"
         onmouseenter="this.style.borderColor='rgba(0,171,99,0.45)';this.style.background='rgba(0,171,99,0.06)';this.style.boxShadow='0 16px 40px rgba(0,171,99,0.15)';this.style.transform='translateY(-3px)'"
         onmouseleave="this.style.borderColor='rgba(0,171,99,0.15)';this.style.background='';this.style.boxShadow='';this.style.transform=''">
-        <div style="display:flex;align-items:center;justify-content:space-around;">
+        <!-- Row 1: Total + MWc + CAPEX -->
+        <div style="display:flex;align-items:center;justify-content:space-around;margin-bottom:10px;">
           <div style="text-align:center;">
             <div style="font-size:22px;font-weight:800;color:#00ab63;" id="e-enr-proj-total">—</div>
             <div style="font-size:7px;color:rgba(0,171,99,0.5);text-transform:uppercase;">projets</div>
@@ -509,8 +510,37 @@
           <div style="width:1px;height:24px;background:rgba(0,171,99,0.15);"></div>
           <div style="text-align:center;">
             <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.8);" id="e-enr-proj-mw">—</div>
-            <div style="font-size:7px;color:rgba(0,171,99,0.4);text-transform:uppercase;">MWc</div>
+            <div style="font-size:7px;color:rgba(0,171,99,0.4);text-transform:uppercase;">MWc total</div>
           </div>
+          <div style="width:1px;height:24px;background:rgba(0,171,99,0.15);"></div>
+          <div style="text-align:center;">
+            <div style="font-size:16px;font-weight:700;color:#FDB823;" id="e-enr-proj-capex">—</div>
+            <div style="font-size:7px;color:rgba(253,184,35,0.5);text-transform:uppercase;">CAPEX M$</div>
+          </div>
+        </div>
+        <!-- Row 2: Phase badges -->
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
+          <div style="background:rgba(0,171,99,0.1);border:1px solid rgba(0,171,99,0.25);border-radius:6px;padding:3px 8px;text-align:center;">
+            <span style="font-size:13px;font-weight:800;color:rgba(0,171,99,0.8);" id="e-enr-proj-terme">—</span>
+            <span style="font-size:7px;color:rgba(0,171,99,0.5);margin-left:3px;">Terminé</span>
+          </div>
+          <div style="background:rgba(253,184,35,0.08);border:1px solid rgba(253,184,35,0.2);border-radius:6px;padding:3px 8px;text-align:center;">
+            <span style="font-size:13px;font-weight:800;color:rgba(253,184,35,0.8);" id="e-enr-proj-const">—</span>
+            <span style="font-size:7px;color:rgba(253,184,35,0.5);margin-left:3px;">Const.</span>
+          </div>
+          <div style="background:rgba(90,175,175,0.08);border:1px solid rgba(90,175,175,0.2);border-radius:6px;padding:3px 8px;text-align:center;">
+            <span style="font-size:13px;font-weight:800;color:rgba(90,175,175,0.8);" id="e-enr-proj-dev">—</span>
+            <span style="font-size:7px;color:rgba(90,175,175,0.5);margin-left:3px;">Dev.</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:3px 8px;text-align:center;">
+            <span style="font-size:13px;font-weight:800;color:rgba(255,255,255,0.4);" id="e-enr-proj-plan">—</span>
+            <span style="font-size:7px;color:rgba(255,255,255,0.25);margin-left:3px;">Plan.</span>
+          </div>
+        </div>
+        <!-- Row 3: Alerts -->
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <div id="e-enr-proj-delay" style="font-size:8px;color:rgba(243,112,86,0.7);display:none;">⚠ <span id="e-enr-proj-delay-n">0</span> en retard</div>
+          <div id="e-enr-proj-nok" style="font-size:8px;color:rgba(220,50,50,0.7);display:none;">💰 <span id="e-enr-proj-nok-n">0</span> paiements NOK</div>
         </div>
       </div>
       </div><!-- /e-col EnR -->
@@ -738,6 +768,7 @@
     <div id="pd-cashflow-section"></div>
     <div id="pd-gantt-section"></div>
     <div id="pd-schedule-section"></div>
+    <div id="pd-paiements-section"></div>
     <div id="pd-comments-section"></div>
   </div>
 </div>
@@ -1839,7 +1870,7 @@
 <script src="js/energy.js"></script>
 <script src="js/capex.js"></script>
 <script src="js/properties.js"></script>
-<script src="js/projects.js"></script>
+<script src="js/projects.js?v=20260316"></script>
 <script src="js/investments.js"></script>
 <script src="js/csi.js"></script>
 <script src="reporting_data.js"></script>

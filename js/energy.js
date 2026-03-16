@@ -844,6 +844,7 @@ function closeHfoProjets(){
         epciste: p.epciste || 'TBC',
         engProgression: p.engProgression || null,
         studies: p.studies || [],
+        paiements: p.paiements || null,
         blocages: p.blocages || null,
         actionsS1: p.actionsS1 || null,
         actionsS: p.actionsS || null,
@@ -1078,6 +1079,18 @@ function closeHfoProjets(){
   if (el('e-enr-proj-dev'))   el('e-enr-proj-dev').textContent   = grouped.developpement.length;
   if (el('e-enr-proj-plan'))  el('e-enr-proj-plan').textContent  = grouped.planifie.length;
   if (el('e-enr-proj-capex')) el('e-enr-proj-capex').textContent = totalCapex.toFixed(1);
+  /* Delay alert */
+  var delayCount = enrProjects.filter(function(p) { return p.glissement > 0; }).length;
+  if (el('e-enr-proj-delay') && delayCount > 0) {
+    el('e-enr-proj-delay').style.display = '';
+    el('e-enr-proj-delay-n').textContent = delayCount;
+  }
+  /* Payment NOK alert */
+  var nokTotal = enrProjects.reduce(function(s, p) { return s + (p.paiements ? p.paiements.nok : 0); }, 0);
+  if (el('e-enr-proj-nok') && nokTotal > 0) {
+    el('e-enr-proj-nok').style.display = '';
+    el('e-enr-proj-nok-n').textContent = nokTotal;
+  }
 
   /* ── Production EnR — données réelles depuis enr_site_data.js ── */
   var enrSites = (typeof ENR_SITES !== 'undefined') ? ENR_SITES : [];

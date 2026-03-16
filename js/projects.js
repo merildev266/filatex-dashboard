@@ -20,6 +20,7 @@ function openProjectDetail(projectId) {
   renderPdCashflow(p, hasCc, color, rgb);
   renderPdGantt(p, phase, color, rgb);
   renderPdSchedule(p, color, rgb, hasCc);
+  renderPdPaiements(p, color, rgb);
   renderPdComments(p);
 
   const panel = document.getElementById('panel-project-detail');
@@ -320,91 +321,201 @@ function autoStages(p) {
   return stages;
 }
 
-/* ── Section 6: Stage-Gate Gantt ── */
+/* ── Section 6: Stage-Gate Gantt (date-based timeline) ── */
 function renderPdGantt(p, phase, color, rgb) {
+  const el = document.getElementById('pd-gantt-section');
   const stages = p.stages || autoStages(p);
-  if (!stages.length) { document.getElementById('pd-gantt-section').innerHTML = ''; return; }
+  if (!stages.length) { el.innerHTML = ''; return; }
+
+  /* Collect all dates from the project */
+  const datePairs = [
+    {name:'Engineering', start:p.engStart, end:p.engEnd, pct:p.engPct||0},
+    {name:'Tendering', start:p.tendStart, end:p.tendEnd, pct:p.tendDone?100:50},
+    {name:'Construction', start:p.constStart, end:p.constEnd, pct:Math.round((p.constProg||0)*100)},
+  ].filter(d => d.start && d.end);
+
+  /* If no dates at all, fall back to percentage-only bars */
+  if (!datePairs.length) {
+    renderPdGanttPctOnly(p, stages, rgb);
+    return;
+  }
+
+  const parseD = s => new Date(s);
+  const allDates = datePairs.flatMap(d => [parseD(d.start), parseD(d.end)]);
+  const minDate = new Date(Math.min(...allDates));
+  const maxDate = new Date(Math.max(...allDates));
+  /* Add 10% padding on each side */
+  const span = maxDate - minDate;
+  const padMs = Math.max(span * 0.05, 7*864e5);
+  const tlStart = new Date(minDate - padMs);
+  const tlEnd = new Date(+maxDate + padMs);
+  const tlSpan = tlEnd - tlStart;
+  const toPct = d => Math.max(0, Math.min(100, ((parseD(d) - tlStart) / tlSpan) * 100));
+  const today = new Date();
+  const todayPct = Math.max(0, Math.min(100, ((today - tlStart) / tlSpan) * 100));
+
+  /* Build month headers */
+  const months = [];
+  let mCur = new Date(tlStart.getFullYear(), tlStart.getMonth(), 1);
+  while (mCur <= tlEnd) {
+    months.push(new Date(mCur));
+    mCur = new Date(mCur.getFullYear(), mCur.getMonth() + 1, 1);
+  }
+
+  const stageHex = ['#74b859','#5aafaf','#8b7cf6','#f8c100','#ff8758','#6488ff'];
   const delays = p.delays || {};
   const defaultCause = p.comment || 'Cause en cours d\'analyse';
   const defaultResolution = 'En cours — suivi renforcé';
-
-  /* Store current project delays globally for onclick handlers */
   window._sgDelays = delays;
   window._sgDefaultCause = defaultCause;
   window._sgDefaultResolution = defaultResolution;
 
-  /* Per-stage color palette — matches reference standalone gantt */
-  const stageHex = ['#74b859','#5aafaf','#8b7cf6','#f8c100','#ff8758','#6488ff'];
-  const stageRgb = ['116,184,89','90,175,175','139,124,246','248,193,0','255,135,88','100,136,255'];
+  const fmtShort = d => {
+    const dt = typeof d === 'string' ? new Date(d) : d;
+    return dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'});
+  };
 
-  let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Stage-Gate</div>
+  let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Timeline</div>
+  <div class="neutral-card" style="margin-bottom:32px;overflow-x:auto;">
+    <div style="min-width:600px;">`;
+
+  /* Month header row */
+  html += `<div style="display:flex;align-items:center;margin-bottom:8px;">
+    <div style="flex:0 0 160px;"></div>
+    <div style="flex:1;position:relative;height:22px;">`;
+  months.forEach(m => {
+    const mEnd = new Date(m.getFullYear(), m.getMonth() + 1, 0);
+    const left = Math.max(0, ((m - tlStart) / tlSpan) * 100);
+    const label = m.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'});
+    html += `<div style="position:absolute;left:${left}%;font-size:8px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:0.05em;white-space:nowrap;border-left:1px solid rgba(255,255,255,0.06);padding-left:4px;height:22px;line-height:22px;">${label}</div>`;
+  });
+  html += `</div></div>`;
+
+  /* Phase rows */
+  datePairs.forEach((dp, si) => {
+    const sHex = stageHex[si % stageHex.length];
+    const left = toPct(dp.start);
+    const right = toPct(dp.end);
+    const width = Math.max(2, right - left);
+    const pct = dp.pct;
+    const isDelayed = dp.name === 'Construction' && p.glissement > 0;
+    const delayWeeks = isDelayed ? Math.round(p.glissement / 7) : 0;
+
+    html += `<div style="display:flex;align-items:center;margin-bottom:12px;">
+      <div style="flex:0 0 160px;display:flex;flex-direction:column;padding-right:10px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);border-left:3px solid ${sHex};padding-left:8px;">${dp.name}</div>
+        <div style="font-size:8px;color:rgba(255,255,255,0.3);padding-left:11px;margin-top:2px;">${fmtShort(dp.start)} → ${fmtShort(dp.end)}</div>
+      </div>
+      <div style="flex:1;position:relative;height:26px;">`;
+
+    /* Gridlines */
+    months.forEach(m => {
+      const gl = Math.max(0, ((m - tlStart) / tlSpan) * 100);
+      html += `<div style="position:absolute;left:${gl}%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.04);"></div>`;
+    });
+
+    /* Today line */
+    if (todayPct > 0 && todayPct < 100) {
+      html += `<div style="position:absolute;left:${todayPct}%;top:-2px;bottom:-2px;width:1.5px;background:rgba(255,255,255,0.2);z-index:3;"></div>`;
+    }
+
+    /* Background track */
+    html += `<div style="position:absolute;left:${left}%;width:${width}%;top:3px;height:20px;background:${sHex}18;border:1px solid ${sHex}44;border-radius:5px;"></div>`;
+
+    /* Progress fill */
+    const fillW = width * pct / 100;
+    html += `<div style="position:absolute;left:${left}%;width:${fillW}%;top:3px;height:20px;background:${sHex}77;border-radius:5px 0 0 5px;${pct >= 100 ? 'border-radius:5px;' : ''}overflow:hidden;">
+      <div style="height:100%;width:100%;background:linear-gradient(90deg,${sHex}99,${sHex}55);"></div>
+    </div>`;
+
+    /* Percentage label */
+    html += `<div style="position:absolute;left:${left + width/2}%;top:3px;height:20px;display:flex;align-items:center;justify-content:center;transform:translateX(-50%);font-size:8px;font-weight:800;color:rgba(255,255,255,0.7);z-index:2;text-shadow:0 1px 3px rgba(0,0,0,0.5);">${pct}%</div>`;
+
+    /* Delay indicator */
+    if (isDelayed && delayWeeks > 0) {
+      const escapedCause = defaultCause.replace(/'/g, "\\'");
+      const escapedResolution = defaultResolution.replace(/'/g, "\\'");
+      html += `<div style="position:absolute;left:${left + width + 1}%;top:3px;height:20px;display:flex;align-items:center;gap:4px;cursor:pointer;z-index:2;" onclick="showDelayPopup('Construction','+${delayWeeks} sem','${escapedCause}','${escapedResolution}')">
+        <span style="font-size:11px;animation:pulse-delay 2.5s ease-in-out infinite;">⚠</span>
+        <span style="font-size:8px;font-weight:700;color:rgba(255,100,100,0.8);">+${delayWeeks} sem</span>
+      </div>`;
+    }
+
+    /* Start/End date markers */
+    html += `<div style="position:absolute;left:${left}%;bottom:-1px;font-size:7px;color:rgba(255,255,255,0.25);transform:translateX(-50%);white-space:nowrap;">${new Date(dp.start).toLocaleDateString('fr-FR',{month:'2-digit',year:'2-digit'})}</div>`;
+    html += `<div style="position:absolute;left:${left+width}%;bottom:-1px;font-size:7px;color:rgba(255,255,255,0.25);transform:translateX(-50%);white-space:nowrap;">${new Date(dp.end).toLocaleDateString('fr-FR',{month:'2-digit',year:'2-digit'})}</div>`;
+
+    html += `</div></div>`;
+  });
+
+  /* Today marker label */
+  if (todayPct > 0 && todayPct < 100) {
+    html += `<div style="display:flex;align-items:center;margin-top:4px;">
+      <div style="flex:0 0 160px;"></div>
+      <div style="flex:1;position:relative;height:12px;">
+        <div style="position:absolute;left:${todayPct}%;transform:translateX(-50%);font-size:7px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.1em;white-space:nowrap;">▼ Aujourd'hui</div>
+      </div>
+    </div>`;
+  }
+
+  /* Legend */
+  html += `<div style="display:flex;gap:20px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;">`;
+  datePairs.forEach((dp, si) => {
+    const sHex = stageHex[si % stageHex.length];
+    html += `<div style="display:flex;align-items:center;gap:6px;"><div style="width:18px;height:8px;border-radius:3px;background:${sHex}77;border:1px solid ${sHex};"></div><span style="font-size:9px;color:rgba(255,255,255,0.35);">${dp.name}</span></div>`;
+  });
+  html += `<div style="display:flex;align-items:center;gap:6px;"><div style="width:1.5px;height:12px;background:rgba(255,255,255,0.2);"></div><span style="font-size:9px;color:rgba(255,255,255,0.35);">Aujourd'hui</span></div>`;
+  if (datePairs.some(d => d.name === 'Construction' && p.glissement > 0)) {
+    html += `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;">⚠</span><span style="font-size:9px;color:rgba(255,255,255,0.35);">Retard — cliquer pour détails</span></div>`;
+  }
+  html += `</div>`;
+
+  html += `</div></div>`;
+  el.innerHTML = html;
+}
+
+/* Fallback: percentage-only bars when no dates available */
+function renderPdGanttPctOnly(p, stages, rgb) {
+  const el = document.getElementById('pd-gantt-section');
+  const stageHex = ['#74b859','#5aafaf','#8b7cf6','#f8c100','#ff8758','#6488ff'];
+  const delays = p.delays || {};
+  const defaultCause = p.comment || 'Cause en cours d\'analyse';
+  const defaultResolution = 'En cours — suivi renforcé';
+
+  let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Planning · Avancement</div>
   <div class="neutral-card" style="margin-bottom:32px;">`;
 
   stages.forEach((stage, si) => {
     const sHex = stageHex[si % stageHex.length];
-    const sRgb = stageRgb[si % stageRgb.length];
     const stagePct = stage.tasks.length > 0 ? Math.round(stage.tasks.reduce((s,t) => s + t.pct, 0) / stage.tasks.length) : 0;
 
-    /* Stage header row — rendered as a thicker bar like reference */
-    html += `<div class="sg-stage">
+    html += `<div style="margin-bottom:14px;">
       <div style="display:flex;align-items:center;min-height:30px;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:4px;">
         <div style="flex:0 0 180px;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.75);padding-left:10px;border-left:3px solid ${sHex};white-space:nowrap;">${stage.name}</div>
         <div style="flex:1;position:relative;height:18px;">
           <div style="position:absolute;inset:0;background:rgba(255,255,255,0.03);border-radius:4px;"></div>
           <div style="position:absolute;left:0;top:0;width:${stagePct}%;height:100%;border-radius:4px;background:${sHex}44;border:1px solid ${sHex}88;overflow:hidden;">
             <div style="height:100%;width:100%;background:${sHex}99;"></div>
-            ${stagePct > 15 ? `<div style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:700;color:rgba(255,255,255,0.6);">${stagePct}%</div>` : ''}
           </div>
-          ${stagePct <= 15 && stagePct > 0 ? `<div style="position:absolute;left:${stagePct + 1}%;top:50%;transform:translateY(-50%);font-size:7px;font-weight:700;color:rgba(255,255,255,0.4);">${stagePct}%</div>` : ''}
+          <div style="position:absolute;${stagePct > 15 ? `right:4px;` : `left:${stagePct+1}%;`}top:50%;transform:translateY(-50%);font-size:7px;font-weight:700;color:rgba(255,255,255,${stagePct > 15 ? '0.6' : '0.4'});">${stagePct}%</div>
         </div>
       </div>`;
     stage.tasks.forEach(t => {
       const isDelayed = t.status === 'delayed';
-      const pctLabel = t.pct > 0 ? t.pct + '%' : '';
       const barW = Math.max(t.pct > 0 ? 3 : 0, t.pct);
-      const dInfo = delays[t.name];
-      const delayW = t.delayWeeks || (dInfo ? dInfo.weeks : 0);
-      const delayLabel = delayW > 0 ? '+' + delayW + ' sem' : '';
-      const cause = dInfo ? dInfo.cause : defaultCause;
-      const resolution = dInfo ? dInfo.resolution : defaultResolution;
-      const escapedName = t.name.replace(/'/g, "\\'");
-      const escapedCause = cause.replace(/'/g, "\\'");
-      const escapedResolution = resolution.replace(/'/g, "\\'");
-
-      /* Delay offset */
-      const delayBarPct = isDelayed && delayW > 0 ? Math.min(30, Math.max(8, Math.round(delayW * 0.8))) : 0;
-      const adjustedBarW = isDelayed && delayBarPct > 0 && barW + delayBarPct > 100 ? 100 - delayBarPct : barW;
-      const delayBarLeft = adjustedBarW;
-
       const isPending = t.pct === 0 && !isDelayed;
-      /* Task name: indented, orange for delayed */
       const nameStyle = isDelayed ? 'color:rgba(255,135,88,0.75);font-weight:700;' : '';
-
       html += `<div class="sg-task">
         <div class="sg-task-name" style="padding-left:14px;${nameStyle}">${t.name}</div>
         <div class="sg-bar-track" style="border-radius:4px;${!isPending ? `border:1px solid ${sHex}55;background:${sHex}16;` : ''}">
-          ${isPending ? '' : `<div class="sg-bar-fill" style="width:${adjustedBarW}%;background:${sHex}77;border-radius:3px 0 0 3px;">${pctLabel}</div>`}
-          ${isDelayed && delayBarPct > 0 ? `<div style="position:absolute;top:0;left:${delayBarLeft}%;width:${delayBarPct}%;height:100%;border-radius:0 4px 4px 0;background:rgba(220,50,50,0.35);border:1px solid rgba(220,50,50,0.5);border-left:none;overflow:visible;cursor:pointer;z-index:2;animation:pulse-delay 2.5s ease-in-out infinite;" onclick="showDelayPopup('${escapedName}','${delayLabel}','${escapedCause}','${escapedResolution}')">
-            <div style="height:100%;width:100%;background:rgba(220,50,50,0.55);border-radius:0 3px 3px 0;"></div>
-            <div style="position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:700;color:rgba(255,180,180,0.9);">⚠</div>
-          </div>` : ''}
+          ${isPending ? '' : `<div class="sg-bar-fill" style="width:${barW}%;background:${sHex}77;border-radius:3px;">${t.pct > 0 ? t.pct+'%' : ''}</div>`}
         </div>
-        ${isDelayed && delayBarPct === 0 ? `<span class="sg-warn" onclick="showDelayPopup('${escapedName}','${delayLabel}','${escapedCause}','${escapedResolution}')">⚠</span>` : ''}
       </div>`;
     });
     html += `</div>`;
   });
-
-  /* Legend — matches reference style */
-  html += `<div style="display:flex;gap:20px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:7px;"><div style="width:20px;height:8px;border-radius:3px;background:rgba(116,184,89,0.5);border:1px solid rgba(116,184,89,0.7);"></div><span style="font-size:9px;color:rgba(255,255,255,0.35);">Dans les délais</span></div>
-    <div style="display:flex;align-items:center;gap:7px;"><div style="width:20px;height:8px;border-radius:3px;background:rgba(220,50,50,0.45);border:1px solid rgba(220,50,50,0.7);"></div><span style="font-size:9px;color:rgba(255,255,255,0.35);">Retard détecté ⚠</span></div>
-    <div style="display:flex;align-items:center;gap:7px;"><div style="width:20px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);"></div><span style="font-size:9px;color:rgba(255,255,255,0.35);">À venir</span></div>
-    <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:11px;filter:drop-shadow(0 0 3px rgba(220,50,50,0.4));">⚠</span><span style="font-size:9px;color:rgba(255,255,255,0.35);">Cliquer pour détails</span></div>
-  </div>`;
-
   html += `</div>`;
-  document.getElementById('pd-gantt-section').innerHTML = html;
+  el.innerHTML = html;
 }
 
 /* ── Section 7: Schedule ── */
@@ -446,7 +557,68 @@ function renderPdSchedule(p, color, rgb, hasCc) {
     </div>`;
 }
 
-/* ── Section 8: Comments ── */
+/* ── Section 8: Paiements ── */
+function renderPdPaiements(p, color, rgb) {
+  const el = document.getElementById('pd-paiements-section');
+  if (!p.paiements || !p.paiements.lines || !p.paiements.lines.length) { el.innerHTML = ''; return; }
+  const pm = p.paiements;
+
+  let html = `<div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Suivi Paiements</div>
+  <div class="neutral-card" style="margin-bottom:32px;">`;
+
+  /* Summary KPIs */
+  html += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
+    <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:7px;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.3);margin-bottom:4px;">TOTAL</div>
+      <div style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.8);">${pm.count}</div>
+    </div>
+    <div style="background:rgba(0,171,99,0.08);border:1px solid rgba(0,171,99,0.2);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:7px;font-weight:700;letter-spacing:0.15em;color:rgba(0,171,99,0.5);margin-bottom:4px;">PAYÉ</div>
+      <div style="font-size:18px;font-weight:800;color:#00ab63;">${pm.ok}</div>
+    </div>
+    <div style="background:rgba(243,112,86,0.08);border:1px solid rgba(243,112,86,0.2);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:7px;font-weight:700;letter-spacing:0.15em;color:rgba(243,112,86,0.5);margin-bottom:4px;">EN ATTENTE</div>
+      <div style="font-size:18px;font-weight:800;color:#f37056;">${pm.nok}</div>
+    </div>
+    <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:7px;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.3);margin-bottom:4px;">MONTANTS</div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);line-height:1.6;">
+        ${pm.totalUSD ? '$' + Number(pm.totalUSD).toLocaleString('fr-FR') : ''}
+        ${pm.totalUSD && pm.totalMGA ? '<br>' : ''}
+        ${pm.totalMGA ? Number(pm.totalMGA).toLocaleString('fr-FR') + ' MGA' : ''}
+      </div>
+    </div>
+  </div>`;
+
+  /* Detail table */
+  html += `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:9px;">
+    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+      <th style="text-align:left;padding:6px 8px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.1em;font-size:8px;">Contractant</th>
+      <th style="text-align:left;padding:6px 8px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.1em;font-size:8px;">Prestation</th>
+      <th style="text-align:right;padding:6px 8px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.1em;font-size:8px;">Montant</th>
+      <th style="text-align:center;padding:6px 8px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.1em;font-size:8px;">Statut</th>
+      <th style="text-align:left;padding:6px 8px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.1em;font-size:8px;">Actions</th>
+    </tr></thead><tbody>`;
+
+  pm.lines.forEach(l => {
+    const isOk = (l.statut || '').toUpperCase() === 'OK';
+    const statusColor = isOk ? '#00ab63' : '#f37056';
+    const statusBg = isOk ? 'rgba(0,171,99,0.12)' : 'rgba(243,112,86,0.12)';
+    const montantFmt = l.montant ? (l.devise === 'USD' ? '$' : '') + Number(l.montant).toLocaleString('fr-FR') + (l.devise === 'MGA' ? ' MGA' : '') : '—';
+    html += `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+      <td style="padding:8px;color:rgba(255,255,255,0.6);font-weight:600;">${l.contractant || '—'}</td>
+      <td style="padding:8px;color:rgba(255,255,255,0.5);">${l.prestation || l.desc || '—'}</td>
+      <td style="padding:8px;text-align:right;color:rgba(255,255,255,0.7);font-weight:700;font-variant-numeric:tabular-nums;">${montantFmt}</td>
+      <td style="padding:8px;text-align:center;"><span style="background:${statusBg};color:${statusColor};border:1px solid ${statusColor}44;border-radius:4px;padding:2px 8px;font-weight:700;font-size:8px;">${isOk ? 'Payé' : 'NOK'}</span></td>
+      <td style="padding:8px;color:rgba(255,255,255,0.4);font-size:8px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${(l.actions||'').replace(/"/g,'&quot;')}">${l.actions || '—'}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div></div>`;
+  el.innerHTML = html;
+}
+
+/* ── Section 9: Comments ── */
 function renderPdComments(p) {
   const el = document.getElementById('pd-comments-section');
   if (!p.comment) { el.innerHTML = ''; return; }
