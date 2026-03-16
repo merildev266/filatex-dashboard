@@ -392,7 +392,26 @@ def read_status_etudes(projects):
 
 # ══════════════════════════════════════════
 # FILE 5: Weekly_EnR_Avancement.xlsx
+# New format: 52 sheets S01-S52, auto-detect latest filled week
+# Headers row 8: A=ID, B=Projet, C=Resp, D=Type, E=MWc,
+#   F=Phase, G=Avancement(%), H=Glissement(j), I=StatutEtudes,
+#   J=StatutConstruction, K=EPC, L=COD, M=Blocages,
+#   N=ActionsS-1, O=ActionsSemaine, P=CommentairesDG
 # ══════════════════════════════════════════
+def _find_latest_weekly_sheet(wb):
+    """Find the latest sheet with actual data (non-empty F column)."""
+    best = None
+    for sn in reversed(wb.sheetnames):
+        if not sn.startswith('S') or not sn[1:].isdigit():
+            continue
+        ws = wb[sn]
+        # Check if any project row has Phase filled (col F, rows 9+)
+        for row in range(9, 30):
+            if ws.cell(row, 6).value:
+                return sn
+    return None
+
+
 def read_weekly(projects):
     path = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Avancement.xlsx")
     if not os.path.exists(path):
@@ -401,15 +420,42 @@ def read_weekly(projects):
         print(f"  SKIP: {path}")
         return None
     wb = openpyxl.load_workbook(path, data_only=True)
-    ws = wb["Avancement Projets"]
 
-    week_val = ws["E2"].value
+    # Try new multi-sheet format first
+    latest = _find_latest_weekly_sheet(wb)
+    if latest:
+        ws = wb[latest]
+        data_start = 9  # row 9 = first data row in new format
+        print(f"  Weekly format: multi-sheet, reading {latest}")
+    elif "Avancement Projets" in wb.sheetnames:
+        ws = wb["Avancement Projets"]
+        data_start = 5  # old format
+        latest = "old"
+        print(f"  Weekly format: legacy single-sheet")
+    else:
+        print(f"  SKIP: no valid sheet found")
+        wb.close()
+        return None
+
+    week_val = ws["E2"].value or ws["E3"].value
     week_str = ""
     if week_val:
         week_str = week_val.strftime("%d/%m/%Y") if hasattr(week_val, 'strftime') else str(week_val)
 
+    # Column mapping depends on format
+    if latest != "old":
+        # New format columns: F=Phase G=Av H=Glis I=StatEtudes J=StatConst K=EPC L=COD M=Bloc N=ActS1 O=ActS P=ComDG
+        col_map = {'resp':3, 'type':4, 'phase':6, 'av':7, 'glis':8,
+                   'statEtudes':9, 'statConst':10, 'epc':11, 'cod':12,
+                   'blocages':13, 'actionsS1':14, 'actionsS':15, 'comDG':16}
+    else:
+        # Old format columns
+        col_map = {'resp':3, 'type':4, 'phase':6, 'av':7, 'glis':8,
+                   'statEtudes':9, 'statConst':10, 'epc':12, 'cod':13,
+                   'blocages':15, 'actionsS1':16, 'actionsS':17, 'comDG':18}
+
     count = 0
-    for row in range(5, ws.max_row + 1):
+    for row in range(data_start, ws.max_row + 1):
         pid = safe_str(ws.cell(row, 1).value)
         if not pid:
             continue
@@ -417,17 +463,19 @@ def read_weekly(projects):
             projects[pid] = {"id": pid}
         p = projects[pid]
 
-        # Weekly fields override
-        resp = safe_str(ws.cell(row, 3).value)
-        type_ = safe_str(ws.cell(row, 4).value)
-        phase = safe_str(ws.cell(row, 6).value)
-        avancement = safe_float(ws.cell(row, 7).value)
-        glissement = safe_float(ws.cell(row, 8).value)
-        epc = safe_str(ws.cell(row, 12).value)
-        blocages = safe_str(ws.cell(row, 15).value)
-        actions_s1 = safe_str(ws.cell(row, 16).value)
-        actions_s = safe_str(ws.cell(row, 17).value)
-        commentaires_dg = safe_str(ws.cell(row, 18).value)
+        resp = safe_str(ws.cell(row, col_map['resp']).value)
+        type_ = safe_str(ws.cell(row, col_map['type']).value)
+        phase = safe_str(ws.cell(row, col_map['phase']).value)
+        avancement = safe_float(ws.cell(row, col_map['av']).value)
+        glissement = safe_float(ws.cell(row, col_map['glis']).value)
+        stat_etudes = safe_str(ws.cell(row, col_map['statEtudes']).value)
+        stat_const = safe_str(ws.cell(row, col_map['statConst']).value)
+        epc = safe_str(ws.cell(row, col_map['epc']).value)
+        cod = safe_date(ws.cell(row, col_map['cod']).value)
+        blocages = safe_str(ws.cell(row, col_map['blocages']).value)
+        actions_s1 = safe_str(ws.cell(row, col_map['actionsS1']).value)
+        actions_s = safe_str(ws.cell(row, col_map['actionsS']).value)
+        commentaires_dg = safe_str(ws.cell(row, col_map['comDG']).value)
 
         if resp: p["chef"] = resp
         if type_: p["type"] = type_
@@ -436,7 +484,10 @@ def read_weekly(projects):
             p["avancement"] = round(avancement)
             p["constProg"] = round(avancement / 100, 2)
         if glissement is not None: p["glissement"] = int(glissement)
+        if stat_etudes: p["statutEtudes"] = stat_etudes
+        if stat_const: p["statutConst"] = stat_const
         if epc: p["epciste"] = epc
+        if cod: p["codPrevue"] = cod
         if blocages: p["blocages"] = blocages
         if actions_s1: p["actionsS1"] = actions_s1
         if actions_s: p["actionsS"] = actions_s
@@ -452,39 +503,70 @@ def read_weekly(projects):
 # FILE 6: Weekly_EnR_Paiements.xlsx
 # ══════════════════════════════════════════
 def read_paiements(projects):
-    path = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Paiements.xlsx")
+    # Try PAIEMENT sheet inside Weekly_EnR_Avancement first (new unified format)
+    path = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Avancement.xlsx")
     if not os.path.exists(path):
-        path = os.path.join(BASE, "Weekly_EnR_Paiements.xlsx")
-    if not os.path.exists(path):
-        print(f"  SKIP: {path}")
-        return
-    wb = openpyxl.load_workbook(path, data_only=True)
-    ws = wb["Paiements"]
+        path = os.path.join(BASE, "Weekly_EnR_Avancement.xlsx")
+    wb = None
+    ws = None
+    if os.path.exists(path):
+        wb = openpyxl.load_workbook(path, data_only=True)
+        if "PAIEMENT" in wb.sheetnames:
+            ws = wb["PAIEMENT"]
+    # Fallback: separate Weekly_EnR_Paiements.xlsx
+    if ws is None:
+        if wb: wb.close()
+        wb = None
+        for fname in ["Weekly_EnR_Paiements.xlsx"]:
+            for base in [os.path.join(BASE, "Weekly_Report"), BASE]:
+                fpath = os.path.join(base, fname)
+                if os.path.exists(fpath):
+                    try:
+                        wb = openpyxl.load_workbook(fpath, data_only=True)
+                        for sn in ["Paiements", "PAIEMENT", "Paiement"]:
+                            if sn in wb.sheetnames:
+                                ws = wb[sn]
+                                break
+                        if ws: break
+                        wb.close(); wb = None
+                    except Exception:
+                        pass
+            if ws: break
+        if ws is None:
+            print(f"  SKIP Paiements: no valid sheet found")
+            if wb: wb.close()
+            return
 
-    # Per-project payment aggregation
-    pmt_data = {}  # pid -> {lines: [], totalUSD: 0, totalMGA: 0, ok: 0, nok: 0}
+    # Detect format: PAIEMENT sheet starts at B2 (new) or A4 (old Paiements)
+    # New: B=PROJET C=CONTRACTANT D=PRESTATION E=DESCRIPTION F=PROPORTION G=Montant H=Echeance I=Statut J=Actions
+    # Old: A=ID B=Projet C=Contractant D=Prestation E=Description F=Montant G=Devise H=Echeance I=Statut J=Actions
+    is_new_fmt = ws.title == "PAIEMENT"
+    data_start = 3 if is_new_fmt else 5
+    col_offset = 1 if is_new_fmt else 0  # new format starts at B, old at A
 
-    for row in range(5, ws.max_row + 1):
-        pid_raw = safe_str(ws.cell(row, 1).value)
-        projet_name = safe_str(ws.cell(row, 2).value)
-        if not pid_raw and not projet_name:
+    pmt_data = {}
+
+    for row in range(data_start, ws.max_row + 1):
+        projet_name = safe_str(ws.cell(row, 2 + col_offset).value)
+        if not projet_name:
             continue
-        # Skip TOTAL rows
-        if "total" in (pid_raw + projet_name).lower():
+        if "total" in projet_name.lower():
             continue
 
-        pid = pid_raw if pid_raw in projects else resolve_id(pid_raw) or resolve_id(projet_name)
+        pid = resolve_id(projet_name)
         if not pid:
             continue
 
-        contractant = safe_str(ws.cell(row, 3).value)
-        prestation = safe_str(ws.cell(row, 4).value)
-        description = safe_str(ws.cell(row, 5).value)
-        montant = safe_float(ws.cell(row, 6).value, 0)
-        devise = safe_str(ws.cell(row, 7).value).upper()
-        echeance = safe_date(ws.cell(row, 8).value)
-        statut = safe_str(ws.cell(row, 9).value).upper()
-        actions = safe_str(ws.cell(row, 10).value)
+        contractant = safe_str(ws.cell(row, 3 + col_offset).value)
+        prestation = safe_str(ws.cell(row, 4 + col_offset).value)
+        description = safe_str(ws.cell(row, 5 + col_offset).value)
+        montant = safe_float(ws.cell(row, 7 if is_new_fmt else 6).value, 0)
+        devise = "USD"  # new format is USD by default
+        if not is_new_fmt:
+            devise = safe_str(ws.cell(row, 7).value).upper()
+        echeance = safe_date(ws.cell(row, 8 + col_offset).value)
+        statut = safe_str(ws.cell(row, 9 + col_offset).value).upper()
+        actions = safe_str(ws.cell(row, 10 + col_offset).value)
 
         if pid not in pmt_data:
             pmt_data[pid] = {"lines": [], "totalUSD": 0, "totalMGA": 0, "ok": 0, "nok": 0}
