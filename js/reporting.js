@@ -31,14 +31,31 @@ function renderReportingPoleKpis(data) {
 function openReportingPole(pole) {
   document.querySelector('.rpt-poles-grid').style.display = 'none';
   document.getElementById('rpt-global-summary').style.display = 'none';
+
+  // Update sticky bar: Accueil -> Retour
+  var backBtn = document.getElementById('rpt-back-btn');
+  var title = document.getElementById('rpt-sticky-title');
+
   if (pole === 'enr') {
     var detail = document.getElementById('rpt-enr-detail');
     detail.style.display = 'block';
+    backBtn.textContent = 'Retour';
+    backBtn.onclick = function() { closeReportingPole(); };
+    backBtn.style.borderColor = 'rgba(0,171,99,0.3)';
+    backBtn.style.color = '#00ab63';
+    title.textContent = 'Reporting EnR';
+    title.style.color = '#00ab63';
     populateWeekSelector();
     renderEnrDetail();
   } else if (pole === 'inv') {
     var detail = document.getElementById('rpt-inv-detail');
     detail.style.display = 'block';
+    backBtn.textContent = 'Retour';
+    backBtn.onclick = function() { closeReportingPole(); };
+    backBtn.style.borderColor = 'rgba(243,112,86,0.3)';
+    backBtn.style.color = '#f37056';
+    title.textContent = 'Reporting Investments';
+    title.style.color = '#f37056';
     populateInvWeekSelector();
     renderInvReportingKpis('externe');
     renderInvReportingTable('externe');
@@ -50,6 +67,16 @@ function closeReportingPole() {
   document.getElementById('rpt-inv-detail').style.display = 'none';
   document.querySelector('.rpt-poles-grid').style.display = '';
   document.getElementById('rpt-global-summary').style.display = '';
+
+  // Restore sticky bar
+  var backBtn = document.getElementById('rpt-back-btn');
+  var title = document.getElementById('rpt-sticky-title');
+  backBtn.textContent = 'Accueil';
+  backBtn.onclick = function() { closePage('page-reporting'); };
+  backBtn.style.borderColor = 'rgba(90,175,175,0.3)';
+  backBtn.style.color = '#5aafaf';
+  title.textContent = 'Reporting Hebdomadaire';
+  title.style.color = '#5aafaf';
 }
 
 // ══ WEEK SELECTOR ══
