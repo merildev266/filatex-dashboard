@@ -1812,98 +1812,107 @@
     <!-- GLOBAL SUMMARY -->
     <div id="rpt-global-summary" class="rpt-summary-grid"></div>
 
-    <!-- 3 COLUMNS -->
+    <!-- 3 COLUMNS: Energy / Investments / Properties -->
     <div class="rpt-poles-grid" style="grid-template-columns:1fr 1fr 1fr;align-items:start;">
 
       <!-- COLUMN 1: ENERGY -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <h3 style="color:#00ab63;font-size:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 4px;text-align:center;">Energy</h3>
-        <!-- EnR -->
-        <div class="rpt-pole-card rpt-pole-enr" onclick="openReportingPole('enr')" style="margin:0;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="2" style="width:36px;height:36px;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <h3 style="color:#00ab63;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 2px;text-align:center;">Energy</h3>
+        <!-- Étage 1: HFO + LFO -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <!-- HFO -->
+          <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-enr" onclick="openReportingPole('hfo')" style="margin:0;">
+            <div class="rpt-pole-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="2" style="width:24px;height:24px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div class="rpt-pole-title" style="color:#00ab63;font-size:13px;">HFO</div>
+            <div class="rpt-pole-sub" id="rpt-pole-hfo-sub" style="font-size:10px;">57 projets</div>
+            <div class="rpt-pole-kpis" id="rpt-pole-hfo-kpis"></div>
           </div>
-          <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">EnR</div>
-          <div class="rpt-pole-sub">21 projets</div>
+          <!-- LFO -->
+          <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-enr" onclick="openReportingPole('lfo')" style="margin:0;">
+            <div class="rpt-pole-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="1.5" style="width:24px;height:24px;"><rect x="3" y="8" width="18" height="10" rx="2"/><line x1="7" y1="8" x2="7" y2="5"/><line x1="12" y1="8" x2="12" y2="5"/><line x1="17" y1="8" x2="17" y2="5"/><circle cx="8" cy="13" r="2"/><circle cx="16" cy="13" r="2"/><line x1="10" y1="13" x2="14" y2="13"/></svg>
+            </div>
+            <div class="rpt-pole-title" style="color:#00ab63;font-size:13px;">LFO</div>
+            <div class="rpt-pole-sub" id="rpt-pole-lfo-sub" style="font-size:10px;">40 moteurs</div>
+            <div class="rpt-pole-kpis" id="rpt-pole-lfo-kpis"></div>
+          </div>
+        </div>
+        <!-- Étage 2: EnR -->
+        <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-enr" onclick="openReportingPole('enr')" style="margin:0;">
+          <div class="rpt-pole-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="2" style="width:24px;height:24px;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </div>
+          <div class="rpt-pole-title" style="color:#00ab63;font-size:13px;">EnR</div>
+          <div class="rpt-pole-sub" style="font-size:10px;">21 projets</div>
           <div class="rpt-pole-kpis" id="rpt-pole-enr-kpis"></div>
-        </div>
-        <!-- HFO -->
-        <div class="rpt-pole-card rpt-pole-enr" onclick="openReportingPole('hfo')" style="margin:0;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="2" style="width:36px;height:36px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </div>
-          <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">HFO</div>
-          <div class="rpt-pole-sub" id="rpt-pole-hfo-sub">57 projets</div>
-          <div class="rpt-pole-kpis" id="rpt-pole-hfo-kpis"></div>
-        </div>
-        <!-- LFO -->
-        <div class="rpt-pole-card rpt-pole-enr" onclick="openReportingPole('lfo')" style="margin:0;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="1.5" style="width:36px;height:36px;"><rect x="3" y="8" width="18" height="10" rx="2"/><line x1="7" y1="8" x2="7" y2="5"/><line x1="12" y1="8" x2="12" y2="5"/><line x1="17" y1="8" x2="17" y2="5"/><circle cx="8" cy="13" r="2"/><circle cx="16" cy="13" r="2"/><line x1="10" y1="13" x2="14" y2="13"/></svg>
-          </div>
-          <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">LFO</div>
-          <div class="rpt-pole-sub" id="rpt-pole-lfo-sub">40 moteurs</div>
-          <div class="rpt-pole-kpis" id="rpt-pole-lfo-kpis"></div>
         </div>
       </div>
 
       <!-- COLUMN 2: INVESTMENTS -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <h3 style="color:#f37056;font-size:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 4px;text-align:center;">Investments</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <h3 style="color:#f37056;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 2px;text-align:center;">Investments</h3>
         <!-- Ventures -->
-        <div class="rpt-pole-card rpt-pole-inv" onclick="openReportingPole('inv')" style="margin:0;">
+        <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-inv" onclick="openReportingPole('inv')" style="margin:0;">
           <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#f37056" stroke-width="2" style="width:36px;height:36px;"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f37056" stroke-width="2" style="width:24px;height:24px;"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
           </div>
-          <div class="rpt-pole-title" style="color:#f37056;font-size:16px;">Ventures</div>
-          <div class="rpt-pole-sub" id="rpt-pole-inv-sub">19 projets</div>
+          <div class="rpt-pole-title" style="color:#f37056;font-size:13px;">Ventures</div>
+          <div class="rpt-pole-sub" id="rpt-pole-inv-sub" style="font-size:10px;">19 projets</div>
           <div class="rpt-pole-kpis" id="rpt-pole-inv-kpis"></div>
         </div>
       </div>
 
       <!-- COLUMN 3: PROPERTIES -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <h3 style="color:#FDB823;font-size:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 4px;text-align:center;">Properties</h3>
-        <!-- Foncier -->
-        <div class="rpt-pole-card rpt-pole-props" style="margin:0;opacity:0.4;pointer-events:none;">
-          <div class="rpt-pole-title" style="color:#FDB823;font-size:15px;">Foncier</div>
-          <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
-        </div>
-        <!-- SAV -->
-        <div class="rpt-pole-card rpt-pole-props" onclick="openPropsDirectSub('sav')" style="margin:0;cursor:pointer;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:32px;height:32px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <h3 style="color:#FDB823;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 2px;text-align:center;">Properties</h3>
+        <!-- Étage 1: Foncier + Développement -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <!-- Foncier -->
+          <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-props" style="margin:0;opacity:0.4;pointer-events:none;">
+            <div class="rpt-pole-title" style="color:#FDB823;font-size:13px;">Foncier</div>
+            <div class="rpt-pole-sub" style="color:var(--text-dim);font-size:10px;">Bientot disponible</div>
           </div>
-          <div class="rpt-pole-title" style="color:#FDB823;font-size:15px;">SAV</div>
-          <div class="rpt-pole-sub" id="rpt-pole-sav-sub" style="color:var(--text-muted);">Service après-vente</div>
+          <!-- Développement -->
+          <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-props" onclick="openPropsDirectSub('dev')" style="margin:0;cursor:pointer;">
+            <div class="rpt-pole-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:24px;height:24px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div class="rpt-pole-title" style="color:#FDB823;font-size:13px;">Dev</div>
+            <div class="rpt-pole-sub" id="rpt-pole-dev-sub" style="color:var(--text-muted);font-size:10px;">Nouveaux projets</div>
+            <div class="rpt-pole-kpis" id="rpt-pole-dev-kpis"></div>
+          </div>
+        </div>
+        <!-- Étage 2: Travaux + Commercial -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <!-- Travaux -->
+          <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-props" onclick="openPropsDirectSub('tvx')" style="margin:0;cursor:pointer;">
+            <div class="rpt-pole-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:24px;height:24px;"><path d="M2 20h20M5 20V10l7-7 7 7v10M9 20v-6h6v6"/></svg>
+            </div>
+            <div class="rpt-pole-title" style="color:#FDB823;font-size:13px;">Travaux</div>
+            <div class="rpt-pole-sub" id="rpt-pole-tvx-sub" style="color:var(--text-muted);font-size:10px;">Suivi chantiers</div>
+            <div class="rpt-pole-kpis" id="rpt-pole-tvx-kpis"></div>
+          </div>
+          <!-- Commercial -->
+          <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-props" onclick="openPropsDirectSub('com')" style="margin:0;cursor:pointer;">
+            <div class="rpt-pole-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:24px;height:24px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="rpt-pole-title" style="color:#FDB823;font-size:13px;">Commercial</div>
+            <div class="rpt-pole-sub" id="rpt-pole-com-sub" style="color:var(--text-muted);font-size:10px;">Objectifs 2026</div>
+            <div class="rpt-pole-kpis" id="rpt-pole-com-kpis"></div>
+          </div>
+        </div>
+        <!-- Étage 3: SAV -->
+        <div class="rpt-pole-card rpt-pole-card-sm rpt-pole-props" onclick="openPropsDirectSub('sav')" style="margin:0;cursor:pointer;">
+          <div class="rpt-pole-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:24px;height:24px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="rpt-pole-title" style="color:#FDB823;font-size:13px;">SAV</div>
+          <div class="rpt-pole-sub" id="rpt-pole-sav-sub" style="color:var(--text-muted);font-size:10px;">Service après-vente</div>
           <div class="rpt-pole-kpis" id="rpt-pole-sav-kpis"></div>
-        </div>
-        <!-- Travaux -->
-        <div class="rpt-pole-card rpt-pole-props" onclick="openPropsDirectSub('tvx')" style="margin:0;cursor:pointer;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:32px;height:32px;"><path d="M2 20h20M5 20V10l7-7 7 7v10M9 20v-6h6v6"/></svg>
-          </div>
-          <div class="rpt-pole-title" style="color:#FDB823;font-size:15px;">Travaux</div>
-          <div class="rpt-pole-sub" id="rpt-pole-tvx-sub" style="color:var(--text-muted);">Suivi chantiers</div>
-          <div class="rpt-pole-kpis" id="rpt-pole-tvx-kpis"></div>
-        </div>
-        <!-- Développement -->
-        <div class="rpt-pole-card rpt-pole-props" onclick="openPropsDirectSub('dev')" style="margin:0;cursor:pointer;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:32px;height:32px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <div class="rpt-pole-title" style="color:#FDB823;font-size:15px;">Développement</div>
-          <div class="rpt-pole-sub" id="rpt-pole-dev-sub" style="color:var(--text-muted);">Nouveaux projets</div>
-          <div class="rpt-pole-kpis" id="rpt-pole-dev-kpis"></div>
-        </div>
-        <!-- Commercial -->
-        <div class="rpt-pole-card rpt-pole-props" onclick="openPropsDirectSub('com')" style="margin:0;cursor:pointer;">
-          <div class="rpt-pole-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#FDB823" stroke-width="1.5" style="width:32px;height:32px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
-          <div class="rpt-pole-title" style="color:#FDB823;font-size:15px;">Commercial</div>
-          <div class="rpt-pole-sub" id="rpt-pole-com-sub" style="color:var(--text-muted);">Objectifs 2026</div>
-          <div class="rpt-pole-kpis" id="rpt-pole-com-kpis"></div>
         </div>
       </div>
 

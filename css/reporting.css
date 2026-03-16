@@ -21,6 +21,16 @@
 .rpt-pole-kpi .kv{font-size:20px;font-weight:700;}
 .rpt-pole-kpi .kl{font-size:8px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);}
 
+/* ══ SMALL CARDS (reporting home) ══ */
+.rpt-pole-card-sm{padding:16px 12px 14px;border-radius:14px;gap:6px;}
+.rpt-pole-card-sm .rpt-pole-icon svg{width:24px;height:24px;}
+.rpt-pole-card-sm .rpt-pole-title{font-size:13px;}
+.rpt-pole-card-sm .rpt-pole-sub{font-size:10px;}
+.rpt-pole-card-sm .rpt-pole-kpis{gap:8px;margin-top:4px;}
+.rpt-pole-card-sm .rpt-pole-kpi .kv{font-size:14px;}
+.rpt-pole-card-sm .rpt-pole-kpi .kl{font-size:7px;}
+.rpt-pole-card-sm:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(90,175,175,0.1);}
+
 /* ══ DETAIL SECTION ══ */
 .rpt-detail-section{animation:slideIn 0.4s ease both;}
 .rpt-detail-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
