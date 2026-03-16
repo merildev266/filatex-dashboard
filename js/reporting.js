@@ -76,7 +76,7 @@ function renderEnrDetail() {
   var html = '<table class="rpt-table"><thead><tr>' +
     '<th>Projet</th><th>Resp.</th><th>Type</th><th>MWc</th><th>Phase</th>' +
     '<th>Avancement</th><th>Glissement</th><th>EPC</th>' +
-    '<th>Blocages & Risques</th><th>Actions S</th><th>Commentaires DG</th>' +
+    '<th>Blocages & Risques</th><th>Actions S</th><th>Commentaires DG</th><th>Reponse</th>' +
     '</tr></thead><tbody>';
 
   // Sort: Construction first, then Dev, then Planifie, then Termine
@@ -106,7 +106,36 @@ function renderEnrDetail() {
       '<td class="nowrap">' + (p.epc || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted);">' + (p.blocages || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted);">' + (p.actions || '') + '</td>' +
-      '<td style="font-size:11px;color:var(--text-dim);">' + (p.commentaires_dg || '') + '</td>' +
+      '<td style="min-width:200px;">' +
+        '<textarea class="rpt-dg-comment" data-pid="' + p.id + '" rows="2" ' +
+          'style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'resize:vertical;outline:none;line-height:1.4;transition:border-color 0.2s;" ' +
+          'onfocus="this.style.borderColor=\'rgba(243,112,86,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '>' + (p.commentaires_dg || '') + '</textarea>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveReportingDgField(\'' + p.id + '\', \'comment\', this)" ' +
+            'style="background:linear-gradient(135deg,#f37056,#e04030);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-dg-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(255,180,130,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '<td style="min-width:200px;">' +
+        '<textarea class="rpt-dg-reponse" data-pid="' + p.id + '" rows="2" ' +
+          'style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#b8d6ff;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'resize:vertical;outline:none;line-height:1.4;transition:border-color 0.2s;" ' +
+          'onfocus="this.style.borderColor=\'rgba(86,140,243,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '>' + (p.reponse || '') + '</textarea>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveReportingDgField(\'' + p.id + '\', \'reponse\', this)" ' +
+            'style="background:linear-gradient(135deg,#5686d6,#3060b0);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-rep-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(130,170,255,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
       '</tr>';
   });
 
@@ -141,6 +170,65 @@ function syncReportingToEnrProjects() {
     if (rp.glissement != null) ep.glissement = rp.glissement;
     if (rp.epc) ep.epciste = rp.epc;
     if (rp.responsable) ep.lead = rp.responsable;
+  });
+}
+
+// ══ SAVE DG COMMENT OR REPONSE FROM REPORTING TABLE ══
+function saveReportingDgField(projectId, fieldType, btnEl) {
+  // fieldType: 'comment' or 'reponse'
+  var isComment = fieldType === 'comment';
+  var textarea = document.querySelector(
+    (isComment ? '.rpt-dg-comment' : '.rpt-dg-reponse') + '[data-pid="' + projectId + '"]'
+  );
+  var statusEl = document.querySelector(
+    (isComment ? '.rpt-dg-status' : '.rpt-rep-status') + '[data-pid="' + projectId + '"]'
+  );
+  if (!textarea) return;
+
+  var value = textarea.value.trim();
+  btnEl.disabled = true;
+  btnEl.textContent = '...';
+  statusEl.textContent = '';
+
+  var body = { projectId: projectId };
+  if (isComment) {
+    body.comment = value;
+  } else {
+    body.reponse = value;
+  }
+
+  fetch('/api/comment/enr', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(function(res) { return res.json().then(function(d) { return { ok: res.ok, data: d }; }); })
+  .then(function(result) {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Enregistrer';
+    if (result.ok) {
+      statusEl.style.color = '#4caf50';
+      statusEl.textContent = 'OK (' + result.data.sheet + ')';
+      // Update local data
+      var data = window.REPORTING_ENR;
+      if (data && data.projects) {
+        var p = data.projects.find(function(x) { return x.id === projectId; });
+        if (p) {
+          if (isComment) p.commentaires_dg = value;
+          else p.reponse = value;
+        }
+      }
+      setTimeout(function() { statusEl.textContent = ''; }, 3000);
+    } else {
+      statusEl.style.color = '#f37056';
+      statusEl.textContent = result.data.error || 'Erreur';
+    }
+  })
+  .catch(function(err) {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Enregistrer';
+    statusEl.style.color = '#f37056';
+    statusEl.textContent = 'Erreur: ' + err.message;
   });
 }
 

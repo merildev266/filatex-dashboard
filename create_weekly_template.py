@@ -84,9 +84,10 @@ HEADERS = {
     'N': 'Actions S-1',
     'O': 'Actions Semaine',
     'P': 'Commentaires DG',
+    'Q': 'Reponse',
 }
 COL_WIDTHS = {'A':16, 'B':30, 'C':14, 'D':10, 'E':8, 'F':14, 'G':12, 'H':11,
-              'I':28, 'J':32, 'K':18, 'L':14, 'M':32, 'N':32, 'O':32, 'P':28}
+              'I':28, 'J':32, 'K':18, 'L':14, 'M':32, 'N':32, 'O':32, 'P':28, 'Q':28}
 
 
 def read_source_data():
@@ -139,7 +140,7 @@ def create_weekly_sheet(wb, sheet_name, monday, sunday, is_current=False, src_da
     ws = wb.create_sheet(sheet_name)
 
     # ── Meta header (rows 1-8) — same style as user's template ──
-    ws.merge_cells('A1:P1')
+    ws.merge_cells('A1:Q1')
     c = ws['A1']
     c.value = "Weekly Report - Statut d'Avancement Projets EnR"
     c.font = title_font; c.fill = title_fill; c.alignment = center; c.border = thin_border
@@ -159,16 +160,16 @@ def create_weekly_sheet(wb, sheet_name, monday, sunday, is_current=False, src_da
     ws['G3'] = sunday; ws['G3'].number_format = 'DD/MM/YYYY'; ws['G3'].font = meta_font; ws['G3'].border = thin_border
 
     ws['A4'] = 'Sujet :'; ws['A4'].font = meta_font; ws['A4'].fill = meta_fill; ws['A4'].border = thin_border
-    ws.merge_cells('B4:P4')
+    ws.merge_cells('B4:Q4')
     ws['B4'] = 'Avancement global projets EnR'; ws['B4'].font = meta_font; ws['B4'].border = thin_border
 
     ws['A5'] = 'Objectif :'; ws['A5'].font = meta_font; ws['A5'].fill = meta_fill; ws['A5'].border = thin_border
-    ws.merge_cells('B5:P5')
+    ws.merge_cells('B5:Q5')
     ws['B5'] = "Point sur l'etat des projets - identifier blocages - coordonner actions"; ws['B5'].font = data_font; ws['B5'].border = thin_border
 
     # Row 6-7 spacer
-    ws.merge_cells('A6:P6')
-    ws.merge_cells('A7:P7')
+    ws.merge_cells('A6:Q6')
+    ws.merge_cells('A7:Q7')
     ws.row_dimensions[6].height = 6
     ws.row_dimensions[7].height = 6
 
@@ -212,7 +213,7 @@ def create_weekly_sheet(wb, sheet_name, monday, sunday, is_current=False, src_da
 
     # ── Freeze & filter ──
     ws.freeze_panes = 'A9'
-    ws.auto_filter.ref = f'A8:P29'
+    ws.auto_filter.ref = f'A8:Q29'
 
     # ── Migrate source data for current week ──
     if is_current and src_data:

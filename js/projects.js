@@ -621,15 +621,65 @@ function renderPdPaiements(p, color, rgb) {
 /* ── Section 9: Comments ── */
 function renderPdComments(p) {
   const el = document.getElementById('pd-comments-section');
-  if (!p.comment) { el.innerHTML = ''; return; }
+  var existing = p.commentairesDG || p.comment || '';
   el.innerHTML = `
-    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(243,112,86,0.6);margin-bottom:18px;">Commentaires & Risques</div>
-    <div style="background:rgba(243,112,86,0.06);border:1px solid rgba(243,112,86,0.15);border-radius:14px;padding:18px;margin-bottom:32px;">
-      <div style="display:flex;align-items:flex-start;gap:12px;">
-        <span style="font-size:16px;">⚠</span>
-        <div style="font-size:11px;color:rgba(255,180,130,0.8);line-height:1.6;">${p.comment}</div>
-      </div>
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(243,112,86,0.6);margin-bottom:18px;">Commentaires DG</div>
+    <div style="background:rgba(243,112,86,0.06);border:1px solid rgba(243,112,86,0.15);border-radius:14px;padding:18px;margin-bottom:12px;">
+      <textarea id="pd-comment-textarea" rows="4" placeholder="Saisir un commentaire DG..."
+        style="width:100%;background:rgba(0,0,0,0.2);border:1px solid rgba(243,112,86,0.2);border-radius:8px;
+        color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:10px;resize:vertical;
+        line-height:1.6;outline:none;">${existing}</textarea>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+      <button id="pd-comment-save" onclick="saveDgComment('${p.id}','enr')"
+        style="background:linear-gradient(135deg,#f37056,#e04030);color:#fff;border:none;border-radius:8px;
+        padding:8px 24px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">
+        Enregistrer
+      </button>
+      <span id="pd-comment-status" style="font-size:10px;color:rgba(255,180,130,0.6);"></span>
     </div>`;
+}
+
+function saveDgComment(projectId, pole) {
+  var textarea = document.getElementById('pd-comment-textarea');
+  var statusEl = document.getElementById('pd-comment-status');
+  var btn = document.getElementById('pd-comment-save');
+  if (!textarea || !btn) return;
+
+  var comment = textarea.value.trim();
+  btn.disabled = true;
+  btn.textContent = 'Sauvegarde...';
+  statusEl.textContent = '';
+
+  var endpoint = pole === 'investments' ? '/api/comment/investments' : '/api/comment/enr';
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ projectId: projectId, comment: comment })
+  })
+  .then(function(res) { return res.json().then(function(d) { return { ok: res.ok, data: d }; }); })
+  .then(function(result) {
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer';
+    if (result.ok) {
+      statusEl.style.color = '#4caf50';
+      statusEl.textContent = 'Sauvegarde OK (' + result.data.sheet + ')';
+      // Update local data
+      var projects = window._enrProjects || [];
+      var p = projects.find(function(x) { return x.id === projectId; });
+      if (p) { p.commentairesDG = comment; p.comment = comment; }
+    } else {
+      statusEl.style.color = '#f37056';
+      statusEl.textContent = result.data.error || 'Erreur';
+    }
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer';
+    statusEl.style.color = '#f37056';
+    statusEl.textContent = 'Erreur reseau: ' + err.message;
+  });
 }
 var diegoData = {
   dev: {

@@ -832,6 +832,7 @@ function closeHfoProjets(){
         costDev: p.costDev || 0,
         costPv: p.costPv || 0,
         comment: p.comment || null,
+        commentairesDG: p.commentairesDG || null,
         chef: p.chef || p.lead || null,
         qtr: p.qtr || [],
         cc: p.cc || {bac:null, forecast:null, ac:null, avReel:null, spi:null, cpi:null, perf:null},
