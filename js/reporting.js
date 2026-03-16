@@ -54,6 +54,34 @@ function openReportingPole(pole) {
       '</select>';
     populateWeekSelector();
     renderEnrDetail();
+  } else if (pole === 'lfo') {
+    var detail = document.getElementById('rpt-lfo-detail');
+    detail.style.display = 'block';
+    backBtn.textContent = 'Retour';
+    backBtn.onclick = function() { closeReportingPole(); };
+    backBtn.style.borderColor = 'rgba(0,171,99,0.3)';
+    backBtn.style.color = '#00ab63';
+    title.textContent = 'Reporting LFO';
+    title.style.color = '#00ab63';
+    // Inject filter tabs for motor states
+    filters.innerHTML =
+      '<button class="rpt-lfo-tab active" onclick="switchLfoTab(\'all\')" data-tab="all" ' +
+        'style="background:rgba(0,171,99,0.15);color:#00ab63;border:1px solid rgba(0,171,99,0.3);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Tous</button>' +
+      '<button class="rpt-lfo-tab" onclick="switchLfoTab(\'au_f23\')" data-tab="au_f23" ' +
+        'style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Au F23</button>' +
+      '<button class="rpt-lfo-tab" onclick="switchLfoTab(\'installes\')" data-tab="installes" ' +
+        'style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Installes</button>' +
+      '<button class="rpt-lfo-tab" onclick="switchLfoTab(\'a_rapatrier\')" data-tab="a_rapatrier" ' +
+        'style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">A rapatrier</button>' +
+      '<button class="rpt-lfo-tab" onclick="switchLfoTab(\'a_definir\')" data-tab="a_definir" ' +
+        'style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);' +
+        'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">A definir</button>';
+    renderLfoReportingKpis('all');
+    renderLfoReportingTable('all');
   } else if (pole === 'inv') {
     var detail = document.getElementById('rpt-inv-detail');
     detail.style.display = 'block';
@@ -85,6 +113,7 @@ function openReportingPole(pole) {
 function closeReportingPole() {
   document.getElementById('rpt-enr-detail').style.display = 'none';
   document.getElementById('rpt-inv-detail').style.display = 'none';
+  document.getElementById('rpt-lfo-detail').style.display = 'none';
   document.querySelector('.rpt-poles-grid').style.display = '';
   document.getElementById('rpt-global-summary').style.display = '';
 
@@ -1245,9 +1274,248 @@ function saveInvDgField(projectId, fieldType, btnEl) {
   });
 }
 
+// ══════════════════════════════════════════════
+// ══ LFO REPORTING ══
+// ══════════════════════════════════════════════
+
+var _rptLfoFilter = 'all';
+
+var lfoMoteurs = [
+  // --- AU F23 ---
+  { n: 1, serie: '97831', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'A definir', section: 'au_f23', transfert: 'A definir', reparation: '', situation: '' },
+  { n: 2, serie: '18W2920764', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'Canibalis\u00e9', section: 'au_f23', transfert: 'Canibalis\u00e9', reparation: '', situation: '' },
+  { n: 3, serie: '18W2920729', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'IHOSY', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 04/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 30/04/26', situation: 'A envoyer et installer \u00e0 Ihosy\nDL : 15/06/26' },
+  { n: 4, serie: '18W2920737', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'IHOSY', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 07/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 30/04/26', situation: 'A envoyer et installer \u00e0 Ihosy\nDL : 15/06/26' },
+  { n: 5, serie: '18W2920759', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'IHOSY', section: 'au_f23', transfert: 'Transport de F23 \u00e0 Enermad DL 16/03/26', reparation: '', situation: 'A envoyer et installer \u00e0 Ihosy\nDL : 15/06/26' },
+  { n: 6, serie: '18W2920730', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'MAINTIRANO', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 07/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 31/05/26', situation: 'A envoyer et installer \u00e0 Maintirano\nDL : 31/07/26' },
+  { n: 7, serie: '18W2920741', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'MAINTIRANO', section: 'au_f23', transfert: 'Transport de F23 \u00e0 Enermad DL 16/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 31/05/26', situation: 'A envoyer et installer \u00e0 Maintirano\nDL : 31/07/26' },
+  { n: 8, serie: '18W2920745', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'SAKARAHA', section: 'au_f23', transfert: 'Transport de F23 \u00e0 Enermad DL 16/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 05/07/26', situation: 'A envoyer et installer \u00e0 Sakaraha\nDL : 31/08/26' },
+  { n: 9, serie: '18W2920749', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'SAKARAHA', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 04/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 05/07/26', situation: 'A envoyer et installer \u00e0 Sakaraha\nDL : 31/08/26' },
+  { n: 10, serie: '18W2920738', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'VENTE', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 04/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 11, serie: '18W2920742', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'VENTE', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 07/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 12, serie: '18W2920739', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'VENTE', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 04/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 13, serie: '18W2920743', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'VENTE', section: 'au_f23', transfert: 'Transport\u00e9 de F23 \u00e0 Enermad le 07/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 14, serie: '18W2920731', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'Canibalis\u00e9', section: 'au_f23', transfert: 'Canibalis\u00e9', reparation: '', situation: '' },
+  // --- INSTALLES SUR SITES ---
+  { n: 15, serie: '41285749 / 18W2920763', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'ANTSIRABE', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Antsirabe', reparation: 'Fait', situation: 'Install\u00e9 \u00e0 Antsirabe - Mise en service et en production' },
+  { n: 16, serie: '41281933 / 18W2920759', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'ANTSIRABE', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Antsirabe', reparation: 'Fait', situation: 'Install\u00e9 \u00e0 Antsirabe - Mise en service et en production' },
+  { n: 17, serie: '41285750 / 18W2920757', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'ANTSIRABE', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Antsirabe', reparation: 'Fait', situation: 'Install\u00e9 \u00e0 Antsirabe - En panne : Exciter winding failure' },
+  { n: 18, serie: '41281942 / 18W2920753', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'ANTSIRABE', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Antsirabe', reparation: 'Fait', situation: 'Install\u00e9 \u00e0 Antsirabe - R\u00e9paration transfo par Fanelec\nDL connexion : 31/04/26' },
+  { n: 19, serie: '18W2920760', type: 'KTA 38G1', puissance: 540, depart: 'MAJUNGA', affectation: 'DIEGO', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Di\u00e9go', reparation: 'Fait', situation: 'Install\u00e9 \u00e0 Di\u00e9go - Mise en service et en production' },
+  { n: 20, serie: '18W2920761', type: 'KTA 38G1', puissance: 540, depart: 'MAJUNGA', affectation: 'DIEGO', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Di\u00e9go', reparation: 'Fait', situation: 'Install\u00e9 \u00e0 Di\u00e9go - Mise en service et en production' },
+  { n: 21, serie: '18W2920755', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'DIEGO', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Di\u00e9go', reparation: 'R\u00e9par\u00e9 par Enermad', situation: 'Connexion \u00e0 faire par Enermad\nDL connexion : 09/03/26' },
+  { n: 22, serie: '18W2920763', type: 'KTA 38G1', puissance: 540, depart: 'FILATEX F23', affectation: 'DIEGO', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Di\u00e9go', reparation: 'R\u00e9par\u00e9 par Enermad', situation: 'Connexion \u00e0 faire par Enermad\nDL connexion : 09/03/26' },
+  { n: 23, serie: '18W2920756', type: 'KTA 38G1', puissance: 540, depart: 'PORT BERGE', affectation: 'DIEGO', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Di\u00e9go', reparation: 'R\u00e9par\u00e9 par Enermad', situation: 'Connexion \u00e0 faire par Enermad\nDL connexion : 09/03/26' },
+  { n: 24, serie: '18W2920766', type: 'KTA 38G1', puissance: 540, depart: 'PORT BERGE', affectation: 'DIEGO', section: 'installes', transfert: 'Envoy\u00e9 \u00e0 Di\u00e9go', reparation: 'Poulie \u00e0 r\u00e9cup\u00e9rer au F23', situation: 'DL connexion : 23/03/26' },
+  { n: 25, serie: '18W2920751', type: 'KTA 38G1', puissance: 540, depart: 'IHOSY', affectation: 'IHOSY', section: 'installes', transfert: 'D\u00e9j\u00e0 sur site', reparation: 'A r\u00e9parer par Enermad\nDL : 30/04/26', situation: 'Installer \u00e0 Ihosy\nDL : 15/06/26' },
+  { n: 26, serie: '18W2920754', type: 'KTA 38G1', puissance: 540, depart: 'MAINTIRANO', affectation: 'MAINTIRANO', section: 'installes', transfert: 'D\u00e9j\u00e0 sur site', reparation: 'A r\u00e9parer par Enermad\nDL : 31/05/26', situation: 'Installer \u00e0 Maintirano\nDL : 31/07/26' },
+  // --- A RAPATRIER ---
+  { n: 27, serie: '41281932', type: 'KTA38-G1', puissance: 500, depart: 'MAMPIKONY', affectation: 'MAINTIRANO', section: 'a_rapatrier', transfert: 'Attente paiement acompte (Miarantsoana) DL 31/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 31/05/26', situation: 'A envoyer et installer \u00e0 Maintirano\nDL : 31/07/26' },
+  { n: 28, serie: 'L24394', type: 'NTA 855', puissance: 200, depart: 'PORT BERGE', affectation: 'SAKARAHA', section: 'a_rapatrier', transfert: 'Attente paiement acompte (Miarantsoana) DL 31/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 05/07/26', situation: 'A envoyer et installer \u00e0 Sakaraha\nDL : 31/08/26' },
+  { n: 29, serie: '41282355', type: 'NTA855-G4', puissance: 351, depart: 'MAMPIKONY', affectation: 'SAKARAHA', section: 'a_rapatrier', transfert: 'Attente paiement acompte (Miarantsoana) DL 31/03/26', reparation: 'A r\u00e9parer par Enermad\nDL : 05/07/26', situation: 'A envoyer et installer \u00e0 Sakaraha\nDL : 31/08/26' },
+  { n: 30, serie: '18W2920750', type: 'NTA 855', puissance: 200, depart: 'AMPARAFAVOLA', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement fait 19/12/25', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 31, serie: '18W2920748', type: 'NTA 855', puissance: 200, depart: 'ANDILAMENA / AMPARAFAVOLA', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement fait 19/12/25', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 32, serie: '18W2920744', type: 'NTA 855', puissance: 200, depart: 'BRIKAVILLE', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement fait 23/12/25', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 33, serie: '18W2920735', type: 'NTA 855', puissance: 200, depart: 'MAHABO', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement fait 07/02/26', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 34, serie: '18W2920746', type: 'NTA 855', puissance: 200, depart: 'MANJA', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement en cours - retard routes d\u00e9t\u00e9rior\u00e9es\nDL : 31/05', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 35, serie: '18W2920734', type: 'NTA 855', puissance: 200, depart: 'MOROMBE', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement fait 07/02/26', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 36, serie: 'L24374', type: 'NTA 855', puissance: 200, depart: 'PORT BERGE', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement \u00e0 faire', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  { n: 37, serie: '18W2920740', type: 'NTA 855', puissance: 200, depart: 'TANAMBE', affectation: 'VENTE', section: 'a_rapatrier', transfert: 'Rapatriement fait 19/12/25', reparation: 'A r\u00e9parer par Enermad\nDL : 15/07/26', situation: 'Pour vente' },
+  // --- A DEFINIR ---
+  { n: 38, serie: '18W2920733', type: 'NTA 855', puissance: 200, depart: 'VANGAINDRANO', affectation: 'A d\u00e9finir', section: 'a_definir', transfert: 'Investigation \u00e0 faire', reparation: '', situation: 'Investigation \u00e0 Vangaindrano \u00e0 faire' },
+  { n: 39, serie: '18W2920732', type: 'NTA 855', puissance: 200, depart: 'VOHEMAR', affectation: 'A d\u00e9finir', section: 'a_definir', transfert: 'Investigation \u00e0 faire', reparation: '', situation: 'Investigation \u00e0 Vohemar \u00e0 faire' },
+  { n: 40, serie: '18W2920736', type: 'NTA 855', puissance: 200, depart: 'FILATEX F23', affectation: 'A d\u00e9finir', section: 'a_definir', transfert: 'Investigation \u00e0 faire : n\'est pas \u00e0 F23', reparation: '', situation: 'Investigation chez Roberto \u00e0 faire' }
+];
+
+var lfoSectionLabels = {
+  'au_f23': 'Au F23',
+  'installes': 'Install\u00e9s sur sites',
+  'a_rapatrier': 'A rapatrier',
+  'a_definir': 'A d\u00e9finir'
+};
+
+function renderLfoPoleCard() {
+  var total = lfoMoteurs.length;
+  var installes = lfoMoteurs.filter(function(m) { return m.section === 'installes'; }).length;
+  var auF23 = lfoMoteurs.filter(function(m) { return m.section === 'au_f23'; }).length;
+  var aRapatrier = lfoMoteurs.filter(function(m) { return m.section === 'a_rapatrier'; }).length;
+
+  var subEl = document.getElementById('rpt-pole-lfo-sub');
+  if (subEl) subEl.textContent = total + ' moteurs';
+
+  var el = document.getElementById('rpt-pole-lfo-kpis');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + total + '</span><span class="kl">Moteurs</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#4ecdc4;">' + installes + '</span><span class="kl">Install\u00e9s</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + auF23 + '</span><span class="kl">Au F23</span></div>' +
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + aRapatrier + '</span><span class="kl">A rapatrier</span></div>';
+}
+
+function renderLfoReportingKpis(filter) {
+  var ms = filter === 'all' ? lfoMoteurs : lfoMoteurs.filter(function(m) { return m.section === filter; });
+  var total = ms.length;
+  var totalKw = ms.reduce(function(s, m) { return s + (m.puissance || 0); }, 0);
+  var enProd = ms.filter(function(m) { return m.situation.indexOf('en production') >= 0; }).length;
+  var pourVente = ms.filter(function(m) { return m.affectation === 'VENTE'; }).length;
+  var enReparation = ms.filter(function(m) { return m.reparation && m.reparation.indexOf('r\u00e9parer') >= 0; }).length;
+
+  var sites = {};
+  ms.forEach(function(m) {
+    var aff = m.affectation;
+    if (aff && aff !== 'VENTE' && aff !== 'Canibalis\u00e9' && aff !== 'A d\u00e9finir' && aff !== 'A definir') sites[aff] = true;
+  });
+  var nbSites = Object.keys(sites).length;
+
+  var bar = document.getElementById('rpt-lfo-kpi-bar');
+  bar.innerHTML =
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + total + '</div><div class="kl">Moteurs</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + (totalKw / 1000).toFixed(1) + ' MW</div><div class="kl">Puissance totale</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#4ecdc4;">' + enProd + '</div><div class="kl">En production</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + enReparation + '</div><div class="kl">En r\u00e9paration</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#E05C5C;">' + pourVente + '</div><div class="kl">Pour vente</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#b8d6ff;">' + nbSites + '</div><div class="kl">Sites</div></div>';
+}
+
+function renderLfoReportingTable(filter) {
+  var ms = filter === 'all' ? lfoMoteurs : lfoMoteurs.filter(function(m) { return m.section === filter; });
+
+  var html = '<table class="rpt-table"><thead><tr>' +
+    '<th>N\u00b0</th><th>Num S\u00e9rie</th><th>Type</th><th>kW</th>' +
+    '<th>Site d\u00e9part</th><th>Affectation</th>';
+  if (filter === 'all') html += '<th>Section</th>';
+  html += '<th>Transfert / Rapatriement</th><th>R\u00e9paration</th><th>Situation finale</th>' +
+    '<th>Commentaires DG</th><th>R\u00e9ponse</th>' +
+    '</tr></thead><tbody>';
+
+  ms.forEach(function(m) {
+    var sitColor = '';
+    if (m.situation.indexOf('en production') >= 0) sitColor = 'color:#4ecdc4;';
+    else if (m.situation.indexOf('Pour vente') >= 0) sitColor = 'color:#FDB823;';
+    else if (m.situation.indexOf('Investigation') >= 0) sitColor = 'color:#E05C5C;';
+
+    var sectionBadge = '';
+    if (filter === 'all') {
+      var secColor = m.section === 'installes' ? '#4ecdc4' : m.section === 'au_f23' ? '#FDB823' : m.section === 'a_rapatrier' ? '#E05C5C' : '#b8d6ff';
+      sectionBadge = '<td><span style="background:' + secColor + '22;color:' + secColor + ';padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;">' + (lfoSectionLabels[m.section] || m.section) + '</span></td>';
+    }
+
+    html += '<tr>' +
+      '<td style="font-weight:600;color:#5aafaf;">' + m.n + '</td>' +
+      '<td class="nowrap" style="font-size:10px;font-family:monospace;">' + escapeHtml(m.serie) + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + escapeHtml(m.type) + '</td>' +
+      '<td style="text-align:right;font-weight:600;">' + m.puissance + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + escapeHtml(m.depart) + '</td>' +
+      '<td class="nowrap" style="font-size:11px;font-weight:600;">' + escapeHtml(m.affectation) + '</td>' +
+      sectionBadge +
+      '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(m.transfert) + '</td>' +
+      '<td style="font-size:11px;color:#FDB823;">' + escapeHtml(m.reparation) + '</td>' +
+      '<td style="font-size:11px;' + sitColor + '">' + escapeHtml(m.situation) + '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-dg-comment" data-pid="lfo_' + m.n + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+          'onfocus="this.style.borderColor=\'rgba(0,171,99,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveLfoDgField(\'lfo_' + m.n + '\', \'comment\', this)" ' +
+            'style="background:linear-gradient(135deg,#00ab63,#008050);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-lfo-status" data-pid="lfo_' + m.n + '" style="font-size:9px;color:rgba(0,171,99,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-lfo-reponse" data-pid="lfo_' + m.n + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#b8d6ff;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+          'onfocus="this.style.borderColor=\'rgba(86,140,243,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveLfoDgField(\'lfo_' + m.n + '\', \'reponse\', this)" ' +
+            'style="background:linear-gradient(135deg,#5686d6,#3060b0);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-lfo-rep-status" data-pid="lfo_' + m.n + '" style="font-size:9px;color:rgba(130,170,255,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('rpt-lfo-table-wrap').innerHTML = html;
+}
+
+function switchLfoTab(tab) {
+  _rptLfoFilter = tab;
+  document.querySelectorAll('.rpt-lfo-tab').forEach(function(btn) {
+    var isActive = btn.getAttribute('data-tab') === tab;
+    btn.classList.toggle('active', isActive);
+    btn.style.background = isActive ? 'rgba(0,171,99,0.15)' : 'rgba(255,255,255,0.04)';
+    btn.style.color = isActive ? '#00ab63' : '';
+    btn.style.borderColor = isActive ? 'rgba(0,171,99,0.3)' : 'rgba(255,255,255,0.1)';
+  });
+  renderLfoReportingKpis(tab);
+  renderLfoReportingTable(tab);
+}
+
+function saveLfoDgField(moteurId, fieldType, btnEl) {
+  var isComment = fieldType === 'comment';
+  var editDiv = document.querySelector(
+    (isComment ? '.rpt-dg-comment' : '.rpt-lfo-reponse') + '[data-pid="' + moteurId + '"]'
+  );
+  var statusEl = document.querySelector(
+    (isComment ? '.rpt-lfo-status' : '.rpt-lfo-rep-status') + '[data-pid="' + moteurId + '"]'
+  );
+  if (!editDiv) return;
+
+  var value = editDiv.innerText.trim();
+  btnEl.disabled = true;
+  btnEl.textContent = '...';
+  statusEl.textContent = '';
+
+  var body = { projectId: moteurId };
+  if (isComment) body.comment = value;
+  else body.reponse = value;
+
+  fetch('/api/comment/lfo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(function(res) {
+    var ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) {
+      throw new Error('API non disponible (mode statique)');
+    }
+    return res.json().then(function(d) { return { ok: res.ok, data: d }; });
+  })
+  .then(function(result) {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Enregistrer';
+    if (result.ok) {
+      statusEl.style.color = '#4caf50';
+      statusEl.textContent = 'OK';
+      setTimeout(function() { statusEl.textContent = ''; }, 3000);
+    } else {
+      statusEl.style.color = '#00ab63';
+      statusEl.textContent = result.data.error || 'Erreur';
+    }
+  })
+  .catch(function(err) {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Enregistrer';
+    statusEl.style.color = '#E05C5C';
+    statusEl.textContent = err.message || 'Erreur connexion';
+  });
+}
+
 // Init on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
   initReporting();
   renderInvReportingPoleCard();
+  renderLfoPoleCard();
   setTimeout(syncReportingToEnrProjects, 100);
 });
