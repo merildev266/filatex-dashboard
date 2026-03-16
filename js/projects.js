@@ -11,7 +11,7 @@ function openProjectDetail(projectId) {
   const phase = window._getPhase(p);
   const color = window._phaseColors[phase];
   const rgb = window._phaseBgs[phase];
-  const hasCc = p.cc && p.cc.bac !== null && p.cc.bac > 0;
+  const hasCc = p.cc && p.cc.bac != null && p.cc.bac > 0;
 
   renderPdHeader(p, phase, color, rgb);
   renderPdKpiRow(p, phase, color, rgb, hasCc);
@@ -51,8 +51,8 @@ function renderPdHeader(p, phase, color, rgb) {
 
 /* ── Section 2: KPI Row ── */
 function renderPdKpiRow(p, phase, color, rgb, hasCc) {
-  const engPct = p.engPct !== null ? p.engPct : 0;
-  const avReel = hasCc && p.cc.avReel !== null ? p.cc.avReel : null;
+  const engPct = p.engPct != null ? p.engPct : 0;
+  const avReel = hasCc && p.cc.avReel != null ? p.cc.avReel : null;
   document.getElementById('pd-kpi-row').innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:36px;">
       <div class="enr-kpi-card">
@@ -64,13 +64,13 @@ function renderPdKpiRow(p, phase, color, rgb, hasCc) {
       <div class="enr-kpi-card">
         <div class="ckpi-label" style="color:rgba(${rgb},0.6);">TRI</div>
         <div class="ckpi-val" style="color:${p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.3)'};">
-          ${p.tri !== null ? p.tri + '%' : '—'}
+          ${p.tri != null ? p.tri + '%' : '—'}
         </div>
         <div class="ckpi-sub">${p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : 'À déterminer'}</div>
       </div>
       <div class="enr-kpi-card">
         <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Engineering</div>
-        <div class="ckpi-val" style="color:${color};">${p.engPct !== null ? engPct + '%' : '—'}</div>
+        <div class="ckpi-val" style="color:${color};">${p.engPct != null ? engPct + '%' : '—'}</div>
         <div class="ckpi-progress-track" style="background:rgba(${rgb},0.12);height:5px;border-radius:3px;overflow:hidden;margin:6px 0;">
           <div class="ckpi-progress-bar" style="width:${engPct}%;background:${color};height:100%;border-radius:3px;"></div>
         </div>
@@ -85,19 +85,19 @@ function renderPdKpiRow(p, phase, color, rgb, hasCc) {
       </div>
       <div class="enr-kpi-card">
         <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Avancement Réel</div>
-        ${avReel !== null ? `
+        ${avReel != null ? `
           <div class="ckpi-val" style="color:${color};">${avReel}%</div>
           <div class="ckpi-progress-track" style="background:rgba(${rgb},0.12);height:5px;border-radius:3px;overflow:hidden;margin:6px 0;">
             <div class="ckpi-progress-bar" style="width:${avReel}%;background:${color};height:100%;border-radius:3px;"></div>
           </div>
-          <div class="ckpi-sub">SPI: ${p.cc.spi !== null ? p.cc.spi.toFixed(2) : '—'}</div>
+          <div class="ckpi-sub">SPI: ${p.cc.spi != null ? Number(p.cc.spi).toFixed(2) : '—'}</div>
         ` : `<div style="font-size:13px;color:rgba(255,255,255,0.2);margin-top:10px;">Données à venir</div>`}
       </div>
       <div class="enr-kpi-card">
         <div class="ckpi-label" style="color:rgba(${rgb},0.6);">Performance</div>
-        ${p.cc && p.cc.perf ? `
+        ${p.cc && p.cc.perf && !p.cc.perf.startsWith('#') ? `
           <div style="font-size:11px;font-weight:600;color:${p.cc.perf.includes('temps') ? '#00ab63' : '#f37056'};margin-top:8px;line-height:1.5;">${p.cc.perf}</div>
-          ${p.cc.cpi !== null ? `<div class="ckpi-sub">CPI: ${p.cc.cpi > 10 ? '>10' : p.cc.cpi.toFixed(2)}</div>` : ''}
+          ${p.cc.cpi != null ? `<div class="ckpi-sub">CPI: ${p.cc.cpi > 10 ? '>10' : Number(p.cc.cpi).toFixed(2)}</div>` : ''}
         ` : `<div style="font-size:13px;color:rgba(255,255,255,0.2);margin-top:10px;">—</div>`}
       </div>
     </div>`;
@@ -109,9 +109,9 @@ function renderPdEvm(p, hasCc, color, rgb) {
   if (!hasCc) { el.innerHTML = ''; return; }
   const cc = p.cc;
   const ev = cc.bac && cc.avReel ? cc.bac * (cc.avReel / 100) : null;
-  const etc = cc.forecast && cc.ac !== null ? cc.forecast - cc.ac : null;
-  const cv = ev !== null && cc.ac !== null ? ev - cc.ac : null;
-  const sv = ev !== null && cc.bac ? ev - (cc.bac * (cc.avReel / 100)) : null;
+  const etc = cc.forecast && cc.ac != null ? cc.forecast - cc.ac : null;
+  const cv = ev != null && cc.ac != null ? ev - cc.ac : null;
+  const sv = ev != null && cc.bac ? ev - (cc.bac * (cc.avReel / 100)) : null;
 
   el.innerHTML = `
     <div style="font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:rgba(${rgb},0.5);margin-bottom:18px;">Earned Value Management (EVM)</div>
@@ -135,24 +135,24 @@ function renderPdEvm(p, hasCc, color, rgb) {
         </div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
           <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Reste (ETC)</div>
-          <div style="font-size:20px;font-weight:800;color:#f37056;">${etc !== null ? fmtK(etc) : '—'}</div>
+          <div style="font-size:20px;font-weight:800;color:#f37056;">${etc != null ? fmtK(etc) : '—'}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
           <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">SPI</div>
-          <div style="font-size:22px;font-weight:800;color:${cc.spi >= 1 ? '#00ab63' : cc.spi >= 0.9 ? '#FDB823' : '#ff5050'};">${cc.spi !== null ? cc.spi.toFixed(2) : '—'}</div>
-          ${cc.spi !== null ? `<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin-top:8px;">
+          <div style="font-size:22px;font-weight:800;color:${cc.spi != null && cc.spi >= 1 ? '#00ab63' : cc.spi != null && cc.spi >= 0.9 ? '#FDB823' : cc.spi != null ? '#ff5050' : 'rgba(255,255,255,0.2)'};">${cc.spi != null ? Number(cc.spi).toFixed(2) : '—'}</div>
+          ${cc.spi != null ? `<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin-top:8px;">
             <div style="height:100%;width:${Math.min(cc.spi * 100, 100)}%;background:${cc.spi >= 1 ? '#00ab63' : '#f37056'};border-radius:3px;"></div>
           </div>` : ''}
         </div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
           <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">CPI</div>
-          <div style="font-size:22px;font-weight:800;color:${cc.cpi !== null && cc.cpi >= 1 ? '#00ab63' : '#ff5050'};">${cc.cpi !== null ? (cc.cpi > 10 ? '>10' : cc.cpi.toFixed(2)) : '—'}</div>
+          <div style="font-size:22px;font-weight:800;color:${cc.cpi != null && cc.cpi >= 1 ? '#00ab63' : cc.cpi != null ? '#ff5050' : 'rgba(255,255,255,0.2)'};">${cc.cpi != null ? (cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)) : '—'}</div>
         </div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
           <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Écart Coût (CV)</div>
-          <div style="font-size:18px;font-weight:800;color:${cv !== null && cv >= 0 ? '#00ab63' : '#ff5050'};">${cv !== null ? fmtK(cv) : '—'}</div>
+          <div style="font-size:18px;font-weight:800;color:${cv != null && cv >= 0 ? '#00ab63' : '#ff5050'};">${cv != null ? fmtK(cv) : '—'}</div>
         </div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
           <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">Écart Budget</div>
