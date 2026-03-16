@@ -3,11 +3,11 @@ Reads EnR production Excel files (rapport de production + production elum)
 and generates enr_site_data.js for the dashboard.
 
 Source: OneDrive/.../01_Energy/Production/EnR/
-  - DIE_raport de production.xlsx
+  - DIE_rapport_de_production.xlsx
   - TMM_rapport de production.xlsx
   - MJN_rapport de production.xlsx
   - DIE_production_elum.xlsx  (optional, 10-min granular)
-  - TMM_production _elum.xlsx (optional)
+  - TMM_production_elum.xlsx  (optional)
   - MJN_production_elum.xlsx  (optional)
 """
 import json
@@ -30,7 +30,7 @@ SITES = {
         "centrale": "Centrale Solaire d'Ankorikahely",
         "loc": "Ankorikahely, Diego",
         "capacityKwc": 2400,
-        "file": "DIE_raport de production.xlsx",
+        "file": "DIE_rapport_de_production.xlsx",
     },
     "TMM": {
         "name": "Tamatave",
