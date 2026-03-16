@@ -2004,6 +2004,13 @@ function switchPropsSiteFilter(sub, site) {
   renderPropsTable(sub, site);
 }
 
+function openPropsDirectSubWithDelay(sub) {
+  // Open sub-detail with delay filter pre-activated
+  openPropsDirectSub(sub);
+  _propsDelayFilter = true;
+  renderPropsTable(sub, 'all');
+}
+
 function openPropsDirectSub(sub) {
   // Direct from reporting home to props sub-detail (no intermediate sub-cards)
   document.querySelector('.rpt-poles-grid').style.display = 'none';
@@ -2034,8 +2041,9 @@ function openPropsSub(sub, fromDirect) {
   document.getElementById('rpt-props-' + sub + '-detail').style.display = 'block';
 
   if (sub === 'com') {
-    filters.innerHTML = '';
-    renderComTable();
+    filters.innerHTML = buildComFilterHtml();
+    _comSectionFilter = 'all';
+    renderComTable('all');
   } else {
     filters.innerHTML = buildPropsSiteFilterHtml(sub);
     _rptPropsSiteFilter = 'all';
@@ -2134,22 +2142,51 @@ function renderPropsTable(sub, siteFilter) {
 // ══ COMMERCIAL REPORTING (Vente Immo / Vente Foncière / Location) ══
 // ══════════════════════════════════════════════════════════════
 
+var _comSectionFilter = 'all';
+
 function fmtEur(v) {
   if (v == null || v === '') return '\u2014';
   return v.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' \u20ac';
 }
 
-function renderComTable() {
-  var bar = document.getElementById('rpt-props-com-kpi-bar');
-  bar.innerHTML =
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</div><div class="kl">Obj. Vente Immo</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</div><div class="kl">Obj. Vente Fonci\u00e8re</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + fmtEur(comData_locationTotal) + ' /mois</div><div class="kl">Obj. Location</div></div>';
-
+function buildComFilterHtml() {
+  var tabs = [
+    { key: 'all', label: 'Tous' },
+    { key: 'immo', label: 'Vente Immobili\u00e8re' },
+    { key: 'fonc', label: 'Vente Fonci\u00e8re' },
+    { key: 'loc', label: 'Location' }
+  ];
   var html = '';
+  tabs.forEach(function(t) {
+    var isActive = (_comSectionFilter === t.key);
+    var bg = isActive ? 'background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' :
+      'background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);';
+    html += '<button class="rpt-com-tab" onclick="switchComSection(\'' + t.key + '\')" data-tab="' + t.key + '" ' +
+      'style="' + bg + 'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">' + t.label + '</button>';
+  });
+  return html;
+}
 
-  // === SECTION 1: Vente Immobilière ===
-  html += '<div style="margin-bottom:32px;">' +
+function switchComSection(section) {
+  _comSectionFilter = section;
+  // Update tab styles
+  var tabs = document.querySelectorAll('.rpt-com-tab');
+  tabs.forEach(function(btn) {
+    if (btn.getAttribute('data-tab') === section) {
+      btn.style.background = 'rgba(253,184,35,0.15)';
+      btn.style.color = '#FDB823';
+      btn.style.borderColor = 'rgba(253,184,35,0.3)';
+    } else {
+      btn.style.background = 'rgba(255,255,255,0.04)';
+      btn.style.color = 'var(--text-muted)';
+      btn.style.borderColor = 'rgba(255,255,255,0.1)';
+    }
+  });
+  renderComTable(section);
+}
+
+function buildComSectionImmo() {
+  var html = '<div style="margin-bottom:32px;">' +
     '<h3 style="color:#FDB823;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(253,184,35,0.08);border-radius:10px;border-left:3px solid #FDB823;">' +
     'Vente Immobili\u00e8re \u2014 Objectif: ' + fmtEur(comData_venteImmoTotal) + '</h3>' +
     '<table class="rpt-table"><thead><tr>' +
@@ -2160,7 +2197,6 @@ function renderComTable() {
     '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
     '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
     '</tr></thead><tbody>';
-
   comData_venteImmo.forEach(function(p) {
     html += '<tr>' +
       '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(p.name) + '</td>' +
@@ -2175,16 +2211,16 @@ function renderComTable() {
       '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
       '</tr>';
   });
-
-  // Total row
   html += '<tr style="background:rgba(253,184,35,0.08);font-weight:700;">' +
     '<td style="color:#FDB823;">TOTAL</td>' +
     '<td style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</td>' +
     '<td colspan="8"></td></tr>';
   html += '</tbody></table></div>';
+  return html;
+}
 
-  // === SECTION 2: Vente Foncière ===
-  html += '<div style="margin-bottom:32px;">' +
+function buildComSectionFonc() {
+  var html = '<div style="margin-bottom:32px;">' +
     '<h3 style="color:#00ab63;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(0,171,99,0.08);border-radius:10px;border-left:3px solid #00ab63;">' +
     'Vente Fonci\u00e8re \u2014 Objectif: ' + fmtEur(comData_venteFonciereTotal) + '</h3>' +
     '<table class="rpt-table"><thead><tr>' +
@@ -2195,7 +2231,6 @@ function renderComTable() {
     '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
     '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
     '</tr></thead><tbody>';
-
   comData_venteFonciere.forEach(function(p) {
     html += '<tr>' +
       '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(p.name) + '</td>' +
@@ -2210,15 +2245,16 @@ function renderComTable() {
       '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
       '</tr>';
   });
-
   html += '<tr style="background:rgba(0,171,99,0.08);font-weight:700;">' +
     '<td style="color:#00ab63;">TOTAL</td>' +
     '<td style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</td>' +
     '<td colspan="8"></td></tr>';
   html += '</tbody></table></div>';
+  return html;
+}
 
-  // === SECTION 3: Location ===
-  html += '<div style="margin-bottom:32px;">' +
+function buildComSectionLoc() {
+  var html = '<div style="margin-bottom:32px;">' +
     '<h3 style="color:#5aafaf;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(90,175,175,0.08);border-radius:10px;border-left:3px solid #5aafaf;">' +
     'Location \u2014 Objectif mensuel: ' + fmtEur(comData_locationTotal) + ' /mois</h3>' +
     '<table class="rpt-table"><thead><tr>' +
@@ -2229,7 +2265,6 @@ function renderComTable() {
     '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
     '<th>Total Obj.</th>' +
     '</tr></thead><tbody>';
-
   comData_location.forEach(function(loc) {
     html += '<tr>' +
       '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(loc.name) + '</td>' +
@@ -2244,7 +2279,6 @@ function renderComTable() {
       '<td style="font-weight:700;color:#5aafaf;font-size:11px;">' + fmtEur(loc.total) + '</td>' +
       '</tr>';
   });
-
   var locTotalObj = comData_location.reduce(function(s, l) { return s + (l.total || 0); }, 0);
   html += '<tr style="background:rgba(90,175,175,0.08);font-weight:700;">' +
     '<td style="color:#5aafaf;">TOTAL</td>' +
@@ -2252,57 +2286,74 @@ function renderComTable() {
     '<td style="color:#5aafaf;">' + fmtEur(locTotalObj) + '</td>' +
     '</tr>';
   html += '</tbody></table></div>';
+  return html;
+}
+
+function renderComTable(section) {
+  section = section || 'all';
+
+  // KPI bar - highlight active section
+  var bar = document.getElementById('rpt-props-com-kpi-bar');
+  var immoActive = (section === 'immo') ? 'background:rgba(253,184,35,0.12);border:1px solid rgba(253,184,35,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
+  var foncActive = (section === 'fonc') ? 'background:rgba(0,171,99,0.12);border:1px solid rgba(0,171,99,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
+  var locActive = (section === 'loc') ? 'background:rgba(90,175,175,0.12);border:1px solid rgba(90,175,175,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
+
+  bar.innerHTML =
+    '<div class="rpt-kpi-item" onclick="switchComSection(\'immo\')" style="' + immoActive + '"><div class="kv" style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</div><div class="kl">Vente Immo</div></div>' +
+    '<div class="rpt-kpi-item" onclick="switchComSection(\'fonc\')" style="' + foncActive + '"><div class="kv" style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</div><div class="kl">Vente Fonci\u00e8re</div></div>' +
+    '<div class="rpt-kpi-item" onclick="switchComSection(\'loc\')" style="' + locActive + '"><div class="kv" style="color:#5aafaf;">' + fmtEur(comData_locationTotal) + ' /mois</div><div class="kl">Location</div></div>';
+
+  var html = '';
+  if (section === 'all' || section === 'immo') html += buildComSectionImmo();
+  if (section === 'all' || section === 'fonc') html += buildComSectionFonc();
+  if (section === 'all' || section === 'loc') html += buildComSectionLoc();
 
   document.getElementById('rpt-props-com-table-wrap').innerHTML = html;
 }
 
 function renderPropsPoleCards() {
+  // Helper: build clickable KPIs for SAV/TVX/DEV cards
+  function buildCardKpis(sub, projects, data) {
+    var delayed = data.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
+    return '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'' + sub + '\')" style="cursor:pointer;">' +
+      '<span class="kv" style="color:#FDB823;">' + projects.length + '</span><span class="kl">Projets</span></div>' +
+      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'' + sub + '\')" style="cursor:pointer;">' +
+      '<span class="kv" style="color:#00ab63;">' + data.length + '</span><span class="kl">\u00c9tapes</span></div>' +
+      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSubWithDelay(\'' + sub + '\')" style="cursor:pointer;background:rgba(224,92,92,0.08);border-radius:8px;">' +
+      '<span class="kv" style="color:#E05C5C;">' + delayed + '</span><span class="kl">Retard \u25BC</span></div>';
+  }
+
   // SAV card
   var savProjects = propsGroupByProject(propsData_sav);
   var savEl = document.getElementById('rpt-pole-sav-kpis');
-  if (savEl) {
-    var savDelayed = propsData_sav.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
-    savEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + savProjects.length + '</span><span class="kl">Projets</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + propsData_sav.length + '</span><span class="kl">\u00c9tapes</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + savDelayed + '</span><span class="kl">Retard</span></div>';
-  }
+  if (savEl) savEl.innerHTML = buildCardKpis('sav', savProjects, propsData_sav);
   var savSub = document.getElementById('rpt-pole-sav-sub');
   if (savSub) savSub.textContent = savProjects.length + ' projets \u2022 ' + propsData_sav.length + ' \u00e9tapes';
 
   // TVX card
   var tvxProjects = propsGroupByProject(propsData_tvx);
   var tvxEl = document.getElementById('rpt-pole-tvx-kpis');
-  if (tvxEl) {
-    var tvxDelayed = propsData_tvx.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
-    tvxEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + tvxProjects.length + '</span><span class="kl">Projets</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + propsData_tvx.length + '</span><span class="kl">\u00c9tapes</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + tvxDelayed + '</span><span class="kl">Retard</span></div>';
-  }
+  if (tvxEl) tvxEl.innerHTML = buildCardKpis('tvx', tvxProjects, propsData_tvx);
   var tvxSub = document.getElementById('rpt-pole-tvx-sub');
   if (tvxSub) tvxSub.textContent = tvxProjects.length + ' projets \u2022 ' + propsData_tvx.length + ' \u00e9tapes';
 
   // DEV card
   var devProjects = propsGroupByProject(propsData_dev);
   var devEl = document.getElementById('rpt-pole-dev-kpis');
-  if (devEl) {
-    var devDelayed = propsData_dev.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
-    devEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + devProjects.length + '</span><span class="kl">Projets</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + propsData_dev.length + '</span><span class="kl">\u00c9tapes</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + devDelayed + '</span><span class="kl">Retard</span></div>';
-  }
+  if (devEl) devEl.innerHTML = buildCardKpis('dev', devProjects, propsData_dev);
   var devSub = document.getElementById('rpt-pole-dev-sub');
   if (devSub) devSub.textContent = devProjects.length + ' projets \u2022 ' + propsData_dev.length + ' \u00e9tapes';
 
-  // COM card
+  // COM card - KPIs are also clickable, open commercial detail
   var comEl = document.getElementById('rpt-pole-com-kpis');
   if (comEl) {
     comEl.innerHTML =
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + (comData_venteImmoTotal / 1000000).toFixed(1) + 'M</span><span class="kl">Vente Immo</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + (comData_venteFonciereTotal / 1000000).toFixed(1) + 'M</span><span class="kl">Vente Fonc.</span></div>' +
-      '<div class="rpt-pole-kpi"><span class="kv" style="color:#E05C5C;">' + (comData_locationTotal / 1000).toFixed(0) + 'k/m</span><span class="kl">Location</span></div>';
+      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'com\')" style="cursor:pointer;">' +
+      '<span class="kv" style="color:#FDB823;">' + (comData_venteImmoTotal / 1000000).toFixed(1) + 'M</span><span class="kl">Vente Immo</span></div>' +
+      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'com\')" style="cursor:pointer;">' +
+      '<span class="kv" style="color:#00ab63;">' + (comData_venteFonciereTotal / 1000000).toFixed(1) + 'M</span><span class="kl">Vente Fonc.</span></div>' +
+      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'com\')" style="cursor:pointer;">' +
+      '<span class="kv" style="color:#E05C5C;">' + (comData_locationTotal / 1000).toFixed(0) + 'k/m</span><span class="kl">Location</span></div>';
   }
 }
 
