@@ -1835,12 +1835,13 @@
       </div>
 
       <!-- POLE 3: INVESTMENTS -->
-      <div class="rpt-pole-card rpt-pole-inv" style="opacity:0.4;pointer-events:none;">
+      <div class="rpt-pole-card rpt-pole-inv" onclick="openReportingPole('inv')">
         <div class="rpt-pole-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#f37056" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
         </div>
         <div class="rpt-pole-title" style="color:#f37056;">Investments</div>
-        <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
+        <div class="rpt-pole-sub" id="rpt-pole-inv-sub">19 projets</div>
+        <div class="rpt-pole-kpis" id="rpt-pole-inv-kpis"></div>
       </div>
 
     </div>
@@ -1865,6 +1866,23 @@
 
       <!-- PROJECTS TABLE -->
       <div id="rpt-enr-table-wrap" class="rpt-table-wrap"></div>
+    </div>
+
+    <!-- DETAIL POLE INVESTMENTS -->
+    <div id="rpt-inv-detail" class="rpt-detail-section" style="display:none;">
+      <div class="rpt-detail-header">
+        <button class="rpt-back-btn" onclick="closeReportingPole()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+        <h2 style="color:#f37056;margin:0;font-size:18px;">Reporting Investments</h2>
+      </div>
+      <div id="rpt-inv-kpi-bar" class="rpt-kpi-bar"></div>
+      <div id="rpt-inv-filter-tabs" style="display:flex;gap:8px;margin-bottom:20px;">
+        <button class="rpt-inv-tab active" onclick="switchInvTab('externe')" data-tab="externe" style="background:rgba(243,112,86,0.15);color:#f37056;border:1px solid rgba(243,112,86,0.3);border-radius:8px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;">Externe</button>
+        <button class="rpt-inv-tab" onclick="switchInvTab('interne')" data-tab="interne" style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;">Interne</button>
+      </div>
+      <div id="rpt-inv-table-wrap" class="rpt-table-wrap"></div>
     </div>
 
   </div>
