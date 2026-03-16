@@ -54,6 +54,20 @@ function openReportingPole(pole) {
       '</select>';
     populateWeekSelector();
     renderEnrDetail();
+  } else if (pole === 'hfo') {
+    var detail = document.getElementById('rpt-hfo-detail');
+    detail.style.display = 'block';
+    backBtn.textContent = 'Retour';
+    backBtn.onclick = function() { closeReportingPole(); };
+    backBtn.style.borderColor = 'rgba(0,171,99,0.3)';
+    backBtn.style.color = '#00ab63';
+    title.textContent = 'Reporting HFO';
+    title.style.color = '#00ab63';
+    filters.innerHTML = '';
+    // Show the sub-cards, hide sub-details
+    document.getElementById('rpt-hfo-cards').style.display = '';
+    document.getElementById('rpt-hfo-overhauls-detail').style.display = 'none';
+    document.getElementById('rpt-hfo-projets-detail').style.display = 'none';
   } else if (pole === 'lfo') {
     var detail = document.getElementById('rpt-lfo-detail');
     detail.style.display = 'block';
@@ -113,6 +127,7 @@ function openReportingPole(pole) {
 function closeReportingPole() {
   document.getElementById('rpt-enr-detail').style.display = 'none';
   document.getElementById('rpt-inv-detail').style.display = 'none';
+  document.getElementById('rpt-hfo-detail').style.display = 'none';
   document.getElementById('rpt-lfo-detail').style.display = 'none';
   document.querySelector('.rpt-poles-grid').style.display = '';
   document.getElementById('rpt-global-summary').style.display = '';
@@ -1270,6 +1285,362 @@ function saveInvDgField(projectId, fieldType, btnEl) {
     btnEl.disabled = false;
     btnEl.textContent = 'Enregistrer';
     statusEl.style.color = '#f37056';
+    statusEl.textContent = err.message || 'Erreur connexion';
+  });
+}
+
+// ══════════════════════════════════════════════
+// ══ HFO REPORTING ══
+// ══════════════════════════════════════════════
+
+var _currentHfoSub = null;
+var _rptHfoOverhaulSite = 'all';
+var _rptHfoProjetSite = 'all';
+
+var hfoProjects = [
+  // === OVERHAULS (moteur assigned) ===
+  { id:'hfo_1', site:'TAMATAVE', projet:'Remise en service ADG8', moteur:'ADG8', dl_initial:'2025-07-11', dl_revu:'2026-04-26', date_exec:'', ecart:289, dtg:66, commentaire:'Travaux de Kyros fiasco\nAlternateur achet\u00e9 par PDG : arriv\u00e9e 11/03/26\nTravaux \u00e0 faire par GPCE \u2013 Attente planning\nTravaux GC par HCM - devis et planning', action:'Situation par rapport au planning \u00e0 voir', resp:'Marcel', type:'overhaul' },
+  { id:'hfo_2', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG3', dl_initial:'2026-09-26', dl_revu:'2026-10-18', date_exec:'', ecart:22, dtg:241, commentaire:'ADG3 Planifi\u00e9 \u2013 Pi\u00e8ce dispo 8%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_3', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG6', dl_initial:'2025-10-31', dl_revu:'2026-09-20', date_exec:'', ecart:324, dtg:213, commentaire:'ADG6 Planifi\u00e9 - Pi\u00e8ce dispo 0%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_4', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG7', dl_initial:'2025-12-31', dl_revu:'2026-07-26', date_exec:'', ecart:207, dtg:157, commentaire:'ADG7 Planifi\u00e9 - Pi\u00e8ce dispo 8%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_5', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG9', dl_initial:'2025-07-31', dl_revu:'2026-05-31', date_exec:'', ecart:304, dtg:101, commentaire:'ADG9 Planifi\u00e9 - Pi\u00e8ce dispo 8%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_6', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG10', dl_initial:'2025-09-30', dl_revu:'2026-08-23', date_exec:'', ecart:327, dtg:185, commentaire:'ADG10 Planifi\u00e9 - Pi\u00e8ce dispo 0%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_7', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG11', dl_initial:'2025-10-31', dl_revu:'2026-06-28', date_exec:'', ecart:240, dtg:129, commentaire:'ADG11 Planifi\u00e9 - Pi\u00e8ce dispo 8%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_8', site:'TAMATAVE', projet:'Overhaul 2026', moteur:'ADG12', dl_initial:'2025-11-30', dl_revu:'2026-05-03', date_exec:'', ecart:154, dtg:73, commentaire:'ADG12 Planifi\u00e9 - Pi\u00e8ce dispo 8%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_18', site:'MAJUNGA', projet:'Overhaul 2026', moteur:'MDG1', dl_initial:'2025-10-31', dl_revu:'2026-07-05', date_exec:'', ecart:247, dtg:136, commentaire:'MDG1 Planifi\u00e9 - Pi\u00e8ce 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_19', site:'MAJUNGA', projet:'Overhaul 2026', moteur:'MDG2', dl_initial:'2025-09-30', dl_revu:'2026-03-04', date_exec:'', ecart:155, dtg:13, commentaire:'MDG2 Planifi\u00e9 - Pi\u00e8ce Re\u00e7ues et mise \u00e0 disposition pour DDG9', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_20', site:'MAJUNGA', projet:'Overhaul 2026', moteur:'MDG3', dl_initial:'2025-08-31', dl_revu:'2026-06-07', date_exec:'', ecart:280, dtg:108, commentaire:'MDG3 Planifi\u00e9 - Pi\u00e8ce Re\u00e7ues 84%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_21', site:'MAJUNGA', projet:'Overhaul 2026', moteur:'MDG4', dl_initial:'2025-11-30', dl_revu:'2026-08-30', date_exec:'', ecart:273, dtg:192, commentaire:'MDG4 Planifi\u00e9 - Pi\u00e8ce 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_22', site:'MAJUNGA', projet:'Overhaul 2026', moteur:'MDG5', dl_initial:'2025-12-31', dl_revu:'2026-07-02', date_exec:'', ecart:183, dtg:133, commentaire:'MDG5 Planifi\u00e9 - Pi\u00e8ce 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_31', site:'DIEGO', projet:'Overhaul 2026', moteur:'DDG1', dl_initial:'', dl_revu:'2026-05-06', date_exec:'', ecart:0, dtg:76, commentaire:'DDG1 pi\u00e8ce dispo 0%', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_32', site:'DIEGO', projet:'Overhaul 2026', moteur:'DDG2', dl_initial:'2025-12-31', dl_revu:'2026-05-23', date_exec:'', ecart:143, dtg:93, commentaire:'DDG2 Pi\u00e8ce 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_33', site:'DIEGO', projet:'Overhaul 2026', moteur:'DDG5', dl_initial:'2025-11-30', dl_revu:'2026-08-05', date_exec:'', ecart:248, dtg:167, commentaire:'DDG5 Pi\u00e8ce 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_34', site:'DIEGO', projet:'Overhaul 2026', moteur:'DDG9', dl_initial:'2025-07-23', dl_revu:'2026-07-11', date_exec:'', ecart:353, dtg:142, commentaire:'DDG9 Partial en cours - Pi\u00e8ce en attente\nUtilisation pi\u00e8ce de MDG2\nComplete en D\u00e9cembre et remplacement Crankshaft ; Pi\u00e8ce 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_37', site:'DIEGO', projet:'Remplacement moteur DDG8', moteur:'DDG8', dl_initial:'2026-03-31', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Arriv\u00e9e bloc moteur et vilebrequin 20/02/26 \u00e0 Di\u00e9go', action:'Travaux par GPCE', resp:'Marcel', type:'overhaul' },
+  { id:'hfo_40', site:'TULEAR', projet:'Overhaul 2026', moteur:'UDG2', dl_initial:'', dl_revu:'2026-10-25', date_exec:'', ecart:0, dtg:248, commentaire:'UDG2 Pi\u00e8ces 0% dispo', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  { id:'hfo_48', site:'ANTSIRABE', projet:'Overhaul 2026', moteur:'BDG1', dl_initial:'2025-01-31', dl_revu:'2026-09-27', date_exec:'', ecart:604, dtg:220, commentaire:'DL suivant planning de remise en service de la centrale GPCE', action:'En attente offres fournisseurs / Prix / DL livraison\nTri des pi\u00e8ces dispo au F23', resp:'Marcel / Gaston / Erick', type:'overhaul' },
+  // === PROJET ANNEXE ===
+  { id:'hfo_10', site:'TAMATAVE', projet:'Maintenance des auxiliaires', moteur:'', dl_initial:'2025-09-30', dl_revu:'2026-03-31', date_exec:'', ecart:182, dtg:40, commentaire:'Compresseur achat\u00e9 par PDG\nExpression de besoin d\'autre pi\u00e8ce en 25Jul25\nPaiement Oct25 280k$ et Nov25 250k$\nConfection listes besoins et commande en cours', action:'Compilation des besoins', resp:'Christian', type:'projet' },
+  { id:'hfo_11', site:'TAMATAVE', projet:'Calorifusage des moteurs (exhaust)', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Attente paiement \u2192 attente contrat', action:'Situation contrat/offre \u00e0 voir', resp:'Marcel', type:'projet' },
+  { id:'hfo_12', site:'TAMATAVE', projet:'SCADA avec GPCE', moteur:'', dl_initial:'2025-07-31', dl_revu:'2026-03-31', date_exec:'', ecart:243, dtg:40, commentaire:'Glissement d\u00fb au paiement', action:'Croisement des listes de besoin GPCE avec dispo F23', resp:'Gaston / Erick', type:'projet' },
+  { id:'hfo_13', site:'TAMATAVE', projet:'Installation tank huile', moteur:'', dl_initial:'2026-07-31', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'R\u00e9union faite \u2192 \u00e0 suivre avec Motul', action:'Visite sur site Tamatave', resp:'Christian', type:'projet' },
+  { id:'hfo_14', site:'TAMATAVE', projet:'Cl\u00f4ture tomb\u00e9e : garanti 10ans par HCM', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_15', site:'TAMATAVE', projet:'R\u00e9habilitation villa expat', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_16', site:'TAMATAVE', projet:'R\u00e9habilitation gu\u00e9rite et rallongement toiture sous-d\u00e9canteur', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_17', site:'TAMATAVE', projet:'Cooling tower ADG8', moteur:'', dl_initial:'2025-06-30', dl_revu:'2026-03-31', date_exec:'', ecart:274, dtg:40, commentaire:'Attente retour cotation GPCE', action:'', resp:'Omar', type:'projet' },
+  { id:'hfo_23', site:'MAJUNGA', projet:'Maintenance des auxiliaires', moteur:'', dl_initial:'2025-09-30', dl_revu:'2026-03-31', date_exec:'', ecart:182, dtg:40, commentaire:'Compresseur achat\u00e9 par PDG\nExpression de besoin d\'autre pi\u00e8ce\nPaiement Oct25 280k$ et Nov25 250k$\nConfection listes besoins et commande en cours', action:'Compilation des besoins', resp:'Christian', type:'projet' },
+  { id:'hfo_24', site:'MAJUNGA', projet:'SCADA', moteur:'', dl_initial:'2026-07-31', dl_revu:'2026-03-31', date_exec:'', ecart:-122, dtg:40, commentaire:'Glissement d\u00fb au paiement', action:'Croisement des listes de besoin GPCE avec dispo F23', resp:'Gaston / Erick', type:'projet' },
+  { id:'hfo_25', site:'MAJUNGA', projet:'Installation climatiseur control room', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_26', site:'MAJUNGA', projet:'Avancement actions post d\u00e9versement', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_27', site:'MAJUNGA', projet:'R\u00e9habilitation toiture : effondrement toit Enelec 2', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_28', site:'MAJUNGA', projet:'Pompe transfert sludge caniveau (collaboration Jirama)', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_29', site:'MAJUNGA', projet:'D\u00e9canteur : probl\u00e8me avec APMF ; devis SITMA', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_30', site:'MAJUNGA', projet:'Upgradation', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'S\u00e9paration Cooling tower \u00e0 voir avec SGX', action:'Situation Soavato', resp:'Ange / Olivier', type:'projet' },
+  { id:'hfo_35', site:'DIEGO', projet:'Abris Cummins', moteur:'', dl_initial:'', dl_revu:'', date_exec:'2026-02-12', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_36', site:'DIEGO', projet:'Installation 18 extraction d\'air', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_38', site:'TULEAR', projet:'Cooling Tower UDG4', moteur:'', dl_initial:'2025-08-31', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Construction en cours (Sur site 26/09/25, attente mat\u00e9riel de connexion)', action:'Attente retour cotation GPCE', resp:'Omar', type:'projet' },
+  { id:'hfo_39', site:'TULEAR', projet:'Climatisation control room', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_41', site:'ANTSIRABE', projet:'Remise en service centrale apr\u00e8s incendie', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Planning GPCE', action:'Relance GPCE', resp:'Omar', type:'projet' },
+  { id:'hfo_42', site:'ANTSIRABE', projet:'Maintenance des auxiliaires', moteur:'', dl_initial:'2025-09-30', dl_revu:'2026-03-31', date_exec:'', ecart:182, dtg:40, commentaire:'Compresseur achat\u00e9 par PDG\nExpression de besoin\nPaiement Oct25 280k$ et Nov25 250k$\nConfection listes besoins et commande en cours', action:'Compilation des besoins', resp:'Christian', type:'projet' },
+  { id:'hfo_43', site:'ANTSIRABE', projet:'SCADA', moteur:'', dl_initial:'2025-07-31', dl_revu:'2026-03-31', date_exec:'', ecart:243, dtg:40, commentaire:'Glissement d\u00fb au paiement', action:'Croisement des listes de besoin GPCE avec dispo F23', resp:'Gaston / Erick', type:'projet' },
+  { id:'hfo_44', site:'ANTSIRABE', projet:'Construction de route', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_45', site:'ANTSIRABE', projet:'R\u00e9haussement cl\u00f4ture mitoyen', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_46', site:'ANTSIRABE', projet:'Carrelage all\u00e9e centrale et peinture sol epoxy', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_47', site:'ANTSIRABE', projet:'Peinture sol epoxy et gardes corps mezzanine', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'SGX', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_49', site:'VESTOP', projet:'Majunga : installation du Man', moteur:'', dl_initial:'2025-12-31', dl_revu:'2026-07-31', date_exec:'', ecart:212, dtg:162, commentaire:'Equipe GPCE d\u00e9j\u00e0 sur site : attente planning\nGC par HCM \u00e0 d\u00e9finir', action:'', resp:'Marcel', type:'projet' },
+  { id:'hfo_50', site:'VESTOP', projet:'Fihaonana : installation de 2 moteurs 6R32', moteur:'', dl_initial:'2026-04-30', dl_revu:'2026-12-25', date_exec:'', ecart:239, dtg:309, commentaire:'Contrat sign\u00e9 avec GPCE\nTravaux GC en cours par HCM', action:'4 containers arriv\u00e9s ; probl\u00e8me logistique \u00e0 Tamatave', resp:'Marcel', type:'projet' },
+  { id:'hfo_51', site:'AUTRE', projet:'D\u00e9signation et impl\u00e9mentation des protections sites', moteur:'', dl_initial:'2026-04-01', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Pour \u00e9viter les black-out r\u00e9p\u00e9titifs et prot\u00e9ger nos installations', action:'En cours\nSites : Tulear, Antsirabe, Tamatave et Di\u00e9go \u2192 planning missions', resp:'Omar', type:'projet' },
+  { id:'hfo_52', site:'AUTRE', projet:'Analyses Fuel, eau et huile en local', moteur:'', dl_initial:'2026-12-01', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Ma\u00eetrise qualit\u00e9 fluides, analyses internes et externes n\u00e9cessaires', action:'', resp:'Omar', type:'projet' },
+  { id:'hfo_53', site:'AUTRE', projet:'Achat syst\u00e8me brouillard huile (OMD) - 116 439$ pour 16 moteurs', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Pour \u00e9viter destructions paliers vilebrequins (246 603$ et longues indisponibilit\u00e9s)', action:'Mise \u00e0 jour cotation puis valider', resp:'Omar / Marcel', type:'projet' },
+  { id:'hfo_54', site:'AUTRE', projet:'Filtre automatique huile \u00e0 bougies', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Nettoyage auto sans arr\u00eat machine\nGain 352 811$ annuel\nEl\u00e9ments remplac\u00e9s apr\u00e8s 24000h', action:'Attente cotation puis valider', resp:'Omar / Marcel', type:'projet' },
+  { id:'hfo_55', site:'AUTRE', projet:'Unit\u00e9s de traitement eaux', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Arr\u00eat de 15h par moteur pour d\u00e9tartrer', action:'Cotation re\u00e7ue \u2192 P2P', resp:'Omar / Marcel', type:'projet' },
+  { id:'hfo_56', site:'AUTRE', projet:'SFOC', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Achever le projet d\u00e9bitm\u00e8tres sur tous les sites', action:'Demande de cotation', resp:'Omar / Marcel', type:'projet' },
+  { id:'hfo_57', site:'AUTRE', projet:'Maintenance \u00e9lectrique L4 alternateurs et transfos', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Le L4 d\'un alternateur est l\'\u00e9quivalent de Overhaul d\'un moteur', action:'Demande de cotation', resp:'Omar / Marcel', type:'projet' },
+  { id:'hfo_58', site:'AUTRE', projet:'Gestion des Stocks', moteur:'', dl_initial:'', dl_revu:'', date_exec:'', ecart:0, dtg:0, commentaire:'Codification et gestion par si\u00e8ge des stocks. Inventaire mensuel et annuel', action:'', resp:'Gaston / Hussen', type:'projet' }
+];
+
+var hfoSites = ['TAMATAVE','MAJUNGA','DIEGO','TULEAR','ANTSIRABE','VESTOP','AUTRE'];
+
+function openHfoSub(sub) {
+  _currentHfoSub = sub;
+  document.getElementById('rpt-hfo-cards').style.display = 'none';
+
+  var backBtn = document.getElementById('rpt-back-btn');
+  var title = document.getElementById('rpt-sticky-title');
+  var filters = document.getElementById('rpt-sticky-filters');
+
+  backBtn.textContent = 'Retour';
+  backBtn.onclick = function() { closeHfoSub(); };
+
+  if (sub === 'overhauls') {
+    title.textContent = 'HFO - Overhauls';
+    document.getElementById('rpt-hfo-overhauls-detail').style.display = 'block';
+    filters.innerHTML = buildHfoSiteFilterHtml('overhauls');
+    _rptHfoOverhaulSite = 'all';
+    renderHfoOverhaulsTable('all');
+  } else if (sub === 'projets') {
+    title.textContent = 'HFO - Projet annexe';
+    document.getElementById('rpt-hfo-projets-detail').style.display = 'block';
+    filters.innerHTML = buildHfoSiteFilterHtml('projets');
+    _rptHfoProjetSite = 'all';
+    renderHfoProjetsTable('all');
+  }
+}
+
+function closeHfoSub() {
+  _currentHfoSub = null;
+  document.getElementById('rpt-hfo-overhauls-detail').style.display = 'none';
+  document.getElementById('rpt-hfo-projets-detail').style.display = 'none';
+  document.getElementById('rpt-hfo-cards').style.display = '';
+
+  var backBtn = document.getElementById('rpt-back-btn');
+  var title = document.getElementById('rpt-sticky-title');
+  var filters = document.getElementById('rpt-sticky-filters');
+  backBtn.textContent = 'Retour';
+  backBtn.onclick = function() { closeReportingPole(); };
+  title.textContent = 'Reporting HFO';
+  title.style.color = '#00ab63';
+  filters.innerHTML = '';
+}
+
+function renderHfoOverhaulsTable(siteFilter) {
+  var ms = hfoProjects.filter(function(p) { return p.type === 'overhaul'; });
+  if (siteFilter && siteFilter !== 'all') ms = ms.filter(function(p) { return p.site === siteFilter; });
+
+  // KPIs
+  var total = ms.length;
+  var urgent = ms.filter(function(p) { return p.dtg > 0 && p.dtg <= 60; }).length;
+  var enRetard = ms.filter(function(p) { return p.ecart > 200; }).length;
+  var sites = {};
+  ms.forEach(function(p) { sites[p.site] = true; });
+
+  var bar = document.getElementById('rpt-hfo-overhauls-kpi-bar');
+  bar.innerHTML =
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + total + '</div><div class="kl">Overhauls</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#E05C5C;">' + urgent + '</div><div class="kl">&lt; 60 jours</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + enRetard + '</div><div class="kl">Ecart &gt; 200j</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + Object.keys(sites).length + '</div><div class="kl">Sites</div></div>';
+
+  // Table
+  var html = '<table class="rpt-table"><thead><tr>' +
+    '<th>Site</th><th>Moteur</th><th>Projet</th><th>DL initial</th><th>DL revu</th>' +
+    '<th>Ecart (j)</th><th>Day to go</th><th>Commentaire</th><th>Action</th><th>Resp</th>' +
+    '<th>Commentaires DG</th><th>R\u00e9ponse</th>' +
+    '</tr></thead><tbody>';
+
+  var sorted = ms.slice().sort(function(a, b) { return (a.dtg || 9999) - (b.dtg || 9999); });
+
+  sorted.forEach(function(p) {
+    var ecartColor = p.ecart > 200 ? '#E05C5C' : p.ecart > 100 ? '#FDB823' : '#5aafaf';
+    var dtgColor = p.dtg <= 60 ? '#E05C5C' : p.dtg <= 120 ? '#FDB823' : '#4ecdc4';
+
+    html += '<tr>' +
+      '<td class="nowrap" style="font-weight:600;">' + escapeHtml(p.site) + '</td>' +
+      '<td class="nowrap" style="font-weight:600;color:#5aafaf;">' + escapeHtml(p.moteur) + '</td>' +
+      '<td style="font-size:11px;">' + escapeHtml(p.projet) + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + (p.dl_initial || '\u2014') + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + (p.dl_revu || '\u2014') + '</td>' +
+      '<td style="text-align:right;font-weight:600;color:' + ecartColor + ';">' + (p.ecart || '\u2014') + '</td>' +
+      '<td style="text-align:right;font-weight:600;color:' + dtgColor + ';">' + (p.dtg || '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(p.commentaire) + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(p.action) + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + escapeHtml(p.resp) + '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-dg-comment" data-pid="' + p.id + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+          'onfocus="this.style.borderColor=\'rgba(0,171,99,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveHfoDgField(\'' + p.id + '\', \'comment\', this)" ' +
+            'style="background:linear-gradient(135deg,#00ab63,#008050);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-hfo-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(0,171,99,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-hfo-reponse" data-pid="' + p.id + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#b8d6ff;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+          'onfocus="this.style.borderColor=\'rgba(86,140,243,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveHfoDgField(\'' + p.id + '\', \'reponse\', this)" ' +
+            'style="background:linear-gradient(135deg,#5686d6,#3060b0);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-hfo-rep-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(130,170,255,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('rpt-hfo-overhauls-table-wrap').innerHTML = html;
+}
+
+function renderHfoProjetsTable(siteFilter) {
+  var ms = hfoProjects.filter(function(p) { return p.type === 'projet'; });
+  if (siteFilter && siteFilter !== 'all') ms = ms.filter(function(p) { return p.site === siteFilter; });
+
+  // KPIs
+  var total = ms.length;
+  var sites = {};
+  ms.forEach(function(p) { sites[p.site] = true; });
+  var withDl = ms.filter(function(p) { return p.dl_initial || p.dl_revu; }).length;
+  var sgx = ms.filter(function(p) { return p.commentaire === 'SGX'; }).length;
+
+  var bar = document.getElementById('rpt-hfo-projets-kpi-bar');
+  bar.innerHTML =
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + total + '</div><div class="kl">Projets</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + Object.keys(sites).length + '</div><div class="kl">Sites</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + withDl + '</div><div class="kl">Avec deadline</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:var(--text-muted);">' + sgx + '</div><div class="kl">SGX</div></div>';
+
+  // Table
+  var html = '<table class="rpt-table"><thead><tr>' +
+    '<th>Site</th><th>Projet</th><th>DL initial</th><th>DL revu</th>' +
+    '<th>Ecart (j)</th><th>Day to go</th><th>Commentaire</th><th>Action</th><th>Resp</th>' +
+    '<th>Commentaires DG</th><th>R\u00e9ponse</th>' +
+    '</tr></thead><tbody>';
+
+  ms.forEach(function(p) {
+    var ecartColor = p.ecart > 200 ? '#E05C5C' : p.ecart > 100 ? '#FDB823' : '#5aafaf';
+    var dtgColor = p.dtg > 0 && p.dtg <= 60 ? '#E05C5C' : p.dtg > 60 && p.dtg <= 120 ? '#FDB823' : '#4ecdc4';
+
+    html += '<tr>' +
+      '<td class="nowrap" style="font-weight:600;">' + escapeHtml(p.site) + '</td>' +
+      '<td style="font-size:11px;font-weight:600;">' + escapeHtml(p.projet) + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + (p.dl_initial || '\u2014') + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + (p.dl_revu || '\u2014') + '</td>' +
+      '<td style="text-align:right;font-weight:600;color:' + ecartColor + ';">' + (p.ecart || '\u2014') + '</td>' +
+      '<td style="text-align:right;font-weight:600;color:' + dtgColor + ';">' + (p.dtg || '\u2014') + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(p.commentaire) + '</td>' +
+      '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(p.action) + '</td>' +
+      '<td class="nowrap" style="font-size:11px;">' + escapeHtml(p.resp) + '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-dg-comment" data-pid="' + p.id + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+          'onfocus="this.style.borderColor=\'rgba(0,171,99,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveHfoDgField(\'' + p.id + '\', \'comment\', this)" ' +
+            'style="background:linear-gradient(135deg,#00ab63,#008050);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-hfo-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(0,171,99,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-hfo-reponse" data-pid="' + p.id + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+          'border-radius:6px;color:#b8d6ff;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+          'onfocus="this.style.borderColor=\'rgba(86,140,243,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
+          '<button onclick="saveHfoDgField(\'' + p.id + '\', \'reponse\', this)" ' +
+            'style="background:linear-gradient(135deg,#5686d6,#3060b0);color:#fff;border:none;border-radius:5px;' +
+            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
+          '<span class="rpt-hfo-rep-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(130,170,255,0.5);"></span>' +
+        '</div>' +
+      '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('rpt-hfo-projets-table-wrap').innerHTML = html;
+}
+
+function switchHfoSiteFilter(sub, site) {
+  if (sub === 'overhauls') {
+    _rptHfoOverhaulSite = site;
+    renderHfoOverhaulsTable(site);
+  } else {
+    _rptHfoProjetSite = site;
+    renderHfoProjetsTable(site);
+  }
+  document.querySelectorAll('.rpt-hfo-site-tab').forEach(function(btn) {
+    var isActive = btn.getAttribute('data-tab') === site;
+    btn.classList.toggle('active', isActive);
+    btn.style.background = isActive ? 'rgba(0,171,99,0.15)' : 'rgba(255,255,255,0.04)';
+    btn.style.color = isActive ? '#00ab63' : '';
+    btn.style.borderColor = isActive ? 'rgba(0,171,99,0.3)' : 'rgba(255,255,255,0.1)';
+  });
+}
+
+function buildHfoSiteFilterHtml(sub) {
+  var relevantSites = [];
+  var type = sub === 'overhauls' ? 'overhaul' : 'projet';
+  hfoSites.forEach(function(s) {
+    if (hfoProjects.some(function(p) { return p.type === type && p.site === s; })) {
+      relevantSites.push(s);
+    }
+  });
+
+  var html = '<button class="rpt-hfo-site-tab active" onclick="switchHfoSiteFilter(\'' + sub + '\', \'all\')" data-tab="all" ' +
+    'style="background:rgba(0,171,99,0.15);color:#00ab63;border:1px solid rgba(0,171,99,0.3);' +
+    'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">Tous</button>';
+
+  relevantSites.forEach(function(s) {
+    html += '<button class="rpt-hfo-site-tab" onclick="switchHfoSiteFilter(\'' + sub + '\', \'' + s + '\')" data-tab="' + s + '" ' +
+      'style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);' +
+      'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">' + s + '</button>';
+  });
+  return html;
+}
+
+function saveHfoDgField(projectId, fieldType, btnEl) {
+  var isComment = fieldType === 'comment';
+  var editDiv = document.querySelector(
+    (isComment ? '.rpt-dg-comment' : '.rpt-hfo-reponse') + '[data-pid="' + projectId + '"]'
+  );
+  var statusEl = document.querySelector(
+    (isComment ? '.rpt-hfo-status' : '.rpt-hfo-rep-status') + '[data-pid="' + projectId + '"]'
+  );
+  if (!editDiv) return;
+
+  var value = editDiv.innerText.trim();
+  btnEl.disabled = true;
+  btnEl.textContent = '...';
+  statusEl.textContent = '';
+
+  var body = { projectId: projectId };
+  if (isComment) body.comment = value;
+  else body.reponse = value;
+
+  fetch('/api/comment/hfo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(function(res) {
+    var ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) throw new Error('API non disponible (mode statique)');
+    return res.json().then(function(d) { return { ok: res.ok, data: d }; });
+  })
+  .then(function(result) {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Enregistrer';
+    if (result.ok) {
+      statusEl.style.color = '#4caf50';
+      statusEl.textContent = 'OK';
+      setTimeout(function() { statusEl.textContent = ''; }, 3000);
+    } else {
+      statusEl.style.color = '#E05C5C';
+      statusEl.textContent = result.data.error || 'Erreur';
+    }
+  })
+  .catch(function(err) {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Enregistrer';
+    statusEl.style.color = '#E05C5C';
     statusEl.textContent = err.message || 'Erreur connexion';
   });
 }

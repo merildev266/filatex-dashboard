@@ -1828,12 +1828,12 @@
           <div class="rpt-pole-kpis" id="rpt-pole-enr-kpis"></div>
         </div>
         <!-- HFO -->
-        <div class="rpt-pole-card rpt-pole-enr" style="margin:0;opacity:0.4;pointer-events:none;">
+        <div class="rpt-pole-card rpt-pole-enr" onclick="openReportingPole('hfo')" style="margin:0;">
           <div class="rpt-pole-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="2" style="width:36px;height:36px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
           <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">HFO</div>
-          <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
+          <div class="rpt-pole-sub" id="rpt-pole-hfo-sub">3 rubriques</div>
         </div>
         <!-- LFO -->
         <div class="rpt-pole-card rpt-pole-enr" onclick="openReportingPole('lfo')" style="margin:0;">
@@ -1905,6 +1905,46 @@
     <div id="rpt-inv-detail" class="rpt-detail-section" style="display:none;">
       <div id="rpt-inv-kpi-bar" class="rpt-kpi-bar"></div>
       <div id="rpt-inv-table-wrap" class="rpt-table-wrap"></div>
+    </div>
+
+    <!-- DETAIL POLE HFO -->
+    <div id="rpt-hfo-detail" class="rpt-detail-section" style="display:none;">
+      <!-- HFO sub-cards grid -->
+      <div id="rpt-hfo-cards" class="rpt-poles-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:900px;margin:40px auto;">
+        <!-- Overhauls -->
+        <div class="rpt-pole-card rpt-pole-enr" onclick="openHfoSub('overhauls')" style="margin:0;">
+          <div class="rpt-pole-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="1.5" style="width:36px;height:36px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">Overhauls</div>
+          <div class="rpt-pole-sub" style="color:var(--text-muted);">Maintenance moteurs</div>
+        </div>
+        <!-- Projet annexe -->
+        <div class="rpt-pole-card rpt-pole-enr" onclick="openHfoSub('projets')" style="margin:0;">
+          <div class="rpt-pole-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="1.5" style="width:36px;height:36px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="9" y1="9" x2="21" y2="9"/><line x1="9" y1="15" x2="21" y2="15"/></svg>
+          </div>
+          <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">Projet annexe</div>
+          <div class="rpt-pole-sub" style="color:var(--text-muted);">Projets complementaires</div>
+        </div>
+        <!-- Informations site -->
+        <div class="rpt-pole-card rpt-pole-enr" style="margin:0;opacity:0.4;pointer-events:none;">
+          <div class="rpt-pole-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00ab63" stroke-width="1.5" style="width:36px;height:36px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </div>
+          <div class="rpt-pole-title" style="color:#00ab63;font-size:16px;">Informations site</div>
+          <div class="rpt-pole-sub" style="color:var(--text-dim);">Bientot disponible</div>
+        </div>
+      </div>
+      <!-- HFO sub-detail areas -->
+      <div id="rpt-hfo-overhauls-detail" style="display:none;">
+        <div id="rpt-hfo-overhauls-kpi-bar" class="rpt-kpi-bar"></div>
+        <div id="rpt-hfo-overhauls-table-wrap" class="rpt-table-wrap"></div>
+      </div>
+      <div id="rpt-hfo-projets-detail" style="display:none;">
+        <div id="rpt-hfo-projets-kpi-bar" class="rpt-kpi-bar"></div>
+        <div id="rpt-hfo-projets-table-wrap" class="rpt-table-wrap"></div>
+      </div>
     </div>
 
     <!-- DETAIL POLE LFO -->
