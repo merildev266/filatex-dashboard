@@ -1402,10 +1402,10 @@ function renderLfoReportingTable(filter) {
 
     html += '<tr>' +
       '<td style="font-weight:600;color:#5aafaf;">' + m.n + '</td>' +
-      '<td class="nowrap" style="font-size:10px;font-family:monospace;">' + escapeHtml(m.serie) + '</td>' +
+      '<td style="font-size:10px;font-family:monospace;white-space:pre-line;">' + escapeHtml(m.serie).replace(/ \/ /g, '<br>') + '</td>' +
       '<td class="nowrap" style="font-size:11px;">' + escapeHtml(m.type) + '</td>' +
       '<td style="text-align:right;font-weight:600;">' + m.puissance + '</td>' +
-      '<td class="nowrap" style="font-size:11px;">' + escapeHtml(m.depart) + '</td>' +
+      '<td style="font-size:11px;white-space:pre-line;">' + escapeHtml(m.depart).replace(/ \/ /g, '<br>') + '</td>' +
       '<td class="nowrap" style="font-size:11px;font-weight:600;">' + escapeHtml(m.affectation) + '</td>' +
       sectionBadge +
       '<td style="font-size:11px;color:var(--text-muted);">' + escapeHtml(m.transfert) + '</td>' +
