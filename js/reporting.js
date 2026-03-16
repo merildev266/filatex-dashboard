@@ -39,8 +39,8 @@ function openReportingPole(pole) {
   } else if (pole === 'inv') {
     var detail = document.getElementById('rpt-inv-detail');
     detail.style.display = 'block';
-    renderInvReportingKpis('all');
-    renderInvReportingTable('all');
+    renderInvReportingKpis('externe');
+    renderInvReportingTable('externe');
   }
 }
 
@@ -285,7 +285,7 @@ function saveReportingDgField(projectId, fieldType, btnEl) {
 
 // ══ INVESTMENTS REPORTING ══
 
-var _rptInvFilter = 'all';
+var _rptInvFilter = 'externe';
 
 function renderInvReportingPoleCard() {
   if (typeof invProjects === 'undefined') return;
@@ -302,8 +302,7 @@ function renderInvReportingPoleCard() {
   el.innerHTML =
     '<div class="rpt-pole-kpi"><span class="kv" style="color:#f37056;">' + total + '</span><span class="kl">Projets</span></div>' +
     '<div class="rpt-pole-kpi"><span class="kv" style="color:#5aafaf;">' + ext + '</span><span class="kl">Externe</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + int + '</span><span class="kl">Interne</span></div>' +
-    '<div class="rpt-pole-kpi"><span class="kv" style="color:#00ab63;">' + withCapex + '</span><span class="kl">CAPEX</span></div>';
+    '<div class="rpt-pole-kpi"><span class="kv" style="color:#FDB823;">' + int + '</span><span class="kl">Interne</span></div>';
 }
 
 function renderInvReportingKpis(filter) {
@@ -312,28 +311,14 @@ function renderInvReportingKpis(filter) {
   var total = ps.length;
   var ext = ps.filter(function(p) { return p.type === 'externe'; }).length;
   var int = ps.filter(function(p) { return p.type === 'interne'; }).length;
-  var withCapex = ps.filter(function(p) { return p.capex !== null; });
-  var budgetTotal = 0, decaisseTotal = 0;
-  withCapex.forEach(function(p) {
-    var inv = p.capex.invest.replace(/[^\d.,]/g, '').replace(',', '.');
-    var eta = p.capex.etat.replace(/[^\d.,]/g, '').replace(',', '.');
-    var invNum = parseFloat(inv) || 0;
-    var etaNum = parseFloat(eta) || 0;
-    var mult = p.capex.invest.indexOf('M') !== -1 ? 1 : 0.001;
-    var multE = p.capex.etat.indexOf('M') !== -1 ? 1 : 0.001;
-    budgetTotal += invNum * mult;
-    decaisseTotal += etaNum * multE;
-  });
-  var pctExec = budgetTotal > 0 ? Math.round(decaisseTotal / budgetTotal * 100) : 0;
+  var enCours = ps.filter(function(p) { return p.status === 'En cours'; }).length;
 
   var bar = document.getElementById('rpt-inv-kpi-bar');
   bar.innerHTML =
     '<div class="rpt-kpi-item"><div class="kv" style="color:#f37056;">' + total + '</div><div class="kl">Total Projets</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + ext + '</div><div class="kl">Externe</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + int + '</div><div class="kl">Interne</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + withCapex.length + '</div><div class="kl">Avec CAPEX</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#f37056;">' + budgetTotal.toFixed(1) + '</div><div class="kl">Budget M$</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#4ecdc4;">' + pctExec + '%</div><div class="kl">Execution</div></div>';
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#4ecdc4;">' + enCours + '</div><div class="kl">En cours</div></div>';
 }
 
 function renderInvReportingTable(filter) {
@@ -341,16 +326,12 @@ function renderInvReportingTable(filter) {
   var ps = filter === 'all' ? invProjects : invProjects.filter(function(p) { return p.type === filter; });
 
   var html = '<table class="rpt-table"><thead><tr>' +
-    '<th>Projet</th><th>Type</th><th>Responsable</th><th>Statut</th>' +
-    '<th>Investissement</th><th>Decaisse</th><th>Execution</th><th>Semaine MAJ</th>' +
-    '<th>Commentaires DG</th><th>Reponse</th>' +
+    '<th>Projet</th><th>Type</th><th>Avancement</th>' +
+    '<th>Point de blocage</th><th>Actions Prevues</th><th>Actions Realisees</th>' +
+    '<th>Mise a jour</th>' +
     '</tr></thead><tbody>';
 
-  // Sort: with CAPEX first, then alphabetically
   var sorted = ps.slice().sort(function(a, b) {
-    var ca = a.capex ? 0 : 1;
-    var cb = b.capex ? 0 : 1;
-    if (ca !== cb) return ca - cb;
     return a.nom.localeCompare(b.nom);
   });
 
@@ -358,55 +339,43 @@ function renderInvReportingTable(filter) {
     var typeBadge = p.type === 'externe'
       ? '<span class="rpt-badge rpt-badge-blue">Externe</span>'
       : '<span class="rpt-badge rpt-badge-orange">Interne</span>';
-    var statusColor = p.status === 'En cours' ? '#4ecdc4' : '#a8d98a';
-    var investVal = p.capex ? p.capex.invest : '—';
-    var decaisseVal = p.capex ? p.capex.etat : '—';
-    var execPct = p.capex ? p.capex.pct : null;
-    var execColor = execPct >= 80 ? '#00ab63' : execPct >= 40 ? '#FDB823' : execPct !== null ? '#f37056' : 'var(--text-dim)';
-    var execText = execPct !== null ? execPct + '%' : '—';
-    var execBar = execPct !== null
-      ? '<div class="rpt-prog-bar"><div class="rpt-prog-fill" style="width:' + execPct + '%;background:' + execColor + ';"></div></div>'
-      : '';
+
+    var editStyle = 'width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+      'border-radius:6px;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
+      'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
 
     html += '<tr>' +
       '<td class="nowrap" style="font-weight:600;">' + escapeHtml(p.nom) + '</td>' +
       '<td>' + typeBadge + '</td>' +
-      '<td class="nowrap">' + escapeHtml(p.resp) + '</td>' +
-      '<td><span style="color:' + statusColor + ';font-weight:600;">' + escapeHtml(p.status) + '</span></td>' +
-      '<td class="nowrap" style="font-weight:600;color:#f37056;">' + investVal + '</td>' +
-      '<td class="nowrap">' + decaisseVal + '</td>' +
-      '<td><span style="font-weight:600;color:' + execColor + ';">' + execText + '</span>' + execBar + '</td>' +
-      '<td class="nowrap">S' + p.week + '</td>' +
-      '<td style="min-width:200px;">' +
-        '<div class="rpt-dg-comment" data-pid="' + p.id + '" contenteditable="true" ' +
-          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
-          'border-radius:6px;color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
-          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+      '<td style="min-width:140px;">' +
+        '<div class="rpt-inv-field" data-pid="' + p.id + '" data-field="avancement" contenteditable="true" ' +
+          'style="' + editStyle + 'color:#4ecdc4;" ' +
+          'onfocus="this.style.borderColor=\'rgba(78,205,196,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+      '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-inv-field" data-pid="' + p.id + '" data-field="blocage" contenteditable="true" ' +
+          'style="' + editStyle + 'color:#ff8a80;" ' +
+          'onfocus="this.style.borderColor=\'rgba(255,80,80,0.5)\'" ' +
+          'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
+        '></div>' +
+      '</td>' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-inv-field" data-pid="' + p.id + '" data-field="actions_prevues" contenteditable="true" ' +
+          'style="' + editStyle + 'color:#ffd6b8;" ' +
           'onfocus="this.style.borderColor=\'rgba(243,112,86,0.5)\'" ' +
           'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
         '></div>' +
-        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
-          '<button onclick="saveInvDgField(\'' + p.id + '\', \'comment\', this)" ' +
-            'style="background:linear-gradient(135deg,#f37056,#e04030);color:#fff;border:none;border-radius:5px;' +
-            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
-          '<span class="rpt-inv-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(255,180,130,0.5);"></span>' +
-        '</div>' +
       '</td>' +
-      '<td style="min-width:200px;">' +
-        '<div class="rpt-inv-reponse" data-pid="' + p.id + '" contenteditable="true" ' +
-          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
-          'border-radius:6px;color:#b8d6ff;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
-          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
+      '<td style="min-width:180px;">' +
+        '<div class="rpt-inv-field" data-pid="' + p.id + '" data-field="actions_realisees" contenteditable="true" ' +
+          'style="' + editStyle + 'color:#b8d6ff;" ' +
           'onfocus="this.style.borderColor=\'rgba(86,140,243,0.5)\'" ' +
           'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
         '></div>' +
-        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
-          '<button onclick="saveInvDgField(\'' + p.id + '\', \'reponse\', this)" ' +
-            'style="background:linear-gradient(135deg,#5686d6,#3060b0);color:#fff;border:none;border-radius:5px;' +
-            'padding:4px 12px;font-size:9px;font-weight:700;cursor:pointer;">Enregistrer</button>' +
-          '<span class="rpt-inv-rep-status" data-pid="' + p.id + '" style="font-size:9px;color:rgba(130,170,255,0.5);"></span>' +
-        '</div>' +
       '</td>' +
+      '<td class="nowrap" style="color:rgba(255,255,255,0.5);">S' + p.week + '</td>' +
       '</tr>';
   });
 
