@@ -1,7 +1,7 @@
 /* === Reporting JS === */
 
 // ══ ENR REPORTING DATA (loaded from reporting_data.js) ══
-// Expected global: window.REPORTING_ENR = { week, projects[], payments[] }
+// Expected global: window.REPORTING_ENR = { week, projects[], payments[], weeks{}, currentSheet }
 
 function initReporting() {
   var data = window.REPORTING_ENR || null;
@@ -34,6 +34,7 @@ function openReportingPole(pole) {
     document.getElementById('rpt-global-summary').style.display = 'none';
     var detail = document.getElementById('rpt-enr-detail');
     detail.style.display = 'block';
+    populateWeekSelector();
     renderEnrDetail();
   }
 }
@@ -42,6 +43,50 @@ function closeReportingPole() {
   document.getElementById('rpt-enr-detail').style.display = 'none';
   document.querySelector('.rpt-poles-grid').style.display = '';
   document.getElementById('rpt-global-summary').style.display = '';
+}
+
+// ══ WEEK SELECTOR ══
+function populateWeekSelector() {
+  var sel = document.getElementById('rpt-enr-week-select');
+  if (!sel) return;
+  var data = window.REPORTING_ENR;
+  if (!data) return;
+
+  sel.innerHTML = '';
+
+  // If multi-week data available
+  if (data.weeks && Object.keys(data.weeks).length > 0) {
+    var keys = Object.keys(data.weeks).sort(function(a, b) {
+      var na = parseInt(a.replace('S', ''));
+      var nb = parseInt(b.replace('S', ''));
+      return nb - na; // Most recent first
+    });
+    keys.forEach(function(k) {
+      var w = data.weeks[k];
+      var opt = document.createElement('option');
+      opt.value = k;
+      opt.textContent = k + ' — ' + (w.week || '');
+      if (k === (data.currentSheet || '')) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  } else {
+    // Single week fallback
+    var opt = document.createElement('option');
+    opt.value = '_current';
+    opt.textContent = data.week || 'Semaine courante';
+    sel.appendChild(opt);
+  }
+}
+
+function switchEnrWeek(sheetKey) {
+  var data = window.REPORTING_ENR;
+  if (!data || !data.weeks || !data.weeks[sheetKey]) return;
+
+  var weekData = data.weeks[sheetKey];
+  data.projects = weekData.projects;
+  data.week = weekData.week;
+  data.currentSheet = sheetKey;
+  renderEnrDetail();
 }
 
 function renderEnrDetail() {
@@ -107,13 +152,13 @@ function renderEnrDetail() {
       '<td style="font-size:11px;color:var(--text-muted);">' + (p.blocages || '') + '</td>' +
       '<td style="font-size:11px;color:var(--text-muted);">' + (p.actions || '') + '</td>' +
       '<td style="min-width:200px;">' +
-        '<textarea class="rpt-dg-comment" data-pid="' + p.id + '" rows="2" ' +
-          'style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+        '<div class="rpt-dg-comment" data-pid="' + p.id + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
           'border-radius:6px;color:#ffd6b8;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
-          'resize:vertical;outline:none;line-height:1.4;transition:border-color 0.2s;" ' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
           'onfocus="this.style.borderColor=\'rgba(243,112,86,0.5)\'" ' +
           'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
-        '>' + (p.commentaires_dg || '') + '</textarea>' +
+        '>' + escapeHtml(p.commentaires_dg || '') + '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
           '<button onclick="saveReportingDgField(\'' + p.id + '\', \'comment\', this)" ' +
             'style="background:linear-gradient(135deg,#f37056,#e04030);color:#fff;border:none;border-radius:5px;' +
@@ -122,13 +167,13 @@ function renderEnrDetail() {
         '</div>' +
       '</td>' +
       '<td style="min-width:200px;">' +
-        '<textarea class="rpt-dg-reponse" data-pid="' + p.id + '" rows="2" ' +
-          'style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
+        '<div class="rpt-dg-reponse" data-pid="' + p.id + '" contenteditable="true" ' +
+          'style="width:100%;min-height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);' +
           'border-radius:6px;color:#b8d6ff;font-size:11px;font-family:Arial,sans-serif;padding:6px 8px;' +
-          'resize:vertical;outline:none;line-height:1.4;transition:border-color 0.2s;" ' +
+          'outline:none;line-height:1.4;transition:border-color 0.2s;white-space:pre-wrap;word-break:break-word;overflow:hidden;" ' +
           'onfocus="this.style.borderColor=\'rgba(86,140,243,0.5)\'" ' +
           'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\'"' +
-        '>' + (p.reponse || '') + '</textarea>' +
+        '>' + escapeHtml(p.reponse || '') + '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">' +
           '<button onclick="saveReportingDgField(\'' + p.id + '\', \'reponse\', this)" ' +
             'style="background:linear-gradient(135deg,#5686d6,#3060b0);color:#fff;border:none;border-radius:5px;' +
@@ -143,6 +188,11 @@ function renderEnrDetail() {
   wrap.innerHTML = html;
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function getPhaseBadge(phase) {
   switch (phase) {
     case 'Termine': return '<span class="rpt-badge rpt-badge-green">Termine</span>';
@@ -154,18 +204,14 @@ function getPhaseBadge(phase) {
 }
 
 // ══ AUTO-UPDATE ENR PROJECTS IN ENERGY.JS ══
-// After reporting data is loaded, update enrEnrich with latest weekly data
 function syncReportingToEnrProjects() {
   var data = window.REPORTING_ENR;
   if (!data || !data.projects || typeof enrProjects === 'undefined') return;
 
   data.projects.forEach(function(rp) {
     if (!rp.id) return;
-    // Find in enrProjects
     var ep = enrProjects.find(function(p) { return p.id === rp.id; });
     if (!ep) return;
-
-    // Update fields from weekly reporting
     if (rp.avancement != null) ep.constProg = rp.avancement / 100;
     if (rp.glissement != null) ep.glissement = rp.glissement;
     if (rp.epc) ep.epciste = rp.epc;
@@ -175,41 +221,42 @@ function syncReportingToEnrProjects() {
 
 // ══ SAVE DG COMMENT OR REPONSE FROM REPORTING TABLE ══
 function saveReportingDgField(projectId, fieldType, btnEl) {
-  // fieldType: 'comment' or 'reponse'
   var isComment = fieldType === 'comment';
-  var textarea = document.querySelector(
+  var editDiv = document.querySelector(
     (isComment ? '.rpt-dg-comment' : '.rpt-dg-reponse') + '[data-pid="' + projectId + '"]'
   );
   var statusEl = document.querySelector(
     (isComment ? '.rpt-dg-status' : '.rpt-rep-status') + '[data-pid="' + projectId + '"]'
   );
-  if (!textarea) return;
+  if (!editDiv) return;
 
-  var value = textarea.value.trim();
+  var value = editDiv.innerText.trim();
   btnEl.disabled = true;
   btnEl.textContent = '...';
   statusEl.textContent = '';
 
   var body = { projectId: projectId };
-  if (isComment) {
-    body.comment = value;
-  } else {
-    body.reponse = value;
-  }
+  if (isComment) body.comment = value;
+  else body.reponse = value;
 
   fetch('/api/comment/enr', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   })
-  .then(function(res) { return res.json().then(function(d) { return { ok: res.ok, data: d }; }); })
+  .then(function(res) {
+    var ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) {
+      throw new Error('API non disponible (mode statique)');
+    }
+    return res.json().then(function(d) { return { ok: res.ok, data: d }; });
+  })
   .then(function(result) {
     btnEl.disabled = false;
     btnEl.textContent = 'Enregistrer';
     if (result.ok) {
       statusEl.style.color = '#4caf50';
       statusEl.textContent = 'OK (' + result.data.sheet + ')';
-      // Update local data
       var data = window.REPORTING_ENR;
       if (data && data.projects) {
         var p = data.projects.find(function(x) { return x.id === projectId; });
@@ -228,13 +275,12 @@ function saveReportingDgField(projectId, fieldType, btnEl) {
     btnEl.disabled = false;
     btnEl.textContent = 'Enregistrer';
     statusEl.style.color = '#f37056';
-    statusEl.textContent = 'Erreur: ' + err.message;
+    statusEl.textContent = err.message || 'Erreur connexion';
   });
 }
 
 // Init on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
   initReporting();
-  // Sync after a tick to ensure energy.js has loaded
   setTimeout(syncReportingToEnrProjects, 100);
 });
