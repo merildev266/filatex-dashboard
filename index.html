@@ -1803,8 +1803,8 @@
 <!-- ══════════════ PAGE REPORTING ══════════════ -->
 <div id="page-reporting" class="placeholder-page" style="background:#080d18;scrollbar-width:none;">
   <div class="sd-sticky-bar" style="border-bottom:1px solid rgba(90,175,175,0.15);">
-    <div class="nav-back"><button class="back-btn" onclick="closePage('page-reporting')" style="border-color:rgba(90,175,175,0.3);color:#5aafaf;">Accueil</button></div>
-    <div class="sd-site-name" style="color:#5aafaf;">Reporting Hebdomadaire</div>
+    <div class="nav-back"><button id="rpt-back-btn" class="back-btn" onclick="closePage('page-reporting')" style="border-color:rgba(90,175,175,0.3);color:#5aafaf;">Accueil</button></div>
+    <div id="rpt-sticky-title" class="sd-site-name" style="color:#5aafaf;">Reporting Hebdomadaire</div>
     <div class="nav-filter"></div>
   </div>
   <div class="inner-page-inner">
@@ -1848,14 +1848,9 @@
 
     <!-- DETAIL POLE ENR -->
     <div id="rpt-enr-detail" class="rpt-detail-section" style="display:none;">
-      <div class="rpt-detail-header">
-        <button class="rpt-back-btn" onclick="closeReportingPole()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
-          Retour
-        </button>
-        <h2 style="color:#00ab63;margin:0;font-size:18px;">Reporting EnR - Semaine du <span id="rpt-enr-week"></span></h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
         <select id="rpt-enr-week-select" onchange="switchEnrWeek(this.value)"
-          style="margin-left:auto;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+          style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
           border-radius:8px;color:#00ab63;font-size:13px;font-weight:600;padding:6px 14px;
           cursor:pointer;outline:none;font-family:Arial,sans-serif;min-width:200px;">
         </select>
@@ -1870,23 +1865,16 @@
 
     <!-- DETAIL POLE INVESTMENTS -->
     <div id="rpt-inv-detail" class="rpt-detail-section" style="display:none;">
-      <div class="rpt-detail-header">
-        <button class="rpt-back-btn" onclick="closeReportingPole()" style="border-color:rgba(243,112,86,0.3);color:#f37056;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
-          Retour
-        </button>
-        <h2 style="color:#f37056;margin:0;font-size:18px;">Reporting Investments - <span id="rpt-inv-week"></span></h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
         <select id="rpt-inv-week-select" onchange="switchInvWeek(this.value)"
-          style="margin-left:auto;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+          style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
           border-radius:8px;color:#f37056;font-size:13px;font-weight:600;padding:6px 14px;
           cursor:pointer;outline:none;font-family:Arial,sans-serif;min-width:200px;">
         </select>
-      </div>
-      <div id="rpt-inv-kpi-bar" class="rpt-kpi-bar"></div>
-      <div id="rpt-inv-filter-tabs" style="display:flex;gap:8px;margin-bottom:20px;">
         <button class="rpt-inv-tab active" onclick="switchInvTab('externe')" data-tab="externe" style="background:rgba(243,112,86,0.15);color:#f37056;border:1px solid rgba(243,112,86,0.3);border-radius:8px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;">Externe</button>
         <button class="rpt-inv-tab" onclick="switchInvTab('interne')" data-tab="interne" style="background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;">Interne</button>
       </div>
+      <div id="rpt-inv-kpi-bar" class="rpt-kpi-bar"></div>
       <div id="rpt-inv-table-wrap" class="rpt-table-wrap"></div>
     </div>
 
