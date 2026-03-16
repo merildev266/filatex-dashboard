@@ -34,7 +34,7 @@
 .rpt-kpi-item .kl{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-top:4px;}
 
 /* ══ TABLE ══ */
-.rpt-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+.rpt-table-wrap{overflow-x:auto;scrollbar-width:none;border-radius:12px;border:1px solid var(--border);}
 .rpt-table{width:100%;border-collapse:collapse;font-size:12px;}
 .rpt-table thead th{background:var(--dark2);color:var(--text-muted);font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:10px 12px;text-align:left;position:sticky;top:0;white-space:nowrap;border-bottom:1px solid var(--border);}
 .rpt-table tbody tr{border-bottom:1px solid rgba(42,47,68,0.5);transition:background 0.15s;}
