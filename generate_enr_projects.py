@@ -162,6 +162,9 @@ def read_dates_budgets(projects):
 
     for row in range(4, ws.max_row + 1):
         name = safe_str(ws.cell(row, 2).value)
+        # Stop at TOTAL row — only read the first section (Master Plan)
+        if name.upper().startswith("TOTAL"):
+            break
         pid = resolve_id(name)
         if not pid:
             continue

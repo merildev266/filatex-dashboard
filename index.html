@@ -684,43 +684,41 @@
 
 <!-- ══ PANEL PROJETS EnR ══ -->
 <div id="panel-enr-projets">
-  <div class="nav-back"><button class="back-btn" onclick="closeEnrProjets()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">← Energy</button></div>
+  <div class="sd-sticky-bar">
+    <div class="nav-back"><button class="back-btn" onclick="closeEnrProjets()" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
+    <div class="sd-site-name" style="color:#00ab63;">Projets EnR</div>
+  </div>
 
-  <div style="max-width:1280px;margin:0 auto;padding:32px 40px 80px;">
+  <div style="max-width:1400px;margin:0 auto;padding:24px 36px 80px;">
 
-    <!-- TOPBAR — identique HFO -->
-    <div class="inner-topbar" style="border-bottom-color:rgba(0,171,99,0.15);margin-bottom:36px;">
-      <div style="text-align:center;width:100%;">
-        <div class="inner-title" style="color:#00ab63;">Projets EnR</div>
-        <div class="inner-subtitle" style="color:rgba(0,171,99,0.5);">Développement · Construction · Groupe Filatex</div>
+    <!-- KPI Consolidés -->
+    <div id="enrp-kpi-consolidated" class="enrp-consolidated"></div>
+
+    <!-- Filtres phase -->
+    <div class="enrp-filters">
+      <div id="enrp-filter-termine" class="enrp-filter-btn" onclick="toggleEnrFilter('termine')">
+        <div class="enrp-fdot" style="background:#00ab63;"></div>
+        <span class="enrp-flabel" style="color:rgba(0,171,99,0.7);">Terminé</span>
+        <span class="enrp-fcount" style="color:#00ab63;" id="enrp-term-count">—</span>
+      </div>
+      <div id="enrp-filter-construction" class="enrp-filter-btn" onclick="toggleEnrFilter('construction')">
+        <div class="enrp-fdot" style="background:#FDB823;"></div>
+        <span class="enrp-flabel" style="color:rgba(253,184,35,0.7);">Construction</span>
+        <span class="enrp-fcount" style="color:#FDB823;" id="enrp-const-count">—</span>
+      </div>
+      <div id="enrp-filter-developpement" class="enrp-filter-btn" onclick="toggleEnrFilter('developpement')">
+        <div class="enrp-fdot" style="background:#5aafaf;"></div>
+        <span class="enrp-flabel" style="color:rgba(90,175,175,0.7);">Développement</span>
+        <span class="enrp-fcount" style="color:#5aafaf;" id="enrp-dev-count">—</span>
+      </div>
+      <div id="enrp-filter-planifie" class="enrp-filter-btn" onclick="toggleEnrFilter('planifie')">
+        <div class="enrp-fdot" style="background:rgba(255,255,255,0.25);"></div>
+        <span class="enrp-flabel" style="color:rgba(255,255,255,0.35);">Planifié</span>
+        <span class="enrp-fcount" style="color:rgba(255,255,255,0.4);" id="enrp-plan-count">—</span>
       </div>
     </div>
 
-    <!-- En-têtes résumé — filtres cliquables -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;">
-      <div id="enrp-filter-termine" onclick="toggleEnrFilter('termine')" style="cursor:pointer;transition:all 0.3s;background:rgba(0,171,99,0.06);border:1px solid rgba(0,171,99,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:#00ab63;"></div>
-        <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,171,99,0.7);">Terminé</span>
-        <span style="font-size:18px;font-weight:800;color:#00ab63;" id="enrp-term-count">—</span>
-      </div>
-      <div id="enrp-filter-construction" onclick="toggleEnrFilter('construction')" style="cursor:pointer;transition:all 0.3s;background:rgba(253,184,35,0.05);border:1px solid rgba(253,184,35,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:#FDB823;"></div>
-        <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(253,184,35,0.7);">Construction</span>
-        <span style="font-size:18px;font-weight:800;color:#FDB823;" id="enrp-const-count">—</span>
-      </div>
-      <div id="enrp-filter-developpement" onclick="toggleEnrFilter('developpement')" style="cursor:pointer;transition:all 0.3s;background:rgba(90,175,175,0.05);border:1px solid rgba(90,175,175,0.15);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:#5aafaf;"></div>
-        <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(90,175,175,0.7);">Développement</span>
-        <span style="font-size:18px;font-weight:800;color:#5aafaf;" id="enrp-dev-count">—</span>
-      </div>
-      <div id="enrp-filter-planifie" onclick="toggleEnrFilter('planifie')" style="cursor:pointer;transition:all 0.3s;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);"></div>
-        <span style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);">Planifié</span>
-        <span style="font-size:18px;font-weight:800;color:rgba(255,255,255,0.4);" id="enrp-plan-count">—</span>
-      </div>
-    </div>
-
-    <!-- Paires de projets -->
+    <!-- Grille projets (dynamique) -->
     <div id="enrp-pairs-list"></div>
 
   </div>

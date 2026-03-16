@@ -874,7 +874,7 @@ function closeHfoProjets(){
   }
 
   /* ── Helpers ── */
-  function fmtM(v) { return v >= 1 ? v.toFixed(1) + 'M$' : Math.round(v * 1000).toLocaleString('fr-FR') + 'k$'; }
+  function fmtM(v) { if (!v && v !== 0) return '—'; return v >= 1 ? v.toFixed(1) + 'M$' : Math.round(v * 1000).toLocaleString('fr-FR') + 'k$'; }
   function fmtK(v) { if (!v) return '—'; return v >= 1e6 ? (v/1e6).toFixed(2)+'M$' : Math.round(v/1000)+'k$'; }
   function fmtDate(d) { if(!d) return '—'; const dt=new Date(d); return dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'2-digit'}); }
   function fmtPct(v) { return v !== null && v !== undefined ? Math.round(v*100)/100 : '—'; }
@@ -884,77 +884,50 @@ function closeHfoProjets(){
   const phaseColors = { termine:'#00ab63', construction:'#FDB823', developpement:'#5aafaf', planifie:'rgba(255,255,255,0.35)' };
   const phaseBgs    = { termine:'0,171,99', construction:'253,184,35', developpement:'90,175,175', planifie:'255,255,255' };
 
-  /* ── Project card HTML ── */
+  /* ── Project card HTML (HFO-style compact card) ── */
   function projCardHtml(p) {
     const phase = getPhase(p);
     const color = phaseColors[phase];
     const rgb = phaseBgs[phase];
     const engPct = p.engPct !== null ? p.engPct : 0;
-    const hasCc = p.cc && p.cc.avReel !== null;
-    const avReel = hasCc ? (typeof p.cc.avReel === 'number' ? p.cc.avReel : null) : null;
-    const perfLabel = p.cc && p.cc.perf ? p.cc.perf : null;
-    const perfColor = perfLabel && perfLabel.includes('temps') ? '#00ab63' : perfLabel ? '#f37056' : 'rgba(255,255,255,0.3)';
+    const constProg = Math.round((p.constProg || 0) * 100);
+    const gliss = p.glissement || 0;
+    const hasCc = p.cc && p.cc.avReel != null;
+    const avReel = hasCc ? p.cc.avReel : null;
 
-    return `<div class="enrp-proj-card" style="border-color:rgba(${rgb},0.18);cursor:pointer;" onclick="openProjectDetail('${p.id}')">
-      <div class="enrp-proj-name">
-        <span style="font-size:14px;">${typeIcon(p.type)}</span>
-        <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.88);flex:1;">${p.name}</span>
-        <span style="font-size:9px;font-weight:700;color:${color};background:rgba(${rgb},0.12);border-radius:6px;padding:3px 8px;">${phaseLabels[phase]}</span>
-        ${p.glissement > 0 ? '<span style="font-size:9px;font-weight:700;color:#ff5050;background:rgba(255,80,80,0.12);border-radius:6px;padding:3px 8px;">\u26A0 '+p.glissement+'j retard</span>' : ''}
+    return `<div class="enrp-card" style="border-color:rgba(${rgb},0.18);" onclick="openProjectDetail('${p.id}')">
+      <div class="enrp-card-head">
+        <span class="enrp-card-icon">${typeIcon(p.type)}</span>
+        <div style="flex:1;min-width:0;">
+          <div class="enrp-card-title">${p.name}</div>
+          <div class="enrp-card-sub">${p.loc || ''}${p.lead ? ' · ' + p.lead : ''}${p.epciste && p.epciste !== 'TBC' ? ' · ' + p.epciste : ''}</div>
+        </div>
+        <span class="enrp-card-badge" style="color:${color};background:rgba(${rgb},0.12);">${phaseLabels[phase]}</span>
       </div>
-      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.05);border-radius:5px;padding:2px 8px;">${p.pvMw} MWc${p.bessMwh ? ' + '+p.bessMwh+' MWh' : ''}</span>
-        <span style="font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);border-radius:5px;padding:2px 8px;">📍 ${p.loc}</span>
-        ${p.lead ? '<span style="font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);border-radius:5px;padding:2px 8px;">\uD83D\uDC64 '+p.lead+'</span>' : ''}
-        ${p.epciste && p.epciste !== 'TBC' ? '<span style="font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.04);border-radius:5px;padding:2px 8px;">\uD83C\uDFD7 '+p.epciste+'</span>' : ''}
+      <div class="enrp-card-kpis">
+        <div class="enrp-ck"><div class="v" style="color:#00ab63;">${p.pvMw || 0}</div><div class="l">MWc</div></div>
+        <div class="enrp-ck"><div class="v" style="color:#FDB823;">${fmtM(p.capexM)}</div><div class="l">CAPEX</div></div>
+        <div class="enrp-ck"><div class="v" style="color:${p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.25)'};">${p.tri ? p.tri + '%' : '—'}</div><div class="l">TRI</div></div>
       </div>
-      <div class="enrp-kpi-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="enrp-kpi">
-          <div class="enrp-kpi-label">CAPEX Total</div>
-          <div class="enrp-kpi-reel" style="color:${color};font-size:16px;">${fmtM(p.capexM)}</div>
-          <div class="enrp-kpi-sub">Dév. ${fmtK(p.costDev)} · PV ${fmtK(p.costPv)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <div style="padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:8px;">
+          <div style="font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Engineering</div>
+          <div class="enrp-bar"><div class="enrp-bar-fill" style="width:${engPct}%;background:${color};"></div></div>
+          <div style="font-size:12px;font-weight:800;color:${color};">${p.engPct != null ? engPct + '%' : '—'}</div>
         </div>
-        <div class="enrp-kpi">
-          <div class="enrp-kpi-label">Engineering</div>
-          <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px 0 4px;">
-            <div style="height:100%;width:${engPct}%;background:${color};border-radius:3px;transition:width .6s;"></div>
-          </div>
-          <div style="font-size:16px;font-weight:800;color:${color};">${p.engPct !== null ? engPct+'%' : '—'}</div>
-          <div class="enrp-kpi-sub">${fmtDate(p.engStart)} → ${fmtDate(p.engEnd)}</div>
-        </div>
-        <div class="enrp-kpi">
-          <div class="enrp-kpi-label">TRI</div>
-          <div class="enrp-kpi-reel" style="color:${p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.3)'};font-size:16px;">${p.tri ? p.tri+'%' : '—'}</div>
-          <div class="enrp-kpi-sub">${p.tri && p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : 'À déterminer'}</div>
-        </div>
-        <div class="enrp-kpi">
-          <div class="enrp-kpi-label">Construction</div>
-          ${p.constProg > 0 ? '<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px 0 4px;"><div style="height:100%;width:'+Math.round(p.constProg*100)+'%;background:'+(p.glissement>0?'#ff5050':color)+';border-radius:3px;"></div></div><div style="font-size:16px;font-weight:800;color:'+(p.glissement>0?'#ff5050':color)+';">'+Math.round(p.constProg*100)+'%</div>' : ''}
-          <div style="font-size:10px;color:rgba(255,255,255,0.6);line-height:1.8;">
-            <div>Début: <span style="color:${color};">${fmtDate(p.constStart)}</span></div>
-            <div>COD: <span style="color:${p.glissement > 0 ? '#ff5050' : color};">${fmtDate(p.constEnd)}</span></div>
-          </div>
-          ${p.glissement > 0 ? '<div style="font-size:9px;color:#ff5050;margin-top:4px;font-weight:600;">\u26A0 '+p.glissement+'j de retard</div>' : ''}
-        </div>
-        <div class="enrp-kpi">
-          <div class="enrp-kpi-label">Avancement réel</div>
-          ${avReel !== null ? `
-            <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;margin:6px 0 4px;">
-              <div style="height:100%;width:${avReel}%;background:${color};border-radius:3px;"></div>
-            </div>
-            <div style="font-size:16px;font-weight:800;color:${color};">${avReel}%</div>
-          ` : `<div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">—</div>`}
-          <div class="enrp-kpi-sub">${p.cc && p.cc.spi !== null ? 'SPI: '+fmtPct(p.cc.spi) : 'Détails à venir'}</div>
-        </div>
-        <div class="enrp-kpi">
-          <div class="enrp-kpi-label">Performance</div>
-          <div style="font-size:10px;font-weight:600;color:${perfColor};margin-top:6px;line-height:1.4;">
-            ${perfLabel || '—'}
-          </div>
-          ${p.cc && p.cc.cpi !== null && p.cc.cpi < 50 ? `<div class="enrp-kpi-sub">CPI: ${fmtPct(p.cc.cpi)}</div>` : ''}
+        <div style="padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:8px;">
+          <div style="font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Construction</div>
+          <div class="enrp-bar"><div class="enrp-bar-fill" style="width:${constProg}%;background:${gliss > 0 ? '#ff5050' : color};"></div></div>
+          <div style="font-size:12px;font-weight:800;color:${gliss > 0 ? '#ff5050' : color};">${constProg}%</div>
         </div>
       </div>
-      ${p.comment ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(243,112,86,0.06);border:1px solid rgba(243,112,86,0.15);border-radius:8px;font-size:9px;color:rgba(255,180,130,0.7);">⚠ ${p.comment}</div>` : ''}
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:rgba(255,255,255,0.4);">
+        <span>${fmtDate(p.constStart)} → ${fmtDate(p.constEnd)}</span>
+        ${avReel != null ? '<span style="margin-left:auto;font-weight:700;color:' + color + ';">Réel: ' + avReel + '%</span>' : ''}
+        ${p.cc && p.cc.spi != null ? '<span style="font-weight:700;color:' + (p.cc.spi >= 0.9 ? '#00ab63' : p.cc.spi >= 0.7 ? '#FDB823' : '#ff5050') + ';">SPI ' + Number(p.cc.spi).toFixed(2) + '</span>' : ''}
+      </div>
+      ${gliss > 0 ? '<div class="enrp-delay">\u26A0 ' + gliss + 'j de retard</div>' : ''}
+      ${p.comment ? '<div class="enrp-comment">\u26A0 ' + p.comment + '</div>' : ''}
     </div>`;
   }
 
@@ -973,7 +946,7 @@ function closeHfoProjets(){
   document.getElementById('enrp-plan-count').textContent   = grouped.planifie.length;
 
   /* ── Phase filter state ── */
-  let activePhaseFilter = null; // null = show all
+  let activePhaseFilter = null;
 
   const filterBtnStyles = {
     termine:      { bg:'rgba(0,171,99,', border:'rgba(0,171,99,' },
@@ -1016,85 +989,55 @@ function closeHfoProjets(){
   }
 
   function renderEnrProjects() {
-    // Determine which phases to show
     const showPhases = activePhaseFilter ? [activePhaseFilter] : ['termine','construction','developpement','planifie'];
-
-    // Filtered projects for summary bar
     const filtered = activePhaseFilter ? grouped[activePhaseFilter] : enrProjects;
     const fMw = filtered.reduce((s,p) => s + (p.pvMw||0), 0);
     const fCapex = filtered.reduce((s,p) => s + (p.capexM||0), 0);
     const fBess = filtered.reduce((s,p) => s + (p.bessMwh||0), 0);
-
-    // Glissement alert + summary KPIs
+    const fProd = filtered.reduce((s,p) => s + (p.prodJour||0), 0);
     const projsWithDelay = filtered.filter(p => p.glissement && p.glissement > 0);
     const avgDelay = projsWithDelay.length > 0 ? Math.round(projsWithDelay.reduce((s,p) => s + p.glissement, 0) / projsWithDelay.length) : 0;
-    const maxDelay = projsWithDelay.length > 0 ? Math.max(...projsWithDelay.map(p => p.glissement)) : 0;
-    const fProd = filtered.reduce((s,p) => s + (p.prodJour||0), 0);
 
-    let html = '';
-    if (projsWithDelay.length > 0) {
-      html += '<div style="background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);border-radius:14px;padding:16px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'
-        + '<div style="font-size:24px;">\u26A0\uFE0F</div>'
-        + '<div style="flex:1;min-width:200px;">'
-        + '<div style="font-size:11px;font-weight:700;color:#ff5050;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Alerte Glissement</div>'
-        + '<div style="font-size:10px;color:rgba(255,255,255,0.5);">' + projsWithDelay.length + ' projet' + (projsWithDelay.length>1?'s':'') + ' en retard \xB7 Retard moyen: ' + avgDelay + ' jours \xB7 Max: ' + maxDelay + ' jours</div>'
-        + '</div>'
-        + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-        + projsWithDelay.map(p => '<span style="font-size:9px;color:#ff5050;background:rgba(255,80,80,0.12);border-radius:6px;padding:3px 8px;white-space:nowrap;">'+p.name+' '+p.glissement+'j</span>').join('')
-        + '</div></div>';
+    /* ── KPI Consolidés (top bar, style HFO) ── */
+    const kpiEl = document.getElementById('enrp-kpi-consolidated');
+    if (kpiEl) {
+      kpiEl.innerHTML = `
+        <div class="enrp-kbox"><div class="kv" style="color:#00ab63;">${filtered.length}</div><span class="kl">Projets</span></div>
+        <div class="enrp-kbox"><div class="kv" style="color:#00ab63;">${fMw.toFixed(1)}</div><span class="kl">MWc Pipeline</span></div>
+        <div class="enrp-kbox"><div class="kv" style="color:#FDB823;">${fCapex.toFixed(1)}M$</div><span class="kl">CAPEX Total</span></div>
+        <div class="enrp-kbox"><div class="kv" style="color:#5aafaf;">${fBess || 0}</div><span class="kl">MWh BESS</span><div class="ks">${fProd > 0 ? Math.round(fProd/1000) + ' MWh/j est.' : ''}</div></div>
+        <div class="enrp-kbox"><div class="kv" style="color:${projsWithDelay.length>0?'#ff5050':'rgba(255,255,255,0.3)'};">${projsWithDelay.length}</div><span class="kl">En retard</span><div class="ks">${avgDelay > 0 ? 'moy. ' + avgDelay + 'j' : ''}</div></div>
+        <div class="enrp-kbox"><div class="kv" style="color:#00ab63;">${grouped.termine.length}</div><span class="kl">Terminés</span><div class="ks">${grouped.construction.length} en constr.</div></div>
+      `;
     }
 
-    html += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Total Projets</div>
-        <div style="font-size:28px;font-weight:800;color:#00ab63;">${filtered.length}</div>
-      </div>
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Capacité totale</div>
-        <div style="font-size:28px;font-weight:800;color:#00ab63;">${fMw.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(0,171,99,0.6);margin-left:4px;">MWc</span></div>
-      </div>
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">CAPEX Total</div>
-        <div style="font-size:28px;font-weight:800;color:#FDB823;">${fCapex.toFixed(1)}<span style="font-size:12px;font-weight:400;color:rgba(253,184,35,0.6);margin-left:4px;">M$</span></div>
-      </div>
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Production est.</div>
-        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${fProd > 0 ? Math.round(fProd/1000) : '\u2014'}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh/j</span></div>
-      </div>
-    </div>`;
-    html += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Stockage BESS</div>
-        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${fBess}<span style="font-size:12px;font-weight:400;color:rgba(90,175,175,0.6);margin-left:4px;">MWh</span></div>
-      </div>
-      <div style="background:rgba(253,184,35,0.03);border:1px solid rgba(253,184,35,0.12);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(253,184,35,0.5);margin-bottom:4px;">En Construction</div>
-        <div style="font-size:28px;font-weight:800;color:#FDB823;">${grouped.construction.length}</div>
-      </div>
-      <div style="background:rgba(90,175,175,0.03);border:1px solid rgba(90,175,175,0.12);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(90,175,175,0.5);margin-bottom:4px;">En D\xe9veloppement</div>
-        <div style="font-size:28px;font-weight:800;color:#5aafaf;">${grouped.developpement.length}</div>
-      </div>
-      <div style="background:rgba(${projsWithDelay.length>0?'255,80,80':'255,255,255'},0.03);border:1px solid rgba(${projsWithDelay.length>0?'255,80,80':'255,255,255'},0.12);border-radius:12px;padding:14px 16px;text-align:center;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${projsWithDelay.length>0?'rgba(255,80,80,0.7)':'rgba(255,255,255,0.3)'};margin-bottom:4px;">Glissement moy.</div>
-        <div style="font-size:28px;font-weight:800;color:${projsWithDelay.length>0?'#ff5050':'rgba(255,255,255,0.4)'};">${avgDelay>0?avgDelay:'\u2014'}<span style="font-size:12px;font-weight:400;color:${projsWithDelay.length>0?'rgba(255,80,80,0.6)':'rgba(255,255,255,0.3)'};margin-left:4px;">jours</span></div>
-      </div>
-    </div>`;
+    /* ── Cards list ── */
+    let html = '';
 
-    // Render each visible group
+    /* Delay alert */
+    if (projsWithDelay.length > 0) {
+      html += `<div class="enrp-alert">
+        <span style="font-size:16px;">\u26A0\uFE0F</span>
+        <span style="font-weight:700;color:#ff5050;">${projsWithDelay.length} projet${projsWithDelay.length>1?'s':''} en retard</span>
+        ${projsWithDelay.map(p => '<span class="enrp-alert-tag">'+p.name.replace(/^(Top Energie |Vestop |Lidera |Floating Solar )/,'')+' '+p.glissement+'j</span>').join('')}
+      </div>`;
+    }
+
+    /* Phase sections with card grids */
     showPhases.forEach(phase => {
       const list = grouped[phase];
       if (!list.length) return;
       const color = phaseColors[phase];
       const rgb = phaseBgs[phase];
-      html += `<div style="margin-bottom:32px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:0 4px;">
-          <div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 8px ${color};"></div>
-          <div style="font-size:11px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:${color};">${phaseLabels[phase]}</div>
-          <span style="font-size:11px;font-weight:800;color:${color};background:rgba(${rgb},0.12);border-radius:6px;padding:2px 10px;">${list.length}</span>
-          <div style="height:1px;flex:1;background:rgba(${rgb},0.15);"></div>
+
+      html += `<div class="enrp-phase-section">
+        <div class="enrp-phase-hdr">
+          <div class="dot" style="background:${color};box-shadow:0 0 8px ${color};"></div>
+          <span class="lbl" style="color:${color};">${phaseLabels[phase]}</span>
+          <span class="cnt" style="color:${color};background:rgba(${rgb},0.12);">${list.length}</span>
+          <div class="line" style="background:rgba(${rgb},0.15);"></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="enrp-cards-grid">
           ${list.map(p => projCardHtml(p)).join('')}
         </div>
       </div>`;
@@ -1268,6 +1211,7 @@ function updateEnergyHfoCard() {
   let arretMW = 0;
   let sfocWeighted = 0, slocWeighted = 0;
 
+  if (typeof siteOrder === 'undefined' || typeof siteData === 'undefined') return;
   siteOrder.forEach(id => {
     const s = siteData[id];
     if (!s || !s.groupes || !s.kpi) return;
