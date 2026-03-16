@@ -22,6 +22,14 @@ BASE_DIR = os.path.join(
 # SITE CONFIGURATIONS
 # ══════════════════════════════════════════════════════════════
 
+INFOS_HFO_DIR = os.path.join(
+    os.path.expanduser("~"),
+    "OneDrive - GROUPE FILATEX",
+    "1. DATA Meril HIVANAKO",
+    "Bureau",
+    "Infos HFO",
+)
+
 SITE_CONFIG = {
     "tamatave": {
         "name": "Tamatave",
@@ -73,6 +81,16 @@ SITE_CONFIG = {
             "start": 6, "end": 7, "duration": 8, "incharge": 9,
         },
         "oil_rh_is_time": False,
+        # Fuel stock: Tamatave has no Fuel stock sheet — derived from Daily Data
+        "fuel_stock_sheet": None,
+        # Solar: separate file
+        "solar_file_pattern": "Tamatave_Solar_*.xlsx",
+        "solar_sheet": "generation",
+        "solar_cols": {"date": 0, "gross": 3, "aux": 6, "net": 7},
+        "solar_data_start_row": 2,
+        # Oil stock: from Specific data oil header
+        "oil_autonomy_row": 8,  # Row with "Autonomy :" value
+        "oil_stock_col": 1,     # Column B = stock value on day rows
         # HFO daily report per-DG detail
         "hfo_detail": {
             "dg_header_row": 33,       # Row with DG1, DG2, … headers
@@ -134,6 +152,18 @@ SITE_CONFIG = {
             "start": 6, "end": 7, "duration": None, "incharge": 8,
         },
         "oil_rh_is_time": True,
+        # Fuel stock: Diego has "Fuel stock" sheet
+        "fuel_stock_sheet": "Fuel stock",
+        "fuel_stock_layout": "diego",  # DATE(0), ENTRE(1), CONSO(2), STOCK(3); LFO: DATE(8), ENTRE(9), CONSO(10), STOCK(11)
+        "fuel_stock_data_start_row": 3,
+        "fuel_stock_hfo_cols": {"date": 0, "receipt": 1, "conso": 2, "stock": 3},
+        "fuel_stock_lfo_cols": {"date": 8, "receipt": 9, "conso": 10, "stock": 11},
+        # Solar: no separate sheet/file for Diego
+        "solar_file_pattern": None,
+        "solar_sheet": None,
+        # Oil stock
+        "oil_autonomy_row": 8,
+        "oil_stock_col": 1,
         # HFO daily report per-DG detail
         "hfo_detail": {
             "dg_header_row": 27,       # Row with DG1, DG2, … headers
@@ -195,6 +225,18 @@ SITE_CONFIG = {
             "start": 5, "end": 6, "duration": 7, "incharge": 8,
         },
         "oil_rh_is_time": False,
+        # Fuel stock: Majunga has no Fuel stock sheet
+        "fuel_stock_sheet": None,
+        # Solar: no solar at Majunga
+        "solar_file_pattern": None,
+        "solar_sheet": None,
+        # Load chart: Majunga has a "load chart" sheet (Date, Max load, Avg load, Min load)
+        "load_chart_sheet": "load chart",
+        "load_chart_data_start_row": 2,
+        "load_chart_cols": {"date": 0, "max": 1, "avg": 2, "min": 3},
+        # Oil stock
+        "oil_autonomy_row": 8,
+        "oil_stock_col": 1,
         # HFO daily report per-DG detail
         "hfo_detail": {
             "dg_header_row": 25,       # Row with DG1, DG2, … headers
@@ -255,6 +297,22 @@ SITE_CONFIG = {
             "start": 3, "end": 4, "duration": 5, "incharge": 6,
         },
         "oil_rh_is_time": False,
+        # Fuel stock: Tulear has "HFO+LFO DATA" sheet
+        "fuel_stock_sheet": "HFO+LFO DATA",
+        "fuel_stock_layout": "tulear",  # DATE(0), Opening(1), Receipt(2), CONSO(3), Closing(4); LFO: DATE(6), Opening(7), Receipt(8), Cons(9), Closing(10)
+        "fuel_stock_data_start_row": 4,
+        "fuel_stock_hfo_cols": {"date": 0, "opening": 1, "receipt": 2, "conso": 3, "stock": 4},
+        "fuel_stock_lfo_cols": {"date": 6, "opening": 7, "receipt": 8, "conso": 9, "stock": 10},
+        # Solar: Tulear has " SOLAR" sheet
+        "solar_sheet": " SOLAR",
+        "solar_file_pattern": None,
+        "solar_cols": {"date": 0, "gross_phase1": 3, "gross_phase2": 4, "total_mw": 5},
+        "solar_data_start_row": 3,
+        "solar_layout": "tulear",
+        # Lube oil: "LUBE OIL CONSUMPTION" sheet
+        "lube_oil_sheet": "LUBE OIL CONSUMPTION",
+        "lube_oil_data_start_row": 10,
+        "lube_oil_stock_col": 1,  # Column B = stock
         # HFO daily report per-DG detail
         "hfo_detail": {
             "dg_header_row": 20,       # Row with DG1, DG2, … headers
@@ -701,6 +759,392 @@ def collect_daily_dg_metrics(xls, cfg):
     return result, num_days
 
 
+def parse_fuel_stock(xls, cfg):
+    """Extract daily fuel stock (HFO + LFO) from the fuel stock sheet.
+
+    Returns dict with:
+        hfo: [{date, receipt, conso, stock}, ...] (daily entries with data)
+        lfo: [{date, receipt, conso, stock}, ...]
+        latest_hfo_stock, latest_lfo_stock, hfo_autonomy_days, lfo_autonomy_days
+    """
+    sheet_name = cfg.get("fuel_stock_sheet")
+    if not sheet_name:
+        return None
+    try:
+        df = pd.read_excel(xls, sheet_name=sheet_name, header=None)
+    except Exception:
+        return None
+
+    start_row = cfg.get("fuel_stock_data_start_row", 3)
+    hfo_cols = cfg.get("fuel_stock_hfo_cols", {})
+    lfo_cols = cfg.get("fuel_stock_lfo_cols", {})
+    layout = cfg.get("fuel_stock_layout", "diego")
+
+    hfo_daily = []
+    lfo_daily = []
+
+    for i in range(start_row, len(df)):
+        row = df.iloc[i]
+        date_val = row.iloc[hfo_cols.get("date", 0)]
+        if not isinstance(date_val, (datetime, pd.Timestamp)):
+            continue
+
+        date_str = str(pd.Timestamp(date_val).date())
+
+        # HFO
+        if layout == "tulear":
+            hfo_stock = safe_float(row.iloc[hfo_cols["stock"]])
+            hfo_conso = safe_float(row.iloc[hfo_cols["conso"]])
+            hfo_receipt = safe_float(row.iloc[hfo_cols["receipt"]])
+        else:  # diego
+            hfo_stock = safe_float(row.iloc[hfo_cols["stock"]])
+            hfo_conso = safe_float(row.iloc[hfo_cols["conso"]])
+            hfo_receipt = safe_float(row.iloc[hfo_cols["receipt"]])
+
+        hfo_daily.append({
+            "date": date_str,
+            "receipt": round(hfo_receipt),
+            "conso": round(hfo_conso),
+            "stock": round(hfo_stock),
+        })
+
+        # LFO
+        if lfo_cols:
+            lfo_stock = safe_float(row.iloc[lfo_cols["stock"]])
+            lfo_conso = safe_float(row.iloc[lfo_cols.get("conso", lfo_cols.get("stock"))])
+            lfo_receipt = safe_float(row.iloc[lfo_cols["receipt"]])
+            lfo_daily.append({
+                "date": date_str,
+                "receipt": round(lfo_receipt),
+                "conso": round(lfo_conso),
+                "stock": round(lfo_stock),
+            })
+
+    # Find latest day with actual consumption data
+    hfo_with_data = [d for d in hfo_daily if d["conso"] > 0]
+    latest_hfo = hfo_with_data[-1] if hfo_with_data else (hfo_daily[-1] if hfo_daily else None)
+    lfo_with_data = [d for d in lfo_daily if d["conso"] > 0]
+    latest_lfo = lfo_with_data[-1] if lfo_with_data else (lfo_daily[-1] if lfo_daily else None)
+
+    # Compute autonomy: average daily consumption over last 7 days with data
+    def compute_autonomy(daily_list):
+        with_conso = [d for d in daily_list if d["conso"] > 0]
+        if not with_conso:
+            return None
+        recent = with_conso[-7:]  # last 7 days with data
+        avg_conso = sum(d["conso"] for d in recent) / len(recent)
+        latest_stock = with_conso[-1]["stock"]
+        if avg_conso > 0 and latest_stock > 0:
+            return round(latest_stock / avg_conso, 1)
+        return None
+
+    return {
+        "hfo": hfo_daily,
+        "lfo": lfo_daily,
+        "latestHfoStock": latest_hfo["stock"] if latest_hfo else 0,
+        "latestLfoStock": latest_lfo["stock"] if latest_lfo else 0,
+        "hfoAutonomyDays": compute_autonomy(hfo_daily),
+        "lfoAutonomyDays": compute_autonomy(lfo_daily),
+    }
+
+
+def parse_solar(xls_or_path, cfg):
+    """Extract daily solar production.
+
+    Reads from either an in-file sheet or a separate solar file.
+    Returns list of {date, gross_kwh, net_kwh} and totals.
+    """
+    solar_sheet = cfg.get("solar_sheet")
+    solar_layout = cfg.get("solar_layout", "tamatave")
+
+    if solar_sheet and xls_or_path is not None:
+        try:
+            if isinstance(xls_or_path, pd.ExcelFile):
+                if solar_sheet.strip() not in [s.strip() for s in xls_or_path.sheet_names]:
+                    return None
+                df = pd.read_excel(xls_or_path, sheet_name=solar_sheet, header=None)
+            else:
+                df = pd.read_excel(xls_or_path, sheet_name=solar_sheet, header=None)
+        except Exception:
+            return None
+    else:
+        return None
+
+    start_row = cfg.get("solar_data_start_row", 2)
+    cols = cfg.get("solar_cols", {})
+    daily = []
+
+    for i in range(start_row, len(df)):
+        row = df.iloc[i]
+        date_val = row.iloc[cols.get("date", 0)]
+        if not isinstance(date_val, (datetime, pd.Timestamp)):
+            continue
+
+        date_str = str(pd.Timestamp(date_val).date())
+
+        if solar_layout == "tulear":
+            # Tulear: Phase1 + Phase2 kWh, total in MW
+            p1 = safe_float(row.iloc[cols["gross_phase1"]])
+            p2 = safe_float(row.iloc[cols["gross_phase2"]])
+            gross = p1 + p2
+            net = gross  # no aux data for Tulear solar
+        else:
+            # Tamatave: gross(3), aux(6), net(7)
+            gross = safe_float(row.iloc[cols.get("gross", 3)])
+            net = safe_float(row.iloc[cols.get("net", 7)])
+
+        if gross <= 0:
+            continue
+
+        daily.append({
+            "date": date_str,
+            "gross_kwh": round(gross),
+            "net_kwh": round(net),
+        })
+
+    if not daily:
+        return None
+
+    total_gross = sum(d["gross_kwh"] for d in daily)
+    total_net = sum(d["net_kwh"] for d in daily)
+
+    return {
+        "daily": daily,
+        "totalGrossKwh": round(total_gross),
+        "totalNetKwh": round(total_net),
+        "avgDailyKwh": round(total_gross / len(daily)) if daily else 0,
+        "numDays": len(daily),
+    }
+
+
+def parse_load_chart(xls, cfg):
+    """Extract daily site-level load data from 'load chart' sheet (Majunga).
+
+    Returns list of {date, max_kw, avg_kw, min_kw}.
+    """
+    sheet_name = cfg.get("load_chart_sheet")
+    if not sheet_name:
+        return None
+    try:
+        df = pd.read_excel(xls, sheet_name=sheet_name, header=None)
+    except Exception:
+        return None
+
+    start_row = cfg.get("load_chart_data_start_row", 2)
+    cols = cfg.get("load_chart_cols", {"date": 0, "max": 1, "avg": 2, "min": 3})
+    daily = []
+
+    for i in range(start_row, len(df)):
+        row = df.iloc[i]
+        date_val = row.iloc[cols["date"]]
+        if not isinstance(date_val, (datetime, pd.Timestamp)):
+            continue
+        max_kw = safe_float(row.iloc[cols["max"]])
+        avg_kw = safe_float(row.iloc[cols["avg"]])
+        min_kw = safe_float(row.iloc[cols.get("min", 3)])
+        if max_kw <= 0 and avg_kw <= 0:
+            continue
+        daily.append({
+            "date": str(pd.Timestamp(date_val).date()),
+            "max_kw": round(max_kw),
+            "avg_kw": round(avg_kw),
+            "min_kw": round(min_kw),
+        })
+
+    return daily if daily else None
+
+
+def parse_oil_stock(xls, cfg):
+    """Extract lube oil stock and autonomy from Specific data oil or dedicated sheet.
+
+    Returns {stock, autonomy_days, daily: [{date, stock, conso}]}.
+    """
+    # Try dedicated lube oil sheet first (Tulear)
+    lube_sheet = cfg.get("lube_oil_sheet")
+    oil_sheet = cfg.get("oil_sheet", "Specific data oil")
+
+    if lube_sheet:
+        try:
+            df = pd.read_excel(xls, sheet_name=lube_sheet, header=None)
+            start_row = cfg.get("lube_oil_data_start_row", 10)
+            stock_col = cfg.get("lube_oil_stock_col", 1)
+            daily = []
+            for i in range(start_row, len(df)):
+                date_val = df.iloc[i, 0]
+                if not isinstance(date_val, (datetime, pd.Timestamp)):
+                    continue
+                stock = safe_float(df.iloc[i, stock_col])
+                daily.append({
+                    "date": str(pd.Timestamp(date_val).date()),
+                    "stock": round(stock),
+                })
+            with_stock = [d for d in daily if d["stock"] > 0]
+            latest = with_stock[-1]["stock"] if with_stock else 0
+            return {"stock": latest, "autonomy_days": None, "daily": daily}
+        except Exception:
+            pass
+
+    if not oil_sheet:
+        return None
+
+    try:
+        df = pd.read_excel(xls, sheet_name=oil_sheet, header=None)
+    except Exception:
+        return None
+
+    # Extract autonomy from header area
+    autonomy_row = cfg.get("oil_autonomy_row", 8)
+    autonomy = None
+    if autonomy_row < len(df):
+        cell = df.iloc[autonomy_row, 0]
+        if pd.notna(cell) and "autonomy" in str(cell).lower():
+            autonomy = safe_float(df.iloc[autonomy_row, 1])
+
+    # Extract daily oil stock from column B (Stock Form.)
+    stock_col = cfg.get("oil_stock_col", 1)
+    start_row = cfg.get("oil_data_start_row", 13)
+    daily = []
+    for i in range(start_row, len(df)):
+        date_val = df.iloc[i, 0]
+        # Accept day numbers (1-31) or dates
+        if isinstance(date_val, (datetime, pd.Timestamp)):
+            date_str = str(pd.Timestamp(date_val).date())
+        elif isinstance(date_val, (int, float)):
+            try:
+                day = int(date_val)
+                if 1 <= day <= 31:
+                    date_str = f"day-{day}"
+                else:
+                    continue
+            except (ValueError, OverflowError):
+                continue
+        else:
+            continue
+        stock = safe_float(df.iloc[i, stock_col])
+        daily.append({"date": date_str, "stock": round(stock)})
+
+    with_stock = [d for d in daily if d["stock"] > 0]
+    latest_stock = with_stock[-1]["stock"] if with_stock else 0
+
+    return {
+        "stock": latest_stock,
+        "autonomy_days": round(autonomy, 1) if autonomy else None,
+        "daily": daily,
+    }
+
+
+def compute_blackout_stats(blackout_events):
+    """Compute aggregated blackout statistics from event list.
+
+    Returns {count, totalDurationMin, bySource: {enelec: n, jirama: n, other: n},
+             byMonth: {1: n, 2: n, ...}}.
+    """
+    if not blackout_events:
+        return {"count": 0, "totalDurationMin": 0, "bySource": {}, "byMonth": {}}
+
+    count = len(blackout_events)
+    total_min = 0
+    by_source = {}
+    by_month = {}
+
+    for ev in blackout_events:
+        # Duration parsing
+        dur = ev.get("duration", "")
+        if dur:
+            try:
+                # Try parsing as timedelta string "HH:MM:SS" or "X:XX:XX"
+                parts = str(dur).split(":")
+                if len(parts) >= 2:
+                    h = int(parts[0])
+                    m = int(parts[1])
+                    s = int(parts[2]) if len(parts) > 2 else 0
+                    total_min += h * 60 + m + s / 60
+            except (ValueError, IndexError):
+                pass
+
+        # Source classification (ENELEC vs JIRAMA)
+        source = str(ev.get("source", "") or ev.get("cause", "")).lower()
+        if "jirama" in source:
+            key = "jirama"
+        elif "enelec" in source:
+            key = "enelec"
+        else:
+            key = "autre"
+        by_source[key] = by_source.get(key, 0) + 1
+
+        # By month
+        try:
+            month = int(ev["date"].split("-")[1])
+            by_month[month] = by_month.get(month, 0) + 1
+        except (ValueError, IndexError):
+            pass
+
+    return {
+        "count": count,
+        "totalDurationMin": round(total_min),
+        "bySource": by_source,
+        "byMonth": by_month,
+    }
+
+
+def compute_station_use(daily_trend):
+    """Compute station use % from gross/net in daily trend.
+
+    Adds station_use_pct to each trend entry and returns site-level averages.
+    """
+    total_gross = 0
+    total_net = 0
+    for entry in daily_trend:
+        g = entry.get("gross_mwh", 0)
+        n = entry.get("net_mwh", 0)
+        if g > 0:
+            entry["station_use_pct"] = round((g - n) / g * 100, 1)
+            total_gross += g
+            total_net += n
+        else:
+            entry["station_use_pct"] = 0
+
+    avg_pct = round((total_gross - total_net) / total_gross * 100, 1) if total_gross > 0 else 0
+    return {
+        "avgStationUsePct": avg_pct,
+        "totalGrossMwh": round(total_gross, 1),
+        "totalNetMwh": round(total_net, 1),
+    }
+
+
+def compute_dg_availability(groupes):
+    """Compute availability % for each DG based on daily arrays.
+
+    Adds availability_pct to each groupe dict.
+    """
+    for g in groupes:
+        # Current day availability
+        h_today = g.get("hToday", 0)
+        g["availability_pct"] = round(h_today / 24 * 100, 1) if h_today > 0 else 0.0
+
+        # Monthly availability from daily arrays
+        daily_hours = g.get("dailyHours", [])
+        days_with_data = sum(1 for h in daily_hours if h > 0)
+        total_hours = sum(daily_hours)
+        if days_with_data > 0:
+            g["monthlyAvailabilityPct"] = round(total_hours / (days_with_data * 24) * 100, 1)
+        else:
+            g["monthlyAvailabilityPct"] = 0.0
+
+
+def compute_site_hourly_load(groupes):
+    """Aggregate per-DG hourly loads into site-level total.
+
+    Returns 24-element list (index 0 = 07:00, ..., index 23 = 06:00).
+    """
+    site_load = [0.0] * 24
+    for g in groupes:
+        hourly = g.get("hourlyLoad", [0] * 24)
+        for i in range(min(24, len(hourly))):
+            site_load[i] += hourly[i]
+    return [round(v, 1) for v in site_load]
+
+
 def load_site_files(cfg):
     """Load all xlsx files for a site and return combined DataFrames."""
     data_dir = cfg["data_dir"]
@@ -768,6 +1212,12 @@ def load_site_files(cfg):
 
     # --- HFO per-DG detail from the latest xlsx file ---
     hfo_detail = {}
+    fuel_stock_data = None
+    solar_data = None
+    oil_stock_data = None
+    load_chart_data = None
+    latest_xls = None
+
     for fpath in reversed(files):
         try:
             latest_xls = pd.ExcelFile(fpath)
@@ -776,6 +1226,33 @@ def load_site_files(cfg):
         except PermissionError:
             print(f"  ⚠ HFO detail: fichier verrouillé, essai fichier précédent : {os.path.basename(fpath)}")
             continue
+
+    # --- Fuel stock from latest file ---
+    if latest_xls and cfg.get("fuel_stock_sheet"):
+        fuel_stock_data = parse_fuel_stock(latest_xls, cfg)
+
+    # --- Solar production ---
+    # Try separate solar file first
+    solar_pattern = cfg.get("solar_file_pattern")
+    if solar_pattern:
+        solar_files = sorted(glob.glob(os.path.join(data_dir, solar_pattern)))
+        if solar_files:
+            try:
+                solar_xls = pd.ExcelFile(solar_files[-1])
+                solar_data = parse_solar(solar_xls, cfg)
+            except (PermissionError, Exception) as e:
+                print(f"  ⚠ Solar: {e}")
+    # Try in-file solar sheet
+    if not solar_data and latest_xls and cfg.get("solar_sheet"):
+        solar_data = parse_solar(latest_xls, cfg)
+
+    # --- Oil stock ---
+    if latest_xls:
+        oil_stock_data = parse_oil_stock(latest_xls, cfg)
+
+    # --- Load chart (Majunga) ---
+    if latest_xls and cfg.get("load_chart_sheet"):
+        load_chart_data = parse_load_chart(latest_xls, cfg)
 
     # --- Collect daily per-DG metrics for each month (all metrics) ---
     monthly_dg_metrics = {}  # {month_num: {DG_id: {metric: [31 daily values]}}}
@@ -792,7 +1269,8 @@ def load_site_files(cfg):
         except (PermissionError, ValueError, IndexError):
             continue
 
-    return daily_df, oil_df, blackout_df, hfo_detail, monthly_dg_metrics
+    return (daily_df, oil_df, blackout_df, hfo_detail, monthly_dg_metrics,
+            fuel_stock_data, solar_data, oil_stock_data, load_chart_data)
 
 
 def build_site_data(site_key):
@@ -802,7 +1280,8 @@ def build_site_data(site_key):
     if result is None:
         return None
 
-    daily_df, oil_df, blackout_df, hfo_detail, monthly_dg_metrics = result
+    (daily_df, oil_df, blackout_df, hfo_detail, monthly_dg_metrics,
+     fuel_stock_data, solar_data, oil_stock_data, load_chart_data) = result
     dd = cfg["dd_cols"]
     num_eng = cfg["num_engines"]
 
@@ -1167,6 +1646,20 @@ def build_site_data(site_key):
         except Exception:
             continue
 
+    # ── NEW KPIs ──
+
+    # 1. Blackout stats
+    blackout_stats = compute_blackout_stats(blackout_events)
+
+    # 2. Station use % (Gross vs Net)
+    station_use_stats = compute_station_use(daily_trend)
+
+    # 3. Per-DG availability
+    compute_dg_availability(groupes)
+
+    # 4. Site-level hourly load (sum of all DGs)
+    site_hourly_load = compute_site_hourly_load(groupes)
+
     return {
         "name": cfg["name"],
         "status": site_status,
@@ -1195,7 +1688,14 @@ def build_site_data(site_key):
         },
         "prev2025": cfg["prev2025"],
         "blackouts": blackout_events,
+        "blackoutStats": blackout_stats,
         "dailyTrend": daily_trend,
+        "stationUse": station_use_stats,
+        "siteHourlyLoad": site_hourly_load,
+        "fuelStock": fuel_stock_data,
+        "solar": solar_data,
+        "oilStock": oil_stock_data,
+        "loadChart": load_chart_data,
     }
 
 
@@ -1214,6 +1714,35 @@ if __name__ == "__main__":
             print(f"  Engines: {len(data['groupes'])} ({sum(1 for g in data['groupes'] if g['statut'] == 'ok')} running)")
             print(f"  KPI month: prod={data['kpi']['month']['prod']} MWh, sfoc={data['kpi']['month']['sfoc']}")
             print(f"  Trend: {len(data['dailyTrend'])} days, Blackouts: {len(data['blackouts'])}")
+            # New KPIs
+            bs = data.get("blackoutStats", {})
+            print(f"  Blackout stats: count={bs.get('count',0)}, duration={bs.get('totalDurationMin',0)}min, sources={bs.get('bySource',{})}")
+            su = data.get("stationUse", {})
+            print(f"  Station use: avg={su.get('avgStationUsePct',0)}%, gross={su.get('totalGrossMwh',0)} MWh, net={su.get('totalNetMwh',0)} MWh")
+            fs = data.get("fuelStock")
+            if fs:
+                print(f"  Fuel stock: HFO={fs['latestHfoStock']}L, LFO={fs['latestLfoStock']}L, HFO autonomy={fs['hfoAutonomyDays']}j")
+            else:
+                print(f"  Fuel stock: N/A (no sheet)")
+            sol = data.get("solar")
+            if sol:
+                print(f"  Solar: {sol['numDays']} days, total={sol['totalGrossKwh']} kWh, avg={sol['avgDailyKwh']} kWh/day")
+            else:
+                print(f"  Solar: N/A")
+            oil = data.get("oilStock")
+            if oil:
+                print(f"  Oil stock: {oil['stock']}L, autonomy={oil.get('autonomy_days')}j")
+            else:
+                print(f"  Oil stock: N/A")
+            lc = data.get("loadChart")
+            if lc:
+                print(f"  Load chart: {len(lc)} days")
+            hl = data.get("siteHourlyLoad", [])
+            peak = max(hl) if hl else 0
+            print(f"  Site hourly load: peak={peak} kW")
+            # DG availability
+            avail = [(g['id'], g.get('availability_pct', 0), g.get('monthlyAvailabilityPct', 0)) for g in data['groupes']]
+            print(f"  DG availability: {[(a[0], f'{a[1]}%/{a[2]}%') for a in avail[:5]]}...")
             print()
         else:
             print(f"=== {site.upper()} === No data found\n")

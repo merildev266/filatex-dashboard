@@ -1787,6 +1787,14 @@ function mergeLiveData(target, source) {
   target.dailyTrend = source.dailyTrend || [];
   target.latestDate = source.latestDate || '';
   if (source.latestMonth) target.latestMonth = source.latestMonth;
+  // New KPIs
+  if (source.fuelStock) target.fuelStock = source.fuelStock;
+  if (source.blackoutStats) target.blackoutStats = source.blackoutStats;
+  if (source.stationUse) target.stationUse = source.stationUse;
+  if (source.siteHourlyLoad) target.siteHourlyLoad = source.siteHourlyLoad;
+  if (source.solar) target.solar = source.solar;
+  if (source.oilStock) target.oilStock = source.oilStock;
+  if (source.loadChart) target.loadChart = source.loadChart;
 }
 if (typeof TAMATAVE_LIVE !== 'undefined') mergeLiveData(siteData.tamatave, TAMATAVE_LIVE);
 if (typeof DIEGO_LIVE !== 'undefined') mergeLiveData(siteData.diego, DIEGO_LIVE);
@@ -2254,6 +2262,20 @@ function renderSites() {
     const totalMoteurs = s.groupes.length;
     const arretColor   = arretCount === 0 ? 'var(--energy)' : arretCount <= 2 ? 'var(--orange)' : 'var(--red)';
 
+    // ── New KPIs: Fuel autonomy, Blackouts, Station Use ──
+    const _fs = s.fuelStock || {};
+    const hfoAuto = _fs.hfoAutonomyDays != null ? _fs.hfoAutonomyDays : null;
+    const hfoAutoColor = hfoAuto === null ? 'var(--text-dim)' : hfoAuto <= 3 ? 'var(--red)' : hfoAuto <= 10 ? 'var(--orange)' : 'var(--energy)';
+    const hfoStockL = _fs.latestHfoStock != null ? _fs.latestHfoStock : null;
+
+    const _bs = s.blackoutStats || {};
+    const boCount = _bs.count || 0;
+    const boColor = boCount === 0 ? 'var(--energy)' : boCount <= 10 ? 'var(--orange)' : 'var(--red)';
+
+    const _su = s.stationUse || {};
+    const stUsePct = _su.avgStationUsePct != null ? _su.avgStationUsePct : null;
+    const stUseColor = stUsePct === null ? 'var(--text-dim)' : stUsePct <= 5 ? 'var(--energy)' : stUsePct <= 8 ? 'var(--orange)' : 'var(--red)';
+
     // SFOC — seuil 250 : < 250 vert, > 250 rouge
     const sfocVal   = k.sfoc !== null && k.sfoc > 0 ? k.sfoc : null;
     const sfocColor = sfocVal === null ? 'var(--text-dim)' : sfocVal <= 250 ? 'var(--energy)' : 'var(--red)';
@@ -2352,6 +2374,26 @@ function renderSites() {
           <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
             <div style="font-size:28px;font-weight:800;color:${arretColor};line-height:1;letter-spacing:-1px;">${arretCount}</div>
             <div style="font-size:10px;color:var(--text-dim);line-height:1.4;">/ ${totalMoteurs}<br>moteurs</div>
+          </div>
+        </div>
+
+        <!-- KPI row: Fuel Autonomy + Blackouts + Station Use -->
+        <div style="display:flex;gap:6px;padding-bottom:10px;border-bottom:1px solid ${borderCol};margin-bottom:10px;">
+          <div style="flex:1;background:${bgKpi};border-radius:8px;padding:7px 4px 5px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:7px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${labelCol};margin-bottom:3px;">FUEL HFO</div>
+            <div style="font-size:13px;font-weight:800;color:${hfoAutoColor};line-height:1;">${hfoAuto !== null ? hfoAuto.toFixed(1) : '—'}</div>
+            <div style="font-size:7px;color:var(--text-dim);margin-top:1px;">jours autonomie</div>
+            <div style="font-size:7px;color:rgba(255,255,255,0.2);margin-top:2px;">${hfoStockL !== null ? Math.round(hfoStockL).toLocaleString() + ' L' : ''}</div>
+          </div>
+          <div style="flex:1;background:${bgKpi};border-radius:8px;padding:7px 4px 5px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:7px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${labelCol};margin-bottom:3px;">BLACKOUTS</div>
+            <div style="font-size:13px;font-weight:800;color:${boColor};line-height:1;">${boCount}</div>
+            <div style="font-size:7px;color:var(--text-dim);margin-top:1px;">coupures</div>
+          </div>
+          <div style="flex:1;background:${bgKpi};border-radius:8px;padding:7px 4px 5px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:7px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${labelCol};margin-bottom:3px;">CONSO STATION</div>
+            <div style="font-size:13px;font-weight:800;color:${stUseColor};line-height:1;">${stUsePct !== null ? stUsePct.toFixed(1) : '—'}</div>
+            <div style="font-size:7px;color:var(--text-dim);margin-top:1px;">% auxiliaires</div>
           </div>
         </div>
 
@@ -2600,14 +2642,14 @@ function renderDetail(id) {
     banner.innerHTML = `<span style="font-size:20px;">${s.notice || ''}</span>
       <span style="font-size:13px;color:var(--text-muted);margin-top:6px;">Les données opérationnelles seront disponibles dès la remise en service.</span>`;
     // Hide ALL data sections
-    ['detail-s1-top','detail-s1-conso','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-card','detail-blackout-list'].forEach(x => {
+    ['detail-s1-top','detail-s1-conso','detail-ops-kpis','detail-load-label','detail-hourly-load','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-card','detail-blackout-list','detail-fuel-label','detail-fuel-stock'].forEach(x => {
       const e = document.getElementById(x); if(e) e.style.display='none';
     });
     document.querySelectorAll('.detail-section-label').forEach(e => e.style.display='none');
     return;
   } else {
     banner.style.display = 'none';
-    ['detail-s1-top','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-card'].forEach(x => {
+    ['detail-s1-top','detail-ops-kpis','detail-s2-label','detail-gen-cards','detail-s3-label','detail-blackout-card','detail-fuel-stock'].forEach(x => {
       const e = document.getElementById(x); if(e) e.style.display = x === 'detail-gen-cards' ? 'flex' : (x === 'detail-blackout-card' ? 'flex' : '');
     });
     document.querySelectorAll('.detail-section-label').forEach(e => e.style.display='');
@@ -2623,6 +2665,12 @@ function renderDetail(id) {
   document.getElementById('d-prod').textContent = k.prod != null ? parseFloat(k.prod).toFixed(1) : '—';
   document.getElementById('d-sfoc').textContent = k.sfoc != null ? parseFloat(k.sfoc).toFixed(1) : '—';
   document.getElementById('d-sloc').textContent = k.sloc != null ? parseFloat(k.sloc).toFixed(1) : '—';
+
+  // ── SECTION 1b — KPIs OPÉRATIONNELS ──
+  renderOpsKpis(id, s);
+
+  // ── SECTION 1c — COURBE DE CHARGE HORAIRE ──
+  renderHourlyLoadChart(id, s);
 
   // ── SECTION 2 — GÉNÉRATEURS (cartes compactes) ──
   document.getElementById('detail-gen-cards').innerHTML = s.groupes.map(g => {
@@ -2686,6 +2734,189 @@ function renderDetail(id) {
 
   // ── SECTION 3 — BLACKOUTS ──
   renderBlackouts(id);
+
+  // ── SECTION 4 — FUEL STOCK ──
+  renderFuelStockDetail(id, s);
+}
+
+// ══ RENDER OPS KPIs (fuel stock, station use, solar, oil stock) ══
+function renderOpsKpis(id, s) {
+  const el = document.getElementById('detail-ops-kpis');
+  if (!el) return;
+
+  const _fs = s.fuelStock || {};
+  const _su = s.stationUse || {};
+  const _sol = s.solar || null;
+  const _oil = s.oilStock || {};
+
+  const hfoStock = _fs.latestHfoStock;
+  const hfoAuto = _fs.hfoAutonomyDays;
+  const lfoStock = _fs.latestLfoStock;
+  const hfoAutoColor = hfoAuto == null ? 'var(--text-dim)' : hfoAuto <= 3 ? 'var(--red)' : hfoAuto <= 10 ? 'var(--orange)' : 'var(--energy)';
+
+  const grossMwh = _su.totalGrossMwh;
+  const netMwh = _su.totalNetMwh;
+  const stUsePct = _su.avgStationUsePct;
+  const stUseColor = stUsePct == null ? 'var(--text-dim)' : stUsePct <= 5 ? 'var(--energy)' : stUsePct <= 8 ? 'var(--orange)' : 'var(--red)';
+
+  const solarAvg = _sol ? _sol.avgDailyKwh : null;
+  const solarTotal = _sol ? _sol.totalKwh : null;
+
+  const oilStock = _oil.stock;
+  const oilAuto = _oil.autonomy_days;
+  const oilAutoColor = oilAuto == null ? 'var(--text-dim)' : oilAuto <= 5 ? 'var(--red)' : oilAuto <= 15 ? 'var(--orange)' : 'var(--energy)';
+
+  let cards = '';
+
+  // Card 1: Fuel Stock HFO
+  cards += `<div class="s1-card">
+    <div class="s1-card-label">Stock HFO</div>
+    <div class="s1-card-value" style="color:${hfoAutoColor}">${hfoStock != null ? Math.round(hfoStock).toLocaleString() : '—'}</div>
+    <div class="s1-card-unit-line">Litres</div>
+    <div class="s1-card-sub" style="color:${hfoAutoColor}">${hfoAuto != null ? hfoAuto.toFixed(1) + ' jours autonomie' : 'Données non dispo'}</div>
+  </div>`;
+
+  // Card 2: Station Use (Gross vs Net)
+  cards += `<div class="s1-card">
+    <div class="s1-card-label">Conso Station</div>
+    <div class="s1-card-value" style="color:${stUseColor}">${stUsePct != null ? stUsePct.toFixed(1) : '—'}</div>
+    <div class="s1-card-unit-line">% auxiliaires</div>
+    <div class="s1-card-sub">${grossMwh != null ? 'Brut ' + Math.round(grossMwh).toLocaleString() + ' / Net ' + Math.round(netMwh).toLocaleString() + ' MWh' : ''}</div>
+  </div>`;
+
+  // Card 3: Solar (if available)
+  if (_sol) {
+    cards += `<div class="s1-card">
+      <div class="s1-card-label">Solaire</div>
+      <div class="s1-card-value" style="color:var(--energy)">${solarAvg != null ? Math.round(solarAvg).toLocaleString() : '—'}</div>
+      <div class="s1-card-unit-line">kWh/jour moy.</div>
+      <div class="s1-card-sub">${solarTotal != null ? 'Total ' + Math.round(solarTotal).toLocaleString() + ' kWh' : ''}</div>
+    </div>`;
+  }
+
+  // Card 4: Oil Stock
+  cards += `<div class="s1-card">
+    <div class="s1-card-label">Stock Huile</div>
+    <div class="s1-card-value" style="color:${oilAutoColor}">${oilStock != null ? Math.round(oilStock).toLocaleString() : '—'}</div>
+    <div class="s1-card-unit-line">Litres</div>
+    <div class="s1-card-sub" style="color:${oilAutoColor}">${oilAuto != null ? oilAuto.toFixed(1) + ' jours autonomie' : ''}</div>
+  </div>`;
+
+  el.innerHTML = cards;
+}
+
+// ══ RENDER HOURLY LOAD CHART (bar chart) ══
+function renderHourlyLoadChart(id, s) {
+  const el = document.getElementById('detail-hourly-load');
+  const lbl = document.getElementById('detail-load-label');
+  if (!el) return;
+
+  const hl = s.siteHourlyLoad;
+  if (!hl || hl.length === 0 || hl.every(v => v === 0)) {
+    el.style.display = 'none';
+    if (lbl) lbl.style.display = 'none';
+    return;
+  }
+  el.style.display = '';
+  if (lbl) lbl.style.display = '';
+
+  const maxVal = Math.max(...hl);
+  const peakHour = hl.indexOf(maxVal);
+
+  let barsHtml = '';
+  for (let h = 0; h < 24; h++) {
+    const val = hl[h] || 0;
+    const pct = maxVal > 0 ? (val / maxVal * 100) : 0;
+    const isPeak = h === peakHour;
+    const color = isPeak ? 'var(--energy)' : 'rgba(0,171,99,0.4)';
+    barsHtml += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div style="font-size:7px;color:${isPeak ? 'var(--energy)' : 'var(--text-dim)'};font-weight:${isPeak?'700':'400'};">${val > 0 ? Math.round(val/1000*10)/10 : ''}</div>
+      <div style="width:100%;height:80px;display:flex;align-items:flex-end;">
+        <div style="width:100%;height:${pct}%;background:${color};border-radius:3px 3px 0 0;min-height:${val>0?'2px':'0'};transition:height 0.3s;"></div>
+      </div>
+      <div style="font-size:7px;color:var(--text-dim);">${h}h</div>
+    </div>`;
+  }
+
+  el.innerHTML = `<div style="background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.1);border-radius:12px;padding:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.15em;">MW par heure</div>
+      <div style="font-size:9px;color:var(--energy);font-weight:700;">Pic: ${(maxVal/1000).toFixed(1)} MW a ${peakHour}h</div>
+    </div>
+    <div style="display:flex;gap:2px;align-items:flex-end;">${barsHtml}</div>
+  </div>`;
+}
+
+// ══ RENDER FUEL STOCK DETAIL ══
+function renderFuelStockDetail(id, s) {
+  const el = document.getElementById('detail-fuel-stock');
+  const lbl = document.getElementById('detail-fuel-label');
+  if (!el) return;
+
+  const _fs = s.fuelStock;
+  if (!_fs) {
+    el.style.display = 'none';
+    if (lbl) lbl.style.display = 'none';
+    return;
+  }
+  el.style.display = '';
+  if (lbl) lbl.style.display = '';
+
+  const hfoArr = _fs.hfo || [];
+  const lfoArr = _fs.lfo || [];
+  const hasHfo = hfoArr.some(d => d && d.stock > 0);
+  const hasLfo = lfoArr.some(d => d && d.stock > 0);
+
+  if (!hasHfo && !hasLfo) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-size:11px;padding:16px;">Aucune donnée de stock disponible</div>';
+    return;
+  }
+
+  // Mini sparkline of stock evolution
+  function miniSparkline(arr, color) {
+    if (!arr || arr.length === 0) return '';
+    const vals = arr.filter(d => d && d.stock != null).map(d => d.stock);
+    if (vals.length < 2) return '';
+    const max = Math.max(...vals);
+    const min = Math.min(...vals);
+    const range = max - min || 1;
+    const w = 200, h = 40;
+    const step = w / (vals.length - 1);
+    let path = '';
+    vals.forEach((v, i) => {
+      const x = i * step;
+      const y = h - ((v - min) / range) * h;
+      path += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;">
+      <path d="${path}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.7"/>
+    </svg>`;
+  }
+
+  let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+
+  if (hasHfo) {
+    const latest = hfoArr.filter(d => d && d.stock != null).slice(-1)[0];
+    html += `<div style="background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.1);border-radius:12px;padding:16px;">
+      <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.6);margin-bottom:8px;">Stock HFO</div>
+      <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px;">${latest ? Math.round(latest.stock).toLocaleString() : '—'} <span style="font-size:10px;color:var(--text-muted);">L</span></div>
+      <div style="font-size:9px;color:var(--text-dim);margin-bottom:8px;">Autonomie: <span style="color:${_fs.hfoAutonomyDays != null ? (_fs.hfoAutonomyDays <= 3 ? 'var(--red)' : 'var(--energy)') : 'var(--text-dim)'};font-weight:700;">${_fs.hfoAutonomyDays != null ? _fs.hfoAutonomyDays.toFixed(1) + ' jours' : '—'}</span></div>
+      ${miniSparkline(hfoArr, '#00ab63')}
+    </div>`;
+  }
+
+  if (hasLfo) {
+    const latest = lfoArr.filter(d => d && d.stock != null).slice(-1)[0];
+    html += `<div style="background:rgba(138,146,171,0.04);border:1px solid rgba(138,146,171,0.1);border-radius:12px;padding:16px;">
+      <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(138,146,171,0.6);margin-bottom:8px;">Stock LFO</div>
+      <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px;">${latest ? Math.round(latest.stock).toLocaleString() : '—'} <span style="font-size:10px;color:var(--text-muted);">L</span></div>
+      <div style="font-size:9px;color:var(--text-dim);margin-bottom:8px;">Autonomie: <span style="color:var(--text-dim);">${_fs.lfoAutonomyDays != null ? _fs.lfoAutonomyDays.toFixed(1) + ' jours' : '—'}</span></div>
+      ${miniSparkline(lfoArr, '#5aafaf')}
+    </div>`;
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 
