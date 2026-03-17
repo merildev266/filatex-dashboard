@@ -2181,8 +2181,18 @@ function renderPropsCards(sub, siteFilter) {
       '<span style="font-size:10px;color:var(--text-dim);">' + proj.etapes.length + ' \u00e9tape' + (proj.etapes.length > 1 ? 's' : '') +
       (delayedP > 0 ? ' \u2022 <span style="color:#E05C5C;">' + delayedP + ' retard</span>' : '') + '</span></div>';
 
-    // Étapes list (compact)
-    proj.etapes.forEach(function(et, ei) {
+    // Étapes list (compact) — sorted most recent first
+    var sortedEtapes = proj.etapes.slice().sort(function(a, b) {
+      var aLast = a.history && a.history.length > 0 ? a.history[a.history.length - 1].week : '';
+      var bLast = b.history && b.history.length > 0 ? b.history[b.history.length - 1].week : '';
+      // Parse date from "S11 - 09/03/2026" format
+      var aMatch = aLast.match(/(\d{2})\/(\d{2})\/(\d{4})$/);
+      var bMatch = bLast.match(/(\d{2})\/(\d{2})\/(\d{4})$/);
+      var aDate = aMatch ? new Date(aMatch[3], aMatch[2] - 1, aMatch[1]) : new Date(0);
+      var bDate = bMatch ? new Date(bMatch[3], bMatch[2] - 1, bMatch[1]) : new Date(0);
+      return bDate - aDate;
+    });
+    sortedEtapes.forEach(function(et, ei) {
       var lastH = et.history && et.history.length > 0 ? et.history[et.history.length - 1] : null;
       var cardId = 'proj-hist-' + pi + '-' + ei;
 
