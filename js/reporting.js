@@ -2190,12 +2190,12 @@ function renderPropsCards(sub, siteFilter) {
 
       // Étape title + timing badge
       html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
-        '<span style="font-size:11px;font-weight:600;color:var(--text-main);">' + escapeHtml(et.etape) + '</span>' +
+        '<span style="font-size:13px;font-weight:600;color:#fff;">' + escapeHtml(et.etape) + '</span>' +
         '<span style="margin-left:8px;white-space:nowrap;">' + propsTimingBadge(et.timing_var) + '</span></div>';
 
       // Last comment + date
       if (lastH) {
-        html += '<div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">' +
+        html += '<div style="font-size:12px;color:#fff;margin-bottom:4px;">' +
           '<span style="color:#5aafaf;font-weight:600;">' + escapeHtml(lastH.week) + '</span> \u2014 ' +
           escapeHtml(lastH.comment.length > 120 ? lastH.comment.substring(0, 120) + '...' : lastH.comment) + '</div>';
       }
@@ -2210,9 +2210,9 @@ function renderPropsCards(sub, siteFilter) {
         // Hidden history panel
         html += '<div id="' + cardId + '" style="display:none;margin-top:6px;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;max-height:200px;overflow-y:auto;scrollbar-width:thin;">';
         et.history.forEach(function(h) {
-          html += '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:10px;">' +
+          html += '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px;">' +
             '<span style="color:#5aafaf;font-weight:600;min-width:110px;display:inline-block;">' + escapeHtml(h.week) + '</span> ' +
-            '<span style="color:var(--text-muted);">' + escapeHtml(h.comment) + '</span></div>';
+            '<span style="color:#fff;">' + escapeHtml(h.comment) + '</span></div>';
         });
         html += '</div>';
       }
