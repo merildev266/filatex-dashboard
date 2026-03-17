@@ -1298,6 +1298,83 @@ def build_site_data(site_key):
     dd = cfg["dd_cols"]
     num_eng = cfg["num_engines"]
 
+    # --- Fill missing Daily Data from per-DG HFO specific data sheets ---
+    # When a month's Daily Data sheet is empty (e.g. formulas not computed),
+    # reconstruct daily totals by summing per-DG metrics from HFO sheets.
+    if monthly_dg_metrics:
+        # Determine which months already have data in daily_df
+        months_with_data = set()
+        if not daily_df.empty and "_file_month" in daily_df.columns:
+            for m in daily_df["_file_month"].dropna().unique():
+                # Check if month actually has production data
+                m_rows = daily_df[daily_df["_file_month"] == m]
+                if m_rows.iloc[:, dd["gross_mwh"]].apply(safe_float).sum() > 0:
+                    months_with_data.add(int(m))
+
+        for month_num, dg_data in monthly_dg_metrics.items():
+            if month_num in months_with_data:
+                continue  # Already have valid data for this month
+
+            # Determine number of days in this month (2026)
+            import calendar
+            num_days = calendar.monthrange(2026, month_num)[1]
+
+            synth_rows = []
+            for day_idx in range(num_days):
+                # Sum across all DGs for each metric
+                gross = sum(dg_data.get(dg, {}).get("energieProd", [0.0]*31)[day_idx]
+                            for dg in dg_data)
+                if gross <= 0:
+                    continue  # Skip days with no production
+
+                station = sum(dg_data.get(dg, {}).get("consLVMV", [0.0]*31)[day_idx]
+                              for dg in dg_data)
+                net = gross - station
+                planned = sum(dg_data.get(dg, {}).get("arretPlanifie", [0.0]*31)[day_idx]
+                              for dg in dg_data)
+                forced = sum(dg_data.get(dg, {}).get("arretForce", [0.0]*31)[day_idx]
+                             for dg in dg_data)
+                standby = sum(dg_data.get(dg, {}).get("hStandby", [0.0]*31)[day_idx]
+                              for dg in dg_data)
+                run = sum(dg_data.get(dg, {}).get("hToday", [0.0]*31)[day_idx]
+                          for dg in dg_data)
+                hfo = sum(dg_data.get(dg, {}).get("consoHFO", [0.0]*31)[day_idx]
+                          for dg in dg_data)
+                lfo = sum(dg_data.get(dg, {}).get("consoLFO", [0.0]*31)[day_idx]
+                          for dg in dg_data)
+                lube = sum(dg_data.get(dg, {}).get("oilConso", [0.0]*31)[day_idx]
+                           for dg in dg_data)
+                sfoc = round(hfo * 1000 / net, 1) if net > 0 else 0
+
+                # Build row with same column layout as daily_df
+                row_date = datetime(2026, month_num, day_idx + 1)
+                row_data = {dd["date"]: row_date}
+                row_data[dd["gross_mwh"]] = round(gross, 1)
+                row_data[dd["net_mwh"]] = round(net, 1)
+                row_data[dd["station_use"]] = round(station, 1)
+                row_data[dd["planned_maint"]] = round(planned, 1)
+                row_data[dd["forced"]] = round(forced, 1)
+                row_data[dd["standby"]] = round(standby, 1)
+                row_data[dd["run"]] = round(run, 1)
+                row_data[dd["hfo_kgs"]] = round(hfo, 1)
+                row_data[dd["lfo"]] = round(lfo, 1)
+                row_data[dd["lube_oil"]] = round(lube, 1)
+                row_data[dd["sfoc_gm"]] = sfoc
+                row_data["_file_month"] = month_num
+                synth_rows.append(row_data)
+
+            if synth_rows:
+                synth_df = pd.DataFrame(synth_rows)
+                # Ensure same number of columns by reindexing
+                if not daily_df.empty:
+                    synth_df = synth_df.reindex(columns=daily_df.columns)
+                daily_df = pd.concat([daily_df, synth_df], ignore_index=True)
+                print(f"  [INFO] Reconstructed {len(synth_rows)} daily rows for month {month_num} from per-DG data")
+
+        # Re-sort by date
+        if not daily_df.empty:
+            daily_df = daily_df.sort_values(by=daily_df.columns[dd["date"]]).reset_index(drop=True)
+
     if daily_df.empty:
         return None
 
