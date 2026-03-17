@@ -1962,10 +1962,14 @@ function propsCpsBadge(v) {
 }
 
 function buildPropsSiteFilterHtml(sub) {
-  var dataMap = { sav: propsData_sav, tvx: propsData_tvx, dev: propsData_dev };
-  var rows = dataMap[sub] || [];
   var sites = {};
-  rows.forEach(function(r) { sites[r.site] = true; });
+  if (sub === 'dev' && typeof propsData_dev_full !== 'undefined') {
+    propsData_dev_full.forEach(function(p) { sites[p.name] = true; });
+  } else {
+    var dataMap = { sav: propsData_sav, tvx: propsData_tvx, dev: propsData_dev };
+    var rows = dataMap[sub] || [];
+    rows.forEach(function(r) { sites[r.site] = true; });
+  }
   var siteList = Object.keys(sites).sort();
 
   var html = '<button id="rpt-props-all-btn" onclick="switchPropsSiteFilter(\'' + sub + '\',\'all\')" ' +
@@ -2063,37 +2067,35 @@ function closePropsSub() {
 }
 
 function renderPropsTable(sub, siteFilter) {
+  // DEV uses card view
+  if (sub === 'dev' && typeof propsData_dev_full !== 'undefined') {
+    renderPropsCards(sub, siteFilter);
+    return;
+  }
+
   var dataMap = { sav: propsData_sav, tvx: propsData_tvx, dev: propsData_dev };
   var rows = dataMap[sub] || [];
   if (siteFilter && siteFilter !== 'all') {
     rows = rows.filter(function(r) { return r.site === siteFilter; });
   }
 
-  // Delay filter - filter to only show projects that have delayed étapes
   var allRows = rows;
   if (_propsDelayFilter) {
     rows = rows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; });
   }
 
   var projects = propsGroupByProject(rows);
-
-  // KPIs (always based on allRows, not delay-filtered)
   var kpiRows = allRows || rows;
   var kpiProjects = propsGroupByProject(kpiRows);
-  var totalProjects = kpiProjects.length;
-  var totalEtapes = kpiRows.length;
-  var onTime = kpiRows.filter(function(r) { return r.timing_var === 'On Time'; }).length;
-  var delayed = kpiRows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length;
 
   var bar = document.getElementById('rpt-props-' + sub + '-kpi-bar');
   var delayActive = _propsDelayFilter ? 'background:rgba(224,92,92,0.15);border:1px solid rgba(224,92,92,0.4);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
   bar.innerHTML =
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + totalProjects + '</div><div class="kl">Projets</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + totalEtapes + '</div><div class="kl">\u00c9tapes</div></div>' +
-    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + onTime + '</div><div class="kl">On Time</div></div>' +
-    '<div class="rpt-kpi-item" onclick="togglePropsDelayFilter()" style="' + delayActive + '"><div class="kv" style="color:#E05C5C;">' + delayed + '</div><div class="kl">En retard \u25BC</div></div>';
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + kpiProjects.length + '</div><div class="kl">Projets</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + kpiRows.length + '</div><div class="kl">\u00c9tapes</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + kpiRows.filter(function(r) { return r.timing_var === 'On Time'; }).length + '</div><div class="kl">On Time</div></div>' +
+    '<div class="rpt-kpi-item" onclick="togglePropsDelayFilter()" style="' + delayActive + '"><div class="kv" style="color:#E05C5C;">' + kpiRows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length + '</div><div class="kl">En retard \u25BC</div></div>';
 
-  // Table
   var html = '<table class="rpt-table"><thead><tr>' +
     '<th style="min-width:60px;">Resp.</th>' +
     '<th style="min-width:200px;">\u00c9tape / Objet</th>' +
@@ -2105,22 +2107,15 @@ function renderPropsTable(sub, siteFilter) {
     '</tr></thead><tbody>';
 
   projects.forEach(function(proj) {
-    // Project header row
-    var onTimeP = proj.etapes.filter(function(e) { return e.timing_var === 'On Time'; }).length;
     var delayedP = proj.etapes.filter(function(e) { return e.timing_var && e.timing_var.indexOf('Delay') >= 0; }).length;
     var statusIcon = delayedP > 0 ? '<span style="color:#E05C5C;">\u25CF</span>' : '<span style="color:#00ab63;">\u25CF</span>';
-
     html += '<tr style="background:rgba(253,184,35,0.08);cursor:pointer;" onclick="this.classList.toggle(\'rpt-proj-collapsed\');var s=this.nextElementSibling;while(s&&!s.classList.contains(\'rpt-proj-header\')){s.style.display=s.style.display===\'none\'?\'\':\'none\';s=s.nextElementSibling;}"' +
       ' class="rpt-proj-header">' +
       '<td colspan="7" style="font-weight:700;color:#FDB823;font-size:12px;padding:10px 12px;">' +
-      '<span style="margin-right:6px;">\u25BE</span>' +
-      statusIcon + ' ' +
-      escapeHtml(proj.name) +
+      '<span style="margin-right:6px;">\u25BE</span>' + statusIcon + ' ' + escapeHtml(proj.name) +
       ' <span style="color:var(--text-muted);font-weight:400;font-size:11px;">(' + proj.etapes.length + ' \u00e9tapes' +
       (delayedP > 0 ? ' \u2022 <span style="color:#E05C5C;">' + delayedP + ' en retard</span>' : '') +
       ')</span></td></tr>';
-
-    // Étape rows
     proj.etapes.forEach(function(et) {
       html += '<tr>' +
         '<td class="nowrap" style="font-size:11px;">' + escapeHtml(et.resp) + '</td>' +
@@ -2135,6 +2130,100 @@ function renderPropsTable(sub, siteFilter) {
   });
 
   html += '</tbody></table>';
+  document.getElementById('rpt-props-' + sub + '-table-wrap').innerHTML = html;
+}
+
+// ══ CARD VIEW for Properties (with full history) ══
+function renderPropsCards(sub, siteFilter) {
+  var fullData = propsData_dev_full; // for now only DEV
+  var projects = fullData;
+
+  if (siteFilter && siteFilter !== 'all') {
+    projects = projects.filter(function(p) { return p.name === siteFilter; });
+  }
+
+  // Count for KPIs
+  var allEtapes = [];
+  fullData.forEach(function(p) { p.etapes.forEach(function(e) { allEtapes.push(e); }); });
+  var filteredEtapes = [];
+  projects.forEach(function(p) { p.etapes.forEach(function(e) { filteredEtapes.push(e); }); });
+
+  if (_propsDelayFilter) {
+    projects = projects.map(function(p) {
+      return { name: p.name, etapes: p.etapes.filter(function(e) { return e.timing_var && e.timing_var.indexOf('Delay') >= 0; }) };
+    }).filter(function(p) { return p.etapes.length > 0; });
+  }
+
+  var bar = document.getElementById('rpt-props-' + sub + '-kpi-bar');
+  var delayActive = _propsDelayFilter ? 'background:rgba(224,92,92,0.15);border:1px solid rgba(224,92,92,0.4);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
+  var onTimeCount = allEtapes.filter(function(e) { return e.timing_var === 'On Time'; }).length;
+  var delayCount = allEtapes.filter(function(e) { return e.timing_var && e.timing_var.indexOf('Delay') >= 0; }).length;
+  bar.innerHTML =
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + fullData.length + '</div><div class="kl">Projets</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + allEtapes.length + '</div><div class="kl">\u00c9tapes</div></div>' +
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + onTimeCount + '</div><div class="kl">On Time</div></div>' +
+    '<div class="rpt-kpi-item" onclick="togglePropsDelayFilter()" style="' + delayActive + '"><div class="kv" style="color:#E05C5C;">' + delayCount + '</div><div class="kl">En retard \u25BC</div></div>';
+
+  // Build cards
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;">';
+
+  projects.forEach(function(proj, pi) {
+    var delayedP = proj.etapes.filter(function(e) { return e.timing_var && e.timing_var.indexOf('Delay') >= 0; }).length;
+    var borderColor = delayedP > 0 ? '#E05C5C' : '#00ab63';
+    var statusDot = delayedP > 0 ? '<span style="color:#E05C5C;font-size:14px;">\u25CF</span>' : '<span style="color:#00ab63;font-size:14px;">\u25CF</span>';
+
+    html += '<div class="rpt-proj-card" style="background:rgba(58,57,92,0.12);border:1px solid rgba(' + (delayedP > 0 ? '224,92,92,0.3' : '0,171,99,0.2') + ');border-radius:14px;padding:16px 18px;border-left:3px solid ' + borderColor + ';">';
+
+    // Card header
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+      '<div style="display:flex;align-items:center;gap:8px;">' + statusDot +
+      '<span style="font-weight:700;color:#FDB823;font-size:13px;">' + escapeHtml(proj.name) + '</span></div>' +
+      '<span style="font-size:10px;color:var(--text-dim);">' + proj.etapes.length + ' \u00e9tape' + (proj.etapes.length > 1 ? 's' : '') +
+      (delayedP > 0 ? ' \u2022 <span style="color:#E05C5C;">' + delayedP + ' retard</span>' : '') + '</span></div>';
+
+    // Étapes list (compact)
+    proj.etapes.forEach(function(et, ei) {
+      var lastH = et.history && et.history.length > 0 ? et.history[et.history.length - 1] : null;
+      var cardId = 'proj-hist-' + pi + '-' + ei;
+
+      html += '<div style="margin-bottom:8px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">';
+
+      // Étape title + timing badge
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+        '<span style="font-size:11px;font-weight:600;color:var(--text-main);">' + escapeHtml(et.etape) + '</span>' +
+        '<span style="margin-left:8px;white-space:nowrap;">' + propsTimingBadge(et.timing_var) + '</span></div>';
+
+      // Last comment + date
+      if (lastH) {
+        html += '<div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;">' +
+          '<span style="color:#5aafaf;font-weight:600;">' + escapeHtml(lastH.week) + '</span> \u2014 ' +
+          escapeHtml(lastH.comment.length > 120 ? lastH.comment.substring(0, 120) + '...' : lastH.comment) + '</div>';
+      }
+
+      // History toggle button
+      if (et.history && et.history.length > 1) {
+        html += '<div style="text-align:right;">' +
+          '<button onclick="var el=document.getElementById(\'' + cardId + '\');el.style.display=el.style.display===\'none\'?\'block\':\'none\';this.textContent=el.style.display===\'none\'?\'\u25B6 Historique (' + et.history.length + ')\':\'\u25BC Masquer\'" ' +
+          'style="background:none;border:1px solid rgba(253,184,35,0.2);color:#FDB823;font-size:9px;font-weight:600;padding:2px 8px;border-radius:6px;cursor:pointer;">' +
+          '\u25B6 Historique (' + et.history.length + ')</button></div>';
+
+        // Hidden history panel
+        html += '<div id="' + cardId + '" style="display:none;margin-top:6px;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;max-height:200px;overflow-y:auto;scrollbar-width:thin;">';
+        et.history.forEach(function(h) {
+          html += '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:10px;">' +
+            '<span style="color:#5aafaf;font-weight:600;min-width:110px;display:inline-block;">' + escapeHtml(h.week) + '</span> ' +
+            '<span style="color:var(--text-muted);">' + escapeHtml(h.comment) + '</span></div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div>'; // end étape block
+    });
+
+    html += '</div>'; // end card
+  });
+
+  html += '</div>';
   document.getElementById('rpt-props-' + sub + '-table-wrap').innerHTML = html;
 }
 
