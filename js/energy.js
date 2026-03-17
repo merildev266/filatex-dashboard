@@ -1884,8 +1884,8 @@ function selectMonth(monthIdx, event) {
   if (lbl) lbl.textContent = MONTH_NAMES[monthIdx];
 
   // Re-render visible view first, defer background updates
-  if (currentSite) renderDetail(currentSite);
-  else if (currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  if (currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else if (currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
   requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
 }
@@ -1925,8 +1925,8 @@ function setFilter(f, btn) {
     else if (f === 'year') lbl.textContent = String(selectedYear);
   }
   // Render visible view first, defer background updates
-  if(currentSite) renderDetail(currentSite);
-  else if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else if(currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
   requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
 }
@@ -1943,8 +1943,8 @@ function setFilterQuarter(q, btn) {
   populateQuarterDropdowns();
   const lbl = document.getElementById('filter-label-text');
   if (lbl) lbl.textContent = 'Q' + q;
-  if(currentSite) renderDetail(currentSite);
-  else if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else if(currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
   requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
 }
@@ -1961,8 +1961,8 @@ function setFilterYear(year, btn) {
   populateYearDropdowns();
   const lbl = document.getElementById('filter-label-text');
   if (lbl) lbl.textContent = String(year);
-  if(currentSite) renderDetail(currentSite);
-  else if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else if(currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
   requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
 }
