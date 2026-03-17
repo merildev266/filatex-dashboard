@@ -2207,9 +2207,9 @@ function renderPropsCards(sub, siteFilter) {
           'style="background:none;border:1px solid rgba(253,184,35,0.2);color:#FDB823;font-size:9px;font-weight:600;padding:2px 8px;border-radius:6px;cursor:pointer;">' +
           '\u25B6 Historique (' + et.history.length + ')</button></div>';
 
-        // Hidden history panel
+        // Hidden history panel (most recent first)
         html += '<div id="' + cardId + '" style="display:none;margin-top:6px;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;max-height:200px;overflow-y:auto;scrollbar-width:thin;">';
-        et.history.forEach(function(h) {
+        et.history.slice().reverse().forEach(function(h) {
           html += '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px;">' +
             '<span style="color:#5aafaf;font-weight:600;min-width:110px;display:inline-block;">' + escapeHtml(h.week) + '</span> ' +
             '<span style="color:#fff;">' + escapeHtml(h.comment) + '</span></div>';

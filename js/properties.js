@@ -2,7 +2,7 @@
 
 (function(){
   const azur='#426ab3', terra='#f37056', vert='#00ab63', red='#ff5050', neonRed='#ff2040';
-  const today = new Date(2026,2,9);
+  const today = new Date();
 
   const devProjects = [
     { id:'casa-del-lago', name:'Casa Del Lago', duree:1308, debut:'2024-12-19', fin:'2029-12-24', glissMax:168,

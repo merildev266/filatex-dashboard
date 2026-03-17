@@ -27,7 +27,7 @@
 .gantt-zp-viewport::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:4px;}
 .gantt-zp-content{position:relative;min-width:100%;}
 .gantt-zp-header{position:sticky;top:0;z-index:10;border-bottom:2px solid rgba(255,255,255,0.08);overflow:hidden;}
-.gantt-zp-name{position:sticky;left:0;z-index:5;flex-shrink:0;}
+.gantt-zp-name{position:sticky;left:0;z-index:5;flex-shrink:0;background:#090c1a !important;}
 .gantt-timeline-cell{font-size:11px;font-weight:800;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,0.08);padding:8px 0;text-align:center;}
 .gantt-timeline-cell:nth-child(even){background:rgba(255,255,255,0.02);}
 .gantt-zp-gridline{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.06);pointer-events:none;z-index:0;}
