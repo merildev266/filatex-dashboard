@@ -1163,6 +1163,16 @@ def load_site_files(cfg):
         except PermissionError:
             print(f"  ⚠ Fichier verrouillé (ouvert dans Excel ?), ignoré : {os.path.basename(fpath)}")
             continue
+        except Exception as e:
+            print(f"  [WARN] Fichier corrompu/illisible, ignore : {os.path.basename(fpath)} ({e})")
+            continue
+
+        # Extract month from filename (e.g. "Tamatave_2026_01.xlsx" → 1)
+        _fname = os.path.basename(fpath)
+        _file_month = None
+        _m = re.search(r'_(\d{2})\.xlsx', _fname)
+        if _m:
+            _file_month = int(_m.group(1))
 
         # --- Daily Data ---
         dd_sheet = cfg.get("daily_data_sheet", "Daily Data")
@@ -1172,6 +1182,9 @@ def load_site_files(cfg):
         dd_data = dd_data[dd_data.iloc[:, 0].apply(
             lambda x: isinstance(x, (datetime, pd.Timestamp))
         )]
+        # Tag each row with the month from the filename (robust against wrong dates)
+        if _file_month is not None:
+            dd_data["_file_month"] = _file_month
         all_daily.append(dd_data)
 
         # --- Specific data oil ---
@@ -1560,12 +1573,17 @@ def build_site_data(site_key):
     prod_year, run_year, sfoc_year, sloc_year, dispo_year = compute_kpi(year_df, len(year_df))
 
     # Per-month KPIs (month_1 through month_12)
+    # Use _file_month tag if available (robust against wrong dates in Excel)
     per_month_kpis = {}
+    has_file_month = "_file_month" in daily_df.columns
     for m in range(1, 13):
-        m_mask = daily_df.iloc[:, dd["date"]].apply(
-            lambda x, month=m: isinstance(x, (datetime, pd.Timestamp)) and
-            pd.Timestamp(x).month == month and pd.Timestamp(x).year == now.year
-        )
+        if has_file_month:
+            m_mask = daily_df["_file_month"] == m
+        else:
+            m_mask = daily_df.iloc[:, dd["date"]].apply(
+                lambda x, month=m: isinstance(x, (datetime, pd.Timestamp)) and
+                pd.Timestamp(x).month == month and pd.Timestamp(x).year == now.year
+            )
         m_df = daily_df[m_mask]
         if len(m_df) > 0:
             p, r, sf, sl, d = compute_kpi(m_df, len(m_df))
