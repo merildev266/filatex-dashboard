@@ -2197,28 +2197,12 @@ function renderSites() {
     const slocColor = slocVal === null ? 'var(--text-dim)' : slocVal <= 1.0 ? 'var(--energy)' : 'var(--red)';
     const slocDiff  = slocVal !== null ? (slocVal <= 1.0 ? '−' + (1.0 - slocVal).toFixed(1) + ' vs limite' : '+' + (slocVal - 1.0).toFixed(1) + ' vs limite') : '';
 
-    // ── Néon du site basé sur les 5 KPIs ──
-    // 1. Puissance dispo = 100% du contrat
-    // 2. Production réelle >= prévisionnel
-    // 3. Moteurs à l'arrêt = 0
-    // 4. SFOC < 250
-    // 5. SLOC < 1
-    const _kpiOk = [];
-    if (s.contrat > 0) _kpiOk.push(puissPct >= 100);
-    if (prodPct !== null) _kpiOk.push(prodDeltaPct >= 0);
-    _kpiOk.push(arretCount === 0);
-    if (sfocVal !== null) _kpiOk.push(sfocVal <= 250);
-    if (slocVal !== null) _kpiOk.push(slocVal <= 1.0);
-    const _greenN = _kpiOk.filter(Boolean).length;
-    const _totalN = _kpiOk.length;
-    // Tout vert → vert, ≥ moitié OK → orange, < moitié OK → rouge
+    // ── Néon du site basé sur le contrat ──
+    // Vert si puissance dispo >= 100% du contrat, rouge sinon
     let dotC, st;
-    if (_totalN === 0 || _greenN === _totalN) {
+    if (s.contrat > 0 && puissPct >= 100) {
       dotC = 'status-ok';
       st = {color:'#00ab63', rgb:'116,184,89'};
-    } else if (_greenN >= _totalN / 2) {
-      dotC = 'status-warn';
-      st = {color:'#FDB823', rgb:'245,166,35'};
     } else {
       dotC = 'status-ko';
       st = {color:'#e05c5c', rgb:'224,92,92'};
