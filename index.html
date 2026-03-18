@@ -336,7 +336,7 @@
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closePage('page-energy')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Accueil</button></div>
     <div class="sd-site-name" style="color:#00ab63;">Energy</div>
-    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
+    <div class="nav-filter"><div class="time-filter"><button class="tfilter tfilter-j1" onclick="setFilter24h(this)" style="margin-right:8px;">J-1</button><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
   </div>
   <div class="inner-page-inner">
 
@@ -556,7 +556,7 @@
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closeInner('hfo')" style="border-color:rgba(0,171,99,0.3);color:#00ab63;">Energy</button></div>
     <div class="sd-site-name">HFO</div>
-    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
+    <div class="nav-filter"><div class="time-filter"><button class="tfilter tfilter-j1" onclick="setFilter24h(this)" style="margin-right:8px;">J-1</button><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
   </div>
   <div class="inner-page-inner">
     <div class="section-title" style="text-align:center;">Consolidé HFO</div>
@@ -833,7 +833,7 @@
   <div class="sd-sticky-bar">
     <div class="nav-back"><button class="back-btn" onclick="closeDetail()">HFO</button></div>
     <div class="sd-site-name" id="detail-site-name">—</div>
-    <div class="nav-filter"><div class="time-filter"><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
+    <div class="nav-filter"><div class="time-filter"><button class="tfilter tfilter-j1" onclick="setFilter24h(this)" style="margin-right:8px;">J-1</button><span class="month-btn-wrap"><button class="tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span><span class="quarter-btn-wrap"><button class="tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span><span class="year-btn-wrap"><button class="tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span></div></div>
   </div>
   <div class="detail-inner">
 
@@ -1785,6 +1785,7 @@
     </div>
     <div class="nav-filter">
       <div class="time-filter">
+        <button class="tfilter tfilter-j1 gd-tfilter" onclick="setFilter24h(this)" style="margin-right:8px;">J-1</button>
         <span class="month-btn-wrap"><button class="tfilter gd-tfilter active" onclick="toggleMonthDropdown(event,this)">M</button><div class="month-dropdown"></div></span>
         <span class="quarter-btn-wrap"><button class="tfilter gd-tfilter" onclick="toggleQuarterDropdown(event,this)">Q</button><div class="quarter-dropdown"></div></span>
         <span class="year-btn-wrap"><button class="tfilter gd-tfilter" onclick="toggleYearDropdown(event,this)">A</button><div class="year-dropdown"></div></span>

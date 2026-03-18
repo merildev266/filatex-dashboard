@@ -1970,7 +1970,9 @@ function syncHfoFilterActive() {
     var mw = b.closest('.month-btn-wrap');
     var qw = b.closest('.quarter-btn-wrap');
     var yw = b.closest('.year-btn-wrap');
-    if (currentFilter === 'month') b.classList.toggle('active', !!mw);
+    var isJ1 = b.classList.contains('tfilter-j1');
+    if (currentFilter === '24h') b.classList.toggle('active', isJ1);
+    else if (currentFilter === 'month') b.classList.toggle('active', !!mw);
     else if (currentFilter === 'quarter') b.classList.toggle('active', !!qw);
     else if (currentFilter === 'year') b.classList.toggle('active', !!yw);
     else b.classList.remove('active');
@@ -2040,6 +2042,21 @@ function setFilterYear(year, btn) {
   requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); updateEnrMix(); });
 }
 
+function setFilter24h(btn) {
+  currentFilter = '24h';
+  // Reset M/Q/A button labels
+  document.querySelectorAll('.month-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'M'; });
+  document.querySelectorAll('.quarter-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'Q'; });
+  document.querySelectorAll('.year-btn-wrap .tfilter:not(.enr-filter)').forEach(b => { b.textContent = 'A'; });
+  syncHfoFilterActive();
+  const lbl = document.getElementById('filter-label-text');
+  if (lbl) lbl.textContent = 'J-1';
+  if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
+  else if(currentSite) renderDetail(currentSite);
+  else { renderSites(); renderConsolidated(); }
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); updateEnrMix(); });
+}
+
 // ══ QUARTER KPI COMPUTATION ══
 function getQuarterKpi(siteId, quarter) {
   const s = siteData[siteId];
@@ -2075,6 +2092,9 @@ function getQuarterKpi(siteId, quarter) {
 function _getKpiForSite(siteId) {
   const s = siteData[siteId];
   if (!s || !s.kpi) return {};
+  if (currentFilter === '24h') {
+    return s.kpi['24h'] || {};
+  }
   if (currentFilter === 'month') {
     const kpiKey = getMonthKpiKey();
     return s.kpi[kpiKey] || s.kpi['month'] || {};
@@ -2577,7 +2597,10 @@ function renderDetail(id) {
     const _isCurMonth = isCurrentMonth(selectedMonthIndex);
     {
       let pKwh, hfoL;
-      if(f === 'month' && _isCurMonth) {
+      if(f === '24h') {
+        pKwh = g.energieProd || 0;
+        hfoL = g.consoHFO || 0;
+      } else if(f === 'month' && _isCurMonth) {
         pKwh = (g.dailyProd||[]).reduce((a,b)=>a+b,0);
         hfoL = (g.dailyHFO||[]).reduce((a,b)=>a+b,0);
       } else if(f === 'month') {
@@ -2946,7 +2969,14 @@ function renderGroupeDetail(siteId, grpId) {
   // ── Section 1 — Heures & Exploitation (filter-aware) ──
   html += '<div class="gd-section">Heures de marche & Exploitation</div>';
   let s1_hVal, s1_hUnit, s1_hSub, s1_hColor, s1_sbVal, s1_sbSub, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel;
-  if (f === 'month') {
+  if (f === '24h') {
+    s1_hLabel = 'Marche J-1';
+    s1_hVal = parseFloat(g.hToday || 0).toFixed(1); s1_hUnit = 'h';
+    s1_sbSub = 'Standby : ' + parseFloat(g.hStandby || 0).toFixed(1) + ' h';
+    s1_hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)';
+    s1_afVal = parseFloat(g.arretForce || 0).toFixed(1); s1_afSub = 'Dernières 24h';
+    s1_apVal = parseFloat(g.arretPlanifie || 0).toFixed(1); s1_apSub = 'Dernières 24h';
+  } else if (f === 'month') {
     const _cm = isCurrentMonth(selectedMonthIndex);
     const mLabel = _cm ? 'ce mois' : MONTH_SHORT[selectedMonthIndex];
     s1_hLabel = 'Marche ' + mLabel;
@@ -3018,7 +3048,12 @@ function renderGroupeDetail(siteId, grpId) {
   // Chart card — filter-aware (24h: hourly kW, month: daily kWh, year: monthly kWh)
   let chartData, chartLabels, chartTitle, chartUnit;
 
-  if (f === 'month') {
+  if (f === '24h') {
+    chartData = g.hourlyLoad || Array(24).fill(0);
+    chartLabels = chartData.map((_, i) => i + 'h');
+    chartTitle = 'Charge horaire — J-1';
+    chartUnit = 'kW';
+  } else if (f === 'month') {
     const _cm2 = isCurrentMonth(selectedMonthIndex);
     if (_cm2) {
       const raw = g.dailyProd || Array(31).fill(0);
@@ -3108,7 +3143,16 @@ function renderGroupeDetail(siteId, grpId) {
   // Production KPIs — fully filter-aware
   let prodVal, prodUnit, prodSub, hVal, hUnit, hSub, hColor;
   let loadVal, loadUnit, loadSub, lvmvVal, lvmvUnit, lvmvSub;
-  if (f === 'month') {
+  if (f === '24h') {
+    const dProd = g.energieProd || 0;
+    prodVal = dProd > 1000 ? (dProd/1000).toFixed(1) : dProd.toFixed(1);
+    prodUnit = dProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production J-1';
+    hVal = parseFloat(g.hToday || 0).toFixed(1); hUnit = 'h'; hSub = 'Heures de marche J-1';
+    hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)';
+    loadVal = parseFloat(g.maxLoad || 0).toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge J-1';
+    lvmvVal = parseFloat(g.consLVMV || 0) > 0 ? parseFloat(g.consLVMV).toFixed(1) : '—';
+    lvmvUnit = parseFloat(g.consLVMV || 0) > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires J-1';
+  } else if (f === 'month') {
     const _cm3 = isCurrentMonth(selectedMonthIndex);
     const _mLbl = _cm3 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex];
     let mProd, jours;
@@ -3179,7 +3223,11 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-section">Combustible</div>';
   html += '<div class="gd-metrics-grid">';
   let fHFO, fLFO, fuelPeriod;
-  if (f === 'month') {
+  if (f === '24h') {
+    fHFO = g.consoHFO || 0;
+    fLFO = g.consoLFO || 0;
+    fuelPeriod = 'J-1';
+  } else if (f === 'month') {
     const _cm4 = isCurrentMonth(selectedMonthIndex);
     if (_cm4) {
       const dhfo = g.dailyHFO || []; fHFO = dhfo.reduce((a,b) => a+b, 0);
@@ -3220,7 +3268,11 @@ function renderGroupeDetail(siteId, grpId) {
   html += '<div class="gd-section">Huile moteur</div>';
   html += '<div class="gd-metrics-grid" style="grid-template-columns:repeat(4,1fr);">';
   let fOilC, fOilT, oilPeriod;
-  if (f === 'month') {
+  if (f === '24h') {
+    fOilC = g.oilConso || 0;
+    fOilT = g.oilTopUp || 0;
+    oilPeriod = 'J-1';
+  } else if (f === 'month') {
     const _cm5 = isCurrentMonth(selectedMonthIndex);
     if (_cm5) {
       const doc = g.dailyOilConso || []; fOilC = doc.reduce((a,b) => a+b, 0);
@@ -3267,7 +3319,13 @@ function renderGroupeDetail(siteId, grpId) {
   // Recalculate SFOC/SLOC from aggregated data based on filter
   const HFO_DENSITY = 0.96, OIL_DENSITY = 0.90;
   let calcSfoc = null, calcSloc = null;
-  if (f === 'month') {
+  if (f === '24h') {
+    const dProd = g.energieProd || 0;
+    const dHfo = g.consoHFO || 0;
+    const dOil = g.oilConso || 0;
+    if (dProd > 0 && dHfo > 0) calcSfoc = Math.round((dHfo * HFO_DENSITY) / dProd * 1000 * 10) / 10;
+    if (dProd > 0 && dOil > 0) calcSloc = Math.round((dOil * OIL_DENSITY) / dProd * 1000 * 100) / 100;
+  } else if (f === 'month') {
     const _cm6 = isCurrentMonth(selectedMonthIndex);
     let mProdKwh, mHfoL, mOilL;
     if (_cm6) {
