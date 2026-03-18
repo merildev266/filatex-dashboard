@@ -1277,6 +1277,9 @@ function updateEnrMix() {
 // Initial call
 updateEnrMix();
 
+/* Format generator ID with space before number (ADG1 -> ADG 1) */
+function fmtGId(id) { return id ? id.replace(/(\D+)(\d+)/, '$1 $2') : id; }
+
 function updateEnergyHfoCard() {
   const moisFR = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
   const filter = currentFilter || 'month';
@@ -2599,7 +2602,7 @@ function renderDetail(id) {
     const borderColor = isContra ? 'rgba(160,90,255,0.3)' : (g.statut==='ok'?'rgba(0,171,99,0.2)':g.statut==='warn'?'rgba(240,160,48,0.2)':'rgba(243,112,86,0.2)');
     const mw = parseFloat(g.mw).toFixed(1);
     return `<div style="cursor:pointer;display:flex;flex-direction:column;width:calc((100% - 32px)/5);" onclick="openGroupeDetail('${id}','${g.id}')">
-      <div style="text-align:center;font-size:11px;font-weight:700;color:${isContra?'#7b5fbf':'var(--text)'};margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px;"><span class="status-dot ${sc}" style="width:6px;height:6px;flex-shrink:0;"></span>${g.id}</div>
+      <div style="text-align:center;font-size:11px;font-weight:700;color:${isContra?'#7b5fbf':'var(--text)'};margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px;"><span class="status-dot ${sc}" style="width:6px;height:6px;flex-shrink:0;"></span>${fmtGId(g.id)}</div>
       <div class="s1-card" style="flex:1;padding:10px 6px;transition:border-color 0.2s;border-color:${borderColor};cursor:pointer;" onmouseenter="this.style.borderColor='${dotColor}'" onmouseleave="this.style.borderColor='${borderColor}'">
         <div style="font-size:7px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:4px;">Puissance</div>
         <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1;">${mw}<span style="font-size:9px;color:var(--text-muted);font-weight:400;"> MW</span></div>
@@ -2887,7 +2890,7 @@ function renderGroupeDetail(siteId, grpId) {
   if(!g) return;
 
   // ── Header ──
-  document.getElementById('gd-title').textContent = g.id;
+  document.getElementById('gd-title').textContent = fmtGId(g.id);
   document.getElementById('gd-subtitle').textContent = (g.model || '') + ' · ' + s.name + ' · ' + g.mw + ' MW';
 
   // ── Nav générateurs du site ──
@@ -2897,7 +2900,7 @@ function renderGroupeDetail(siteId, grpId) {
       const dotClass = gr.contradictory ? 'check' : gr.statut === 'ok' ? 'ok' : gr.statut === 'warn' ? 'warn' : 'ko';
       const isActive = gr.id === grpId;
       return `<button class="gen-nav-btn${isActive?' active':''}" onclick="openGroupeDetail('${siteId}','${gr.id}')">` +
-        `<span class="gen-nav-dot ${dotClass}"></span>${gr.id}</button>`;
+        `<span class="gen-nav-dot ${dotClass}"></span>${fmtGId(gr.id)}</button>`;
     }).join('');
   }
 
