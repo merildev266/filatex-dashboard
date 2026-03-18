@@ -1190,9 +1190,9 @@ function closeHfoProjets(){
 })();
 
 
-/* ── Mix EnR/HFO (après chargement site_data.js) ── */
-/* ── Mix EnR/HFO (après chargement site_data.js) ── */
+/* ── Mix EnR/HFO — moy. journalière + absolue par période ── */
 (function() {
+  // --- Daily average mix (unchanged logic, rounded to 0.01) ---
   var enrMwhJ = window._enrMwhJ || 0;
   var totalHfoKwh = 0;
   [TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE].forEach(function(site) {
@@ -1200,12 +1200,82 @@ function closeHfoProjets(){
     site.groupes.forEach(function(g) { totalHfoKwh += (g.energieProd || 0); });
   });
   var hfoMwhJ = totalHfoKwh / 1000;
-  var mixPct = (hfoMwhJ + enrMwhJ) > 0 ? Math.round(enrMwhJ / (hfoMwhJ + enrMwhJ) * 100) : 0;
+  var mixPct = (hfoMwhJ + enrMwhJ) > 0 ? (Math.round(enrMwhJ / (hfoMwhJ + enrMwhJ) * 10000) / 100) : 0;
   var elMix = document.getElementById('enr-prod-mix');
-  if (elMix) elMix.textContent = mixPct;
+  if (elMix) elMix.textContent = mixPct.toFixed(2);
   var elMixCard = document.getElementById('e-enr-mix');
-  if (elMixCard) elMixCard.textContent = mixPct + '%';
+  if (elMixCard) elMixCard.textContent = mixPct.toFixed(2) + '%';
 })();
+
+/* ── Mix EnR/HFO — absolue selon filtre (mois/trimestre/année) ── */
+function updateEnrMix() {
+  var filter = (typeof currentFilter !== 'undefined') ? currentFilter : 'month';
+  var mIdx = (typeof selectedMonthIndex !== 'undefined') ? selectedMonthIndex : new Date().getMonth();
+  var qtr = (typeof selectedQuarter !== 'undefined') ? selectedQuarter : Math.ceil((mIdx + 1) / 3);
+  var moisFR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+  // --- ENR production for the period (KWh) ---
+  var enrSites = window._enrSites || [];
+  var enrPeriodKwh = 0;
+  var targetYear = (typeof selectedYear !== 'undefined') ? selectedYear : new Date().getFullYear();
+
+  if (filter === 'month') {
+    var targetMonth = targetYear + '-' + String(mIdx + 1).padStart(2, '0');
+    enrSites.forEach(function(s) {
+      if (!s.monthly) return;
+      s.monthly.forEach(function(m) { if (m.month === targetMonth) enrPeriodKwh += m.totalProdKwh; });
+    });
+  } else if (filter === 'quarter') {
+    var qMonths = [(qtr - 1) * 3, (qtr - 1) * 3 + 1, (qtr - 1) * 3 + 2];
+    qMonths.forEach(function(mi) {
+      var tm = targetYear + '-' + String(mi + 1).padStart(2, '0');
+      enrSites.forEach(function(s) {
+        if (!s.monthly) return;
+        s.monthly.forEach(function(m) { if (m.month === tm) enrPeriodKwh += m.totalProdKwh; });
+      });
+    });
+  } else {
+    enrSites.forEach(function(s) {
+      if (!s.monthly) return;
+      s.monthly.forEach(function(m) { if (m.month.startsWith(String(targetYear))) enrPeriodKwh += m.totalProdKwh; });
+    });
+  }
+
+  // --- HFO production for the period (KWh) ---
+  var hfoPeriodKwh = 0;
+  var hfoSites = (typeof TAMATAVE_LIVE !== 'undefined') ? [TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE] : [];
+  hfoSites.forEach(function(site) {
+    if (!site || !site.groupes) return;
+    site.groupes.forEach(function(g) {
+      if (!g.monthlyProd) return;
+      if (filter === 'month') {
+        hfoPeriodKwh += (g.monthlyProd[mIdx] || 0);
+      } else if (filter === 'quarter') {
+        for (var qi = (qtr - 1) * 3; qi < qtr * 3; qi++) hfoPeriodKwh += (g.monthlyProd[qi] || 0);
+      } else {
+        g.monthlyProd.forEach(function(v) { hfoPeriodKwh += (v || 0); });
+      }
+    });
+  });
+
+  // --- Calculate & display ---
+  var totalPeriod = enrPeriodKwh + hfoPeriodKwh;
+  var mixPeriod = totalPeriod > 0 ? (Math.round(enrPeriodKwh / totalPeriod * 10000) / 100) : 0;
+
+  var label = filter === 'month' ? moisFR[mIdx] : filter === 'quarter' ? 'Q' + qtr : String(targetYear);
+
+  var el1 = document.getElementById('e-enr-mix-period');
+  if (el1) el1.textContent = mixPeriod.toFixed(2) + '%';
+  var el1l = document.getElementById('e-enr-mix-period-label');
+  if (el1l) el1l.textContent = 'du mix · ' + label;
+
+  var el2 = document.getElementById('enr-prod-mix-period');
+  if (el2) el2.textContent = mixPeriod.toFixed(2);
+  var el2l = document.getElementById('enr-prod-mix-period-label');
+  if (el2l) el2l.textContent = 'du mix · ' + label;
+}
+// Initial call
+updateEnrMix();
 
 function updateEnergyHfoCard() {
   const moisFR = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
@@ -1887,7 +1957,7 @@ function selectMonth(monthIdx, event) {
   if (currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
   else if (currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
-  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); updateEnrMix(); });
 }
 
 // ══ FILTER ══
@@ -1928,7 +1998,7 @@ function setFilter(f, btn) {
   if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
   else if(currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
-  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); updateEnrMix(); });
 }
 
 function setFilterQuarter(q, btn) {
@@ -1946,7 +2016,7 @@ function setFilterQuarter(q, btn) {
   if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
   else if(currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
-  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); updateEnrMix(); });
 }
 
 function setFilterYear(year, btn) {
@@ -1964,7 +2034,7 @@ function setFilterYear(year, btn) {
   if(currentGroupe) renderGroupeDetail(currentGroupe.siteId, currentGroupe.grpId);
   else if(currentSite) renderDetail(currentSite);
   else { renderSites(); renderConsolidated(); }
-  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); });
+  requestAnimationFrame(() => { renderSites(); renderConsolidated(); updateEnergyHfoCard(); updateEnrMix(); });
 }
 
 // ══ QUARTER KPI COMPUTATION ══
