@@ -2089,12 +2089,11 @@ function renderPropsTable(sub, siteFilter) {
   var kpiProjects = propsGroupByProject(kpiRows);
 
   var bar = document.getElementById('rpt-props-' + sub + '-kpi-bar');
-  var delayActive = _propsDelayFilter ? 'background:rgba(224,92,92,0.15);border:1px solid rgba(224,92,92,0.4);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
   bar.innerHTML =
     '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + kpiProjects.length + '</div><div class="kl">Projets</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + kpiRows.length + '</div><div class="kl">\u00c9tapes</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + kpiRows.filter(function(r) { return r.timing_var === 'On Time'; }).length + '</div><div class="kl">On Time</div></div>' +
-    '<div class="rpt-kpi-item" onclick="togglePropsDelayFilter()" style="' + delayActive + '"><div class="kv" style="color:#E05C5C;">' + kpiRows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length + '</div><div class="kl">En retard \u25BC</div></div>';
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#E05C5C;">' + kpiRows.filter(function(r) { return r.timing_var && r.timing_var.indexOf('Delay') >= 0; }).length + '</div><div class="kl">En retard</div></div>';
 
   var html = '<table class="rpt-table"><thead><tr>' +
     '<th style="min-width:60px;">Resp.</th>' +
@@ -2417,8 +2416,8 @@ function renderPropsPoleCards() {
       '<span class="kv" style="color:#FDB823;">' + projects.length + '</span><span class="kl">Projets</span></div>' +
       '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'' + sub + '\')" style="cursor:pointer;">' +
       '<span class="kv" style="color:#00ab63;">' + data.length + '</span><span class="kl">\u00c9tapes</span></div>' +
-      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSubWithDelay(\'' + sub + '\')" style="cursor:pointer;background:rgba(224,92,92,0.08);border-radius:8px;">' +
-      '<span class="kv" style="color:#E05C5C;">' + delayed + '</span><span class="kl">Retard \u25BC</span></div>';
+      '<div class="rpt-pole-kpi" onclick="event.stopPropagation();openPropsDirectSub(\'' + sub + '\')" style="cursor:pointer;">' +
+      '<span class="kv" style="color:#E05C5C;">' + delayed + '</span><span class="kl">Retard</span></div>';
   }
 
   // SAV card
