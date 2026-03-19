@@ -2155,14 +2155,13 @@ function renderPropsCards(sub, siteFilter) {
   }
 
   var bar = document.getElementById('rpt-props-' + sub + '-kpi-bar');
-  var delayActive = _propsDelayFilter ? 'background:rgba(224,92,92,0.15);border:1px solid rgba(224,92,92,0.4);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
   var onTimeCount = allEtapes.filter(function(e) { return e.timing_var === 'On Time'; }).length;
   var delayCount = allEtapes.filter(function(e) { return e.timing_var && e.timing_var.indexOf('Delay') >= 0; }).length;
   bar.innerHTML =
     '<div class="rpt-kpi-item"><div class="kv" style="color:#00ab63;">' + fullData.length + '</div><div class="kl">Projets</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + allEtapes.length + '</div><div class="kl">\u00c9tapes</div></div>' +
     '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + onTimeCount + '</div><div class="kl">On Time</div></div>' +
-    '<div class="rpt-kpi-item" onclick="togglePropsDelayFilter()" style="' + delayActive + '"><div class="kv" style="color:#E05C5C;">' + delayCount + '</div><div class="kl">En retard \u25BC</div></div>';
+    '<div class="rpt-kpi-item"><div class="kv" style="color:#E05C5C;">' + delayCount + '</div><div class="kl">En retard</div></div>';
 
   // Build cards
   var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;">';
