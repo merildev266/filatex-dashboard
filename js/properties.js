@@ -175,25 +175,19 @@
     card.onmouseleave = function(){ this.style.borderColor='rgba(66,106,179,0.12)'; this.style.transform='none'; };
     card.onclick = function(){ openDevProject(idx); };
     card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div style="font-size:13px;font-weight:700;color:#fff;">${p.name}</div>
         <span style="font-size:9px;font-weight:700;color:${statusColor};background:${statusColor}15;padding:3px 8px;border-radius:6px;">${statusLabel}</span>
       </div>
-      <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:10px;">${p.duree} jours &middot; ${p.debut.slice(0,4)} &rarr; ${p.fin.slice(0,4)}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <span style="font-size:10px;color:rgba(255,255,255,0.6);">Avancement global</span>
-        <span style="font-size:11px;font-weight:700;color:${azur};">${p.pct}%</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <span style="font-size:10px;color:rgba(255,255,255,0.5);">Avancement</span>
+        <span style="font-size:12px;font-weight:700;color:${azur};">${p.pct}%</span>
       </div>
-      <div style="height:4px;background:rgba(66,106,179,0.1);border-radius:2px;overflow:hidden;">
-        <div style="height:100%;width:${p.pct}%;background:${p.status==='retard'?neonRed:azur};border-radius:2px;"></div>
+      <div style="height:5px;background:rgba(66,106,179,0.1);border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${p.pct}%;background:${p.status==='retard'?neonRed:azur};border-radius:3px;"></div>
       </div>
-      ${p.glissMax > 0 ? '<div style="font-size:10px;color:'+statusColor+';margin-top:6px;font-weight:600;">Glissement max: +'+p.glissMax+' jours</div>' : ''}
-      <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,0.5);"><b style="color:rgba(255,255,255,0.7);">Phase en cours:</b> ${phaseStr}</div>
-      ${timelineHtml}
-      <div style="display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px;">
-        <span>${p.debut.slice(0,7)}</span><span>${p.fin.slice(0,7)}</span>
-      </div>
-      ${p.comment ? '<div style="margin-top:8px;font-size:9px;color:rgba(255,255,255,0.35);font-style:italic;line-height:1.3;">'+p.comment+'</div>' : ''}
+      ${p.glissMax > 0 ? '<div style="font-size:10px;color:'+statusColor+';margin-top:8px;font-weight:600;">+'+p.glissMax+' jours</div>' : ''}
+      <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,0.45);">${phaseStr}</div>
     `;
     list.appendChild(card);
   });

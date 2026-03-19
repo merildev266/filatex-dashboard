@@ -1399,7 +1399,7 @@ function closeDetail() {
 // ══ SITE DATA ══
 var siteData = {
   tamatave: {
-    name:'Tamatave', status:'ko', mw:0, contrat:24,
+    name:'Tamatave', status:'ko', mw:0, contrat:32,
     groupes:[
       {id:'ADG1',  model:'12V32 LN', mw:1.85, statut:'ko', condition:'Breakdown', jourArret:5,
        h:77394, hToday:0, hStandby:0, arretForce:24, arretPlanifie:0,
@@ -1492,7 +1492,7 @@ var siteData = {
     }
   },
   tulear: {
-    name:'Tuléar', status:'warn', mw:15, contrat:15,
+    name:'Tuléar', status:'warn', mw:15, contrat:9.9,
     groupes:[
       {id:'UDG1', model:'12V32 LN', mw:3.75, statut:'ok', condition:'Running', jourArret:0,
        h:52840, hToday:24, hStandby:0, arretForce:0, arretPlanifie:0,
@@ -1531,7 +1531,7 @@ var siteData = {
     }
   },
   diego: {
-    name:'Diego', status:'warn', mw:9.6, contrat:12,
+    name:'Diego', status:'warn', mw:9.6, contrat:18.5,
     groupes:[
       {id:'DDG1',  model:'9L20', mw:1.2, statut:'ko', condition:'Breakdown', jourArret:3,
        h:38420, hToday:0, hStandby:0, arretForce:24, arretPlanifie:0,
@@ -1606,7 +1606,7 @@ var siteData = {
     }
   },
   majunga: {
-    name:'Majunga', status:'ok', mw:20, contrat:20,
+    name:'Majunga', status:'ok', mw:20, contrat:16.3,
     groupes:[
       {id:'MDG1', model:'12V32 LN', mw:4, statut:'ok', condition:'Running', jourArret:0,
        h:62504, hToday:24, hStandby:0, arretForce:0, arretPlanifie:0,
@@ -1651,7 +1651,7 @@ var siteData = {
     }
   },
   antsirabe: {
-    name: 'Antsirabe', status: 'reconstruction', mw: 0, contrat: 0,
+    name: 'Antsirabe', status: 'reconstruction', mw: 0, contrat: 7.5,
     notice: '🔧 Site en réparation suite à un incendie',
     groupes: [], kpi: {}, prev2025: {}, blackouts: [], dailyTrend: [], latestDate: ''
   },
