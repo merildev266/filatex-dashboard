@@ -1286,6 +1286,510 @@ def load_site_files(cfg):
             fuel_stock_data, solar_data, oil_stock_data, load_chart_data)
 
 
+def build_site_from_frames(site_key: str, daily_df, oil_df, blackout_df,
+                           hfo_detail: dict, monthly_dg_metrics: dict,
+                           fuel_stock_data, solar_data, oil_stock_data, load_chart_data):
+    """Build site data from pre-loaded DataFrames. Called by SharePoint parser (parsers/hfo.py)."""
+    cfg = SITE_CONFIG[site_key]
+    dd = cfg["dd_cols"]
+    num_eng = cfg["num_engines"]
+
+    # --- Fill missing Daily Data from per-DG HFO specific data sheets ---
+    # When a month's Daily Data sheet is empty (e.g. formulas not computed),
+    # reconstruct daily totals by summing per-DG metrics from HFO sheets.
+    if monthly_dg_metrics:
+        # Determine which months already have data in daily_df
+        months_with_data = set()
+        if not daily_df.empty and "_file_month" in daily_df.columns:
+            for m in daily_df["_file_month"].dropna().unique():
+                # Check if month actually has production data
+                m_rows = daily_df[daily_df["_file_month"] == m]
+                if m_rows.iloc[:, dd["gross_mwh"]].apply(safe_float).sum() > 0:
+                    months_with_data.add(int(m))
+
+        for month_num, dg_data in monthly_dg_metrics.items():
+            if month_num in months_with_data:
+                continue  # Already have valid data for this month
+
+            # Determine number of days in this month (2026)
+            import calendar
+            num_days = calendar.monthrange(2026, month_num)[1]
+
+            synth_rows = []
+            for day_idx in range(num_days):
+                # Sum across all DGs for each metric
+                gross = sum(dg_data.get(dg, {}).get("energieProd", [0.0]*31)[day_idx]
+                            for dg in dg_data)
+                if gross <= 0:
+                    continue  # Skip days with no production
+
+                station = sum(dg_data.get(dg, {}).get("consLVMV", [0.0]*31)[day_idx]
+                              for dg in dg_data)
+                net = gross - station
+                planned = sum(dg_data.get(dg, {}).get("arretPlanifie", [0.0]*31)[day_idx]
+                              for dg in dg_data)
+                forced = sum(dg_data.get(dg, {}).get("arretForce", [0.0]*31)[day_idx]
+                             for dg in dg_data)
+                standby = sum(dg_data.get(dg, {}).get("hStandby", [0.0]*31)[day_idx]
+                              for dg in dg_data)
+                run = sum(dg_data.get(dg, {}).get("hToday", [0.0]*31)[day_idx]
+                          for dg in dg_data)
+                hfo = sum(dg_data.get(dg, {}).get("consoHFO", [0.0]*31)[day_idx]
+                          for dg in dg_data)
+                lfo = sum(dg_data.get(dg, {}).get("consoLFO", [0.0]*31)[day_idx]
+                          for dg in dg_data)
+                lube = sum(dg_data.get(dg, {}).get("oilConso", [0.0]*31)[day_idx]
+                           for dg in dg_data)
+                sfoc = round(hfo * 1000 / net, 1) if net > 0 else 0
+
+                # Build row with same column layout as daily_df
+                row_date = datetime(2026, month_num, day_idx + 1)
+                row_data = {dd["date"]: row_date}
+                row_data[dd["gross_mwh"]] = round(gross, 1)
+                row_data[dd["net_mwh"]] = round(net, 1)
+                row_data[dd["station_use"]] = round(station, 1)
+                row_data[dd["planned_maint"]] = round(planned, 1)
+                row_data[dd["forced"]] = round(forced, 1)
+                row_data[dd["standby"]] = round(standby, 1)
+                row_data[dd["run"]] = round(run, 1)
+                row_data[dd["hfo_kgs"]] = round(hfo, 1)
+                row_data[dd["lfo"]] = round(lfo, 1)
+                row_data[dd["lube_oil"]] = round(lube, 1)
+                row_data[dd["sfoc_gm"]] = sfoc
+                row_data["_file_month"] = month_num
+                synth_rows.append(row_data)
+
+            if synth_rows:
+                synth_df = pd.DataFrame(synth_rows)
+                # Ensure same number of columns by reindexing
+                if not daily_df.empty:
+                    synth_df = synth_df.reindex(columns=daily_df.columns)
+                daily_df = pd.concat([daily_df, synth_df], ignore_index=True)
+                print(f"  [INFO] Reconstructed {len(synth_rows)} daily rows for month {month_num} from per-DG data")
+
+        # Re-sort by date
+        if not daily_df.empty:
+            daily_df = daily_df.sort_values(by=daily_df.columns[dd["date"]]).reset_index(drop=True)
+
+    if daily_df.empty:
+        return None
+
+    # Filter out rows with zero production (future/empty dates)
+    daily_df = daily_df[daily_df.iloc[:, dd["gross_mwh"]].apply(safe_float) > 0]
+    oil_conso_col = cfg.get("oil_conso_total_col")
+    if not oil_df.empty and oil_conso_col is not None:
+        oil_df = oil_df[oil_df.iloc[:, oil_conso_col].apply(safe_float) > 0]
+
+    if daily_df.empty:
+        return None
+
+    # --- Latest day data ---
+    latest = daily_df.iloc[-1]
+    latest_date = pd.Timestamp(latest.iloc[dd["date"]])
+
+    # --- Latest oil row ---
+    latest_oil = oil_df.iloc[-1] if not oil_df.empty else None
+
+    # --- DG statuses (only Tamatave has them in Daily Data) ---
+    status_map_raw = {}
+    if cfg["has_dg_status"]:
+        dg_start = cfg["dg_status_start"]
+        for i in range(num_eng):
+            col_idx = dg_start + i
+            if col_idx < len(latest):
+                val = latest.iloc[col_idx]
+                status_map_raw[f"DG{i+1}"] = str(val) if pd.notna(val) else "Unknown"
+
+    # --- Build per-engine data ---
+    groupes = []
+    for eng in cfg["engine_map"]:
+        dg_id = eng["id"]
+
+        # Get oil data (skip if engine has no oil columns or no oil sheet)
+        oil_conso = 0.0
+        oil_rh = 0.0
+        if latest_oil is not None and eng.get("col_conso") is not None:
+            oil_conso = safe_float(latest_oil.iloc[eng["col_conso"]])
+            if cfg.get("oil_rh_is_time"):
+                oil_rh = time_to_hours(latest_oil.iloc[eng["col_rh"]])
+            else:
+                oil_rh = safe_float(latest_oil.iloc[eng["col_rh"]])
+
+        # ── Merge HFO daily report detail (richer data) ──
+        hd = hfo_detail.get(dg_id, {})
+
+        # Determine status
+        if cfg["has_dg_status"]:
+            raw_status = status_map_raw.get(dg_id, "Unknown")
+            statut = dg_status_to_code(raw_status)
+            condition = dg_condition(raw_status)
+        else:
+            # No DG status in sheet — infer from oil hours or HFO detail
+            if oil_rh > 0:
+                statut = "ok"
+                condition = "Running"
+            elif hd.get("hToday", 0) > 0:
+                statut = "ok"
+                condition = "Running"
+            else:
+                statut = "standby"
+                condition = "Standby"
+
+        # Override status from HFO detail if available (more accurate)
+        if hd.get("condition"):
+            raw_cond = hd["condition"]
+            statut = dg_status_to_code(raw_cond)
+            condition = dg_condition(raw_cond)
+
+        # Hours and stoppages
+        h_cumul = hd.get("h_cumul", 0.0)
+        h_today = hd.get("hToday", oil_rh)
+        h_standby = hd.get("hStandby", 0.0)
+        arret_force = hd.get("arretForce", 24.0 if condition == "Breakdown" else 0.0)
+        arret_planifie = hd.get("arretPlanifie", 24.0 if condition == "Maintenance" else 0.0)
+
+        # Production & load
+        max_load = hd.get("maxLoad", 0.0)
+        energie_prod = hd.get("energieProd", 0.0)
+        cons_lvmv = hd.get("consLVMV", 0.0)
+
+        # Fuel
+        conso_hfo = hd.get("consoHFO", 0.0)
+        conso_lfo = hd.get("consoLFO", 0.0)
+
+        # Oil — prefer HFO detail, fall back to oil sheet
+        oil_topup = hd.get("oilTopUp", oil_conso)
+        oil_conso_val = hd.get("oilConso", oil_conso)
+        oil_sump = hd.get("oilSumpLevel", 0.0)
+        lube_pressure = hd.get("lubeOilPressure", 0.0)
+        fuel_temp = hd.get("fuelOilTemp", 0.0)
+
+        # Compute per-DG SFOC and SLOC
+        dg_sfoc = None
+        dg_sloc = None
+        if energie_prod > 0:
+            dg_sfoc = round((conso_hfo * HFO_DENSITY) / energie_prod * 1000, 1)
+            if oil_conso_val > 0:
+                dg_sloc = round((oil_conso_val * OIL_DENSITY) / energie_prod * 1000, 2)
+
+        # Description / maintenance note
+        desc = hd.get("description", "")
+        if desc:
+            maint_label = desc
+        elif condition != "Running":
+            maint_label = condition
+        else:
+            maint_label = "Running normal"
+
+        # ── Contradictory data detection ──
+        # Flag when status and operational data don't match:
+        #   - Says not-running but has significant runtime or production
+        #   - Says running but no runtime and no production
+        contradictory = False
+        if statut != "ok" and (h_today > 1 or energie_prod > 100):
+            contradictory = True  # labelled stopped/standby but actually producing
+        elif statut == "ok" and h_today == 0 and energie_prod == 0:
+            contradictory = True  # labelled running but no output
+
+        groupe = {
+            "id": dg_id,
+            "model": eng["model"],
+            "mw": eng["mw"],
+            "statut": statut,
+            "condition": condition,
+            "contradictory": contradictory,
+            "jourArret": 0 if statut == "ok" else 1,
+            "h": round(h_cumul, 1),
+            "hToday": round(h_today, 1),
+            "hStandby": round(h_standby, 1),
+            "arretForce": round(arret_force, 1),
+            "arretPlanifie": round(arret_planifie, 1),
+            "maxLoad": round(max_load),
+            "energieProd": round(energie_prod, 1),
+            "consLVMV": round(cons_lvmv),
+            "consoHFO": round(conso_hfo, 1),
+            "consoLFO": round(conso_lfo, 1),
+            "oilTopUp": round(oil_topup, 1),
+            "oilConso": round(oil_conso_val, 1),
+            "oilSumpLevel": round(oil_sump, 1),
+            "lubeOilPressure": round(lube_pressure, 1),
+            "fuelOilTemp": round(fuel_temp),
+            "sfoc": dg_sfoc,
+            "sloc": dg_sloc,
+            "maint": maint_label,
+            "hourlyLoad": hd.get("hourlyLoad", [0] * 24),
+            "dailyProd": [],         # filled below
+            "dailyHours": [],        # filled below
+            "dailyHFO": [],          # filled below
+            "dailyLFO": [],          # filled below
+            "dailyOilConso": [],     # filled below
+            "dailyOilTopUp": [],     # filled below
+            "dailyMaxLoad": [],      # filled below
+            "dailyConsLVMV": [],     # filled below
+            "dailyStandby": [],      # filled below
+            "dailyArretForce": [],   # filled below
+            "dailyArretPlanifie": [],# filled below
+            "monthlyProd": [],       # filled below
+            "monthlyHours": [],      # filled below
+            "monthlyHFO": [],        # filled below
+            "monthlyLFO": [],        # filled below
+            "monthlyOilConso": [],   # filled below
+            "monthlyOilTopUp": [],   # filled below
+            "monthlyMaxLoad": [],    # filled below
+            "monthlyConsLVMV": [],   # filled below
+        }
+        groupes.append(groupe)
+
+    # --- Fill daily & monthly arrays for ALL metrics per DG ---
+    # Determine which month is the latest (from the latest daily data date)
+    current_month = latest_date.month if pd.notna(latest_date) else None
+
+    # Mapping: groupe field name → metric key in daily_dg_metrics
+    _DAILY_MAP = {
+        "dailyProd":          "energieProd",
+        "dailyHours":         "hToday",
+        "dailyHFO":           "consoHFO",
+        "dailyLFO":           "consoLFO",
+        "dailyOilConso":      "oilConso",
+        "dailyOilTopUp":      "oilTopUp",
+        "dailyMaxLoad":       "maxLoad",
+        "dailyConsLVMV":      "consLVMV",
+        "dailyStandby":       "hStandby",
+        "dailyArretForce":    "arretForce",
+        "dailyArretPlanifie": "arretPlanifie",
+    }
+    _MONTHLY_MAP = {
+        "monthlyProd":          "energieProd",
+        "monthlyHours":         "hToday",
+        "monthlyHFO":           "consoHFO",
+        "monthlyLFO":           "consoLFO",
+        "monthlyOilConso":      "oilConso",
+        "monthlyOilTopUp":      "oilTopUp",
+        "monthlyMaxLoad":       "maxLoad",
+        "monthlyConsLVMV":      "consLVMV",
+        "monthlyStandby":       "hStandby",
+        "monthlyArretForce":    "arretForce",
+        "monthlyArretPlanifie": "arretPlanifie",
+    }
+    # Metrics that should use max() instead of sum() for monthly aggregation
+    _MAX_METRICS = {"maxLoad"}
+
+    for g in groupes:
+        dg_id = g["id"]
+
+        # Daily arrays for current month
+        if current_month and current_month in monthly_dg_metrics:
+            dm = monthly_dg_metrics[current_month].get(dg_id, {})
+            for field, metric_key in _DAILY_MAP.items():
+                g[field] = dm.get(metric_key, [0.0] * 31)
+
+        # Monthly totals for the year (sum or max of daily values per month)
+        for field, metric_key in _MONTHLY_MAP.items():
+            month_totals = []
+            for m in range(1, 13):
+                if m in monthly_dg_metrics and dg_id in monthly_dg_metrics[m]:
+                    daily_vals = monthly_dg_metrics[m][dg_id].get(metric_key, [0.0] * 31)
+                    if metric_key in _MAX_METRICS:
+                        month_totals.append(round(max(daily_vals), 1))
+                    else:
+                        month_totals.append(round(sum(daily_vals), 1))
+                else:
+                    month_totals.append(0.0)
+            g[field] = month_totals
+
+    # --- Compute KPIs ---
+    hfo_is_liters = cfg.get("hfo_is_liters", False)
+    energy_in_mwh = cfg.get("dd_energy_in_mwh", False)
+    dd_hours_as_time = cfg.get("dd_hours_as_time", False)
+
+    def compute_kpi(df_slice, num_days):
+        net_raw = df_slice.iloc[:, dd["net_mwh"]].apply(safe_float).sum()
+        hfo = df_slice.iloc[:, dd["hfo_kgs"]].apply(safe_float).sum()
+        lube = df_slice.iloc[:, dd["lube_oil"]].apply(safe_float).sum()
+        # Tulear hours columns are timedelta — need time_to_hours conversion
+        if dd_hours_as_time:
+            run = df_slice.iloc[:, dd["run"]].apply(time_to_hours).sum()
+        else:
+            run = df_slice.iloc[:, dd["run"]].apply(safe_float).sum()
+        # Majunga Brief data has energy in MWh; Tamatave/Diego in kWh
+        if energy_in_mwh:
+            prod = net_raw          # already MWh
+            net_kwh = net_raw * 1000  # convert to kWh for SFOC/SLOC
+        else:
+            prod = net_raw / 1000   # kWh → MWh
+            net_kwh = net_raw
+        # If HFO column is liters (Majunga), convert to kgs first
+        hfo_kgs = hfo * HFO_DENSITY if hfo_is_liters else hfo
+        sfoc = round(hfo_kgs * 1000 / net_kwh, 1) if net_kwh > 0 else None
+        sloc = round(lube / net_kwh * 1000, 2) if net_kwh > 0 else None
+        dispo = round(run / (num_eng * 24 * num_days) * 100, 1) if num_days > 0 else 0
+        return prod, run, sfoc, sloc, dispo
+
+    # 24h
+    last_row = daily_df.iloc[[-1]]
+    prod_24h, run_24h, sfoc_24h, sloc_24h, dispo_24h = compute_kpi(last_row, 1)
+
+    # Month
+    now = latest_date
+    month_mask = daily_df.iloc[:, dd["date"]].apply(
+        lambda x: isinstance(x, (datetime, pd.Timestamp)) and
+        pd.Timestamp(x).month == now.month and pd.Timestamp(x).year == now.year
+    )
+    month_df = daily_df[month_mask]
+    prod_month, run_month, sfoc_month, sloc_month, dispo_month = compute_kpi(month_df, len(month_df))
+
+    # Year
+    year_mask = daily_df.iloc[:, dd["date"]].apply(
+        lambda x: isinstance(x, (datetime, pd.Timestamp)) and pd.Timestamp(x).year == now.year
+    )
+    year_df = daily_df[year_mask]
+    prod_year, run_year, sfoc_year, sloc_year, dispo_year = compute_kpi(year_df, len(year_df))
+
+    # Per-month KPIs (month_1 through month_12)
+    # Use _file_month tag if available (robust against wrong dates in Excel)
+    per_month_kpis = {}
+    has_file_month = "_file_month" in daily_df.columns
+    for m in range(1, 13):
+        if has_file_month:
+            m_mask = daily_df["_file_month"] == m
+        else:
+            m_mask = daily_df.iloc[:, dd["date"]].apply(
+                lambda x, month=m: isinstance(x, (datetime, pd.Timestamp)) and
+                pd.Timestamp(x).month == month and pd.Timestamp(x).year == now.year
+            )
+        m_df = daily_df[m_mask]
+        if len(m_df) > 0:
+            p, r, sf, sl, d = compute_kpi(m_df, len(m_df))
+            per_month_kpis[f"month_{m}"] = {
+                "prod": round(p, 1), "prodObj": cfg["prod_obj_month"],
+                "dispo": d, "heures": round(r, 1),
+                "sfoc": sf, "sloc": sl,
+            }
+        else:
+            per_month_kpis[f"month_{m}"] = {
+                "prod": 0, "prodObj": cfg["prod_obj_month"],
+                "dispo": 0, "heures": 0,
+                "sfoc": None, "sloc": None,
+            }
+
+    # Total running MW (use per-engine MW for sites with different DG capacities)
+    running_count = sum(1 for g in groupes if g["statut"] == "ok")
+    mw_total = round(sum(g["mw"] for g in groupes if g["statut"] == "ok"), 1)
+
+    # Site status
+    if running_count == 0:
+        site_status = "ko"
+    elif running_count < cfg["warn_threshold"]:
+        site_status = "warn"
+    else:
+        site_status = "ok"
+
+    # --- Blackout data ---
+    blackout_events = []
+    bo_cols = cfg["blackout_cols"]
+    bo_date_col = cfg["blackout_date_col"]
+    for _, row in blackout_df.iterrows():
+        try:
+            event = {
+                "date": str(pd.Timestamp(row.iloc[bo_date_col]).date()),
+                "description": str(row.iloc[bo_cols["description"]]) if bo_cols.get("description") is not None and pd.notna(row.iloc[bo_cols["description"]]) else "",
+                "cause": str(row.iloc[bo_cols["cause"]]) if bo_cols.get("cause") is not None and pd.notna(row.iloc[bo_cols["cause"]]) else "",
+                "source": str(row.iloc[bo_cols["source"]]) if bo_cols.get("source") is not None and pd.notna(row.iloc[bo_cols["source"]]) else "",
+                "start": str(row.iloc[bo_cols["start"]]) if bo_cols.get("start") is not None and pd.notna(row.iloc[bo_cols["start"]]) else "",
+                "end": str(row.iloc[bo_cols["end"]]) if bo_cols.get("end") is not None and pd.notna(row.iloc[bo_cols["end"]]) else "",
+            }
+            if bo_cols.get("duration") is not None:
+                event["duration"] = str(row.iloc[bo_cols["duration"]]) if pd.notna(row.iloc[bo_cols["duration"]]) else ""
+            if bo_cols.get("incharge") is not None:
+                event["incharge"] = str(row.iloc[bo_cols["incharge"]]) if pd.notna(row.iloc[bo_cols["incharge"]]) else ""
+            blackout_events.append(event)
+        except Exception:
+            continue
+
+    # --- Daily trend ---
+    daily_trend = []
+    for _, row in daily_df.iterrows():
+        try:
+            d = pd.Timestamp(row.iloc[dd["date"]])
+            # Convert hours columns appropriately
+            if dd_hours_as_time:
+                run_val = round(time_to_hours(row.iloc[dd["run"]]), 1)
+                standby_val = round(time_to_hours(row.iloc[dd["standby"]]), 1)
+            else:
+                run_val = round(safe_float(row.iloc[dd["run"]]), 1)
+                standby_val = round(safe_float(row.iloc[dd["standby"]]), 1)
+            # Convert energy to MWh for trend display
+            if energy_in_mwh:
+                gross = round(safe_float(row.iloc[dd["gross_mwh"]]), 1)
+                net = round(safe_float(row.iloc[dd["net_mwh"]]), 1)
+            else:
+                gross = round(safe_float(row.iloc[dd["gross_mwh"]]) / 1000, 1)
+                net = round(safe_float(row.iloc[dd["net_mwh"]]) / 1000, 1)
+            daily_trend.append({
+                "date": str(d.date()),
+                "gross_mwh": gross,
+                "net_mwh": net,
+                "hfo_kgs": round(safe_float(row.iloc[dd["hfo_kgs"]])),
+                "lube_oil": round(safe_float(row.iloc[dd["lube_oil"]]), 1),
+                "run_hours": run_val,
+                "standby": standby_val,
+            })
+        except Exception:
+            continue
+
+    # ── NEW KPIs ──
+
+    # 1. Blackout stats
+    blackout_stats = compute_blackout_stats(blackout_events)
+
+    # 2. Station use % (Gross vs Net)
+    station_use_stats = compute_station_use(daily_trend)
+
+    # 3. Per-DG availability
+    compute_dg_availability(groupes)
+
+    # 4. Site-level hourly load (sum of all DGs)
+    site_hourly_load = compute_site_hourly_load(groupes)
+
+    return {
+        "name": cfg["name"],
+        "status": site_status,
+        "mw": mw_total,
+        "contrat": cfg["contrat"],
+        "latestDate": str(latest_date.date()),
+        "groupes": groupes,
+        "latestMonth": latest_date.month if pd.notna(latest_date) else 1,
+        "kpi": {
+            "24h": {
+                "prod": round(prod_24h, 1), "prodObj": cfg["prod_obj_24h"],
+                "dispo": dispo_24h, "heures": round(run_24h, 1),
+                "sfoc": sfoc_24h, "sloc": sloc_24h,
+            },
+            "month": {
+                "prod": round(prod_month, 1), "prodObj": cfg["prod_obj_month"],
+                "dispo": dispo_month, "heures": round(run_month, 1),
+                "sfoc": sfoc_month, "sloc": sloc_month,
+            },
+            "year": {
+                "prod": round(prod_year, 1), "prodObj": cfg["prod_obj_year"],
+                "dispo": dispo_year, "heures": round(run_year, 1),
+                "sfoc": sfoc_year, "sloc": sloc_year,
+            },
+            **per_month_kpis,
+        },
+        "prev2025": cfg["prev2025"],
+        "blackouts": blackout_events,
+        "blackoutStats": blackout_stats,
+        "dailyTrend": daily_trend,
+        "stationUse": station_use_stats,
+        "siteHourlyLoad": site_hourly_load,
+        "fuelStock": fuel_stock_data,
+        "solar": solar_data,
+        "oilStock": oil_stock_data,
+        "loadChart": load_chart_data,
+    }
+
+
 def build_site_data(site_key):
     """Build the siteData object for a given site from xlsx files."""
     cfg = SITE_CONFIG[site_key]

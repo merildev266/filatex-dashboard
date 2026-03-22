@@ -2,12 +2,61 @@
 Flask application serving the Filatex PMO Dashboard.
 Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
+Phase 2: SharePoint API endpoints registered via Blueprint.
 """
 import os, re, openpyxl
 from flask import Flask, jsonify, request, send_from_directory
 from data_loader import build_tamatave_data
+import config
+import cache
+import api_data
 
 app = Flask(__name__, static_folder=".", static_url_path="")
+
+# ── Phase 2: Register SharePoint API Blueprint ──
+app.register_blueprint(api_data.api)
+
+# ── Background cache refresh (only when SharePoint is configured) ──
+_missing = config.validate()
+if not _missing:
+    # Register all cache keys for pre-warm background refresh
+    def _make_hfo_loader():
+        from parsers import hfo
+        return hfo.build_all_sites
+
+    def _make_enr_sites_loader():
+        from parsers import enr_sites
+        return enr_sites.build
+
+    def _make_hfo_proj_loader():
+        from parsers import hfo_projects
+        return hfo_projects.build
+
+    def _make_enr_proj_loader():
+        from parsers import enr_projects
+        return enr_projects.build
+
+    def _make_capex_loader():
+        from parsers import capex_parser
+        return capex_parser.build
+
+    def _make_reporting_loader():
+        from parsers import reporting
+        return reporting.build
+
+    cache.register("hfo_sites", _make_hfo_loader(), config.TTL_HFO_SITES)
+    cache.register("enr_sites", _make_enr_sites_loader(), config.TTL_ENR_SITES)
+    cache.register("hfo_projects", _make_hfo_proj_loader(), config.TTL_HFO_PROJECTS)
+    cache.register("enr_projects", _make_enr_proj_loader(), config.TTL_ENR_PROJECTS)
+    cache.register("capex", _make_capex_loader(), config.TTL_CAPEX)
+    cache.register("enr_reporting", _make_reporting_loader(), config.TTL_REPORTING)
+    cache.start_background_refresh()
+else:
+    import logging
+    logging.getLogger(__name__).warning(
+        "SharePoint not configured (missing: %s) — background refresh disabled",
+        ", ".join(_missing),
+    )
 
 BASE_ENR = os.path.join(
     os.path.expanduser("~"),

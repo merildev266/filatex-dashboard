@@ -139,6 +139,15 @@ def get_workbook(rel_path: str, read_only: bool = True) -> Workbook:
     return wb
 
 
+def get_file_bytes(rel_path: str) -> bytes:
+    """Download a file from OneDrive and return raw bytes (for pandas ExcelFile use)."""
+    url = _drive_item_url(rel_path) + ":/content"
+    log.info("Downloading bytes: %s", rel_path)
+    resp = requests.get(url, headers=_auth_headers(), timeout=30)
+    resp.raise_for_status()
+    return resp.content
+
+
 def put_workbook(wb: Workbook, rel_path: str) -> None:
     """
     Upload a modified workbook back to OneDrive.
