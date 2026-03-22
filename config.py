@@ -42,6 +42,9 @@ TTL_CAPEX: int = int(os.environ.get("TTL_CAPEX", 3600))
 TTL_REPORTING: int = int(os.environ.get("TTL_REPORTING", 900))
 TTL_INVESTMENTS: int = int(os.environ.get("TTL_INVESTMENTS", 900))
 
+# Historical monthly data — past months don't change, so cache aggressively
+TTL_HISTORICAL_MONTH: int = int(os.environ.get("TTL_HISTORICAL_MONTH", 86400))
+
 # Default TTL used when no specific one is configured
 TTL_DEFAULT: int = int(os.environ.get("TTL_DEFAULT", 900))
 

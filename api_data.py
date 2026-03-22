@@ -4,6 +4,7 @@ All GET endpoints use the cache from Phase 1. POST endpoints write back to Share
 """
 import logging
 import os
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 
 import cache
@@ -20,10 +21,18 @@ def _ttl(key: str) -> int:
     return int(os.environ.get(f"TTL_{key}", config.TTL_DEFAULT))
 
 
-def _safe_load(cache_key: str, ttl_key: str, loader):
-    """Load from cache or call loader, returning (data, status_code)."""
+def _safe_load(cache_key: str, ttl_key: str, loader, ttl_override: int | None = None):
+    """Load from cache or call loader, returning (data, status_code).
+
+    Args:
+        cache_key:    Key used to store/retrieve from cache.
+        ttl_key:      Config key (e.g. 'HFO_SITES') — used when ttl_override is None.
+        loader:       Zero-argument callable that fetches the data.
+        ttl_override: Explicit TTL in seconds; bypasses ttl_key lookup when provided.
+    """
     try:
-        data = cache.get_or_load(cache_key, _ttl(ttl_key), loader)
+        ttl = ttl_override if ttl_override is not None else _ttl(ttl_key)
+        data = cache.get_or_load(cache_key, ttl, loader)
         return jsonify(data), 200
     except Exception as exc:
         err_str = str(exc)
@@ -35,18 +44,104 @@ def _safe_load(cache_key: str, ttl_key: str, loader):
         return jsonify({"error": str(exc)}), 500
 
 
+def _parse_month_param(month_str: str | None):
+    """Parse and validate the ?month= query param. Returns (month_int, error_response)."""
+    if not month_str:
+        return None, None
+    try:
+        month = int(month_str)
+    except ValueError:
+        return None, (jsonify({"error": "Paramètre 'month' invalide — entier 1–12 attendu."}), 400)
+    if not 1 <= month <= 12:
+        return None, (jsonify({"error": "Paramètre 'month' invalide — doit être entre 1 et 12."}), 400)
+    return month, None
+
+
 # ── GET endpoints ──
 
 @api.route("/hfo-sites")
 def get_hfo_sites():
+    """
+    GET /api/hfo-sites              → all available months (current behaviour)
+    GET /api/hfo-sites?month=3      → March data only (cached 24 h)
+    GET /api/hfo-sites?all_months=true → explicit all-months request
+    """
     from parsers import hfo
+
+    month_str = request.args.get("month")
+    all_months = request.args.get("all_months", "").lower() in ("true", "1", "yes")
+
+    if month_str:
+        month, err = _parse_month_param(month_str)
+        if err:
+            return err
+        return _safe_load(
+            f"hfo_sites_m{month:02d}",
+            "HFO_SITES",
+            lambda: hfo.build_all_sites(month=month),
+            ttl_override=config.TTL_HISTORICAL_MONTH,
+        )
+
+    if all_months:
+        return _safe_load("hfo_sites_all", "HFO_SITES", hfo.build_all_sites)
+
     return _safe_load("hfo_sites", "HFO_SITES", hfo.build_all_sites)
 
 
 @api.route("/enr-sites")
 def get_enr_sites():
+    """
+    GET /api/enr-sites              → all available months (current behaviour)
+    GET /api/enr-sites?month=3      → March data only (cached 24 h)
+    GET /api/enr-sites?all_months=true → explicit all-months request
+    """
     from parsers import enr_sites
+
+    month_str = request.args.get("month")
+    all_months = request.args.get("all_months", "").lower() in ("true", "1", "yes")
+
+    if month_str:
+        month, err = _parse_month_param(month_str)
+        if err:
+            return err
+        return _safe_load(
+            f"enr_sites_m{month:02d}",
+            "ENR_SITES",
+            lambda: enr_sites.build(month=month),
+            ttl_override=config.TTL_HISTORICAL_MONTH,
+        )
+
+    if all_months:
+        return _safe_load("enr_sites_all", "ENR_SITES", enr_sites.build)
+
     return _safe_load("enr_sites", "ENR_SITES", enr_sites.build)
+
+
+@api.route("/available-months")
+def get_available_months():
+    """
+    GET /api/available-months → lists which monthly files exist per site.
+
+    Response shape:
+    {
+        "year": 2026,
+        "hfo":  {"tamatave": [1,2,3], "diego": [1,2], ...},
+        "enr":  {"DIE": [1,2,3], "TMM": [1,2,3], "MJN": [1,2,3]}
+    }
+    """
+    from parsers import hfo, enr_sites
+
+    def _load():
+        year = datetime.now().year
+        hfo_result = hfo.list_available_months()
+        enr_result = enr_sites.list_available_months()
+        return {
+            "year": year,
+            "hfo": hfo_result.get("hfo", {}),
+            "enr": enr_result.get("enr", {}),
+        }
+
+    return _safe_load("available_months", "HFO_SITES", _load)
 
 
 @api.route("/hfo-projects")

@@ -252,7 +252,29 @@ def _parse_prod_solaire_sheet(ws) -> list:
     return rows
 
 
-def _build_site_data(code: str, site_cfg: dict) -> dict | None:
+def list_available_months() -> dict:
+    """
+    Return available months per ENR site by inspecting sheet names.
+
+    Returns:
+        {"enr": {"DIE": [1,2,3], "TMM": [1,2,3], "MJN": [1,2,3]}}
+    """
+    result = {}
+    for code, cfg in SITES.items():
+        rel_path = f"{_BASE}/{cfg['file']}"
+        try:
+            wb = sp.get_workbook(rel_path, read_only=True)
+            months = sorted({m for sn in wb.sheetnames if (m := _match_month(sn)) is not None})
+            wb.close()
+            result[code] = months
+        except Exception as exc:
+            log.warning("ENR available months: error for %s: %s", code, exc)
+            result[code] = []
+    log.debug("ENR available months: %s", result)
+    return {"enr": result}
+
+
+def _build_site_data(code: str, site_cfg: dict, month: int | None = None) -> dict | None:
     rel_path = f"{_BASE}/{site_cfg['file']}"
     try:
         wb = sp.get_workbook(rel_path, read_only=False)
@@ -264,8 +286,10 @@ def _build_site_data(code: str, site_cfg: dict) -> dict | None:
     daily_prod = []
 
     for sn in wb.sheetnames:
-        month = _match_month(sn)
-        if month is None:
+        sheet_month = _match_month(sn)
+        if sheet_month is None:
+            continue
+        if month is not None and sheet_month != month:
             continue
         sn_lower = sn.lower()
         if "index" in sn_lower:
@@ -355,14 +379,20 @@ def _build_site_data(code: str, site_cfg: dict) -> dict | None:
     }
 
 
-def build() -> dict:
-    """Return dict with ENR_SITES key."""
+def build(month: int | None = None) -> dict:
+    """
+    Return dict with ENR_SITES key.
+
+    Args:
+        month: If provided, include only data from that month's sheets.
+               If None, include all months (current behaviour).
+    """
     sites = []
     for code, cfg in SITES.items():
-        site_data = _build_site_data(code, cfg)
+        site_data = _build_site_data(code, cfg, month=month)
         if site_data:
             sites.append(site_data)
         else:
-            log.warning("ENR sites: no data for %s", code)
-    log.info("ENR sites: %d sites loaded", len(sites))
+            log.warning("ENR sites: no data for %s (month=%s)", code, month)
+    log.info("ENR sites: %d sites loaded (month=%s)", len(sites), month)
     return {"ENR_SITES": sites}

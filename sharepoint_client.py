@@ -259,3 +259,71 @@ def find_latest_monthly_file(
         prefix, year, rel_path, best_month,
     )
     return rel_path
+
+
+def find_monthly_file(
+    folder: str,
+    prefix: str,
+    year: int,
+    month: int,
+) -> Optional[str]:
+    """
+    Return the relative path for a specific month's Excel file, or None if not found.
+
+    Does a lightweight metadata GET (no content download) to confirm the file exists.
+
+    Args:
+        folder: Folder path relative to DATA_BASE_PATH.
+        prefix: File name prefix (e.g. 'Diego').
+        year:   Four-digit year.
+        month:  Month number (1–12).
+
+    Returns:
+        Relative path like 'folder/Prefix_year_MM.xlsx', or None.
+    """
+    target_name = f"{prefix}_{year}_{month:02d}.xlsx"
+    rel_path = f"{folder.rstrip('/')}/{target_name}"
+    url = _drive_item_url(rel_path)
+    try:
+        resp = requests.get(url, headers=_auth_headers(), timeout=15)
+        if resp.status_code == 200:
+            log.debug("find_monthly_file: found %s", rel_path)
+            return rel_path
+        log.debug("find_monthly_file: %s → HTTP %s", target_name, resp.status_code)
+        return None
+    except Exception as exc:
+        log.warning("find_monthly_file: error checking %s: %s", target_name, exc)
+        return None
+
+
+def list_available_months(
+    folder: str,
+    prefix: str,
+    year: int,
+) -> list[int]:
+    """
+    Return a sorted list of month numbers that have Excel files in an OneDrive folder.
+
+    Args:
+        folder: Folder path relative to DATA_BASE_PATH.
+        prefix: File name prefix (e.g. 'Diego').
+        year:   Four-digit year.
+
+    Returns:
+        Sorted list of month numbers present, e.g. [1, 2, 3].
+    """
+    pattern = re.compile(
+        rf"^{re.escape(prefix)}_{year}_(\d{{2}})\.xlsx$",
+        re.IGNORECASE,
+    )
+    try:
+        items = list_folder(folder)
+    except Exception as exc:
+        log.warning("list_available_months: cannot list %s: %s", folder, exc)
+        return []
+    months = []
+    for item in items:
+        m = pattern.match(item.get("name", ""))
+        if m:
+            months.append(int(m.group(1)))
+    return sorted(months)

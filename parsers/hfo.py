@@ -61,7 +61,38 @@ def _find_monthly_files(folder: str, prefix: str, year: int) -> list[str]:
     return [path for _, path in found]
 
 
-def build_site(site_key: str) -> dict | None:
+def _get_paths_for_site(sp_cfg: dict, year: int, month: int | None) -> list[str]:
+    """
+    Return the file paths to load for a site.
+
+    If month is given, return the single file for that month (or [] if not found).
+    If month is None, return all available monthly files for the year.
+    """
+    if month is not None:
+        path = sp.find_monthly_file(sp_cfg["folder"], sp_cfg["prefix"], year, month)
+        return [path] if path else []
+    return _find_monthly_files(sp_cfg["folder"], sp_cfg["prefix"], year)
+
+
+def list_available_months() -> dict:
+    """
+    Return available months per HFO site for the current year.
+
+    Returns:
+        {"year": YYYY, "hfo": {"tamatave": [1,2,3], "diego": [1,2], ...}}
+    """
+    year = _CURRENT_YEAR
+    result = {}
+    for site_key, sp_cfg in _SP_SITES.items():
+        months = sp.list_available_months(sp_cfg["folder"], sp_cfg["prefix"], year)
+        if not months:
+            months = sp.list_available_months(sp_cfg["folder"], sp_cfg["prefix"], year - 1)
+        result[site_key] = months
+    log.debug("HFO available months: %s", result)
+    return {"year": year, "hfo": result}
+
+
+def build_site(site_key: str, month: int | None = None) -> dict | None:
     """Build site data for one HFO site by downloading from SharePoint."""
     try:
         import pandas as pd
@@ -77,14 +108,14 @@ def build_site(site_key: str) -> dict | None:
         return None
 
     year = _CURRENT_YEAR
-    monthly_paths = _find_monthly_files(sp_cfg["folder"], sp_cfg["prefix"], year)
-    if not monthly_paths:
-        # Try previous year as fallback
+    monthly_paths = _get_paths_for_site(sp_cfg, year, month)
+    if not monthly_paths and month is None:
+        # Try previous year as fallback (only for "latest" requests, not specific months)
         year = _CURRENT_YEAR - 1
-        monthly_paths = _find_monthly_files(sp_cfg["folder"], sp_cfg["prefix"], year)
+        monthly_paths = _get_paths_for_site(sp_cfg, year, month)
 
     if not monthly_paths:
-        log.warning("HFO: no files found for site %s year %d", site_key, _CURRENT_YEAR)
+        log.warning("HFO: no files found for site %s year %d month %s", site_key, _CURRENT_YEAR, month)
         return None
 
     dd = cfg["dd_cols"]
@@ -272,8 +303,14 @@ def build_site(site_key: str) -> dict | None:
     )
 
 
-def build_all_sites() -> dict:
-    """Build all 4 HFO sites and return dict matching window.siteData globals."""
+def build_all_sites(month: int | None = None) -> dict:
+    """
+    Build all 4 HFO sites and return dict matching window.siteData globals.
+
+    Args:
+        month: If provided, load only that month's file per site.
+               If None, load all available months for the current year.
+    """
     js_var_map = {
         "tamatave": "TAMATAVE_LIVE",
         "diego": "DIEGO_LIVE",
@@ -283,12 +320,12 @@ def build_all_sites() -> dict:
     result = {}
     for site_key, js_var in js_var_map.items():
         try:
-            data = build_site(site_key)
+            data = build_site(site_key, month=month)
             if data:
                 result[js_var] = data
-                log.info("HFO %s: status=%s, mw=%s", site_key, data.get("status"), data.get("mw"))
+                log.info("HFO %s (month=%s): status=%s, mw=%s", site_key, month, data.get("status"), data.get("mw"))
             else:
-                log.warning("HFO %s: no data", site_key)
+                log.warning("HFO %s (month=%s): no data", site_key, month)
         except Exception as exc:
             log.error("HFO %s: build failed: %s", site_key, exc)
     return result
