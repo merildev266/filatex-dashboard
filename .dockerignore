@@ -1,0 +1,49 @@
+# Version control
+.git
+.gitignore
+
+# Secrets — NEVER bake into image; inject via Cloud Run env vars / Secret Manager
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+dist/
+build/
+
+# Data generation scripts (run locally to produce *_data.js; not needed at runtime)
+generate_*.py
+
+# Static data files generated locally (served from SharePoint API at runtime)
+*_data.js
+
+# Database migration / one-off utility scripts
+migrate_*.py
+create_weekly_*.py
+create_investments_template.py
+main.py
+
+# Documentation
+SHAREPOINT_MIGRATION_PLAN.md
+CLAUDE.md
+DEPLOY.md
+*.md
+
+# Claude / IDE config
+.claude/
+.vscode/
+.idea/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Local test artifacts
+*.log
+*.tmp

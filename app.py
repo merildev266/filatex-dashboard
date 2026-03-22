@@ -246,4 +246,7 @@ def save_inv_comment():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # Cloud Run sets PORT; fall back to 5000 for local dev
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=port, debug=debug)
