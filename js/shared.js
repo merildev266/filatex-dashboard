@@ -139,8 +139,8 @@ function closePropsInner(type) {
 
 // (state variables declared at top of file)
 
-// ══ DOMContentLoaded ══
-document.addEventListener('DOMContentLoaded', () => {
+// ══ APP INITIALIZATION — gated on data:ready ══
+function initApp() {
   // Initialize month dropdown with data month
   selectedMonthIndex = getDataMonth() - 1;
   populateMonthDropdowns();
@@ -148,4 +148,31 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.month-btn-wrap .tfilter').forEach(b => {
     b.textContent = MONTH_SHORT[selectedMonthIndex];
   });
+}
+
+document.addEventListener('data:ready', function ({ detail }) {
+  var el = document.getElementById('app-loader');
+  if (detail.errors && detail.errors.length) {
+    var errEl = document.getElementById('app-loader-err');
+    if (errEl) {
+      errEl.textContent = 'Données partielles — certaines sections peuvent être indisponibles.';
+      errEl.style.display = 'block';
+    }
+  }
+  if (el) {
+    el.style.opacity = '0';
+    setTimeout(function () { el.style.display = 'none'; }, 400);
+  }
+  initApp();
 });
+
+// Hard timeout: show error if data hasn't loaded within 15 s
+setTimeout(function () {
+  if (!window._dataLoaded) {
+    var errEl = document.getElementById('app-loader-err');
+    if (errEl) {
+      errEl.textContent = 'Impossible de charger les données. Vérifiez la connexion.';
+      errEl.style.display = 'block';
+    }
+  }
+}, 15000);

@@ -17,6 +17,14 @@
 </head>
 <body>
 
+<!-- ══ LOADING OVERLAY ══ -->
+<div id="app-loader" style="position:fixed;inset:0;background:#080b18;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;z-index:9999;
+  transition:opacity .4s">
+  <div style="color:#00ab63;font-family:monospace;font-size:13px">Chargement des données…</div>
+  <div id="app-loader-err" style="color:#E05C5C;font-size:12px;margin-top:12px;display:none"></div>
+</div>
+
 <!-- ══ LOGIN SCREEN ══ -->
 <div id="login-screen">
   <div id="login-box">
@@ -758,8 +766,6 @@
   </div>
 </div>
 
-<script src="enr_site_data.js"></script>
-<script src="hfo_projects.js"></script>
 
 <!-- ══════════════ PROJECT DETAIL PANEL (generic) ══════════════ -->
 <div id="panel-project-detail" style="position:fixed;inset:0;z-index:300;background:#080d18;overflow-y:auto;scrollbar-width:none;transform:translateX(100%);transition:transform 0.45s cubic-bezier(0.16,1,0.3,1);">
@@ -1775,7 +1781,6 @@
 
 
 
-<script src="site_data.js"></script>
 
 <!-- ══════════════ GROUPE DETAIL PANEL ══════════════ -->
 <div id="panel-groupe-detail">
@@ -2044,18 +2049,17 @@
   </div>
 </div>
 
+<script src="js/data_loader.js"></script>
 <script src="js/props_data.js"></script>
 <script src="js/props_data_dev_full.js"></script>
 <script src="js/com_data.js"></script>
 <script src="js/reporting.js"></script>
-<script src="enr_projects_data.js"></script>
 <script src="js/energy.js"></script>
 <script src="js/capex.js"></script>
 <script src="js/properties.js"></script>
 <script src="js/projects.js?v=20260316"></script>
 <script src="js/investments.js"></script>
 <script src="js/csi.js"></script>
-<script src="reporting_data.js"></script>
 <script src="js/accueil.js"></script>
 </body>
 </html>
