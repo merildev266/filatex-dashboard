@@ -1,0 +1,55 @@
+# Environment / secrets — NEVER commit
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local Excel data files (sourced from SharePoint — not committed)
+*.xlsx
+*.xls
+
+# Generated JS data files (produced by generate_*.py — not needed in git)
+site_data.js
+enr_site_data.js
+hfo_projects.js
+props_data.js
+props_data_dev_full.js
+reporting_data.js
+enr_projects_data.js
+
+# Flask
+instance/
