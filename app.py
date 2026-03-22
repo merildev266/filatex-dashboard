@@ -3,13 +3,26 @@ Flask application serving the Filatex PMO Dashboard.
 Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
 Phase 2: SharePoint API endpoints registered via Blueprint.
+Phase 4: Structured logging, background cache pre-warm, error hardening.
 """
-import os, re, openpyxl
+import logging
+import os
+import re
+import openpyxl
 from flask import Flask, jsonify, request, send_from_directory
 from data_loader import build_tamatave_data
 import config
 import cache
 import api_data
+
+# ── Configure logging before anything else ──────────────────────────────────
+logging.basicConfig(
+    level=getattr(logging, config.LOG_LEVEL.upper(), logging.INFO),
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+_log = logging.getLogger(__name__)
+_log.info("Starting Filatex PMO Dashboard (log_level=%s)", config.LOG_LEVEL)
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 
@@ -50,10 +63,12 @@ if not _missing:
     cache.register("enr_projects", _make_enr_proj_loader(), config.TTL_ENR_PROJECTS)
     cache.register("capex", _make_capex_loader(), config.TTL_CAPEX)
     cache.register("enr_reporting", _make_reporting_loader(), config.TTL_REPORTING)
+    # Background worker performs an immediate first pass on startup (pre-warms
+    # all registered keys), then continues refreshing on the normal interval.
     cache.start_background_refresh()
+    _log.info("SharePoint configured — background cache refresh started")
 else:
-    import logging
-    logging.getLogger(__name__).warning(
+    _log.warning(
         "SharePoint not configured (missing: %s) — background refresh disabled",
         ", ".join(_missing),
     )

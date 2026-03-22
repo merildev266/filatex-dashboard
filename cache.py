@@ -5,11 +5,14 @@ Usage:
     import cache
 
     # One-off: fetch from cache or call loader
-    data = cache.get_or_load("hfo_sites", loader_fn=fetch_hfo, ttl=3600)
+    data = cache.get_or_load("hfo_sites", ttl=3600, loader_fn=fetch_hfo)
 
     # Registered key: pre-warmed automatically by background thread
     cache.register("enr_projects", loader_fn=fetch_enr, ttl=900)
     cache.start_background_refresh()   # call once at app startup
+
+    # Stale fallback (returns expired value when loader fails)
+    stale = cache.get_stale("hfo_sites")
 
     # Invalidation
     cache.invalidate("hfo_sites")   # one key
@@ -70,11 +73,14 @@ def get(key: str) -> Optional[Any]:
     """
     Return the cached value for *key*, or None if absent/expired.
 
+    Expired entries are *not* evicted — they remain in the store so that
+    get_stale() can return them as a fallback when a fresh load fails.
+
     Args:
         key: Cache key string.
 
     Returns:
-        The cached value, or None.
+        The cached value, or None if absent or expired.
     """
     with _lock:
         entry = _store.get(key)
@@ -82,10 +88,31 @@ def get(key: str) -> Optional[Any]:
             return None
         if entry.is_alive():
             return entry.value
-        # Expired — evict eagerly
-        del _store[key]
+        # Expired — return None but keep entry for stale fallback
         log.debug("Cache expired: %s", key)
         return None
+
+
+def get_stale(key: str) -> Optional[Any]:
+    """
+    Return the cached value for *key* regardless of TTL expiry.
+
+    Used as a fallback when the loader fails: return the last known good
+    value rather than an error response.
+
+    Args:
+        key: Cache key string.
+
+    Returns:
+        The last cached value (possibly expired), or None if never loaded.
+    """
+    with _lock:
+        entry = _store.get(key)
+        if entry is None:
+            return None
+        if not entry.is_alive():
+            log.debug("Cache stale hit: %s (expired %.0fs ago)", key, -entry.seconds_until_expiry())
+        return entry.value
 
 
 def set(key: str, value: Any, ttl: int) -> None:  # noqa: A001
@@ -103,7 +130,7 @@ def set(key: str, value: Any, ttl: int) -> None:  # noqa: A001
     log.debug("Cache set: %s (ttl=%ds)", key, ttl)
 
 
-def get_or_load(key: str, loader_fn: Callable[[], Any], ttl: int) -> Any:
+def get_or_load(key: str, ttl: int, loader_fn: Callable[[], Any]) -> Any:
     """
     Return the cached value for *key*, calling *loader_fn* on a cache miss.
 
@@ -112,8 +139,8 @@ def get_or_load(key: str, loader_fn: Callable[[], Any], ttl: int) -> Any:
 
     Args:
         key:       Cache key string.
-        loader_fn: Zero-argument callable that produces the value to cache.
         ttl:       Time-to-live in seconds for a newly loaded value.
+        loader_fn: Zero-argument callable that produces the value to cache.
 
     Returns:
         The cached or freshly loaded value.
@@ -173,38 +200,49 @@ def register(key: str, loader_fn: Callable[[], Any], ttl: int) -> None:
     log.debug("Registered for background refresh: %s (ttl=%ds)", key, ttl)
 
 
-def _refresh_worker() -> None:
-    """Background daemon thread: pre-warms registered cache keys before expiry."""
-    interval = config.REFRESH_WORKER_INTERVAL
+def _do_refresh_pass() -> None:
+    """Run one refresh pass: load any registered key that is missing or near expiry."""
     ahead = config.REFRESH_AHEAD_SECONDS
+    with _registry_lock:
+        items = list(_registry.items())
+
+    for key, (ttl, loader_fn) in items:
+        with _lock:
+            entry = _store.get(key)
+
+        # Refresh if: expired, missing, or expiring within `ahead` seconds
+        needs_refresh = (
+            entry is None
+            or not entry.is_alive()
+            or entry.seconds_until_expiry() < ahead
+        )
+        if not needs_refresh:
+            continue
+
+        log.info("Background refresh: %s", key)
+        try:
+            value = loader_fn()
+            set(key, value, ttl)
+        except Exception:
+            log.exception("Background refresh failed: %s", key)
+
+
+def _refresh_worker() -> None:
+    """Background daemon thread: pre-warms registered cache keys before expiry.
+
+    Performs an immediate first pass on startup so cold-cache keys are loaded
+    as soon as the worker starts, without waiting for the first interval.
+    """
+    interval = config.REFRESH_WORKER_INTERVAL
     log.info(
         "Background refresh worker started (check_interval=%ds, ahead=%ds)",
-        interval, ahead,
+        interval, config.REFRESH_AHEAD_SECONDS,
     )
+    # Immediate first pass — warm cold cache entries right away
+    _do_refresh_pass()
     while True:
         time.sleep(interval)
-        with _registry_lock:
-            items = list(_registry.items())
-
-        for key, (ttl, loader_fn) in items:
-            with _lock:
-                entry = _store.get(key)
-
-            # Refresh if: expired, missing, or expiring within `ahead` seconds
-            needs_refresh = (
-                entry is None
-                or not entry.is_alive()
-                or entry.seconds_until_expiry() < ahead
-            )
-            if not needs_refresh:
-                continue
-
-            log.info("Background refresh: %s", key)
-            try:
-                value = loader_fn()
-                set(key, value, ttl)
-            except Exception:
-                log.exception("Background refresh failed: %s", key)
+        _do_refresh_pass()
 
 
 def start_background_refresh() -> None:

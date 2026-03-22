@@ -54,6 +54,30 @@ REFRESH_AHEAD_SECONDS: int = int(os.environ.get("REFRESH_AHEAD_SECONDS", 120))
 # How often the background worker checks for soon-to-expire keys (seconds)
 REFRESH_WORKER_INTERVAL: int = int(os.environ.get("REFRESH_WORKER_INTERVAL", 60))
 
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+
+# Log level for the application (DEBUG / INFO / WARNING / ERROR)
+LOG_LEVEL: str = os.environ.get("LOG_LEVEL", "INFO")
+
+# ---------------------------------------------------------------------------
+# SharePoint / Graph API request settings
+# ---------------------------------------------------------------------------
+
+# Timeout in seconds for folder listing and metadata calls
+SP_TIMEOUT_LIST: int = int(os.environ.get("SP_TIMEOUT_LIST", 15))
+
+# Timeout in seconds for file content downloads
+SP_TIMEOUT_DOWNLOAD: int = int(os.environ.get("SP_TIMEOUT_DOWNLOAD", 30))
+
+# Timeout in seconds for file uploads (write-back)
+SP_TIMEOUT_UPLOAD: int = int(os.environ.get("SP_TIMEOUT_UPLOAD", 60))
+
+# Maximum number of retries on transient failures (5xx, network errors)
+# 0 = no retry; each retry waits 2^attempt seconds before the next attempt
+SP_MAX_RETRIES: int = int(os.environ.get("SP_MAX_RETRIES", 2))
+
 
 def validate() -> list[str]:
     """Return a list of missing required configuration keys (empty = OK)."""

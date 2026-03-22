@@ -4,6 +4,7 @@ All GET endpoints use the cache from Phase 1. POST endpoints write back to Share
 """
 import logging
 import os
+import time
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 
@@ -22,7 +23,16 @@ def _ttl(key: str) -> int:
 
 
 def _safe_load(cache_key: str, ttl_key: str, loader, ttl_override: int | None = None):
-    """Load from cache or call loader, returning (data, status_code).
+    """Load from cache or call loader, returning a Flask response tuple.
+
+    Error handling matrix:
+    - Token expiry:        MSAL auto-refreshes; returns 503 if auth fails.
+    - File locked (423):   Returns 423 with clear message (write-back only —
+                           read-only downloads are unaffected).
+    - File not found (404):Returns stale cached data if available, else 404.
+    - Parse error:         Logs warning; returns stale data or 500.
+    - Cold cache:          Blocks synchronously on first call (get_or_load).
+    - SharePoint down:     Returns stale data if available, else 503.
 
     Args:
         cache_key:    Key used to store/retrieve from cache.
@@ -30,16 +40,47 @@ def _safe_load(cache_key: str, ttl_key: str, loader, ttl_override: int | None = 
         loader:       Zero-argument callable that fetches the data.
         ttl_override: Explicit TTL in seconds; bypasses ttl_key lookup when provided.
     """
+    t0 = time.monotonic()
     try:
         ttl = ttl_override if ttl_override is not None else _ttl(ttl_key)
         data = cache.get_or_load(cache_key, ttl, loader)
+        log.debug("API load OK: key=%s elapsed=%.2fs", cache_key, time.monotonic() - t0)
         return jsonify(data), 200
     except Exception as exc:
+        elapsed = time.monotonic() - t0
         err_str = str(exc)
+        log.warning("API load error: key=%s elapsed=%.2fs error=%s", cache_key, elapsed, err_str)
+
+        # ── Stale cache fallback ──────────────────────────────────────────
+        # Return the last known good value rather than an error when possible.
+        stale = cache.get_stale(cache_key)
+        if stale is not None:
+            log.info("Returning stale cached data for key=%s", cache_key)
+            return jsonify(stale), 200
+
+        # ── Error classification (no stale data available) ────────────────
         if "423" in err_str or "locked" in err_str.lower():
             return jsonify({"error": "Fichier verrouill\u00e9 dans Excel \u2014 r\u00e9essayez plus tard."}), 423
+
+        if "404" in err_str or "not found" in err_str.lower():
+            return jsonify({"error": "file_not_found", "path": cache_key}), 404
+
+        # MSAL auth failure → 503 (transient, retry later)
+        if "msal auth failed" in err_str.lower() or (
+            "access_token" not in err_str and "auth" in err_str.lower()
+        ):
+            return jsonify({
+                "error": "Authentification SharePoint \u00e9chou\u00e9e \u2014 r\u00e9essayez dans quelques instants.",
+                "detail": err_str,
+            }), 503
+
+        # Network / SharePoint unavailable → 503
         if any(code in err_str for code in ["503", "502", "504", "ConnectionError", "Timeout"]):
-            return jsonify({"error": "SharePoint inaccessible \u2014 r\u00e9essayez dans quelques instants.", "detail": err_str}), 503
+            return jsonify({
+                "error": "SharePoint inaccessible \u2014 r\u00e9essayez dans quelques instants.",
+                "detail": err_str,
+            }), 503
+
         log.exception("API error for cache key=%s", cache_key)
         return jsonify({"error": str(exc)}), 500
 

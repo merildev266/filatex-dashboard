@@ -11,6 +11,7 @@ import io
 import logging
 import os
 import re
+import time
 from typing import Optional
 
 import requests
@@ -32,6 +33,55 @@ _msal_app: Optional[ConfidentialClientApplication] = None
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+
+def _get_with_retry(url: str, timeout: int, **kwargs) -> requests.Response:
+    """
+    Perform a GET request with automatic retry on transient failures.
+
+    Retries on 5xx responses and network-level errors (ConnectionError,
+    Timeout). Client errors (4xx) are returned immediately without retry.
+
+    Args:
+        url:     The URL to fetch.
+        timeout: Request timeout in seconds.
+        **kwargs: Additional arguments forwarded to requests.get().
+
+    Returns:
+        The last requests.Response received.
+
+    Raises:
+        requests.ConnectionError / requests.Timeout if all retries exhausted.
+    """
+    last_exc: Optional[Exception] = None
+    for attempt in range(config.SP_MAX_RETRIES + 1):
+        try:
+            resp = requests.get(url, timeout=timeout, **kwargs)
+            # Don't retry on 4xx client errors
+            if resp.status_code < 500:
+                return resp
+            if attempt < config.SP_MAX_RETRIES:
+                wait = 2 ** attempt
+                log.warning(
+                    "Graph API returned %d — retry %d/%d in %ds: %s",
+                    resp.status_code, attempt + 1, config.SP_MAX_RETRIES, wait, url,
+                )
+                time.sleep(wait)
+                continue
+            return resp
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            last_exc = exc
+            if attempt < config.SP_MAX_RETRIES:
+                wait = 2 ** attempt
+                log.warning(
+                    "Network error (%s) — retry %d/%d in %ds: %s",
+                    exc, attempt + 1, config.SP_MAX_RETRIES, wait, url,
+                )
+                time.sleep(wait)
+            else:
+                raise
+    raise last_exc  # type: ignore[misc]  # unreachable but satisfies type checker
+
 
 def _get_msal_app() -> ConfidentialClientApplication:
     """Return the singleton MSAL ConfidentialClientApplication, creating it if needed."""
@@ -66,15 +116,20 @@ def get_token() -> str:
     app = _get_msal_app()
     result = app.acquire_token_silent(GRAPH_SCOPES, account=None)
     if not result:
-        log.debug("Token cache miss — acquiring new token from Azure AD")
+        log.info("Token cache miss — acquiring new token from Azure AD")
+        t0 = time.monotonic()
         result = app.acquire_token_for_client(GRAPH_SCOPES)
+        log.info("Token acquired from Azure AD in %.2fs (expires_in=%s)",
+                 time.monotonic() - t0, result.get("expires_in"))
+    else:
+        log.debug("Token served from MSAL cache (expires_in=%s)", result.get("expires_in"))
 
     if "access_token" not in result:
         error = result.get("error", "unknown_error")
         description = result.get("error_description", "No description")
+        log.error("MSAL auth failed [%s]: %s", error, description)
         raise RuntimeError(f"MSAL auth failed [{error}]: {description}")
 
-    log.debug("Token acquired (expires_in=%s)", result.get("expires_in"))
     return result["access_token"]
 
 
@@ -127,9 +182,13 @@ def get_workbook(rel_path: str, read_only: bool = True) -> Workbook:
         RuntimeError:       If authentication fails.
     """
     url = _drive_item_url(rel_path) + ":/content"
-    log.info("Downloading: %s", rel_path)
-    resp = requests.get(url, headers=_auth_headers(), timeout=30)
+    log.info("Downloading workbook: %s", rel_path)
+    t0 = time.monotonic()
+    resp = _get_with_retry(url, timeout=config.SP_TIMEOUT_DOWNLOAD, headers=_auth_headers())
     resp.raise_for_status()
+    elapsed = time.monotonic() - t0
+    size_kb = len(resp.content) / 1024
+    log.info("Downloaded %.1f KB in %.2fs: %s", size_kb, elapsed, rel_path)
     wb = load_workbook(
         io.BytesIO(resp.content),
         read_only=read_only,
@@ -143,8 +202,12 @@ def get_file_bytes(rel_path: str) -> bytes:
     """Download a file from OneDrive and return raw bytes (for pandas ExcelFile use)."""
     url = _drive_item_url(rel_path) + ":/content"
     log.info("Downloading bytes: %s", rel_path)
-    resp = requests.get(url, headers=_auth_headers(), timeout=30)
+    t0 = time.monotonic()
+    resp = _get_with_retry(url, timeout=config.SP_TIMEOUT_DOWNLOAD, headers=_auth_headers())
     resp.raise_for_status()
+    elapsed = time.monotonic() - t0
+    size_kb = len(resp.content) / 1024
+    log.info("Downloaded %.1f KB in %.2fs: %s", size_kb, elapsed, rel_path)
     return resp.content
 
 
@@ -171,15 +234,17 @@ def put_workbook(wb: Workbook, rel_path: str) -> None:
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     url = _drive_item_url(rel_path) + ":/content"
-    log.info("Uploading: %s (%d bytes)", rel_path, buf.getbuffer().nbytes)
+    size_kb = buf.getbuffer().nbytes / 1024
+    log.info("Uploading: %s (%.1f KB)", rel_path, size_kb)
+    t0 = time.monotonic()
     resp = requests.put(
         url,
         headers={**_auth_headers(), "Content-Type": content_type},
         data=buf.read(),
-        timeout=60,
+        timeout=config.SP_TIMEOUT_UPLOAD,
     )
     resp.raise_for_status()
-    log.info("Upload complete: %s", rel_path)
+    log.info("Upload complete in %.2fs: %s", time.monotonic() - t0, rel_path)
 
 
 def list_folder(rel_path: str) -> list[dict]:
@@ -199,7 +264,7 @@ def list_folder(rel_path: str) -> list[dict]:
     """
     url = _drive_item_url(rel_path) + ":/children"
     log.debug("Listing folder: %s", rel_path)
-    resp = requests.get(url, headers=_auth_headers(), timeout=15)
+    resp = _get_with_retry(url, timeout=config.SP_TIMEOUT_LIST, headers=_auth_headers())
     resp.raise_for_status()
     items: list[dict] = resp.json().get("value", [])
     log.debug("Found %d items in '%s'", len(items), rel_path)
@@ -285,7 +350,7 @@ def find_monthly_file(
     rel_path = f"{folder.rstrip('/')}/{target_name}"
     url = _drive_item_url(rel_path)
     try:
-        resp = requests.get(url, headers=_auth_headers(), timeout=15)
+        resp = requests.get(url, headers=_auth_headers(), timeout=config.SP_TIMEOUT_LIST)
         if resp.status_code == 200:
             log.debug("find_monthly_file: found %s", rel_path)
             return rel_path
