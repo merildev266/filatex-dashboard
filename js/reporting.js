@@ -2282,123 +2282,106 @@ function switchComSection(section) {
   renderComTable(section);
 }
 
+function _comPct(real, obj) {
+  if (!obj) return '—';
+  if (!real) return '<span style="color:rgba(255,255,255,0.25);">0 %</span>';
+  var p = Math.round(real / obj * 100);
+  var c = p >= 80 ? '#00ab63' : p >= 40 ? '#FDB823' : '#E05C5C';
+  return '<span style="color:' + c + ';font-weight:700;">' + p + ' %</span>';
+}
+function _comSumF(arr, f) { return arr.reduce(function(s, r) { return s + (r[f] || 0); }, 0); }
+function _comQCell(obj, real, isAct, rgb) {
+  var bg = isAct ? 'background:rgba(' + rgb + ',0.06);' : '';
+  return '<td style="font-size:11px;color:var(--text-muted);' + bg + '">' + (obj ? fmtEur(obj) : '—') + '</td>' +
+    '<td style="font-size:11px;color:#00ab63;font-weight:600;' + bg + '">' + (real ? fmtEur(real) : '—') + '</td>';
+}
+
+function _buildComSection(data, title, color, rgb, totalVal, itemLabel) {
+  var Q = Math.floor(new Date().getMonth() / 3) + 1;
+  var catReal = 0;
+  for (var qi = 1; qi <= 4; qi++) catReal += _comSumF(data, 't' + qi + 'r');
+  var catPct = totalVal ? Math.round(catReal / totalVal * 100) : 0;
+
+  var html = '<div style="margin-bottom:32px;">' +
+    '<h3 style="color:' + color + ';font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(' + rgb + ',0.08);border-radius:10px;border-left:3px solid ' + color + ';display:flex;justify-content:space-between;align-items:center;">' +
+    '<span>' + title + ' — ' + data.length + ' ' + itemLabel + '</span>' +
+    '<span style="font-size:12px;">Objectif: ' + fmtEur(totalVal) + '  |  Réalisé: ' + fmtEur(catReal) + '  |  ' + _comPct(catReal, totalVal) + '</span></h3>' +
+    '<table class="rpt-table"><thead><tr>' +
+    '<th style="min-width:150px;text-align:left;">' + itemLabel.charAt(0).toUpperCase() + itemLabel.slice(1) + '</th>' +
+    '<th>Objectif</th>';
+  for (var qi = 1; qi <= 4; qi++) {
+    var act = qi === Q;
+    html += '<th colspan="2" style="' + (act ? 'color:' + color + ';' : '') + '">Q' + qi + (act ? ' ●' : '') + '</th>';
+  }
+  html += '<th>% Annuel</th></tr>';
+  html += '<tr style="font-size:8px;opacity:0.5;"><th></th><th></th>';
+  for (var qi = 1; qi <= 4; qi++) html += '<th>Obj.</th><th>Réalisé</th>';
+  html += '<th></th></tr></thead><tbody>';
+
+  data.forEach(function(p) {
+    var rowReal = 0;
+    for (var qi = 1; qi <= 4; qi++) rowReal += (p['t' + qi + 'r'] || 0);
+    html += '<tr><td style="font-weight:600;color:var(--text-main);font-size:12px;text-align:left;">' + escapeHtml(p.name) + '</td>' +
+      '<td style="font-weight:700;color:' + color + ';font-size:11px;">' + fmtEur(p.objectif) + '</td>';
+    for (var qi = 1; qi <= 4; qi++) {
+      html += _comQCell(p['t' + qi], p['t' + qi + 'r'], qi === Q, rgb);
+    }
+    html += '<td>' + _comPct(rowReal, p.objectif) + '</td></tr>';
+  });
+
+  // TOTAL row
+  html += '<tr style="background:rgba(' + rgb + ',0.08);font-weight:700;">' +
+    '<td style="color:' + color + ';text-align:left;">TOTAL</td>' +
+    '<td style="color:' + color + ';">' + fmtEur(totalVal) + '</td>';
+  for (var qi = 1; qi <= 4; qi++) {
+    var tObj = _comSumF(data, 't' + qi);
+    var tReal = _comSumF(data, 't' + qi + 'r');
+    var bg = qi === Q ? 'background:rgba(' + rgb + ',0.12);' : '';
+    html += '<td style="color:' + color + ';' + bg + '">' + (tObj ? fmtEur(tObj) : '—') + '</td>';
+    html += '<td style="color:#00ab63;font-weight:700;' + bg + '">' + (tReal ? fmtEur(tReal) : '—') + '</td>';
+  }
+  html += '<td style="font-weight:800;">' + _comPct(catReal, totalVal) + '</td></tr>';
+  html += '</tbody></table></div>';
+  return html;
+}
+
 function buildComSectionImmo() {
-  var html = '<div style="margin-bottom:32px;">' +
-    '<h3 style="color:#FDB823;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(253,184,35,0.08);border-radius:10px;border-left:3px solid #FDB823;">' +
-    'Vente Immobili\u00e8re \u2014 Objectif: ' + fmtEur(comData_venteImmoTotal) + '</h3>' +
-    '<table class="rpt-table"><thead><tr>' +
-    '<th style="min-width:150px;">Projet</th>' +
-    '<th>Objectif</th>' +
-    '<th>Obj. T1</th><th>R\u00e9alis\u00e9 T1</th>' +
-    '<th>Obj. T2</th><th>R\u00e9alis\u00e9 T2</th>' +
-    '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
-    '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
-    '</tr></thead><tbody>';
-  comData_venteImmo.forEach(function(p) {
-    html += '<tr>' +
-      '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(p.name) + '</td>' +
-      '<td style="font-weight:700;color:#FDB823;font-size:11px;">' + fmtEur(p.objectif) + '</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t1 ? fmtEur(p.t1) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t2 ? fmtEur(p.t2) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t3 ? fmtEur(p.t3) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t4 ? fmtEur(p.t4) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '</tr>';
-  });
-  html += '<tr style="background:rgba(253,184,35,0.08);font-weight:700;">' +
-    '<td style="color:#FDB823;">TOTAL</td>' +
-    '<td style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</td>' +
-    '<td colspan="8"></td></tr>';
-  html += '</tbody></table></div>';
-  return html;
+  return _buildComSection(comData_venteImmo, 'Vente Projet', '#FDB823', '253,184,35', comData_venteImmoTotal, 'projets');
 }
-
 function buildComSectionFonc() {
-  var html = '<div style="margin-bottom:32px;">' +
-    '<h3 style="color:#00ab63;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(0,171,99,0.08);border-radius:10px;border-left:3px solid #00ab63;">' +
-    'Vente Fonci\u00e8re \u2014 Objectif: ' + fmtEur(comData_venteFonciereTotal) + '</h3>' +
-    '<table class="rpt-table"><thead><tr>' +
-    '<th style="min-width:150px;">Projet</th>' +
-    '<th>Objectif</th>' +
-    '<th>Obj. T1</th><th>R\u00e9alis\u00e9 T1</th>' +
-    '<th>Obj. T2</th><th>R\u00e9alis\u00e9 T2</th>' +
-    '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
-    '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
-    '</tr></thead><tbody>';
-  comData_venteFonciere.forEach(function(p) {
-    html += '<tr>' +
-      '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(p.name) + '</td>' +
-      '<td style="font-weight:700;color:#00ab63;font-size:11px;">' + fmtEur(p.objectif) + '</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t1 ? fmtEur(p.t1) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t2 ? fmtEur(p.t2) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t3 ? fmtEur(p.t3) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (p.t4 ? fmtEur(p.t4) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '</tr>';
-  });
-  html += '<tr style="background:rgba(0,171,99,0.08);font-weight:700;">' +
-    '<td style="color:#00ab63;">TOTAL</td>' +
-    '<td style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</td>' +
-    '<td colspan="8"></td></tr>';
-  html += '</tbody></table></div>';
-  return html;
+  return _buildComSection(comData_venteFonciere, 'Vente Terrain', '#00ab63', '0,171,99', comData_venteFonciereTotal, 'terrains');
 }
-
 function buildComSectionLoc() {
-  var html = '<div style="margin-bottom:32px;">' +
-    '<h3 style="color:#5aafaf;font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(90,175,175,0.08);border-radius:10px;border-left:3px solid #5aafaf;">' +
-    'Location \u2014 Objectif mensuel: ' + fmtEur(comData_locationTotal) + ' /mois</h3>' +
-    '<table class="rpt-table"><thead><tr>' +
-    '<th style="min-width:150px;">Site</th>' +
-    '<th>Obj. T1</th><th>R\u00e9alis\u00e9 T1</th>' +
-    '<th>Obj. T2</th><th>R\u00e9alis\u00e9 T2</th>' +
-    '<th>Obj. T3</th><th>R\u00e9alis\u00e9 T3</th>' +
-    '<th>Obj. T4</th><th>R\u00e9alis\u00e9 T4</th>' +
-    '<th>Total Obj.</th>' +
-    '</tr></thead><tbody>';
-  comData_location.forEach(function(loc) {
-    html += '<tr>' +
-      '<td style="font-weight:600;color:var(--text-main);font-size:12px;">' + escapeHtml(loc.name) + '</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t1 ? fmtEur(loc.t1) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t2 ? fmtEur(loc.t2) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t3 ? fmtEur(loc.t3) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-size:11px;color:var(--text-muted);">' + (loc.t4 ? fmtEur(loc.t4) : '\u2014') + '</td>' +
-      '<td style="font-size:11px;color:#00ab63;font-weight:600;">\u2014</td>' +
-      '<td style="font-weight:700;color:#5aafaf;font-size:11px;">' + fmtEur(loc.total) + '</td>' +
-      '</tr>';
-  });
-  var locTotalObj = comData_location.reduce(function(s, l) { return s + (l.total || 0); }, 0);
-  html += '<tr style="background:rgba(90,175,175,0.08);font-weight:700;">' +
-    '<td style="color:#5aafaf;">TOTAL</td>' +
-    '<td colspan="8"></td>' +
-    '<td style="color:#5aafaf;">' + fmtEur(locTotalObj) + '</td>' +
-    '</tr>';
-  html += '</tbody></table></div>';
-  return html;
+  return _buildComSection(comData_location, 'Location', '#5aafaf', '90,175,175', comData_locationTotal, 'biens');
 }
 
 function renderComTable(section) {
   section = section || 'all';
+  var Q = Math.floor(new Date().getMonth() / 3) + 1;
 
-  // KPI bar - highlight active section
+  // Calcul réalisé par catégorie
+  var immoReal = 0, foncReal = 0, locReal = 0;
+  for (var qi = 1; qi <= 4; qi++) {
+    immoReal += _comSumF(comData_venteImmo, 't' + qi + 'r');
+    foncReal += _comSumF(comData_venteFonciere, 't' + qi + 'r');
+    locReal += _comSumF(comData_location, 't' + qi + 'r');
+  }
+
   var bar = document.getElementById('rpt-props-com-kpi-bar');
   var immoActive = (section === 'immo') ? 'background:rgba(253,184,35,0.12);border:1px solid rgba(253,184,35,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
   var foncActive = (section === 'fonc') ? 'background:rgba(0,171,99,0.12);border:1px solid rgba(0,171,99,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
   var locActive = (section === 'loc') ? 'background:rgba(90,175,175,0.12);border:1px solid rgba(90,175,175,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
 
   bar.innerHTML =
-    '<div class="rpt-kpi-item" onclick="switchComSection(\'immo\')" style="' + immoActive + '"><div class="kv" style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</div><div class="kl">Vente Immo</div></div>' +
-    '<div class="rpt-kpi-item" onclick="switchComSection(\'fonc\')" style="' + foncActive + '"><div class="kv" style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</div><div class="kl">Vente Fonci\u00e8re</div></div>' +
-    '<div class="rpt-kpi-item" onclick="switchComSection(\'loc\')" style="' + locActive + '"><div class="kv" style="color:#5aafaf;">' + fmtEur(comData_locationTotal) + ' /mois</div><div class="kl">Location</div></div>';
+    '<div class="rpt-kpi-item" onclick="switchComSection(\'immo\')" style="' + immoActive + '">' +
+      '<div class="kv" style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</div>' +
+      '<div class="kl">Vente Projet · ' + _comPct(immoReal, comData_venteImmoTotal) + '</div></div>' +
+    '<div class="rpt-kpi-item" onclick="switchComSection(\'fonc\')" style="' + foncActive + '">' +
+      '<div class="kv" style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</div>' +
+      '<div class="kl">Vente Terrain · ' + _comPct(foncReal, comData_venteFonciereTotal) + '</div></div>' +
+    '<div class="rpt-kpi-item" onclick="switchComSection(\'loc\')" style="' + locActive + '">' +
+      '<div class="kv" style="color:#5aafaf;">' + fmtEur(comData_locationTotal) + '</div>' +
+      '<div class="kl">Location · ' + _comPct(locReal, comData_locationTotal) + '</div></div>';
 
   var html = '';
   if (section === 'all' || section === 'immo') html += buildComSectionImmo();
