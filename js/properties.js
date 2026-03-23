@@ -499,7 +499,7 @@ function renderCommercial() {
   if (elObj) elObj.textContent = fmtEur(grandTotal);
   if (elNb) elNb.textContent = nbItems;
   if (elReal) elReal.textContent = '0 %';
-  if (elTri) elTri.textContent = 'T' + Q;
+  if (elTri) elTri.textContent = 'Q' + Q;
 
   // ── KPI bar inner page ──
   var kpiBar = document.getElementById('com-inner-kpi-bar');
@@ -565,7 +565,7 @@ function renderCommercial() {
     for (var qi = 1; qi <= 4; qi++) {
       var isActive = qi === Q;
       html += '<th style="' + (isActive ? 'color:' + cat.color + ';' : '') + '">';
-      html += 'T' + qi;
+      html += 'Q' + qi;
       if (isActive) html += ' ●';
       html += '</th>';
     }
