@@ -521,7 +521,7 @@ function renderCommercial() {
         '<div class="props-kpi-sub">Données à renseigner</div>' +
       '</div>' +
       '<div class="props-kpi-card" style="border-color:rgba(90,175,175,0.25);">' +
-        '<div class="props-kpi-label">Quarter</div>' +
+        '<div class="props-kpi-label">Trimestre</div>' +
         '<div class="props-kpi-val" style="color:#5aafaf;">T' + Q + '</div>' +
         '<div class="props-kpi-sub">' + ['Jan-Mar', 'Avr-Jun', 'Jul-Sep', 'Oct-Déc'][Q - 1] + ' 2026</div>' +
       '</div>';
@@ -548,7 +548,7 @@ function renderCommercial() {
     html += '<div class="com-obj-card-kpis">';
     html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</div><div class="com-obj-kpi-label">Objectif</div></div>';
     html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val">' + cat.data.length + '</div><div class="com-obj-kpi-label">' + (cat.id === 'location' ? 'Biens' : 'Projets') + '</div></div>';
-    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:#5aafaf;">' + fmtEur(sumThisQ) + '</div><div class="com-obj-kpi-label">Obj. T' + Q + '</div></div>';
+    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:#5aafaf;">' + fmtEur(sumThisQ) + '</div><div class="com-obj-kpi-label">Obj. Q' + Q + '</div></div>';
     html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:#FDB823;">0 %</div><div class="com-obj-kpi-label">Réalisé</div></div>';
     html += '</div>';
     html += '<div class="com-obj-expand">&#9660;</div>';
