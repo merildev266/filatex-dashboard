@@ -8,47 +8,61 @@ var selectedYear = new Date().getFullYear();
 var MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 var MONTH_SHORT = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
-/* ── VIEWPORT SCALING — résolution de référence 1440px ── */
-// ── VIEWPORT SCALING — résolution de référence 1440px ──
+/* ── VIEWPORT SCALING — zoom adaptatif, réf 1440px ── */
+// Supporte : 1024px → 4K (3840px), scale up ET down via CSS zoom
+// Mobile < 768px : pas de zoom, layout responsive natif
 (function(){
   var REF = 1440;
-  function scale() {
+  var IS_MOBILE = false;
+
+  function applyScale() {
     if (!document.body) return;
-    var isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      // Mobile : pas de scaling, layout responsive natif
-      document.body.style.transform = '';
+    var w = window.innerWidth;
+    IS_MOBILE = w < 768;
+
+    if (IS_MOBILE) {
+      // Mobile : reset tout, layout natif
+      document.body.style.zoom = '';
       document.body.style.width = '';
-      document.body.style.height = '';
-      return;
-    }
-    var ratio = Math.min(Math.max(window.innerWidth / REF, 0.55), 1);
-    if (ratio === 1) {
-      document.body.style.transform = '';
-      document.body.style.width = REF + 'px';
-      document.body.style.height = '';
-      document.body.style.margin = '0 auto';
+      document.body.style.margin = '';
       document.body.style.position = '';
       document.body.style.left = '';
+      document.body.style.height = '';
+      document.body.style.transform = '';
       document.documentElement.style.overflow = 'auto';
-    } else {
-      var offset = (window.innerWidth - REF * ratio) / 2;
-      document.body.style.transform = 'scale(' + ratio + ')';
-      document.body.style.transformOrigin = 'top left';
-      document.body.style.width = REF + 'px';
-      document.body.style.height = Math.ceil(window.innerHeight / ratio) + 'px';
-      document.body.style.position = 'absolute';
-      document.body.style.left = offset + 'px';
-      document.body.style.margin = '';
-      document.documentElement.style.overflow = 'hidden';
+      document.body.classList.add('is-mobile');
+      document.body.classList.remove('is-desktop');
+      return;
     }
+
+    document.body.classList.remove('is-mobile');
+    document.body.classList.add('is-desktop');
+
+    // Nettoyage de l'ancien système transform
+    document.body.style.transform = '';
+    document.body.style.transformOrigin = '';
+    document.body.style.position = '';
+    document.body.style.left = '';
+    document.body.style.height = '';
+
+    // Zoom adaptatif : scale down (petit écran) ET up (grand écran)
+    // Min 0.55 (≈792px), pas de max → s'adapte aux 4K
+    var ratio = Math.max(w / REF, 0.55);
+    document.body.style.zoom = ratio;
+    document.body.style.width = REF + 'px';
+    document.body.style.margin = '0 auto';
+    document.documentElement.style.overflow = 'auto';
   }
+
+  // Expose pour les autres modules
+  window.IS_MOBILE = function(){ return IS_MOBILE; };
+
   if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', scale);
+    document.addEventListener('DOMContentLoaded', applyScale);
   } else {
-    scale();
+    applyScale();
   }
-  window.addEventListener('resize', scale);
+  window.addEventListener('resize', applyScale);
 })();
 
 function checkLogin(){
