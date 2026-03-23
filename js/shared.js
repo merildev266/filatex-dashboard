@@ -9,8 +9,9 @@ var MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','A
 var MONTH_SHORT = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
 /* ── VIEWPORT SCALING — zoom adaptatif, réf 1440px ── */
-// Supporte : 1024px → 4K (3840px), scale up ET down via CSS zoom
-// Mobile < 768px : pas de zoom, layout responsive natif
+// Écrans < 1440px : zoom down pour tout afficher
+// Écrans ≥ 1440px : contenu fluide qui utilise toute la largeur
+// Mobile < 768px : layout natif sans zoom
 (function(){
   var REF = 1440;
   var IS_MOBILE = false;
@@ -21,9 +22,9 @@ var MONTH_SHORT = ['01','02','03','04','05','06','07','08','09','10','11','12'];
     IS_MOBILE = w < 768;
 
     if (IS_MOBILE) {
-      // Mobile : reset tout, layout natif
       document.body.style.zoom = '';
       document.body.style.width = '';
+      document.body.style.maxWidth = '';
       document.body.style.margin = '';
       document.body.style.position = '';
       document.body.style.left = '';
@@ -38,18 +39,24 @@ var MONTH_SHORT = ['01','02','03','04','05','06','07','08','09','10','11','12'];
     document.body.classList.remove('is-mobile');
     document.body.classList.add('is-desktop');
 
-    // Nettoyage de l'ancien système transform
+    // Nettoyage complet de l'ancien système
     document.body.style.transform = '';
     document.body.style.transformOrigin = '';
     document.body.style.position = '';
     document.body.style.left = '';
     document.body.style.height = '';
+    document.body.style.zoom = '';
 
-    // Zoom adaptatif : scale down (petit écran) ET up (grand écran)
-    // Min 0.55 (≈792px), pas de max → s'adapte aux 4K
-    var ratio = Math.max(w / REF, 0.55);
-    document.body.style.zoom = ratio;
-    document.body.style.width = REF + 'px';
+    if (w < REF) {
+      // Petit écran : zoom down pour que tout rentre
+      var ratio = Math.max(w / REF, 0.55);
+      document.body.style.zoom = ratio;
+      document.body.style.width = REF + 'px';
+    } else {
+      // Grand écran (≥1440px) : contenu fluide, largeur naturelle
+      document.body.style.width = '';
+    }
+    document.body.style.maxWidth = '1920px';
     document.body.style.margin = '0 auto';
     document.documentElement.style.overflow = 'auto';
   }
