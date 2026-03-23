@@ -20,9 +20,9 @@ body::-webkit-scrollbar{display:none;}
 @keyframes scrollMotif{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* == PAGES (full-screen overlays) == */
-.page{display:none;position:fixed;top:0;left:0;right:0;bottom:56px;z-index:100;background:var(--dark);overflow-y:auto;}
+.page{display:none;position:fixed;inset:0;z-index:100;background:var(--dark);overflow-y:auto;}
 .page.active{display:block;animation:slideIn 0.45s cubic-bezier(0.16,1,0.3,1) both;}
-.placeholder-page{display:none;position:fixed;top:0;left:0;right:0;bottom:56px;z-index:100;background:var(--dark);overflow-y:auto;}
+.placeholder-page{display:none;position:fixed;inset:0;z-index:100;background:var(--dark);overflow-y:auto;}
 .placeholder-page.active{display:block;animation:slideIn 0.45s cubic-bezier(0.16,1,0.3,1) both;}
 .page-inner{max-width:1100px;margin:0 auto;padding:36px 48px 100px;}
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid var(--border);}
