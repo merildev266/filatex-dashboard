@@ -2045,7 +2045,7 @@ function openPropsSub(sub, fromDirect) {
   document.getElementById('rpt-props-' + sub + '-detail').style.display = 'block';
 
   if (sub === 'com') {
-    filters.innerHTML = buildComFilterHtml();
+    filters.innerHTML = '';
     _comSectionFilter = 'all';
     renderComTable('all');
   } else {
@@ -2246,23 +2246,6 @@ function fmtEur(v) {
   return v.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' \u20ac';
 }
 
-function buildComFilterHtml() {
-  var tabs = [
-    { key: 'all', label: 'Tous' },
-    { key: 'immo', label: 'Vente Immobili\u00e8re' },
-    { key: 'fonc', label: 'Vente Fonci\u00e8re' },
-    { key: 'loc', label: 'Location' }
-  ];
-  var html = '';
-  tabs.forEach(function(t) {
-    var isActive = (_comSectionFilter === t.key);
-    var bg = isActive ? 'background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' :
-      'background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);';
-    html += '<button class="rpt-com-tab" onclick="switchComSection(\'' + t.key + '\')" data-tab="' + t.key + '" ' +
-      'style="' + bg + 'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;">' + t.label + '</button>';
-  });
-  return html;
-}
 
 function switchComSection(section) {
   _comSectionFilter = section;
@@ -2282,6 +2265,7 @@ function switchComSection(section) {
   renderComTable(section);
 }
 
+/* ── COM helpers ── */
 function _comPct(real, obj) {
   if (!obj) return '—';
   if (!real) return '<span style="color:rgba(255,255,255,0.25);">0 %</span>';
@@ -2290,103 +2274,169 @@ function _comPct(real, obj) {
   return '<span style="color:' + c + ';font-weight:700;">' + p + ' %</span>';
 }
 function _comSumF(arr, f) { return arr.reduce(function(s, r) { return s + (r[f] || 0); }, 0); }
-function _comQCell(obj, real, isAct, rgb) {
-  var bg = isAct ? 'background:rgba(' + rgb + ',0.06);' : '';
-  return '<td style="font-size:11px;color:var(--text-muted);' + bg + '">' + (obj ? fmtEur(obj) : '—') + '</td>' +
-    '<td style="font-size:11px;color:#00ab63;font-weight:600;' + bg + '">' + (real ? fmtEur(real) : '—') + '</td>';
-}
 
-function _buildComSection(data, title, color, rgb, totalVal, itemLabel) {
-  var Q = Math.floor(new Date().getMonth() / 3) + 1;
-  var catReal = 0;
-  for (var qi = 1; qi <= 4; qi++) catReal += _comSumF(data, 't' + qi + 'r');
-  var catPct = totalVal ? Math.round(catReal / totalVal * 100) : 0;
-
-  var html = '<div style="margin-bottom:32px;">' +
-    '<h3 style="color:' + color + ';font-size:14px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;background:rgba(' + rgb + ',0.08);border-radius:10px;border-left:3px solid ' + color + ';display:flex;justify-content:space-between;align-items:center;">' +
-    '<span>' + title + ' — ' + data.length + ' ' + itemLabel + '</span>' +
-    '<span style="font-size:12px;">Objectif: ' + fmtEur(totalVal) + '  |  Réalisé: ' + fmtEur(catReal) + '  |  ' + _comPct(catReal, totalVal) + '</span></h3>' +
-    '<table class="rpt-table"><thead><tr>' +
-    '<th style="min-width:150px;text-align:left;">' + itemLabel.charAt(0).toUpperCase() + itemLabel.slice(1) + '</th>' +
-    '<th>Objectif</th>';
-  for (var qi = 1; qi <= 4; qi++) {
-    var act = qi === Q;
-    html += '<th colspan="2" style="' + (act ? 'color:' + color + ';' : '') + '">Q' + qi + (act ? ' ●' : '') + '</th>';
-  }
-  html += '<th>% Annuel</th></tr>';
-  html += '<tr style="font-size:8px;opacity:0.5;"><th></th><th></th>';
-  for (var qi = 1; qi <= 4; qi++) html += '<th>Obj.</th><th>Réalisé</th>';
-  html += '<th></th></tr></thead><tbody>';
-
-  data.forEach(function(p) {
-    var rowReal = 0;
-    for (var qi = 1; qi <= 4; qi++) rowReal += (p['t' + qi + 'r'] || 0);
-    html += '<tr><td style="font-weight:600;color:var(--text-main);font-size:12px;text-align:left;">' + escapeHtml(p.name) + '</td>' +
-      '<td style="font-weight:700;color:' + color + ';font-size:11px;">' + fmtEur(p.objectif) + '</td>';
-    for (var qi = 1; qi <= 4; qi++) {
-      html += _comQCell(p['t' + qi], p['t' + qi + 'r'], qi === Q, rgb);
-    }
-    html += '<td>' + _comPct(rowReal, p.objectif) + '</td></tr>';
-  });
-
-  // TOTAL row
-  html += '<tr style="background:rgba(' + rgb + ',0.08);font-weight:700;">' +
-    '<td style="color:' + color + ';text-align:left;">TOTAL</td>' +
-    '<td style="color:' + color + ';">' + fmtEur(totalVal) + '</td>';
-  for (var qi = 1; qi <= 4; qi++) {
-    var tObj = _comSumF(data, 't' + qi);
-    var tReal = _comSumF(data, 't' + qi + 'r');
-    var bg = qi === Q ? 'background:rgba(' + rgb + ',0.12);' : '';
-    html += '<td style="color:' + color + ';' + bg + '">' + (tObj ? fmtEur(tObj) : '—') + '</td>';
-    html += '<td style="color:#00ab63;font-weight:700;' + bg + '">' + (tReal ? fmtEur(tReal) : '—') + '</td>';
-  }
-  html += '<td style="font-weight:800;">' + _comPct(catReal, totalVal) + '</td></tr>';
-  html += '</tbody></table></div>';
-  return html;
-}
-
-function buildComSectionImmo() {
-  return _buildComSection(comData_venteImmo, 'Vente Projet', '#FDB823', '253,184,35', comData_venteImmoTotal, 'projets');
-}
-function buildComSectionFonc() {
-  return _buildComSection(comData_venteFonciere, 'Vente Terrain', '#00ab63', '0,171,99', comData_venteFonciereTotal, 'terrains');
-}
-function buildComSectionLoc() {
-  return _buildComSection(comData_location, 'Location', '#5aafaf', '90,175,175', comData_locationTotal, 'biens');
-}
-
+/* ── COM Reporting — vue cartes comme DEV ── */
 function renderComTable(section) {
   section = section || 'all';
   var Q = Math.floor(new Date().getMonth() / 3) + 1;
 
-  // Calcul réalisé par catégorie
-  var immoReal = 0, foncReal = 0, locReal = 0;
-  for (var qi = 1; qi <= 4; qi++) {
-    immoReal += _comSumF(comData_venteImmo, 't' + qi + 'r');
-    foncReal += _comSumF(comData_venteFonciere, 't' + qi + 'r');
-    locReal += _comSumF(comData_location, 't' + qi + 'r');
-  }
+  // Données objectifs
+  var cats = [
+    { key: 'immo', title: 'Vente Projet', color: '#FDB823', rgb: '253,184,35',
+      objData: comData_venteImmo, total: comData_venteImmoTotal,
+      reportData: typeof comReport_venteProjet !== 'undefined' ? comReport_venteProjet : [],
+      label: 'projets' },
+    { key: 'fonc', title: 'Vente Terrain', color: '#00ab63', rgb: '0,171,99',
+      objData: comData_venteFonciere, total: comData_venteFonciereTotal,
+      reportData: typeof comReport_venteTerrain !== 'undefined' ? comReport_venteTerrain : [],
+      label: 'terrains' },
+    { key: 'loc', title: 'Location', color: '#5aafaf', rgb: '90,175,175',
+      objData: comData_location, total: comData_locationTotal,
+      reportData: typeof comReport_location !== 'undefined' ? comReport_location : [],
+      label: 'biens' }
+  ];
 
+  // Calcul réalisé par trimestre (global)
+  var realByQ = [0,0,0,0];
+  var objByQ = [0,0,0,0];
+  cats.forEach(function(cat) {
+    for (var qi = 1; qi <= 4; qi++) {
+      objByQ[qi-1] += _comSumF(cat.objData, 't' + qi);
+      realByQ[qi-1] += _comSumF(cat.objData, 't' + qi + 'r');
+    }
+  });
+
+  // KPI bar — % réalisé par trimestre
   var bar = document.getElementById('rpt-props-com-kpi-bar');
-  var immoActive = (section === 'immo') ? 'background:rgba(253,184,35,0.12);border:1px solid rgba(253,184,35,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
-  var foncActive = (section === 'fonc') ? 'background:rgba(0,171,99,0.12);border:1px solid rgba(0,171,99,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
-  var locActive = (section === 'loc') ? 'background:rgba(90,175,175,0.12);border:1px solid rgba(90,175,175,0.3);border-radius:10px;cursor:pointer;' : 'cursor:pointer;';
+  var kpiHtml = '';
+  for (var qi = 1; qi <= 4; qi++) {
+    var isAct = qi === Q;
+    var border = isAct ? 'border:1px solid rgba(90,175,175,0.4);border-radius:10px;background:rgba(90,175,175,0.08);' : '';
+    kpiHtml += '<div class="rpt-kpi-item" style="' + border + '">' +
+      '<div class="kv">' + _comPct(realByQ[qi-1], objByQ[qi-1]) + '</div>' +
+      '<div class="kl">Q' + qi + (isAct ? ' ●' : '') + ' · ' + fmtEur(objByQ[qi-1]) + '</div></div>';
+  }
+  // KPI total
+  var grandReal = realByQ.reduce(function(s,v){return s+v;},0);
+  var grandObj = cats.reduce(function(s,c){return s+c.total;},0);
+  kpiHtml += '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + _comPct(grandReal, grandObj) + '</div><div class="kl">Annuel · ' + fmtEur(grandObj) + '</div></div>';
+  bar.innerHTML = kpiHtml;
 
-  bar.innerHTML =
-    '<div class="rpt-kpi-item" onclick="switchComSection(\'immo\')" style="' + immoActive + '">' +
-      '<div class="kv" style="color:#FDB823;">' + fmtEur(comData_venteImmoTotal) + '</div>' +
-      '<div class="kl">Vente Projet · ' + _comPct(immoReal, comData_venteImmoTotal) + '</div></div>' +
-    '<div class="rpt-kpi-item" onclick="switchComSection(\'fonc\')" style="' + foncActive + '">' +
-      '<div class="kv" style="color:#00ab63;">' + fmtEur(comData_venteFonciereTotal) + '</div>' +
-      '<div class="kl">Vente Terrain · ' + _comPct(foncReal, comData_venteFonciereTotal) + '</div></div>' +
-    '<div class="rpt-kpi-item" onclick="switchComSection(\'loc\')" style="' + locActive + '">' +
-      '<div class="kv" style="color:#5aafaf;">' + fmtEur(comData_locationTotal) + '</div>' +
-      '<div class="kl">Location · ' + _comPct(locReal, comData_locationTotal) + '</div></div>';
+  // Filtres catégorie
+  var filterHtml = '';
+  [{key:'all',label:'Tous'}].concat(cats.map(function(c){return {key:c.key,label:c.title};})).forEach(function(t) {
+    var isAct = (_comSectionFilter === t.key);
+    var bg = isAct ? 'background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' :
+      'background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);';
+    filterHtml += '<button class="rpt-com-tab" onclick="switchComSection(\'' + t.key + '\')" data-tab="' + t.key + '" ' +
+      'style="' + bg + 'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;">' + t.label + '</button>';
+  });
 
-  var html = '';
-  if (section === 'all' || section === 'immo') html += buildComSectionImmo();
-  if (section === 'all' || section === 'fonc') html += buildComSectionFonc();
-  if (section === 'all' || section === 'loc') html += buildComSectionLoc();
+  // Rendu des sections
+  var html = '<div style="display:flex;gap:8px;margin-bottom:20px;">' + filterHtml + '</div>';
+
+  cats.forEach(function(cat) {
+    if (section !== 'all' && section !== cat.key) return;
+
+    var catReal = 0;
+    for (var qi = 1; qi <= 4; qi++) catReal += _comSumF(cat.objData, 't' + qi + 'r');
+
+    // En-tête section
+    html += '<div style="margin-bottom:32px;">';
+    html += '<h3 style="color:' + cat.color + ';font-size:14px;font-weight:700;margin:0 0 16px;padding:10px 14px;background:rgba(' + cat.rgb + ',0.08);border-radius:10px;border-left:3px solid ' + cat.color + ';display:flex;justify-content:space-between;align-items:center;">';
+    html += '<span>' + cat.title + ' — ' + cat.objData.length + ' ' + cat.label + '</span>';
+    html += '<span style="font-size:12px;">Obj: ' + fmtEur(cat.total) + ' | Réalisé: ' + fmtEur(catReal) + ' | ' + _comPct(catReal, cat.total) + '</span></h3>';
+
+    // Tableau objectifs Obj/Réalisé par Q
+    html += '<table class="rpt-table" style="margin-bottom:16px;"><thead><tr>';
+    html += '<th style="text-align:left;min-width:150px;">' + cat.label.charAt(0).toUpperCase() + cat.label.slice(1) + '</th><th>Objectif</th>';
+    for (var qi = 1; qi <= 4; qi++) {
+      var act = qi === Q;
+      html += '<th colspan="2" style="' + (act ? 'color:' + cat.color : '') + '">Q' + qi + (act ? ' ●' : '') + '</th>';
+    }
+    html += '<th>%</th></tr>';
+    html += '<tr style="font-size:8px;opacity:0.5;"><th></th><th></th>';
+    for (var qi = 1; qi <= 4; qi++) html += '<th>Obj.</th><th>Réal.</th>';
+    html += '<th></th></tr></thead><tbody>';
+
+    cat.objData.forEach(function(p) {
+      var rowR = 0;
+      for (var qi = 1; qi <= 4; qi++) rowR += (p['t' + qi + 'r'] || 0);
+      html += '<tr><td style="font-weight:600;text-align:left;">' + escapeHtml(p.name) + '</td>';
+      html += '<td style="font-weight:700;color:' + cat.color + ';">' + fmtEur(p.objectif) + '</td>';
+      for (var qi = 1; qi <= 4; qi++) {
+        var bg = qi === Q ? 'background:rgba(' + cat.rgb + ',0.06);' : '';
+        html += '<td style="color:var(--text-muted);' + bg + '">' + (p['t'+qi] ? fmtEur(p['t'+qi]) : '—') + '</td>';
+        html += '<td style="color:#00ab63;font-weight:600;' + bg + '">' + (p['t'+qi+'r'] ? fmtEur(p['t'+qi+'r']) : '—') + '</td>';
+      }
+      html += '<td>' + _comPct(rowR, p.objectif) + '</td></tr>';
+    });
+
+    // Total
+    html += '<tr style="background:rgba(' + cat.rgb + ',0.08);font-weight:700;"><td style="color:' + cat.color + ';text-align:left;">TOTAL</td><td style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</td>';
+    for (var qi = 1; qi <= 4; qi++) {
+      var tO = _comSumF(cat.objData, 't'+qi), tR = _comSumF(cat.objData, 't'+qi+'r');
+      var bg = qi === Q ? 'background:rgba(' + cat.rgb + ',0.12);' : '';
+      html += '<td style="color:' + cat.color + ';' + bg + '">' + (tO ? fmtEur(tO) : '—') + '</td>';
+      html += '<td style="color:#00ab63;' + bg + '">' + (tR ? fmtEur(tR) : '—') + '</td>';
+    }
+    html += '<td>' + _comPct(catReal, cat.total) + '</td></tr></tbody></table>';
+
+    // ══ Cartes suivi hebdo (comme DEV) ══
+    if (cat.reportData.length > 0) {
+      html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(' + cat.rgb + ',0.5);margin:20px 0 12px;">Suivi hebdomadaire</div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;">';
+
+      cat.reportData.forEach(function(item, pi) {
+        var lastH = item.history.length > 0 ? item.history[item.history.length - 1] : null;
+        var borderCol = lastH && lastH.avancement ? cat.color : 'rgba(255,255,255,0.1)';
+
+        html += '<div style="background:rgba(' + cat.rgb + ',0.04);border:1px solid rgba(' + cat.rgb + ',0.15);border-left:3px solid ' + borderCol + ';border-radius:12px;padding:14px 16px;">';
+        // Header
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">';
+        html += '<span style="color:' + cat.color + ';font-size:14px;">●</span>';
+        html += '<span style="font-weight:700;color:' + cat.color + ';font-size:13px;">' + escapeHtml(item.name) + '</span>';
+        if (lastH && lastH.avancement) html += '<span style="font-size:10px;color:#00ab63;font-weight:600;margin-left:auto;">' + escapeHtml(lastH.avancement) + '</span>';
+        html += '</div>';
+
+        // Dernier commentaire
+        if (lastH) {
+          html += '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:6px;">';
+          html += '<span style="color:#5aafaf;font-weight:600;">' + escapeHtml(lastH.week) + '</span>';
+          if (lastH.phase) html += ' · <span style="color:' + cat.color + ';">' + escapeHtml(lastH.phase) + '</span>';
+          html += '</div>';
+          if (lastH.comment) html += '<div style="font-size:11px;color:rgba(255,255,255,0.6);">' + escapeHtml(lastH.comment).substring(0, 150) + '</div>';
+        } else {
+          html += '<div style="font-size:11px;color:rgba(255,255,255,0.2);font-style:italic;">Aucun suivi saisi</div>';
+        }
+
+        // Historique expandable
+        if (item.history.length > 1) {
+          var hid = 'com-hist-' + cat.key + '-' + pi;
+          html += '<button onclick="var el=document.getElementById(\'' + hid + '\');el.style.display=el.style.display===\'none\'?\'block\':\'none\';" ' +
+            'style="margin-top:8px;background:none;border:none;color:' + cat.color + ';font-size:10px;font-weight:700;cursor:pointer;padding:0;">▶ Historique (' + item.history.length + ')</button>';
+          html += '<div id="' + hid + '" style="display:none;margin-top:8px;max-height:200px;overflow-y:auto;border-top:1px solid rgba(' + cat.rgb + ',0.15);padding-top:8px;">';
+          item.history.slice().reverse().forEach(function(h) {
+            html += '<div style="font-size:10px;margin-bottom:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">';
+            html += '<span style="color:#5aafaf;font-weight:600;">' + escapeHtml(h.week) + '</span>';
+            if (h.phase) html += ' · <span style="color:' + cat.color + ';">' + escapeHtml(h.phase) + '</span>';
+            if (h.avancement) html += ' · <span style="color:#00ab63;">' + escapeHtml(h.avancement) + '</span>';
+            if (h.comment) html += '<div style="color:rgba(255,255,255,0.5);margin-top:2px;">' + escapeHtml(h.comment) + '</div>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+
+        html += '</div>'; // card
+      });
+
+      html += '</div>'; // grid
+    } else {
+      html += '<div style="font-size:11px;color:rgba(255,255,255,0.2);font-style:italic;text-align:center;padding:20px;border:1px dashed rgba(255,255,255,0.08);border-radius:12px;margin-top:12px;">Suivi hebdomadaire — Remplir COM_Reporting.xlsx puis relancer generate_com_reporting.py</div>';
+    }
+
+    html += '</div>'; // section
+  });
 
   document.getElementById('rpt-props-com-table-wrap').innerHTML = html;
 }
