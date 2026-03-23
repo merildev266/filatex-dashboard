@@ -2275,167 +2275,134 @@ function _comPct(real, obj) {
 }
 function _comSumF(arr, f) { return arr.reduce(function(s, r) { return s + (r[f] || 0); }, 0); }
 
-/* ── COM Reporting — vue cartes comme DEV ── */
+/* ── COM Reporting — centré suivi hebdo (comme DEV) ── */
 function renderComTable(section) {
   section = section || 'all';
   var Q = Math.floor(new Date().getMonth() / 3) + 1;
 
-  // Données objectifs
   var cats = [
     { key: 'immo', title: 'Vente Projet', color: '#FDB823', rgb: '253,184,35',
       objData: comData_venteImmo, total: comData_venteImmoTotal,
       reportData: typeof comReport_venteProjet !== 'undefined' ? comReport_venteProjet : [],
-      label: 'projets' },
+      label: 'projets', icon: '🏗' },
     { key: 'fonc', title: 'Vente Terrain', color: '#00ab63', rgb: '0,171,99',
       objData: comData_venteFonciere, total: comData_venteFonciereTotal,
       reportData: typeof comReport_venteTerrain !== 'undefined' ? comReport_venteTerrain : [],
-      label: 'terrains' },
+      label: 'terrains', icon: '🌍' },
     { key: 'loc', title: 'Location', color: '#5aafaf', rgb: '90,175,175',
       objData: comData_location, total: comData_locationTotal,
       reportData: typeof comReport_location !== 'undefined' ? comReport_location : [],
-      label: 'biens' }
+      label: 'biens', icon: '🏢' }
   ];
 
-  // Calcul réalisé par trimestre (global)
-  var realByQ = [0,0,0,0];
-  var objByQ = [0,0,0,0];
-  cats.forEach(function(cat) {
-    for (var qi = 1; qi <= 4; qi++) {
-      objByQ[qi-1] += _comSumF(cat.objData, 't' + qi);
-      realByQ[qi-1] += _comSumF(cat.objData, 't' + qi + 'r');
-    }
-  });
-
-  // KPI bar — % réalisé par trimestre
+  // KPI bar compact — objectif + % réalisé par catégorie
   var bar = document.getElementById('rpt-props-com-kpi-bar');
   var kpiHtml = '';
-  for (var qi = 1; qi <= 4; qi++) {
-    var isAct = qi === Q;
-    var border = isAct ? 'border:1px solid rgba(90,175,175,0.4);border-radius:10px;background:rgba(90,175,175,0.08);' : '';
-    kpiHtml += '<div class="rpt-kpi-item" style="' + border + '">' +
-      '<div class="kv">' + _comPct(realByQ[qi-1], objByQ[qi-1]) + '</div>' +
-      '<div class="kl">Q' + qi + (isAct ? ' ●' : '') + ' · ' + fmtEur(objByQ[qi-1]) + '</div></div>';
-  }
-  // KPI total
-  var grandReal = realByQ.reduce(function(s,v){return s+v;},0);
-  var grandObj = cats.reduce(function(s,c){return s+c.total;},0);
-  kpiHtml += '<div class="rpt-kpi-item"><div class="kv" style="color:#FDB823;">' + _comPct(grandReal, grandObj) + '</div><div class="kl">Annuel · ' + fmtEur(grandObj) + '</div></div>';
+  cats.forEach(function(cat) {
+    var catReal = 0;
+    for (var qi = 1; qi <= 4; qi++) catReal += _comSumF(cat.objData, 't' + qi + 'r');
+    var isAct = (_comSectionFilter === cat.key);
+    var border = isAct ? 'background:rgba(' + cat.rgb + ',0.12);border:1px solid rgba(' + cat.rgb + ',0.3);border-radius:10px;' : '';
+    kpiHtml += '<div class="rpt-kpi-item" onclick="switchComSection(\'' + cat.key + '\')" style="cursor:pointer;' + border + '">' +
+      '<div class="kv" style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</div>' +
+      '<div class="kl">' + cat.title + ' · ' + _comPct(catReal, cat.total) + '</div></div>';
+  });
+  // Nb items suivis cette semaine
+  var totalReport = cats.reduce(function(s,c){return s + c.reportData.length;}, 0);
+  kpiHtml += '<div class="rpt-kpi-item"><div class="kv" style="color:#5aafaf;">' + totalReport + '</div><div class="kl">Suivis cette semaine</div></div>';
   bar.innerHTML = kpiHtml;
 
-  // Filtres catégorie
-  var filterHtml = '';
+  // Filtres
+  var html = '<div style="display:flex;gap:8px;margin-bottom:20px;">';
   [{key:'all',label:'Tous'}].concat(cats.map(function(c){return {key:c.key,label:c.title};})).forEach(function(t) {
     var isAct = (_comSectionFilter === t.key);
     var bg = isAct ? 'background:rgba(253,184,35,0.15);color:#FDB823;border:1px solid rgba(253,184,35,0.3);' :
       'background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);';
-    filterHtml += '<button class="rpt-com-tab" onclick="switchComSection(\'' + t.key + '\')" data-tab="' + t.key + '" ' +
-      'style="' + bg + 'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px;">' + t.label + '</button>';
+    html += '<button class="rpt-com-tab" onclick="switchComSection(\'' + t.key + '\')" data-tab="' + t.key + '" ' +
+      'style="' + bg + 'border-radius:8px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px;">' + t.label + '</button>';
   });
+  html += '</div>';
 
-  // Rendu des sections
-  var html = '<div style="display:flex;gap:8px;margin-bottom:20px;">' + filterHtml + '</div>';
-
+  // Rendu par catégorie — CARTES HEBDO en priorité
   cats.forEach(function(cat) {
     if (section !== 'all' && section !== cat.key) return;
 
     var catReal = 0;
     for (var qi = 1; qi <= 4; qi++) catReal += _comSumF(cat.objData, 't' + qi + 'r');
 
-    // En-tête section
-    html += '<div style="margin-bottom:32px;">';
-    html += '<h3 style="color:' + cat.color + ';font-size:14px;font-weight:700;margin:0 0 16px;padding:10px 14px;background:rgba(' + cat.rgb + ',0.08);border-radius:10px;border-left:3px solid ' + cat.color + ';display:flex;justify-content:space-between;align-items:center;">';
-    html += '<span>' + cat.title + ' — ' + cat.objData.length + ' ' + cat.label + '</span>';
-    html += '<span style="font-size:12px;">Obj: ' + fmtEur(cat.total) + ' | Réalisé: ' + fmtEur(catReal) + ' | ' + _comPct(catReal, cat.total) + '</span></h3>';
+    // En-tête section compact
+    html += '<div style="margin-bottom:36px;">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:8px 14px;background:rgba(' + cat.rgb + ',0.06);border-radius:10px;border-left:3px solid ' + cat.color + ';">';
+    html += '<span style="color:' + cat.color + ';font-size:14px;font-weight:700;">' + cat.title + ' — ' + cat.objData.length + ' ' + cat.label + '</span>';
+    html += '<span style="font-size:11px;color:rgba(255,255,255,0.5);">Obj: ' + fmtEur(cat.total) + ' · Réalisé: ' + _comPct(catReal, cat.total) + '</span>';
+    html += '</div>';
 
-    // Tableau objectifs Obj/Réalisé par Q
-    html += '<table class="rpt-table" style="margin-bottom:16px;"><thead><tr>';
-    html += '<th style="text-align:left;min-width:150px;">' + cat.label.charAt(0).toUpperCase() + cat.label.slice(1) + '</th><th>Objectif</th>';
-    for (var qi = 1; qi <= 4; qi++) {
-      var act = qi === Q;
-      html += '<th colspan="2" style="' + (act ? 'color:' + cat.color : '') + '">Q' + qi + (act ? ' ●' : '') + '</th>';
-    }
-    html += '<th>%</th></tr>';
-    html += '<tr style="font-size:8px;opacity:0.5;"><th></th><th></th>';
-    for (var qi = 1; qi <= 4; qi++) html += '<th>Obj.</th><th>Réal.</th>';
-    html += '<th></th></tr></thead><tbody>';
-
-    cat.objData.forEach(function(p) {
-      var rowR = 0;
-      for (var qi = 1; qi <= 4; qi++) rowR += (p['t' + qi + 'r'] || 0);
-      html += '<tr><td style="font-weight:600;text-align:left;">' + escapeHtml(p.name) + '</td>';
-      html += '<td style="font-weight:700;color:' + cat.color + ';">' + fmtEur(p.objectif) + '</td>';
-      for (var qi = 1; qi <= 4; qi++) {
-        var bg = qi === Q ? 'background:rgba(' + cat.rgb + ',0.06);' : '';
-        html += '<td style="color:var(--text-muted);' + bg + '">' + (p['t'+qi] ? fmtEur(p['t'+qi]) : '—') + '</td>';
-        html += '<td style="color:#00ab63;font-weight:600;' + bg + '">' + (p['t'+qi+'r'] ? fmtEur(p['t'+qi+'r']) : '—') + '</td>';
-      }
-      html += '<td>' + _comPct(rowR, p.objectif) + '</td></tr>';
-    });
-
-    // Total
-    html += '<tr style="background:rgba(' + cat.rgb + ',0.08);font-weight:700;"><td style="color:' + cat.color + ';text-align:left;">TOTAL</td><td style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</td>';
-    for (var qi = 1; qi <= 4; qi++) {
-      var tO = _comSumF(cat.objData, 't'+qi), tR = _comSumF(cat.objData, 't'+qi+'r');
-      var bg = qi === Q ? 'background:rgba(' + cat.rgb + ',0.12);' : '';
-      html += '<td style="color:' + cat.color + ';' + bg + '">' + (tO ? fmtEur(tO) : '—') + '</td>';
-      html += '<td style="color:#00ab63;' + bg + '">' + (tR ? fmtEur(tR) : '—') + '</td>';
-    }
-    html += '<td>' + _comPct(catReal, cat.total) + '</td></tr></tbody></table>';
-
-    // ══ Cartes suivi hebdo (comme DEV) ══
+    // ══ CARTES SUIVI HEBDO ══
     if (cat.reportData.length > 0) {
-      html += '<div style="font-size:9px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(' + cat.rgb + ',0.5);margin:20px 0 12px;">Suivi hebdomadaire</div>';
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;">';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;">';
 
       cat.reportData.forEach(function(item, pi) {
         var lastH = item.history.length > 0 ? item.history[item.history.length - 1] : null;
-        var borderCol = lastH && lastH.avancement ? cat.color : 'rgba(255,255,255,0.1)';
+        var borderCol = lastH && lastH.avancement ? cat.color : 'rgba(255,255,255,0.08)';
 
-        html += '<div style="background:rgba(' + cat.rgb + ',0.04);border:1px solid rgba(' + cat.rgb + ',0.15);border-left:3px solid ' + borderCol + ';border-radius:12px;padding:14px 16px;">';
-        // Header
-        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">';
-        html += '<span style="color:' + cat.color + ';font-size:14px;">●</span>';
+        html += '<div style="background:rgba(' + cat.rgb + ',0.04);border:1px solid rgba(' + cat.rgb + ',0.12);border-left:3px solid ' + borderCol + ';border-radius:12px;padding:14px 16px;">';
+
+        // Header avec nom + avancement
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
+        html += '<span style="color:' + cat.color + ';font-size:13px;">●</span>';
         html += '<span style="font-weight:700;color:' + cat.color + ';font-size:13px;">' + escapeHtml(item.name) + '</span>';
-        if (lastH && lastH.avancement) html += '<span style="font-size:10px;color:#00ab63;font-weight:600;margin-left:auto;">' + escapeHtml(lastH.avancement) + '</span>';
+        if (lastH && lastH.avancement) html += '<span style="font-size:10px;color:#00ab63;font-weight:700;margin-left:auto;background:rgba(0,171,99,0.1);padding:2px 8px;border-radius:6px;">' + escapeHtml(lastH.avancement) + '</span>';
         html += '</div>';
 
-        // Dernier commentaire
+        // Dernier suivi
         if (lastH) {
-          html += '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:6px;">';
+          html += '<div style="font-size:11px;margin-bottom:4px;">';
           html += '<span style="color:#5aafaf;font-weight:600;">' + escapeHtml(lastH.week) + '</span>';
-          if (lastH.phase) html += ' · <span style="color:' + cat.color + ';">' + escapeHtml(lastH.phase) + '</span>';
+          if (lastH.phase) html += ' · <span style="color:' + cat.color + ';font-weight:600;">' + escapeHtml(lastH.phase) + '</span>';
           html += '</div>';
-          if (lastH.comment) html += '<div style="font-size:11px;color:rgba(255,255,255,0.6);">' + escapeHtml(lastH.comment).substring(0, 150) + '</div>';
+          if (lastH.comment) html += '<div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.4;">' + escapeHtml(lastH.comment) + '</div>';
         } else {
-          html += '<div style="font-size:11px;color:rgba(255,255,255,0.2);font-style:italic;">Aucun suivi saisi</div>';
+          html += '<div style="font-size:11px;color:rgba(255,255,255,0.15);font-style:italic;">Aucun suivi</div>';
         }
 
         // Historique expandable
         if (item.history.length > 1) {
           var hid = 'com-hist-' + cat.key + '-' + pi;
-          html += '<button onclick="var el=document.getElementById(\'' + hid + '\');el.style.display=el.style.display===\'none\'?\'block\':\'none\';" ' +
+          html += '<button onclick="var el=document.getElementById(\'' + hid + '\');var btn=this;if(el.style.display===\'none\'){el.style.display=\'block\';btn.textContent=\'▼ Masquer\'}else{el.style.display=\'none\';btn.textContent=\'▶ Historique (' + item.history.length + ')\'}" ' +
             'style="margin-top:8px;background:none;border:none;color:' + cat.color + ';font-size:10px;font-weight:700;cursor:pointer;padding:0;">▶ Historique (' + item.history.length + ')</button>';
-          html += '<div id="' + hid + '" style="display:none;margin-top:8px;max-height:200px;overflow-y:auto;border-top:1px solid rgba(' + cat.rgb + ',0.15);padding-top:8px;">';
+          html += '<div id="' + hid + '" style="display:none;margin-top:8px;max-height:220px;overflow-y:auto;border-top:1px solid rgba(' + cat.rgb + ',0.12);padding-top:8px;">';
           item.history.slice().reverse().forEach(function(h) {
-            html += '<div style="font-size:10px;margin-bottom:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">';
+            html += '<div style="font-size:10px;margin-bottom:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03);">';
             html += '<span style="color:#5aafaf;font-weight:600;">' + escapeHtml(h.week) + '</span>';
             if (h.phase) html += ' · <span style="color:' + cat.color + ';">' + escapeHtml(h.phase) + '</span>';
-            if (h.avancement) html += ' · <span style="color:#00ab63;">' + escapeHtml(h.avancement) + '</span>';
-            if (h.comment) html += '<div style="color:rgba(255,255,255,0.5);margin-top:2px;">' + escapeHtml(h.comment) + '</div>';
+            if (h.avancement) html += ' · <span style="color:#00ab63;font-weight:600;">' + escapeHtml(h.avancement) + '</span>';
+            if (h.comment) html += '<div style="color:rgba(255,255,255,0.45);margin-top:2px;">' + escapeHtml(h.comment) + '</div>';
             html += '</div>';
           });
           html += '</div>';
         }
 
-        html += '</div>'; // card
+        html += '</div>';
       });
 
-      html += '</div>'; // grid
+      html += '</div>';
     } else {
-      html += '<div style="font-size:11px;color:rgba(255,255,255,0.2);font-style:italic;text-align:center;padding:20px;border:1px dashed rgba(255,255,255,0.08);border-radius:12px;margin-top:12px;">Suivi hebdomadaire — Remplir COM_Reporting.xlsx puis relancer generate_com_reporting.py</div>';
+      // Pas de données hebdo — afficher les items à suivre
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;">';
+      cat.objData.forEach(function(item) {
+        html += '<div style="background:rgba(' + cat.rgb + ',0.03);border:1px solid rgba(' + cat.rgb + ',0.08);border-left:3px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;">';
+        html += '<div style="display:flex;align-items:center;gap:8px;">';
+        html += '<span style="color:rgba(255,255,255,0.15);font-size:13px;">●</span>';
+        html += '<span style="font-weight:700;color:rgba(255,255,255,0.4);font-size:13px;">' + escapeHtml(item.name) + '</span>';
+        html += '<span style="font-size:10px;color:rgba(255,255,255,0.15);margin-left:auto;">' + fmtEur(item.objectif) + '</span>';
+        html += '</div>';
+        html += '<div style="font-size:10px;color:rgba(255,255,255,0.12);margin-top:6px;font-style:italic;">En attente de suivi</div>';
+        html += '</div>';
+      });
+      html += '</div>';
     }
 
-    html += '</div>'; // section
+    html += '</div>';
   });
 
   document.getElementById('rpt-props-com-table-wrap').innerHTML = html;
