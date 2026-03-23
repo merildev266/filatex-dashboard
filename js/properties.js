@@ -449,9 +449,8 @@ function initGanttZoomPan(containerId, nameWidth, opts) {
    ══════════════════════════════════════════════════════════ */
 
 function renderCommercial() {
-  var Q = Math.floor(new Date().getMonth() / 3) + 1; // trimestre en cours
+  var Q = Math.floor(new Date().getMonth() / 3) + 1;
 
-  // ── Helpers ──
   function fmtEur(v) {
     if (v == null) return '—';
     if (v >= 1000000) return (v / 1000000).toFixed(1).replace('.', ',') + ' M€';
@@ -462,34 +461,45 @@ function renderCommercial() {
     if (v == null) return '<span style="color:rgba(255,255,255,0.15);">—</span>';
     return fmtEur(v);
   }
-  function sumT(arr, field) {
+  function sumF(arr, field) {
     return arr.reduce(function(s, r) { return s + (r[field] || 0); }, 0);
   }
+  function pct(realise, objectif) {
+    if (!objectif) return '—';
+    if (!realise) return '<span style="color:rgba(255,255,255,0.25);">0 %</span>';
+    var p = Math.round(realise / objectif * 100);
+    var col = p >= 80 ? '#00ab63' : p >= 40 ? '#FDB823' : '#E05C5C';
+    return '<span style="color:' + col + ';font-weight:700;">' + p + ' %</span>';
+  }
 
-  // ── Données ──
   var cats = [
     {
       id: 'vente-projet', title: 'Vente Projet', color: '#00ab63',
       data: typeof comData_venteImmo !== 'undefined' ? comData_venteImmo : [],
       total: typeof comData_venteImmoTotal !== 'undefined' ? comData_venteImmoTotal : 0,
-      unit: '€', hasObjectif: true
+      itemLabel: 'Projets'
     },
     {
       id: 'vente-terrain', title: 'Vente Terrain', color: '#FDB823',
       data: typeof comData_venteFonciere !== 'undefined' ? comData_venteFonciere : [],
       total: typeof comData_venteFonciereTotal !== 'undefined' ? comData_venteFonciereTotal : 0,
-      unit: '€', hasObjectif: true
+      itemLabel: 'Terrains'
     },
     {
       id: 'location', title: 'Location', color: '#5aafaf',
       data: typeof comData_location !== 'undefined' ? comData_location : [],
       total: typeof comData_locationTotal !== 'undefined' ? comData_locationTotal : 0,
-      unit: '€/mois', hasObjectif: false
+      itemLabel: 'Biens'
     }
   ];
 
   var grandTotal = cats.reduce(function(s, c) { return s + c.total; }, 0);
   var nbItems = cats.reduce(function(s, c) { return s + c.data.length; }, 0);
+  var grandRealise = 0;
+  cats.forEach(function(cat) {
+    for (var qi = 1; qi <= 4; qi++) grandRealise += sumF(cat.data, 't' + qi + 'r');
+  });
+  var globalPct = grandTotal ? Math.round(grandRealise / grandTotal * 100) : 0;
 
   // ── KPI accueil Properties ──
   var elObj = document.getElementById('com-kpi-obj');
@@ -498,7 +508,7 @@ function renderCommercial() {
   var elTri = document.getElementById('com-kpi-trimestre');
   if (elObj) elObj.textContent = fmtEur(grandTotal);
   if (elNb) elNb.textContent = nbItems;
-  if (elReal) elReal.textContent = '0 %';
+  if (elReal) { elReal.textContent = globalPct + ' %'; elReal.style.color = globalPct >= 80 ? '#00ab63' : globalPct >= 40 ? '#FDB823' : '#E05C5C'; }
   if (elTri) elTri.textContent = 'Q' + Q;
 
   // ── KPI bar inner page ──
@@ -516,13 +526,13 @@ function renderCommercial() {
         '<div class="props-kpi-sub">' + cats[0].data.length + ' projets · ' + cats[1].data.length + ' terrains · ' + cats[2].data.length + ' biens</div>' +
       '</div>' +
       '<div class="props-kpi-card" style="border-color:rgba(0,171,99,0.18);">' +
-        '<div class="props-kpi-label">Réalisé</div>' +
-        '<div class="props-kpi-val" style="color:#FDB823;">0 %</div>' +
-        '<div class="props-kpi-sub">Données à renseigner</div>' +
+        '<div class="props-kpi-label">Réalisé global</div>' +
+        '<div class="props-kpi-val" style="color:' + (globalPct >= 80 ? '#00ab63' : globalPct >= 40 ? '#FDB823' : '#E05C5C') + ';">' + globalPct + ' %</div>' +
+        '<div class="props-kpi-sub">' + fmtEur(grandRealise) + ' encaissé</div>' +
       '</div>' +
       '<div class="props-kpi-card" style="border-color:rgba(90,175,175,0.25);">' +
         '<div class="props-kpi-label">Trimestre</div>' +
-        '<div class="props-kpi-val" style="color:#5aafaf;">T' + Q + '</div>' +
+        '<div class="props-kpi-val" style="color:#5aafaf;">Q' + Q + '</div>' +
         '<div class="props-kpi-sub">' + ['Jan-Mar', 'Avr-Jun', 'Jul-Sep', 'Oct-Déc'][Q - 1] + ' 2026</div>' +
       '</div>';
   }
@@ -533,73 +543,97 @@ function renderCommercial() {
 
   var html = '';
   cats.forEach(function(cat) {
-    var tQ = 't' + Q;
-    var sumThisQ = sumT(cat.data, tQ);
     var rgba = cat.color.replace('#', '');
-    var r = parseInt(rgba.substring(0, 2), 16);
-    var g = parseInt(rgba.substring(2, 4), 16);
-    var b = parseInt(rgba.substring(4, 6), 16);
+    var rv = parseInt(rgba.substring(0, 2), 16);
+    var gv = parseInt(rgba.substring(2, 4), 16);
+    var bv = parseInt(rgba.substring(4, 6), 16);
+    var rgb = rv + ',' + gv + ',' + bv;
+
+    // Calcul réalisé total catégorie
+    var catRealise = 0;
+    for (var qi = 1; qi <= 4; qi++) catRealise += sumF(cat.data, 't' + qi + 'r');
+    var catPct = cat.total ? Math.round(catRealise / cat.total * 100) : 0;
+    var catQObj = sumF(cat.data, 't' + Q);
+    var catQReal = sumF(cat.data, 't' + Q + 'r');
+    var catQPct = catQObj ? Math.round(catQReal / catQObj * 100) : 0;
 
     // Carte header
     html += '<div class="com-obj-section" style="margin-bottom:36px;">';
-    html += '<div class="com-obj-card" style="border-color:rgba(' + r + ',' + g + ',' + b + ',0.25);cursor:pointer;" onclick="this.parentElement.querySelector(\'.com-obj-detail\').classList.toggle(\'open\')">';
+    html += '<div class="com-obj-card" style="border-color:rgba(' + rgb + ',0.25);cursor:pointer;" onclick="this.parentElement.querySelector(\'.com-obj-detail\').classList.toggle(\'open\')">';
     html += '<div class="com-obj-card-header">';
     html += '<div class="com-obj-card-title" style="color:' + cat.color + ';">' + cat.title + '</div>';
     html += '<div class="com-obj-card-kpis">';
     html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</div><div class="com-obj-kpi-label">Objectif</div></div>';
-    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val">' + cat.data.length + '</div><div class="com-obj-kpi-label">' + (cat.id === 'location' ? 'Biens' : 'Projets') + '</div></div>';
-    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:#5aafaf;">' + fmtEur(sumThisQ) + '</div><div class="com-obj-kpi-label">Obj. Q' + Q + '</div></div>';
-    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:#FDB823;">0 %</div><div class="com-obj-kpi-label">Réalisé</div></div>';
+    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val">' + cat.data.length + '</div><div class="com-obj-kpi-label">' + cat.itemLabel + '</div></div>';
+    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:#5aafaf;">' + fmtEur(catQObj) + '</div><div class="com-obj-kpi-label">Obj. Q' + Q + '</div></div>';
+    html += '<div class="com-obj-kpi"><div class="com-obj-kpi-val" style="color:' + (catPct >= 80 ? '#00ab63' : catPct >= 40 ? '#FDB823' : '#E05C5C') + ';">' + catPct + ' %</div><div class="com-obj-kpi-label">Réalisé</div></div>';
     html += '</div>';
     html += '<div class="com-obj-expand">&#9660;</div>';
     html += '</div>';
     html += '</div>';
 
-    // Tableau détail (hidden par défaut)
+    // Tableau détail avec Obj + Réalisé + % par trimestre
     html += '<div class="com-obj-detail">';
-    html += '<div class="table-wrap" style="background:rgba(' + r + ',' + g + ',' + b + ',0.02);border-color:rgba(' + r + ',' + g + ',' + b + ',0.12);margin-top:12px;">';
+    html += '<div class="table-wrap" style="background:rgba(' + rgb + ',0.02);border-color:rgba(' + rgb + ',0.12);margin-top:12px;">';
     html += '<table class="groups-table com-obj-table">';
     html += '<thead><tr>';
-    html += '<th style="width:30%;">Nom</th>';
-    if (cat.hasObjectif) html += '<th style="width:17%;">Objectif</th>';
+    html += '<th style="text-align:left;">Nom</th>';
+    html += '<th>Objectif</th>';
     for (var qi = 1; qi <= 4; qi++) {
-      var isActive = qi === Q;
-      html += '<th style="' + (isActive ? 'color:' + cat.color + ';' : '') + '">';
-      html += 'Q' + qi;
-      if (isActive) html += ' ●';
-      html += '</th>';
+      var isAct = qi === Q;
+      var thStyle = isAct ? 'color:' + cat.color + ';' : '';
+      html += '<th colspan="2" style="' + thStyle + '">Q' + qi + (isAct ? ' ●' : '') + '</th>';
     }
+    html += '<th>% Annuel</th>';
+    html += '</tr>';
+    // Sub-header Obj / Réalisé
+    html += '<tr style="font-size:8px;opacity:0.5;">';
+    html += '<th></th><th></th>';
+    for (var qi = 1; qi <= 4; qi++) {
+      html += '<th>Obj.</th><th>Réalisé</th>';
+    }
+    html += '<th></th>';
     html += '</tr></thead>';
     html += '<tbody>';
 
     cat.data.forEach(function(row) {
+      var rowRealise = 0;
+      for (var qi = 1; qi <= 4; qi++) rowRealise += (row['t' + qi + 'r'] || 0);
+      var rowPct = row.objectif ? Math.round(rowRealise / row.objectif * 100) : 0;
+
       html += '<tr>';
-      html += '<td style="font-weight:600;">' + row.name + '</td>';
-      if (cat.hasObjectif) html += '<td>' + fmtEur(row.objectif) + '</td>';
+      html += '<td style="font-weight:600;text-align:left;">' + row.name + '</td>';
+      html += '<td>' + fmtEur(row.objectif) + '</td>';
       for (var qi = 1; qi <= 4; qi++) {
-        var val = row['t' + qi];
-        var isActive = qi === Q;
-        var tdStyle = isActive ? 'background:rgba(' + r + ',' + g + ',' + b + ',0.06);font-weight:600;' : '';
-        html += '<td style="' + tdStyle + '">' + fmtCell(val) + '</td>';
+        var obj = row['t' + qi];
+        var real = row['t' + qi + 'r'];
+        var isAct = qi === Q;
+        var bgS = isAct ? 'background:rgba(' + rgb + ',0.06);' : '';
+        html += '<td style="' + bgS + '">' + fmtCell(obj) + '</td>';
+        html += '<td style="' + bgS + 'font-weight:600;">' + (real != null ? fmtEur(real) : '<span style="color:rgba(255,255,255,0.15);">—</span>') + '</td>';
       }
+      html += '<td>' + pct(rowRealise, row.objectif) + '</td>';
       html += '</tr>';
     });
 
-    // Ligne total
-    html += '<tr style="border-top:2px solid rgba(' + r + ',' + g + ',' + b + ',0.2);font-weight:800;">';
-    html += '<td style="color:' + cat.color + ';">TOTAL</td>';
-    if (cat.hasObjectif) html += '<td style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</td>';
+    // Ligne TOTAL
+    html += '<tr style="border-top:2px solid rgba(' + rgb + ',0.2);font-weight:800;">';
+    html += '<td style="color:' + cat.color + ';text-align:left;">TOTAL</td>';
+    html += '<td style="color:' + cat.color + ';">' + fmtEur(cat.total) + '</td>';
     for (var qi = 1; qi <= 4; qi++) {
-      var tSum = sumT(cat.data, 't' + qi);
-      var isActive = qi === Q;
-      var tdStyle = isActive ? 'background:rgba(' + r + ',' + g + ',' + b + ',0.06);' : '';
-      html += '<td style="color:' + cat.color + ';' + tdStyle + '">' + fmtCell(tSum || null) + '</td>';
+      var tObj = sumF(cat.data, 't' + qi);
+      var tReal = sumF(cat.data, 't' + qi + 'r');
+      var isAct = qi === Q;
+      var bgS = isAct ? 'background:rgba(' + rgb + ',0.06);' : '';
+      html += '<td style="color:' + cat.color + ';' + bgS + '">' + fmtCell(tObj || null) + '</td>';
+      html += '<td style="color:#00ab63;' + bgS + '">' + fmtCell(tReal || null) + '</td>';
     }
+    html += '<td>' + pct(catRealise, cat.total) + '</td>';
     html += '</tr>';
 
     html += '</tbody></table></div>';
-    html += '</div>'; // com-obj-detail
-    html += '</div>'; // com-obj-section
+    html += '</div>';
+    html += '</div>';
   });
 
   grid.innerHTML = html;
