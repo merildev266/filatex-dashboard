@@ -24,7 +24,7 @@ body::-webkit-scrollbar{display:none;}
 .page.active{display:block;animation:slideIn 0.45s cubic-bezier(0.16,1,0.3,1) both;}
 .placeholder-page{display:none;position:fixed;inset:0;z-index:100;background:var(--dark);overflow-y:auto;}
 .placeholder-page.active{display:block;animation:slideIn 0.45s cubic-bezier(0.16,1,0.3,1) both;}
-.page-inner{max-width:1100px;margin:0 auto;padding:36px 48px 60px;}
+.page-inner{max-width:1100px;margin:0 auto;padding:36px 48px 100px;}
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid var(--border);}
 .page-logo-wrap svg{height:36px;width:auto;}
 .page-subtitle{font-size:11px;color:var(--text-muted);letter-spacing:0.28em;text-transform:uppercase;margin-top:4px;}
