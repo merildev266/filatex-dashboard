@@ -521,7 +521,7 @@ function renderCommercial() {
         '<div class="props-kpi-sub">Données à renseigner</div>' +
       '</div>' +
       '<div class="props-kpi-card" style="border-color:rgba(90,175,175,0.25);">' +
-        '<div class="props-kpi-label">Trimestre en cours</div>' +
+        '<div class="props-kpi-label">Quarter</div>' +
         '<div class="props-kpi-val" style="color:#5aafaf;">T' + Q + '</div>' +
         '<div class="props-kpi-sub">' + ['Jan-Mar', 'Avr-Jun', 'Jul-Sep', 'Oct-Déc'][Q - 1] + ' 2026</div>' +
       '</div>';
