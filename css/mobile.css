@@ -3,14 +3,15 @@
 /* Valeurs toujours visibles */
 .home-values{display:flex !important;}
 
+
 /* ══ ACCUEIL ══ */
 #home{
   justify-content:flex-start !important;
   padding:0 !important;
   gap:0 !important;
-  height:100vh !important;
+  height:calc(100vh - 56px) !important;
   min-height:auto !important;
-  max-height:100vh !important;
+  max-height:calc(100vh - 56px) !important;
   overflow:hidden !important;
   box-sizing:border-box !important;
 }
@@ -61,9 +62,8 @@
 .card-csi .card-logo-wrap svg{height:38px !important;}
 .card-reporting .card-logo-wrap svg{height:38px !important;}
 
-/* Footer — caché sur mobile pour centrage propre */
-#home-footer{display:none !important;}
-#home-footer-magritte{display:none !important;}
+/* Footer + textes bas — cachés sur mobile */
+#home-footer,#home-footer-magritte,.home-footer,[id*="footer"]{display:none !important;}
 
 /* Motif défilant — doublé en taille */
 #home-motif{
