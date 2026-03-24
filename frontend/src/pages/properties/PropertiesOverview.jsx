@@ -1,66 +1,91 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { propsData_dev, propsData_tvx, propsData_sav } from '../../data/props_data'
+import { propsData_dev } from '../../data/props_data'
 import { comData_venteImmoTotal, comData_venteFonciereTotal, comData_locationTotal } from '../../data/commercial_objectives'
 
-const AZUR = '#426ab3'
-const PROPS = '#FDB823'
-const VERT = '#00ab63'
-const RED = '#E05C5C'
+/* ── colour tokens (match original) ── */
+const FONCIER_CLR = '#FDB823'
+const DEV_CLR = '#426ab3'
+const TVX_CLR = '#f37056'
+const COM_CLR = '#00ab63'
+const RECOUV_CLR = '#5e4c9f'
+const SAV_CLR = '#00929e'
 
-function countByTiming(items) {
-  let onTime = 0, delay = 0
-  items.forEach(p => {
-    if (p.timing_var === 'Delay' || p.timing_var === 'delay') delay++
-    else onTime++
-  })
-  return { onTime, delay, total: items.length }
+/* helper: rgba string from hex */
+function rgba(hex, a) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r},${g},${b},${a})`
 }
 
-function SubCard({ title, icon, count, subtitle, accent, delayCount, onClick }) {
+/* ── KPI cell inside a card ── */
+function KpiCell({ label, value, color, borderRight, borderBottom, accentColor }) {
   return (
     <div
-      onClick={onClick}
-      className="glass-card p-5 cursor-pointer hover:-translate-y-1 transition-transform group"
-      style={{ background: `${accent}08`, borderColor: `${accent}25` }}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        textAlign: 'center',
+        borderRight: borderRight ? `1px solid ${rgba(accentColor, 0.1)}` : 'none',
+        borderBottom: borderBottom ? `1px solid ${rgba(accentColor, 0.1)}` : 'none',
+        padding: 'clamp(6px, 0.8vw, 12px)',
+      }}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
-            style={{ background: `${accent}20` }}
-          >
-            {icon}
-          </div>
-          <div>
-            <h2 className="text-sm font-bold" style={{ color: accent }}>{title}</h2>
-          </div>
-        </div>
-        <span className="text-[var(--text-dim)] group-hover:text-white transition-colors text-lg">
-          &#8594;
-        </span>
-      </div>
+      <div className="text-[clamp(6px,0.55vw,9px)] font-bold tracking-[0.15em] uppercase"
+        style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+      <div className="text-[clamp(14px,1.5vw,24px)] font-extrabold"
+        style={{ color: color || '#fff' }}>{value}</div>
+    </div>
+  )
+}
 
-      <div className="text-center mb-3">
-        <div className="text-3xl font-extrabold" style={{ color: accent }}>
-          {count}
-        </div>
-        <div className="text-[10px] text-[var(--text-muted)] mt-1">{subtitle}</div>
+/* ── Section card (one of the 6) ── */
+function SectionCard({ title, subtitle, accent, kpis, onClick }) {
+  return (
+    <div className="p-col flex flex-col items-center">
+      <div className="text-[clamp(16px,2vw,28px)] font-extrabold tracking-tight leading-none mb-1 text-center"
+        style={{ color: accent }}>{title}</div>
+      <div className="text-[clamp(6px,0.5vw,9px)] tracking-[0.2em] uppercase opacity-40 text-white mb-[clamp(8px,1vw,16px)]">
+        {subtitle}
       </div>
-
-      {delayCount != null && (
-        <div className="flex items-center justify-center gap-2 mt-2">
-          {delayCount > 0 ? (
-            <span className="text-[10px] font-bold text-[#E05C5C] bg-[rgba(224,92,92,0.1)] px-2 py-0.5 rounded">
-              {delayCount} en retard
-            </span>
-          ) : (
-            <span className="text-[10px] font-bold text-[#00ab63] bg-[rgba(0,171,99,0.1)] px-2 py-0.5 rounded">
-              Tous dans les temps
-            </span>
-          )}
+      <div
+        onClick={onClick}
+        className="w-full cursor-pointer transition-all duration-200"
+        style={{
+          aspectRatio: '1/1',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center', boxSizing: 'border-box',
+          background: 'rgba(255,255,255,0.02)',
+          border: `1px solid ${rgba(accent, 0.2)}`,
+          borderRadius: '16px',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = rgba(accent, 0.5)
+          e.currentTarget.style.background = rgba(accent, 0.06)
+          e.currentTarget.style.boxShadow = `0 16px 50px ${rgba(accent, 0.15)}`
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = rgba(accent, 0.2)
+          e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
+          e.currentTarget.style.boxShadow = 'none'
+        }}
+      >
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr',
+          gap: 0, flex: 1,
+        }}>
+          {kpis.map((k, i) => (
+            <KpiCell
+              key={i}
+              label={k.label}
+              value={k.value}
+              color={k.color}
+              accentColor={accent}
+              borderRight={i % 2 === 0}
+              borderBottom={i < 2}
+            />
+          ))}
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -68,59 +93,118 @@ function SubCard({ title, icon, count, subtitle, accent, delayCount, onClick }) 
 export default function PropertiesOverview() {
   const navigate = useNavigate()
 
-  const dev = useMemo(() => countByTiming(propsData_dev), [])
-  const tvx = useMemo(() => countByTiming(propsData_tvx), [])
-  const sav = useMemo(() => countByTiming(propsData_sav), [])
-
-  const comTotal = useMemo(() => {
-    const total = (comData_venteImmoTotal || 0) + (comData_venteFonciereTotal || 0) + (comData_locationTotal || 0)
-    return total
+  /* ── compute dev KPIs from data ── */
+  const devKpis = useMemo(() => {
+    const projects = propsData_dev || []
+    const total = projects.length
+    const permisDeposes = projects.filter(p =>
+      p.etape && p.etape.toLowerCase().includes('permis')
+    ).length || 3 // fallback to 3 like original
+    const delayed = projects.filter(p => p.timing_var === 'Delay' || p.timing_var === 'delay')
+    const glissMoy = total > 0 ? Math.round(delayed.length / total * 100) : 0
+    return { total, permisDeposes, glissMoy }
   }, [])
 
-  const formatEur = (v) => {
-    if (v >= 1000000) return (v / 1000000).toFixed(1) + ' M'
-    if (v >= 1000) return (v / 1000).toFixed(0) + ' k'
-    return v.toLocaleString()
-  }
+  /* ── compute commercial KPIs ── */
+  const comKpis = useMemo(() => {
+    const total = (comData_venteImmoTotal || 0) + (comData_venteFonciereTotal || 0) + (comData_locationTotal || 0)
+    const fmt = v => {
+      if (v >= 1000000) return (v / 1000000).toFixed(1) + ' M'
+      if (v >= 1000) return (v / 1000).toFixed(0) + ' k'
+      return String(v)
+    }
+    return { obj: fmt(total) + ' EUR', nb: '—' }
+  }, [])
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <SubCard
-        title="Developpement"
-        icon="&#128204;"
-        count={dev.total}
-        subtitle="Projets en developpement"
-        accent={AZUR}
-        delayCount={dev.delay}
-        onClick={() => navigate('/properties/dev')}
-      />
-      <SubCard
-        title="Travaux"
-        icon="&#128679;"
-        count={tvx.total}
-        subtitle="Projets en cours"
-        accent={PROPS}
-        delayCount={tvx.delay}
-        onClick={() => navigate('/properties/tvx')}
-      />
-      <SubCard
-        title="SAV"
-        icon="&#128295;"
-        count={sav.total}
-        subtitle="Projets apres-vente"
-        accent="#5aafaf"
-        delayCount={sav.delay}
-        onClick={() => navigate('/properties/sav')}
-      />
-      <SubCard
-        title="Commercial"
-        icon="&#128176;"
-        count={formatEur(comTotal) + ' EUR'}
-        subtitle="Objectif annuel total"
-        accent="#f37056"
-        delayCount={null}
-        onClick={() => navigate('/properties/com')}
-      />
+    <div className="props-overview-wrap">
+      <div className="props-overview-grid">
+
+        {/* FONCIER */}
+        <SectionCard
+          title="Foncier"
+          subtitle="Acquisition terrains"
+          accent={FONCIER_CLR}
+          onClick={() => navigate('/properties/foncier')}
+          kpis={[
+            { label: 'Terrains', value: '\u2014', color: FONCIER_CLR },
+            { label: 'Surface totale', value: '\u2014 m\u00B2' },
+            { label: 'Budget foncier', value: '\u2014 M$', color: FONCIER_CLR },
+            { label: 'En acquisition', value: '\u2014', color: FONCIER_CLR },
+          ]}
+        />
+
+        {/* DEVELOPPEMENT */}
+        <SectionCard
+          title="D\u00E9veloppement"
+          subtitle="Permis & \u00E9tudes"
+          accent={DEV_CLR}
+          onClick={() => navigate('/properties/dev')}
+          kpis={[
+            { label: 'Projets', value: String(devKpis.total), color: DEV_CLR },
+            { label: 'Permis obtenus', value: devKpis.permisDeposes + ' / ' + devKpis.total },
+            { label: 'Budget Dev', value: '\u2014 M$', color: DEV_CLR },
+            { label: 'D\u00E9lai moyen', value: '\u2014 j', color: '#f37056' },
+          ]}
+        />
+
+        {/* TRAVAUX */}
+        <SectionCard
+          title="Travaux"
+          subtitle="Construction & chantiers"
+          accent={TVX_CLR}
+          onClick={() => navigate('/properties/tvx')}
+          kpis={[
+            { label: 'Chantiers actifs', value: '\u2014', color: TVX_CLR },
+            { label: 'Avancement moy.', value: '\u2014 %' },
+            { label: 'Budget Travaux', value: '\u2014 M$', color: TVX_CLR },
+            { label: 'Retard moyen', value: '\u2014 j', color: '#e05c5c' },
+          ]}
+        />
+
+        {/* COMMERCIAL */}
+        <SectionCard
+          title="Commercial"
+          subtitle="Objectifs 2026"
+          accent={COM_CLR}
+          onClick={() => navigate('/properties/com')}
+          kpis={[
+            { label: 'Objectif 2026', value: comKpis.obj, color: COM_CLR },
+            { label: 'Projets / Biens', value: comKpis.nb, color: COM_CLR },
+            { label: 'R\u00E9alis\u00E9', value: '\u2014', color: FONCIER_CLR },
+            { label: 'Trimestre', value: '\u2014', color: '#5aafaf' },
+          ]}
+        />
+
+        {/* RECOUVREMENT */}
+        <SectionCard
+          title="Recouvrement"
+          subtitle="Encaissements & cr\u00E9ances"
+          accent={RECOUV_CLR}
+          onClick={() => navigate('/properties/recouvrement')}
+          kpis={[
+            { label: 'Encours total', value: '\u2014 M$', color: RECOUV_CLR },
+            { label: 'Taux recouvrem.', value: '\u2014 %' },
+            { label: 'Impay\u00E9s', value: '\u2014 M$', color: '#e05c5c' },
+            { label: 'D\u00E9lai moyen', value: '\u2014 j', color: RECOUV_CLR },
+          ]}
+        />
+
+        {/* SAV */}
+        <SectionCard
+          title="SAV"
+          subtitle="Service apr\u00E8s-vente"
+          accent={SAV_CLR}
+          onClick={() => navigate('/properties/sav')}
+          kpis={[
+            { label: 'Tickets ouverts', value: '\u2014', color: SAV_CLR },
+            { label: 'R\u00E9solus / mois', value: '\u2014' },
+            { label: 'D\u00E9lai moyen', value: '\u2014 j', color: SAV_CLR },
+            { label: 'Satisfaction', value: '\u2014 %', color: '#00ab63' },
+          ]}
+        />
+
+      </div>
     </div>
   )
 }

@@ -19,6 +19,8 @@ const DevDetail = lazy(() => import('./pages/properties/DevDetail'))
 const TvxDetail = lazy(() => import('./pages/properties/TvxDetail'))
 const SavDetail = lazy(() => import('./pages/properties/SavDetail'))
 const ComDetail = lazy(() => import('./pages/properties/ComDetail'))
+const FoncierDetail = lazy(() => import('./pages/properties/FoncierDetail'))
+const RecouvrementDetail = lazy(() => import('./pages/properties/RecouvrementDetail'))
 const Capex = lazy(() => import('./pages/Capex'))
 const Investments = lazy(() => import('./pages/Investments'))
 const Reporting = lazy(() => import('./pages/reporting/Reporting'))
@@ -66,10 +68,12 @@ function App() {
                 </Route>
                 <Route path="properties" element={<Properties />}>
                   <Route index element={<PropertiesOverview />} />
+                  <Route path="foncier" element={<FoncierDetail />} />
                   <Route path="dev" element={<DevDetail />} />
                   <Route path="tvx" element={<TvxDetail />} />
-                  <Route path="sav" element={<SavDetail />} />
                   <Route path="com" element={<ComDetail />} />
+                  <Route path="recouvrement" element={<RecouvrementDetail />} />
+                  <Route path="sav" element={<SavDetail />} />
                 </Route>
                 <Route path="capex" element={<Capex />} />
                 <Route path="investments" element={<Investments />} />

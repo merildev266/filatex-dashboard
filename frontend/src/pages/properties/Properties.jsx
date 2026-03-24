@@ -5,29 +5,51 @@ export default function Properties() {
   const location = useLocation()
   const isRoot = location.pathname === '/properties'
 
+  /* Determine sub-page name for back button */
+  const subPage = location.pathname.split('/').pop()
+  const backLabel = isRoot ? 'Accueil' : 'Properties'
+  const handleBack = () => isRoot ? navigate('/') : navigate('/properties')
+
   return (
-    <div className="min-h-[calc(100dvh-56px)]">
-      {/* Section header */}
-      <div className="sticky top-0 z-50 bg-dark/90 backdrop-blur-sm border-b border-[var(--border)]">
-        <div className="h-[3px] bg-[#FDB823]" />
-        <div className="flex items-center gap-3 px-4 py-3">
+    <div style={{ background: '#0a0916', minHeight: '100dvh' }}>
+      {/* Sticky header matching original sd-sticky-bar */}
+      <div className="sticky top-0 z-50 flex items-center px-4 py-3"
+        style={{
+          background: 'rgba(10,9,22,0.95)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(253,184,35,0.08)',
+        }}
+      >
+        <div className="nav-back">
           <button
-            onClick={() => isRoot ? navigate('/') : navigate('/properties')}
-            className="text-[var(--text-muted)] hover:text-white text-base
-                       bg-transparent border-none cursor-pointer"
+            onClick={handleBack}
+            className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg
+                       bg-transparent cursor-pointer transition-colors"
+            style={{
+              border: '1px solid rgba(253,184,35,0.3)',
+              color: '#FDB823',
+            }}
           >
-            &#8592;
+            {backLabel}
           </button>
-          <h1 className="text-sm font-bold uppercase tracking-wider text-[#FDB823]">
-            Properties
-          </h1>
         </div>
+        <div className="flex-1 text-center text-sm font-extrabold tracking-wider uppercase"
+          style={{ color: '#FDB823' }}>
+          Properties
+        </div>
+        <div style={{ width: 70 }} /> {/* spacer to center title */}
       </div>
 
-      {/* Child routes */}
-      <div className="p-4 md:p-6">
-        <Outlet />
-      </div>
+      {/* Content area — no extra padding for overview (it centers itself) */}
+      {isRoot ? (
+        <div className="inner-page-inner">
+          <Outlet />
+        </div>
+      ) : (
+        <div className="inner-page-inner p-4 md:p-6">
+          <Outlet />
+        </div>
+      )}
     </div>
   )
 }
