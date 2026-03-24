@@ -497,7 +497,7 @@ function ProjectDetail({ project, onBack }) {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
+      <div className="dev-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
         <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
           <div className="props-kpi-label">Avancement</div>
           <div className="props-kpi-val" style={{ color: AZUR }}>{project.pct} %</div>
@@ -577,7 +577,7 @@ export default function DevDetail() {
   return (
     <div>
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="dev-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
         <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
           <div className="props-kpi-label">Projets en cours</div>
           <div className="props-kpi-val" style={{ color: AZUR }}>{total}</div>

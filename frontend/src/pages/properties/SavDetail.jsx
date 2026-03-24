@@ -58,7 +58,7 @@ export default function SavDetail() {
   return (
     <div>
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="props-kpi-row-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
         <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.15)' }}>
           <div className="props-kpi-label">Projets SAV</div>
           <div className="props-kpi-val" style={{ color: TEAL }}>{kpis.total}</div>

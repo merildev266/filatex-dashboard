@@ -284,7 +284,7 @@ function ProjectDetailPanel({ project, onClose }) {
       </div>
 
       {/* === ROW 1: 6 KPI CARDS === */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 14, marginBottom: 36 }}>
+      <div className="enrp-detail-kpis-6" style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 14, marginBottom: 36 }}>
         {/* CAPEX Total */}
         <div className="enr-kpi-card" style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>CAPEX Total</div>
@@ -356,7 +356,7 @@ function ProjectDetailPanel({ project, onClose }) {
           </div>
           <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
             {/* Row 1: 5 EVM cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 20 }}>
+            <div className="enrp-evm-grid-5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 20 }}>
               <div style={cardStyle}>
                 <div style={labelStyle}>BAC</div>
                 <div style={valStyle('rgba(255,255,255,0.85)')}>{fmtK(cc.bac)}</div>
@@ -380,7 +380,7 @@ function ProjectDetailPanel({ project, onClose }) {
             </div>
 
             {/* Row 2: 4 performance cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
+            <div className="enrp-perf-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
               {/* SPI */}
               <div style={cardStyle}>
                 <div style={labelStyle}>SPI</div>
@@ -442,7 +442,7 @@ function ProjectDetailPanel({ project, onClose }) {
               </div>
             </div>
             {/* Legend */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
+            <div className="enrp-legend-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(90,175,175,0.6)', marginBottom: 4 }}>D\u00e9veloppement</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#5aafaf' }}>{fmtK(dev)}</div>

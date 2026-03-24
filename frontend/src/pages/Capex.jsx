@@ -106,7 +106,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
         </div>
 
         {/* KPI grid */}
-        <div className="cpj-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="cpj-grid cpj-grid-4" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
           {[
             { label: 'Invest. Initial', value: project.investInit },
             { label: 'Invest. Reel', value: project.investReel, color },
@@ -134,7 +134,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
         </div>
 
         {/* Dates */}
-        <div className="cpj-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
+        <div className="cpj-grid cpj-grid-4" style={{ gridTemplateColumns: 'repeat(4,1fr)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
           {[
             { label: 'Debut Init', value: project.dateDebInit },
             { label: 'Debut Reel', value: project.dateDebReel },
@@ -173,7 +173,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
   const avgPct = projects.length > 0 ? Math.round(projects.reduce((s, p) => s + (p.etatPct || 0), 0) / projects.length) : 0
 
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
+    <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
       {/* Back + Title */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
         <button onClick={onBack} className="back-btn-react" style={{ borderColor: `rgba(${colorRgb},0.3)`, color }}>
@@ -183,7 +183,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
       </div>
 
       {/* KPI row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28 }}>
+      <div className="capex-cat-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28 }}>
         {[
           { label: 'Projets', value: total, color },
           { label: 'En retard', value: delayed, color: delayed > 0 ? '#E05C5C' : color },
@@ -283,12 +283,12 @@ export default function Capex() {
 
   // Landing page
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
+    <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
 
       {/* ══ GLOBAL SUMMARY ══ */}
       <div style={{ marginBottom: 40 }}>
         <div className="capex-section-label">Vue consolidee \u00b7 Tous poles</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 16 }}>
+        <div className="capex-top-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 16 }}>
 
           {/* Projets Actifs */}
           <div className="capex-kpi-card">
@@ -345,7 +345,7 @@ export default function Capex() {
 
       {/* ══ POLES D'INVESTISSEMENT ══ */}
       <div className="capex-section-label">Poles d'investissement</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }}>
+      <div className="capex-poles-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }}>
 
         {POLES.map(pole => (
           <div

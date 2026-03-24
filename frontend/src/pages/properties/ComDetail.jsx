@@ -235,7 +235,7 @@ export default function ComDetail() {
   return (
     <div>
       {/* KPI bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
+      <div className="com-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
         <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
           <div className="props-kpi-label">Objectif total 2026</div>
           <div className="props-kpi-val" style={{ color: VERT }}>{fmtEur(grandTotal)}</div>

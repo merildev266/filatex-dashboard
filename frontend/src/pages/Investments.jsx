@@ -324,7 +324,7 @@ function GridView({ type, onBack, onSelectProject, onSwitchType }) {
       </div>
 
       {/* Project cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, padding: '8px 24px 16px' }}>
+      <div className="inv-project-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, padding: '8px 24px 16px' }}>
         {projects.map(p => (
           <InvProjectCard key={p.id} project={p} onClick={() => onSelectProject(p)} />
         ))}

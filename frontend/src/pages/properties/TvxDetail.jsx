@@ -55,7 +55,7 @@ export default function TvxDetail() {
   return (
     <div>
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="props-kpi-row-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
         <div className="props-kpi-card" style={{ borderColor: 'rgba(253,184,35,0.15)' }}>
           <div className="props-kpi-label">Projets Travaux</div>
           <div className="props-kpi-val" style={{ color: PROPS }}>{kpis.total}</div>

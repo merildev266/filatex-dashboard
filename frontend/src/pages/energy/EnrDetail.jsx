@@ -161,7 +161,7 @@ export default function EnrDetail() {
       </div>
 
       {/* Global KPIs (3 cards) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 36 }}>
+      <div className="enr-kpi-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 36 }}>
         <div style={{ background: 'rgba(0,171,99,0.07)', border: '1px solid rgba(0,171,99,0.2)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.55)', marginBottom: 8 }}>Production totale</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
@@ -189,7 +189,7 @@ export default function EnrDetail() {
       </div>
 
       {/* 3 Site Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+      <div className="enr-site-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
         {sites.map((s, si) => {
           const col = ENR_COLORS[si % ENR_COLORS.length]
           const rgb = ENR_RGBS[si % ENR_RGBS.length]

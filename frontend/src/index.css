@@ -716,7 +716,7 @@ body::-webkit-scrollbar { display: none; }
 /* ══ GANTT ANIMATION ══ */
 @keyframes pulse-delay{0%,100%{opacity:0.8;}50%{opacity:1;}}
 
-/* ══ CAPEX + INVESTMENTS MOBILE ══ */
+/* ══ CAPEX + INVESTMENTS + PROPERTIES + COMMERCIAL MOBILE ══ */
 @media (max-width:768px) {
   .csec-kpis{grid-template-columns:repeat(2,1fr);gap:10px;}
   .csec-kpi-val{font-size:14px;}
@@ -735,4 +735,182 @@ body::-webkit-scrollbar { display: none; }
   .com-obj-card-title{min-width:auto;text-align:center;font-size:16px;}
   .com-obj-card-kpis{flex-wrap:wrap;gap:14px;justify-content:center;}
   .com-obj-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   COMPREHENSIVE MOBILE RESPONSIVE — 640px and below (phones)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width:640px) {
+
+  /* ── Global safety net ── */
+  body { overflow-x: hidden; }
+  #root { overflow-x: hidden; max-width: 100vw; }
+
+  /* ── Bottom Nav: fit 7 items in 375px ── */
+  .bnav-bar { height: 50px; padding: 0 2px; }
+  .bnav-item { gap: 1px; padding: 4px 0; }
+  .bnav-item svg { width: 16px !important; height: 16px !important; }
+  .bnav-item span { font-size: 6px; letter-spacing: 0.05em; }
+
+  /* ── Accueil / Home ── */
+  .logo-groupe { height: 50px; max-width: 80vw; }
+  .home-header { top: 24px !important; gap: 8px; padding: 0 16px; }
+  .home-values { display: none !important; } /* hide values bar on small phones */
+  #home { padding-top: 120px !important; padding-bottom: 60px !important; min-height: 100dvh; }
+  .cards-grid { padding: 0 12px !important; gap: 12px !important; }
+  .cards-row1 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .card { padding: 16px 10px !important; border-radius: 12px !important; }
+  .card-logo-wrap svg { max-width: 100%; }
+  .card-energy .card-logo-wrap svg { height: 34px !important; }
+  .card-invest .card-logo-wrap svg { height: 27px !important; }
+  .card-props .card-logo-wrap svg  { height: 31px !important; }
+  .card-capex .card-logo-wrap svg  { height: 27px !important; }
+  .card-csi .card-logo-wrap svg    { height: 27px !important; }
+  .card-reporting .card-logo-wrap svg { height: 27px !important; }
+  .card-kpi-label { font-size: 7px; margin-top: 16px; }
+  .card-kpi-val { font-size: 12px; }
+  #home-footer { bottom: 58px; }
+  #home-footer-magritte { font-size: 9px; }
+  #home-footer-pmo { bottom: 58px; font-size: 5px; }
+
+  /* ── Sticky bar (Energy, inner pages) ── */
+  .sd-sticky-bar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
+  .sd-sticky-bar .sd-site-name { font-size: 18px; position: static; transform: none; }
+  .time-filter { flex-wrap: wrap; }
+  .tfilter { padding: 4px 6px; font-size: 10px; min-width: 24px; }
+
+  /* ── Inner pages general ── */
+  .inner-page-inner { padding: 10px 12px 80px !important; }
+
+  /* ── Energy ── */
+  .page-energy-wrap { width: 100% !important; gap: 20px !important; }
+  .e-wrap { flex-direction: column !important; }
+  .e-col-title { font-size: 16px; }
+
+  /* ── Investments ── */
+  .inv-page-inner { padding: 10px 10px 70px !important; }
+  .inv-page-inner .e-wrap { width: 100% !important; gap: 16px !important; flex-direction: column !important; }
+  .inv-wrap { width: 100% !important; gap: 16px !important; }
+  .inv-grid-kpi { grid-template-columns: repeat(2,1fr) !important; gap: 6px !important; }
+
+  /* ── CAPEX ── */
+  .capex-kpi-card { padding: 12px 10px; border-radius: 12px; }
+  .ckpi-val { font-size: 18px; }
+  .ckpi-label { font-size: 8px; letter-spacing: 0.15em; }
+  .csec-header { flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .csec-title { font-size: 13px; }
+  .csec-badge { font-size: 8px; padding: 2px 6px; }
+  .csec-kpis { grid-template-columns: repeat(2,1fr) !important; gap: 8px; }
+  .csec-kpi-val { font-size: 13px; }
+  .csec-kpi-label { font-size: 7px; }
+
+  /* ── Properties Overview ── */
+  .props-overview-wrap { padding: 0 10px 40px !important; min-height: auto !important; }
+  .props-overview-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    max-width: 100% !important;
+  }
+  .props-overview-grid .p-col > div:last-child { aspect-ratio: auto !important; padding: 16px 12px !important; }
+
+  /* ── Properties Dev KPI row ── */
+  .props-kpi-card { padding: 10px 8px; border-radius: 10px; }
+  .props-kpi-val { font-size: 18px; }
+  .props-kpi-label { font-size: 7px; letter-spacing: 0.2em; margin-bottom: 4px; }
+
+  /* ── Commercial (Properties) ── */
+  .com-obj-card { padding: 12px 12px; border-radius: 12px; }
+  .com-obj-card-header { flex-direction: column; gap: 8px; }
+  .com-obj-card-title { font-size: 14px; min-width: auto; text-align: center; }
+  .com-obj-card-kpis { flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .com-obj-kpi-val { font-size: 16px; }
+  .com-obj-kpi-label { font-size: 7px; }
+
+  /* ── Reporting Hub ── */
+  .rpt-poles-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .rpt-pole-card { padding: 16px 12px; border-radius: 14px; }
+  .rpt-pole-card-sm { padding: 12px 10px 10px; border-radius: 10px; gap: 4px; }
+  .rpt-pole-card-sm .rpt-pole-kpis { gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .rpt-pole-card-sm .rpt-pole-kpi .kv { font-size: 13px; }
+  .rpt-pole-card-sm .rpt-pole-kpi .kl { font-size: 6px; }
+  .rpt-kpi-bar { grid-template-columns: repeat(2,1fr) !important; gap: 8px; }
+  .rpt-kpi-item .kv { font-size: 16px; }
+  .rpt-kpi-item { padding: 10px 8px; border-radius: 10px; }
+
+  /* ── Reporting table ── */
+  .rpt-table-wrap { border-radius: 8px; }
+  .rpt-table { font-size: 10px; }
+  .rpt-table thead th { padding: 8px 6px; font-size: 8px; }
+  .rpt-table td { padding: 8px 6px; }
+
+  /* ── ENR Projects ── */
+  .enrp-consolidated { grid-template-columns: repeat(2,1fr) !important; gap: 8px; }
+  .enrp-kbox { padding: 10px 8px; border-radius: 10px; }
+  .enrp-kbox .kv { font-size: 18px; }
+  .enrp-kbox .kl { font-size: 7px; }
+  .enrp-filters { grid-template-columns: repeat(2,1fr) !important; gap: 8px; }
+  .enrp-cards-grid { grid-template-columns: 1fr !important; gap: 10px; }
+  .enrp-card { padding: 14px; border-radius: 14px; }
+
+  /* ── S1 consolidated KPI cards ── */
+  .detail-s1-top { grid-template-columns: repeat(2,1fr) !important; gap: 6px; }
+  .s1-card { padding: 10px 8px; border-radius: 10px; }
+  .s1-card-value { font-size: 20px; }
+  .s1-card-label { font-size: 7px; margin-bottom: 4px; }
+
+  /* ── Generator cards ── */
+  .gen-card-wrapper { width: calc((100% - 8px)/2) !important; min-width: 0 !important; }
+
+  /* ── Generator detail ── */
+  .gd-kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .gd-kpi-value { font-size: 20px; }
+  .gd-metrics-grid { grid-template-columns: 1fr !important; }
+  .gd-metrics-grid-4 { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* ── Site navigation ── */
+  .site-nav-strip { gap: 4px; }
+  .site-nav-btn { padding: 4px 10px; font-size: 9px; border-radius: 8px; }
+
+  /* ── Back button ── */
+  .back-btn-react { font-size: 10px; padding: 5px 12px; }
+  .back-btn { padding: 5px 12px; font-size: 9px; }
+
+  /* ── CAPEX page overrides ── */
+  .capex-page-wrap { padding: 0 12px 80px !important; }
+  .capex-top-kpis { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+  .capex-poles-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .capex-cat-kpis { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+  .cpj-grid-4 { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* ── Investments project grid ── */
+  .inv-project-grid { grid-template-columns: 1fr !important; gap: 10px !important; padding: 8px 12px 16px !important; }
+
+  /* ── Reporting Hub sub-grids ── */
+  .rpt-hub-subgrid { grid-template-columns: 1fr !important; }
+
+  /* ── Properties Dev KPI row ── */
+  .dev-kpi-row { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+
+  /* ── Properties Commercial KPI row ── */
+  .com-kpi-row { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+
+  /* ── Properties Sav + Tvx KPI rows ── */
+  .props-kpi-row-4 { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+
+  /* ── EnR Detail ── */
+  .enr-kpi-grid-3 { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .enr-kpi-grid-3 > div { padding: 16px 12px !important; border-radius: 14px !important; }
+  .enr-kpi-grid-3 > div > div:nth-child(2) { font-size: 28px !important; } /* big number */
+  .enr-site-grid-3 { grid-template-columns: 1fr !important; gap: 10px !important; }
+
+  /* ── EnR Projects detail ── */
+  .enrp-detail-kpis-6 { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+  .enrp-evm-grid-5 { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+  .enrp-perf-grid-4 { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; }
+  .enrp-legend-grid-3 { grid-template-columns: 1fr !important; gap: 6px !important; }
 }

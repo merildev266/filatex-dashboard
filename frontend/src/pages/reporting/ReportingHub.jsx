@@ -151,7 +151,7 @@ export default function ReportingHub() {
   const comLocation = (comData_locationTotal / 1000).toFixed(0) + 'k/m'
 
   return (
-    <div className="rpt-poles-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', alignItems: 'start' }}>
+    <div className="rpt-poles-grid" style={{ alignItems: 'start' }}>
 
       {/* ══ COLUMN 1: ENERGY ══ */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -160,7 +160,7 @@ export default function ReportingHub() {
         </h3>
 
         {/* HFO + LFO side by side */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        <div className="rpt-hub-subgrid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {/* HFO */}
           <div
             className="rpt-pole-card rpt-pole-card-sm rpt-pole-enr"
