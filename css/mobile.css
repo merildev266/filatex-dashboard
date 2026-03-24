@@ -8,9 +8,9 @@
 .cards-row1{grid-template-columns:repeat(3,1fr) !important;gap:10px !important;width:100% !important;}
 .cards-grid{padding:0 16px !important;gap:12px !important;}
 
-/* Cartes — plus petites */
-.card{padding:14px 8px !important;border-radius:14px !important;}
-.card-logo-wrap svg{height:30px !important;}
+/* Cartes — plus grandes */
+.card{padding:24px 12px !important;border-radius:16px !important;}
+.card-logo-wrap svg{height:38px !important;}
 
 /* Header — plus compact, moins d'espace */
 .home-header{top:28px !important;gap:6px !important;}
