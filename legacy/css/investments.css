@@ -1,0 +1,64 @@
+/* === Investments Styles === */
+
+/* Page layout — same as Energy */
+#page-investments{overflow:hidden;overflow-y:auto;scrollbar-width:none;}
+#page-investments .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 0;display:flex;flex-direction:column;justify-content:flex-start;}
+#page-investments .e-wrap{gap:clamp(40px,8vw,120px);width:90%;margin:0 auto;align-items:stretch;}
+#page-investments .e-col{flex:1;display:flex;flex-direction:column;}
+
+/* Cards — same as Energy */
+#page-investments .e-card.inv-card{flex:1;}
+#page-investments .capex-section-card{padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);border-radius:clamp(12px,1.5vw,22px);}
+
+/* Sections inside card — all centered, same as Energy */
+#page-investments .e-card .e-sec{padding:clamp(4px,0.5vw,8px) 6px;border-bottom:1px solid rgba(138,146,171,0.08);width:100%;text-align:center;}
+#page-investments .e-card .e-sec:last-child{border-bottom:none;}
+#page-investments .e-card .e-sec-label{font-size:clamp(7px,0.65vw,10px);margin-bottom:clamp(3px,0.5vw,8px);}
+#page-investments .e-card .e-big{font-size:clamp(18px,1.8vw,28px);}
+#page-investments .e-card .e-big-unit{font-size:clamp(8px,0.75vw,12px);}
+#page-investments .e-card .e-sub{font-size:clamp(7px,0.6vw,10px);}
+#page-investments .e-card .e-pct{font-size:clamp(12px,1.2vw,18px);}
+#page-investments .e-card .e-pct-arrow{font-size:clamp(7px,0.6vw,9px);}
+#page-investments .e-card .e-arret-num{font-size:clamp(18px,1.8vw,28px);font-weight:800;letter-spacing:-0.5px;}
+#page-investments .e-card .e-arret-sub{font-size:clamp(7px,0.6vw,10px);color:rgba(255,255,255,0.3);margin-top:1px;}
+#page-investments .e-card .e-arret-sub2{font-size:clamp(7px,0.55vw,9px);color:rgba(255,255,255,0.25);margin-top:0;}
+#page-investments .e-card .e-mid{font-size:clamp(18px,1.8vw,28px);font-weight:800;letter-spacing:-0.5px;}
+#page-investments .e-card .e-mid-unit{font-size:clamp(8px,0.75vw,12px);font-weight:400;}
+
+/* Big project count */
+#page-investments .e-card .inv-proj-count{font-size:clamp(42px,5vw,80px);font-weight:800;letter-spacing:-2px;}
+
+/* Stacked CAPEX layout — all centered */
+#page-investments .inv-capex-stack{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,0.6vw,10px);}
+#page-investments .inv-capex-line{display:flex;align-items:baseline;gap:clamp(6px,0.6vw,12px);justify-content:center;}
+#page-investments .inv-capex-val{font-size:clamp(22px,2.5vw,40px);font-weight:800;color:rgba(255,255,255,0.9);}
+#page-investments .inv-capex-unit{font-size:clamp(9px,1vw,15px);color:rgba(255,255,255,0.4);font-weight:400;}
+#page-investments .inv-capex-label{font-size:clamp(7px,0.7vw,11px);color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.15em;}
+#page-investments .inv-capex-pct{font-size:clamp(14px,1.4vw,22px);font-weight:800;}
+
+/* ═══ INNER PAGES (grid view / detail) — compact like HFO ═══ */
+#inv-grid-kpi{display:grid !important;grid-template-columns:repeat(4,1fr) !important;gap:clamp(6px,1vw,10px);}
+#inv-grid-kpi .s1-card{background:rgba(243,112,86,0.04);border:1px solid rgba(243,112,86,0.18);border-radius:clamp(10px,1.3vw,16px);padding:clamp(12px,1.8vw,20px) clamp(10px,1.6vw,22px);}
+#inv-grid-kpi .s1-card:hover{background:rgba(243,112,86,0.08);border-color:rgba(243,112,86,0.35);}
+#inv-grid-kpi .s1-card-label{color:rgba(243,112,86,0.5);}
+#inv-grid-kpi .s1-card-value{color:rgba(255,255,255,0.9);}
+#inv-grid-kpi .s1-card-unit-line{color:rgba(255,255,255,0.35);}
+#inv-grid-view .kpi-grid{grid-template-columns:repeat(4,minmax(0,180px));gap:10px;}
+#inv-grid-view .kpi-box{padding:8px 10px;border-radius:10px;background:rgba(243,112,86,0.04);border:1px solid rgba(243,112,86,0.18);}
+#inv-grid-view .kpi-label{font-size:6px;margin-bottom:4px;}
+#inv-grid-view .kpi-value{font-size:22px;}
+#inv-grid-view .kpi-unit{font-size:9px;}
+#inv-grid-view .section-title{font-size:9px;}
+#inv-cards-container{grid-template-columns:repeat(3,1fr) !important;gap:12px !important;}
+
+/* ══ MOBILE ══ */
+@media (max-width:768px) {
+  #page-investments .e-wrap{width:100% !important;gap:20px;}
+  #page-investments .inner-page-inner{padding:12px 14px 70px;}
+  #inv-grid-kpi{grid-template-columns:repeat(2,1fr) !important;gap:8px;}
+  #inv-cards-container{grid-template-columns:1fr !important;}
+  #inv-grid-view .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  #inv-grid-view .kpi-value{font-size:18px;}
+  #page-investments .inv-proj-count{font-size:42px;}
+  #page-investments .inv-capex-val{font-size:22px;}
+}
