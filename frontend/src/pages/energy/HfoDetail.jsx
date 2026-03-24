@@ -7,6 +7,16 @@ import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data
 import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, HFO_CAT_LABELS, formatDateFR } from '../../utils/projects'
 
+const MONTH_SHORT = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec']
+
+function mapFilter(f) {
+  return { 'J-1': '24h', 'M': 'month', 'Q': 'quarter', 'A': 'year' }[f] || 'month'
+}
+
+function isCurrentMonth(monthIndex) {
+  return monthIndex === new Date().getMonth()
+}
+
 // Default site data (same structure as energy.js siteData)
 // We merge live data from site_data.js exports
 const SITE_ORDER = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe', 'fihaonana']
@@ -293,8 +303,29 @@ export default function HfoDetail() {
 
 /** Full site detail panel — replaces main view when a site is selected */
 function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, onNavigate }) {
+  const { selectedMonthIndex, selectedQuarter, selectedYear } = useContext(FilterContext)
+  const [selectedGenerator, setSelectedGenerator] = useState(null)
   const s = siteData[siteId]
   const k = getKpiForSite(s, currentFilter)
+
+  // If a generator is selected, show its detail panel
+  const selGen = selectedGenerator ? s.groupes?.find(g => g.id === selectedGenerator) : null
+  if (selGen) {
+    return (
+      <GeneratorDetailPanel
+        siteId={siteId}
+        siteData={siteData}
+        generator={selGen}
+        currentFilter={currentFilter}
+        setFilter={setFilter}
+        selectedMonthIndex={selectedMonthIndex}
+        selectedQuarter={selectedQuarter}
+        selectedYear={selectedYear}
+        onClose={() => setSelectedGenerator(null)}
+        onNavigateGen={(gId) => setSelectedGenerator(gId)}
+      />
+    )
+  }
 
   const isConstruction = s.status === 'construction' || s.status === 'reconstruction'
 
@@ -500,6 +531,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
                       <div
                         className="s1-card gen-card-body"
                         style={{ borderColor, cursor: 'pointer' }}
+                        onClick={() => setSelectedGenerator(g.id)}
                       >
                         <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">Puissance</div>
                         <div className="text-[16px] font-bold text-[var(--text)] leading-none">
@@ -565,6 +597,299 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+
+/** Generator detail panel — shows full detail for a single generator */
+function GeneratorDetailPanel({
+  siteId, siteData, generator: g, currentFilter, setFilter,
+  selectedMonthIndex, selectedQuarter, selectedYear,
+  onClose, onNavigateGen,
+}) {
+  const s = siteData[siteId]
+  const f = mapFilter(currentFilter)
+
+  const isContra = g.contradictory === true
+  const isKO = g.statut === 'ko' && !isContra
+
+  // Status mapping — matches original exactly
+  const statMap = {
+    ok:    { label: 'En marche',    bg: 'rgba(0,171,99,0.12)',    color: '#00ab63' },
+    warn:  { label: 'Maintenance',  bg: 'rgba(245,166,35,0.12)',  color: '#FDB823' },
+    ko:    { label: 'Hors service', bg: 'rgba(224,92,92,0.12)',   color: '#e05c5c' },
+    check: { label: 'A verifier — Donnees contradictoires', bg: 'rgba(160,90,255,0.12)', color: '#7b5fbf' },
+  }
+  const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko)
+
+  // Card border/label/bg colors
+  const bc = isContra ? 'rgba(160,90,255,0.15)' : isKO ? 'rgba(224,92,92,0.15)' : 'rgba(138,146,171,0.18)'
+  const lc = isContra ? 'rgba(160,90,255,0.65)' : isKO ? 'rgba(224,92,92,0.65)' : 'rgba(138,146,171,0.65)'
+  const bg = isContra ? 'rgba(160,90,255,0.06)' : isKO ? 'rgba(224,92,92,0.06)' : 'rgba(138,146,171,0.06)'
+
+  // ── Section 1 — Heures de marche (filter-aware, matches original thresholds) ──
+  let s1_hVal, s1_hUnit = 'h', s1_sbSub, s1_hColor, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel
+
+  if (f === '24h') {
+    s1_hLabel = 'Marche J-1'
+    s1_hVal = parseFloat(g.hToday || 0).toFixed(1)
+    s1_sbSub = 'Standby : ' + parseFloat(g.hStandby || 0).toFixed(1) + ' h'
+    s1_hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)'
+    s1_afVal = parseFloat(g.arretForce || 0).toFixed(1); s1_afSub = 'Dernieres 24h'
+    s1_apVal = parseFloat(g.arretPlanifie || 0).toFixed(1); s1_apSub = 'Dernieres 24h'
+  } else if (f === 'month') {
+    const _cm = isCurrentMonth(selectedMonthIndex)
+    const mLabel = _cm ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
+    s1_hLabel = 'Marche ' + mLabel
+    let totalH, totalSb, totalAf, totalAp, jours
+    if (_cm) {
+      const dh = g.dailyHours || []; totalH = dh.reduce((a, b) => a + b, 0)
+      const ds = g.dailyStandby || []; totalSb = ds.reduce((a, b) => a + b, 0)
+      const daf = g.dailyArretForce || []; totalAf = daf.reduce((a, b) => a + b, 0)
+      const dap = g.dailyArretPlanifie || []; totalAp = dap.reduce((a, b) => a + b, 0)
+      jours = dh.filter(v => v > 0).length
+    } else {
+      const mi = selectedMonthIndex
+      totalH = (g.monthlyHours || [])[mi] || 0
+      totalSb = (g.monthlyStandby || [])[mi] || 0
+      totalAf = (g.monthlyArretForce || [])[mi] || 0
+      totalAp = (g.monthlyArretPlanifie || [])[mi] || 0
+      jours = totalH > 0 ? Math.round(totalH / 24) : 0
+    }
+    s1_hVal = totalH.toFixed(1)
+    s1_sbSub = jours + ' jours en marche · Standby : ' + totalSb.toFixed(1) + ' h'
+    s1_hColor = jours > 20 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
+    s1_afVal = totalAf.toFixed(1); s1_afSub = 'Total arrets forces ' + mLabel
+    s1_apVal = totalAp.toFixed(1); s1_apSub = 'Maintenance preventive ' + mLabel
+  } else if (f === 'quarter') {
+    s1_hLabel = 'Marche Q' + selectedQuarter
+    const startM = (selectedQuarter - 1) * 3
+    const mh = g.monthlyHours || []
+    let totalH = 0, totalAf = 0, totalAp = 0
+    for (let mi = startM; mi < startM + 3 && mi < mh.length; mi++) {
+      totalH += mh[mi] || 0
+      totalAf += (g.monthlyArretForce || [])[mi] || 0
+      totalAp += (g.monthlyArretPlanifie || [])[mi] || 0
+    }
+    const jours = totalH > 0 ? Math.round(totalH / 24) : 0
+    s1_hVal = totalH.toFixed(1)
+    s1_sbSub = jours + ' jours en marche'
+    s1_hColor = jours > 60 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
+    s1_afVal = totalAf.toFixed(1); s1_afSub = 'Total arrets forces Q' + selectedQuarter
+    s1_apVal = totalAp.toFixed(1); s1_apSub = 'Maintenance preventive Q' + selectedQuarter
+  } else {
+    // year
+    s1_hLabel = 'Marche ' + selectedYear
+    const mh = g.monthlyHours || []; const totalH = mh.reduce((a, b) => a + b, 0)
+    const moisActifs = mh.filter(v => v > 0).length
+    s1_hVal = totalH.toFixed(1)
+    s1_sbSub = moisActifs + ' mois en marche sur 12'
+    s1_hColor = moisActifs > 6 ? 'var(--energy)' : moisActifs > 0 ? 'var(--orange)' : 'var(--red)'
+    s1_afVal = parseFloat(g.arretForce || 0).toFixed(1); s1_afSub = 'Non planifie (dernieres 24h)'
+    s1_apVal = parseFloat(g.arretPlanifie || 0).toFixed(1); s1_apSub = 'Maintenance preventive (dernieres 24h)'
+  }
+
+  const kpiRow1 = [
+    { label: 'Heures cumulees', value: g.h > 0 ? parseFloat(g.h).toFixed(1) : '0', unit: 'h', sub: 'Total depuis mise en service', color: null },
+    { label: s1_hLabel, value: s1_hVal, unit: s1_hUnit, sub: s1_sbSub, color: s1_hColor },
+    { label: 'Arret force', value: s1_afVal, unit: 'h', sub: s1_afSub, color: parseFloat(s1_afVal) > 0 ? 'var(--red)' : null },
+    { label: 'Arret planifie', value: s1_apVal, unit: 'h', sub: s1_apSub, color: parseFloat(s1_apVal) > 0 ? 'var(--orange)' : null },
+  ]
+
+  // ── Section 2 — Production KPIs (filter-aware) ──
+  let prodVal, prodUnit, prodSub, hVal, hUnit2, hSub, hColor
+  if (f === '24h') {
+    const dProd = g.energieProd || 0
+    prodVal = dProd > 1000 ? (dProd / 1000).toFixed(1) : dProd.toFixed(1)
+    prodUnit = dProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production J-1'
+    hVal = parseFloat(g.hToday || 0).toFixed(1); hUnit2 = 'h'; hSub = 'Heures de marche J-1'
+    hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)'
+  } else if (f === 'month') {
+    const _cm = isCurrentMonth(selectedMonthIndex)
+    const _mLbl = _cm ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
+    let mProd, jours
+    if (_cm) {
+      const dp = g.dailyProd || []; mProd = dp.reduce((a, b) => a + b, 0)
+      jours = dp.filter(v => v > 0).length
+    } else {
+      mProd = (g.monthlyProd || [])[selectedMonthIndex] || 0
+      jours = mProd > 0 ? Math.ceil((g.monthlyHours || [])[selectedMonthIndex] / 24) || 0 : 0
+    }
+    prodVal = mProd > 1000 ? (mProd / 1000).toFixed(1) : mProd.toFixed(1)
+    prodUnit = mProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + _mLbl
+    hVal = jours; hUnit2 = 'jours'; hSub = 'Jours de production'
+    hColor = jours > 20 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3
+    let qProd = 0, qJours = 0
+    for (let mi = startM; mi < startM + 3; mi++) {
+      qProd += (g.monthlyProd || [])[mi] || 0
+      qJours += ((g.monthlyHours || [])[mi] || 0) > 0 ? Math.ceil((g.monthlyHours || [])[mi] / 24) : 0
+    }
+    prodVal = qProd > 1000 ? (qProd / 1000).toFixed(1) : qProd.toFixed(1)
+    prodUnit = qProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production Q' + selectedQuarter
+    hVal = qJours; hUnit2 = 'jours'; hSub = 'Jours de production'
+    hColor = qJours > 60 ? 'var(--energy)' : qJours > 0 ? 'var(--orange)' : 'var(--red)'
+  } else {
+    const mp = g.monthlyProd || []; const yProd = mp.reduce((a, b) => a + b, 0)
+    const mois = mp.filter(v => v > 0).length
+    prodVal = yProd > 1000 ? (yProd / 1000).toFixed(1) : yProd.toFixed(1)
+    prodUnit = yProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + selectedYear
+    hVal = mois; hUnit2 = 'mois'; hSub = 'Mois de production sur 12'
+    hColor = mois > 6 ? 'var(--energy)' : mois > 0 ? 'var(--orange)' : 'var(--red)'
+  }
+
+  // SFOC per generator
+  const gSfoc = calcGenSfoc(g)
+  const sfocStr = gSfoc != null ? gSfoc.toFixed(1) : '—'
+  const sfocColor = gSfoc != null ? (gSfoc <= 250 ? 'var(--energy)' : 'var(--red)') : 'var(--text-dim)'
+  const gSlocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '—'
+
+  const prodRow = [
+    { label: 'Energie produite', value: prodVal, unit: prodUnit, sub: prodSub, color: isKO ? 'var(--red)' : null },
+    { label: 'SFOC', value: sfocStr, unit: 'g/kWh', sub: 'Specific Fuel Oil Consumption', color: sfocColor },
+    { label: 'SLOC', value: gSlocVal, unit: 'g/kWh', sub: 'Specific Lube Oil Consumption', color: null },
+    { label: 'Heures de marche', value: hVal, unit: hUnit2, sub: hSub, color: hColor },
+  ]
+
+  return (
+    <div className="site-detail-panel gd-panel">
+      {/* Header: back + generator title */}
+      <div className="flex items-center gap-3 mb-1">
+        <button
+          onClick={onClose}
+          className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
+        >
+          &#8592;
+        </button>
+        <div>
+          <h2 className="text-base font-bold uppercase tracking-wider m-0">{fmtGId(g.id)}</h2>
+          <div className="text-[10px] text-[var(--text-muted)] mt-0.5">
+            {g.model || ''} &middot; {s.name} &middot; {g.mw} MW
+          </div>
+        </div>
+        <div className="ml-auto">
+          <FilterBar current={currentFilter} onChange={setFilter} />
+        </div>
+      </div>
+
+      {/* Generator nav strip */}
+      <div className="gd-gen-nav">
+        {s.groupes.map(gr => {
+          const dotColor = gr.contradictory ? '#7b5fbf' : gr.statut === 'ok' ? 'var(--energy)' : gr.statut === 'warn' ? '#f0a030' : 'var(--red)'
+          const active = gr.id === g.id
+          return (
+            <button
+              key={gr.id}
+              className={`gd-gen-nav-btn ${active ? 'active' : ''}`}
+              onClick={() => onNavigateGen(gr.id)}
+            >
+              <span
+                className="gen-status-dot"
+                style={{
+                  backgroundColor: dotColor,
+                  boxShadow: `0 0 4px ${dotColor}, 0 0 8px ${dotColor}`,
+                }}
+              />
+              {fmtGId(gr.id)}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Status badge */}
+      <div className="mb-4">
+        <span
+          className="gd-status-badge"
+          style={{
+            background: st.bg,
+            color: st.color,
+            border: `1px solid ${st.color}44`,
+          }}
+        >
+          <span
+            className="gen-status-dot"
+            style={{
+              backgroundColor: st.color,
+              width: 8, height: 8, minWidth: 8,
+              boxShadow: `0 0 4px ${st.color}`,
+            }}
+          />
+          {st.label}
+        </span>
+      </div>
+
+      {/* Arret banner (if KO) */}
+      {isKO && (
+        <div className="gd-arret-banner">
+          <div className="gd-arret-days">
+            {g.jourArret || '—'}
+            <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 4, color: 'rgba(224,92,92,0.6)' }}>j</span>
+          </div>
+          <div>
+            <div className="gd-arret-label">Arret en cours</div>
+            <div className="gd-arret-condition">
+              {g.condition === 'Maintenance' ? 'Maintenance planifiee' : 'Panne / Breakdown'}
+            </div>
+            <div className="gd-arret-reason">{g.maint}</div>
+          </div>
+          <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(224,92,92,0.5)', marginBottom: 4 }}>
+              Arret force
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: '#e05c5c' }}>
+              {parseFloat(g.arretForce || 0).toFixed(1)}
+              <span style={{ fontSize: 11, fontWeight: 400, color: 'rgba(224,92,92,0.5)', marginLeft: 3 }}>h</span>
+            </div>
+            <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 6 }}>
+              Arret planifie : {parseFloat(g.arretPlanifie || 0).toFixed(1)} h
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Section 1 — Heures de marche & Exploitation */}
+      <div className="gd-section-title">Heures de marche & Exploitation</div>
+      <div className="gd-kpi-grid">
+        {kpiRow1.map((c, i) => (
+          <div key={i} className="gd-kpi-card" style={{ background: bg, borderColor: bc }}>
+            <div className="gd-kpi-label" style={{ color: lc }}>{c.label}</div>
+            <div
+              className="gd-kpi-value"
+              style={{
+                ...(c.color ? { color: c.color } : {}),
+                ...(String(c.value).length > 5 ? { fontSize: 20 } : {}),
+              }}
+            >
+              {c.value}
+              {c.unit && <span className="gd-kpi-unit">{c.unit}</span>}
+            </div>
+            <div className="gd-kpi-sub">{c.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section 2 — Production & Energie */}
+      <div className="gd-section-title">Production & Energie</div>
+      <div className="gd-kpi-grid">
+        {prodRow.map((c, i) => (
+          <div key={i} className="gd-kpi-card" style={{ background: bg, borderColor: bc }}>
+            <div className="gd-kpi-label" style={{ color: lc }}>{c.label}</div>
+            <div
+              className="gd-kpi-value"
+              style={{
+                ...(c.color ? { color: c.color } : {}),
+                ...(String(c.value).length > 5 ? { fontSize: 20 } : {}),
+              }}
+            >
+              {c.value}
+              {c.unit && <span className="gd-kpi-unit">{c.unit}</span>}
+            </div>
+            <div className="gd-kpi-sub">{c.sub}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
