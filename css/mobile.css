@@ -15,11 +15,12 @@
 .home-header{
   position:relative !important;
   top:auto !important;
-  margin-bottom:24px !important;
+  margin-top:30px !important;
+  margin-bottom:20px !important;
   gap:8px !important;
   padding:0 16px !important;
 }
-.logo-groupe{height:50px !important;}
+.logo-groupe{height:36px !important;}
 .home-values span{font-size:7px !important;letter-spacing:0.2em !important;}
 .home-val-sep{width:14px !important;margin:0 6px !important;}
 
@@ -27,14 +28,14 @@
 .cards-grid{padding:0 12px !important;gap:12px !important;}
 .cards-row1{
   grid-template-columns:repeat(3,1fr) !important;
-  gap:10px !important;
+  gap:10px 10px !important;
+  row-gap:20px !important;
   width:100% !important;
   max-width:100% !important;
 }
 .card{
-  padding:28px 10px !important;
-  border-radius:16px !important;
-  aspect-ratio:1/1;
+  padding:18px 10px !important;
+  border-radius:14px !important;
 }
 .card-logo-wrap svg{height:42px !important;}
 .card-energy .card-logo-wrap svg{height:48px !important;}
