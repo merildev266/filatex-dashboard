@@ -1,32 +1,63 @@
 /* ══ MOBILE OVERRIDES — s'ajoute par-dessus le CSS desktop ══ */
-/* Ce fichier ne fait que surcharger ce qui doit changer sur mobile */
 
 /* Valeurs toujours visibles */
 .home-values{display:flex !important;}
 
-/* Accueil — grille 2x3 au lieu de 3x2 */
-.cards-row1{grid-template-columns:repeat(3,1fr) !important;gap:10px !important;width:100% !important;}
-.cards-grid{padding:0 16px !important;gap:12px !important;}
+/* ══ ACCUEIL — layout compact ══ */
+#home{
+  justify-content:flex-start !important;
+  padding:20px 0 80px !important;
+  gap:0 !important;
+  min-height:auto !important;
+}
 
-/* Cartes — plus grandes */
-.card{padding:24px 12px !important;border-radius:16px !important;}
-.card-logo-wrap svg{height:38px !important;}
-
-/* Header — plus compact, moins d'espace */
-.home-header{top:28px !important;gap:6px !important;}
-.logo-groupe{height:40px !important;}
+/* Header — compact, pas absolu sur mobile */
+.home-header{
+  position:relative !important;
+  top:auto !important;
+  margin-bottom:24px !important;
+  gap:8px !important;
+  padding:0 16px !important;
+}
+.logo-groupe{height:50px !important;}
 .home-values span{font-size:7px !important;letter-spacing:0.2em !important;}
-.home-val-sep{width:14px !important;margin:0 8px !important;}
+.home-val-sep{width:14px !important;margin:0 6px !important;}
 
-/* Réduire l'espace entre header et cartes */
-#home{padding-top:0 !important;gap:0 !important;}
+/* Cartes — grille 3x2, plus grandes */
+.cards-grid{padding:0 12px !important;gap:12px !important;}
+.cards-row1{
+  grid-template-columns:repeat(3,1fr) !important;
+  gap:10px !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+.card{
+  padding:28px 10px !important;
+  border-radius:16px !important;
+  aspect-ratio:1/1;
+}
+.card-logo-wrap svg{height:42px !important;}
+.card-energy .card-logo-wrap svg{height:48px !important;}
+.card-invest .card-logo-wrap svg{height:38px !important;}
+.card-props .card-logo-wrap svg{height:44px !important;}
+.card-capex .card-logo-wrap svg{height:38px !important;}
+.card-csi .card-logo-wrap svg{height:38px !important;}
+.card-reporting .card-logo-wrap svg{height:38px !important;}
 
 /* Footer */
 #home-footer{bottom:72px !important;}
 #home-footer-magritte{font-size:9px !important;}
 
 /* Bottom nav — toujours visible + safe area */
-#bottom-nav{position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;z-index:900 !important;display:flex !important;padding-bottom:env(safe-area-inset-bottom);}
+#bottom-nav{
+  position:fixed !important;
+  bottom:0 !important;
+  left:0 !important;
+  right:0 !important;
+  z-index:900 !important;
+  display:flex !important;
+  padding-bottom:env(safe-area-inset-bottom);
+}
 
 /* Pages internes — padding adapté */
 .page-inner{padding:20px 14px 80px !important;}
@@ -34,3 +65,6 @@
 
 /* Désactiver le zoom viewport de shared.js — on laisse le CSS gérer */
 body.is-mobile{zoom:1 !important;}
+
+/* Login caché */
+#login-screen{display:none !important;}
