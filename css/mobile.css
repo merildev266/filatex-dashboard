@@ -11,6 +11,7 @@
   min-height:auto !important;
 }
 
+
 /* Header — compact, pas absolu sur mobile */
 .home-header{
   position:relative !important;
@@ -25,17 +26,30 @@
 .home-val-sep{width:14px !important;margin:0 6px !important;}
 
 /* Cartes — grille 3x2, centrées */
-.cards-grid{padding:0 16px !important;gap:12px !important;width:100% !important;display:flex !important;justify-content:center !important;}
+.cards-grid{padding:0 20px !important;gap:12px !important;width:100% !important;box-sizing:border-box !important;}
 .cards-row1{
+  display:grid !important;
   grid-template-columns:repeat(3,1fr) !important;
-  gap:10px 10px !important;
-  row-gap:20px !important;
+  gap:40px 12px !important;
   width:100% !important;
   max-width:100% !important;
+  margin:0 auto !important;
 }
 .card{
-  padding:18px 10px !important;
+  padding:22px 10px !important;
   border-radius:14px !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  box-shadow:none !important;
+}
+/* Désactiver le hover néon sur mobile */
+.card:hover,.card-energy:hover,.card-invest:hover,.card-props:hover,.card-capex:hover,.card-csi:hover,.card-reporting:hover{
+  transform:none !important;
+  box-shadow:none !important;
+  border-color:rgba(58,57,92,0.35) !important;
+  background:rgba(58,57,92,0.18) !important;
 }
 .card-logo-wrap svg{height:42px !important;}
 .card-energy .card-logo-wrap svg{height:48px !important;}
