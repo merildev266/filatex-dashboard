@@ -5,12 +5,12 @@
 .home-values{display:flex !important;}
 
 /* Accueil — grille 2x3 au lieu de 3x2 */
-.cards-row1{grid-template-columns:repeat(2,1fr) !important;gap:12px !important;width:100% !important;}
+.cards-row1{grid-template-columns:repeat(3,1fr) !important;gap:10px !important;width:100% !important;}
 .cards-grid{padding:0 16px !important;gap:12px !important;}
 
 /* Cartes — plus petites */
-.card{padding:20px 14px !important;border-radius:16px !important;}
-.card-logo-wrap svg{height:40px !important;}
+.card{padding:14px 8px !important;border-radius:14px !important;}
+.card-logo-wrap svg{height:30px !important;}
 
 /* Header — plus compact, moins d'espace */
 .home-header{top:16px !important;gap:6px !important;}
