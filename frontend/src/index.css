@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+:root {
+  --dark: #080b18;
+  --dark2: #0d1025;
+  --dark3: #1a1d35;
+  --border: rgba(58,57,92,0.20);
+  --text: #ffffff;
+  --text-muted: #c7c6c4;
+  --text-dim: #aec1cd;
+  --energy: #00ab63;
+  --energy-dim: rgba(0,171,99,0.15);
+  --invest: #f37056;
+  --props: #FDB823;
+  --capex: #5e4c9f;
+  --csi: #0096c7;
+  --teal: #5aafaf;
+  --orange: #f37056;
+  --danger: #E05C5C;
+  --red: #ff5050;
+  --dev-blue: #426ab3;
+  --filatex: #3A395C;
+  --filatex-bg: rgba(58,57,92,0.10);
+  --filatex-border: rgba(58,57,92,0.22);
+}
+
+body {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 4px currentColor, 0 0 8px currentColor; opacity: 1; }
+  50% { box-shadow: 0 0 8px currentColor, 0 0 16px currentColor; opacity: 0.7; }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-[20px] border border-[rgba(58,57,92,0.35)] backdrop-blur-[16px];
+    background: rgba(58,57,92,0.18);
+    box-shadow: 0 8px 60px rgba(58,57,92,0.12), 0 4px 24px rgba(58,57,92,0.08), inset 0 1px 0 rgba(58,57,92,0.15);
+  }
+}
