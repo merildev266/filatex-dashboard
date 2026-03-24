@@ -2,49 +2,67 @@ import { useState, useMemo } from 'react'
 import { capexData } from '../data/capex_data'
 
 const ACCENT = '#5e4c9f'
+const ACCENT_RGB = '94,76,159'
 
-const CATEGORIES = [
-  { key: 'enr', label: 'EnR' },
-  { key: 'hfo', label: 'HFO' },
-  { key: 'immo', label: 'Immobilier' },
-  { key: 'ventures', label: 'Ventures' },
+const POLES = [
+  {
+    key: 'enr', label: 'EnR', dot: '#00ab63', dotShadow: 'rgba(0,171,99,0.5)',
+    titleColor: '#a8d98a', barColor: '#00ab63',
+    kpis: [
+      { label: 'Budget revise', valKey: 'budgetRevise', vsKey: 'budgetInit', valColor: '#a8d98a' },
+      { label: 'Engage', valKey: 'engage', progressKey: 'engagePct' },
+      { label: 'TRI moyen', val: '~11%', vs: 'ENAT + LIDERA', valColor: '#a8d98a' },
+      { label: 'Entites', val: '3', vs: 'ENAT \u00b7 LIDERA \u00b7 SERV', valColor: '#a8d98a' },
+    ],
+    projets: 32, budgetRevise: '153 M$', budgetInit: '188 M$', engage: '6.7 M$', engagePct: 4,
+  },
+  {
+    key: 'hfo', label: 'HFO', dot: '#426ab3', dotShadow: 'rgba(66,106,179,0.5)',
+    titleColor: '#8bb0ff', barColor: '#426ab3',
+    kpis: [
+      { label: 'Budget revise', valKey: 'budgetRevise', vsKey: 'budgetInit', valColor: '#8bb0ff' },
+      { label: 'Engage', valKey: 'engage', progressKey: 'engagePct' },
+      { label: 'TRI moyen', val: '~7%', vs: '3% a 13%', valColor: '#8bb0ff' },
+      { label: 'Avancement', val: '34%', vs: 'du budget engage', valColor: '#8bb0ff' },
+    ],
+    projets: 7, budgetRevise: '8.3 M$', budgetInit: '8.6 M$', engage: '2.9 M$', engagePct: 34,
+  },
+  {
+    key: 'immo', label: 'Immobilier', dot: '#FDB823', dotShadow: 'rgba(253,184,35,0.5)',
+    titleColor: '#ffd84d', barColor: '#FDB823',
+    kpis: [
+      { label: 'Budget revise', valKey: 'budgetRevise', vsKey: 'budgetInit', valColor: '#ffd84d' },
+      { label: 'Engage', valKey: 'engage', progressKey: 'engagePct' },
+      { label: 'ROI moyen', val: '~18%', vs: '9% a 30%', valColor: '#ffd84d' },
+      { label: 'Categories', val: '3', vs: 'Travaux \u00b7 Dev \u00b7 Foncier', valColor: '#ffd84d' },
+    ],
+    projets: 24, budgetRevise: '105 M$', budgetInit: '158 M$', engage: '6.4 M$', engagePct: 6,
+  },
+  {
+    key: 'ventures', label: 'Ventures', dot: '#f37056', dotShadow: 'rgba(243,112,86,0.5)',
+    titleColor: '#ffaa88', barColor: '#f37056',
+    kpis: [
+      { label: 'Budget revise', valKey: 'budgetRevise', vsKey: 'budgetInit', valColor: '#ffaa88' },
+      { label: 'Deploye', valKey: 'engage', progressKey: 'engagePct' },
+      { label: 'TRI initial', val: '10%', vs: 'Hotel Tamatave', valColor: '#ffaa88' },
+      { label: 'Alertes', val: '1', vs: 'Orga Earth (restruct.)', valColor: '#f37056' },
+    ],
+    projets: 9, budgetRevise: '29.7 M$', budgetInit: '30.9 M$', engage: '19.9 M$', engagePct: 67,
+  },
 ]
 
 /** Parse a dollar string like "3 764 713 $" or "804 k$" or "3.8 M$" into a number in M$ */
 function parseDollar(s) {
-  if (!s || s === '—') return 0
+  if (!s || s === '\u2014') return 0
   const cleaned = s.replace(/[^\d.,kKmM$-]/g, '').replace(',', '.')
   const num = parseFloat(cleaned.replace(/[kKmM$]/g, '')) || 0
   if (/M/i.test(s)) return num
   if (/k/i.test(s)) return num / 1000
-  // raw number — guess based on magnitude
   return num / 1_000_000
 }
 
-function computeCategoryKpis(cat) {
-  const projects = cat.projects
-  const total = projects.length
-  const delayed = projects.filter(p => p.status === 'delayed').length
-  let budgetInitTotal = 0
-  let budgetReelTotal = 0
-  let engageTotal = 0
-
-  projects.forEach(p => {
-    budgetInitTotal += parseDollar(p.investInit)
-    budgetReelTotal += parseDollar(p.investReel || p.etatTotal)
-    engageTotal += parseDollar(p.etatEnCours)
-  })
-
-  const etatTotal = projects.reduce((s, p) => s + parseDollar(p.etatTotal), 0)
-  const avgPct = projects.length > 0
-    ? Math.round(projects.reduce((s, p) => s + (p.etatPct || 0), 0) / projects.length)
-    : 0
-
-  return { total, delayed, budgetInitTotal, budgetReelTotal, engageTotal, etatTotal, avgPct }
-}
-
 function fmtM(val) {
-  if (val === 0) return '—'
+  if (val === 0) return '\u2014'
   if (val >= 1) return val.toFixed(1) + ' M$'
   return (val * 1000).toFixed(0) + ' k$'
 }
@@ -54,10 +72,7 @@ function StatusBadge({ status, color }) {
   const bg = status === 'delayed' ? 'rgba(224,92,92,0.15)' : `rgba(${hexToRgb(color)},0.12)`
   const fg = status === 'delayed' ? '#E05C5C' : color
   return (
-    <span
-      className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded"
-      style={{ background: bg, color: fg }}
-    >
+    <span className="cpj-status" style={{ background: bg, color: fg }}>
       {label}
     </span>
   )
@@ -70,334 +85,310 @@ function hexToRgb(hex) {
   return `${r},${g},${b}`
 }
 
-function ProjectCard({ project, color, colorRgb, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="glass-card p-4 text-left w-full border transition-all duration-200
-                 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer"
-      style={{ borderColor: `rgba(${colorRgb},0.15)` }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.4)` }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.15)` }}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
-          <span className="text-sm font-bold text-[var(--text-primary)] line-clamp-1">{project.name}</span>
-        </div>
-        <StatusBadge status={project.status} color={color} />
-      </div>
-
-      {/* Investment row */}
-      <div className="flex justify-between mt-3">
-        <div>
-          <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">Init.</div>
-          <div className="text-sm font-bold">{project.investInit}</div>
-        </div>
-        <div className="text-center">
-          <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">Reel</div>
-          <div className="text-sm font-bold" style={{ color }}>{project.investReel}</div>
-        </div>
-        <div className="text-right">
-          <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">TRI Init</div>
-          <div className="text-sm font-bold" style={{ color: '#4ecdc4' }}>{project.triInit}</div>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="mt-3">
-        <div className="flex justify-between items-center mb-1">
-          <span className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">
-            {project.etatEnCours} sur {project.etatTotal}
-          </span>
-          <span className="text-xs font-bold" style={{ color }}>{project.etatPct}%</span>
-        </div>
-        <div className="w-full h-1 rounded-full" style={{ background: `rgba(${colorRgb},0.1)` }}>
-          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${project.etatPct}%`, background: color }} />
-        </div>
-      </div>
-    </button>
-  )
-}
-
+/* ========== PROJECT DETAIL VIEW ========== */
 function ProjectDetail({ project, color, colorRgb, onClose }) {
   const deltaColor = project.deltaInvest && project.deltaInvest.startsWith('-') ? '#00ab63' : '#f37056'
 
   return (
-    <div className="space-y-4">
-      {/* Back button */}
-      <button onClick={onClose} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 24px' }}>
+      <button onClick={onClose} className="back-btn-react" style={{ borderColor: `rgba(${colorRgb},0.3)`, color }}>
         &larr; Retour
       </button>
 
-      <div className="glass-card p-6" style={{ borderColor: `rgba(${colorRgb},0.2)` }}>
+      <div className="capex-proj-card" style={{ borderColor: `rgba(${colorRgb},0.2)`, marginTop: 16 }}>
         {/* Title */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full" style={{ background: color, boxShadow: `0 0 10px ${color}` }} />
-            <h2 className="text-lg font-bold">{project.name}</h2>
+        <div className="cpj-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: color, boxShadow: `0 0 10px ${color}` }} />
+            <span className="cpj-name">{project.name}</span>
           </div>
           <StatusBadge status={project.status} color={color} />
         </div>
 
         {/* KPI grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Invest. Initial</div>
-            <div className="text-base font-bold">{project.investInit}</div>
-          </div>
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Invest. Reel</div>
-            <div className="text-base font-bold" style={{ color }}>{project.investReel}</div>
-          </div>
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Delta</div>
-            <div className="text-base font-bold" style={{ color: project.deltaInvest === '—' ? 'inherit' : deltaColor }}>{project.deltaInvest}</div>
-          </div>
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">TRI</div>
-            <div className="text-base font-bold" style={{ color: '#4ecdc4' }}>
-              {project.triInit}{project.triReel && project.triReel !== '—' ? ` / ${project.triReel}` : ''}
+        <div className="cpj-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+          {[
+            { label: 'Invest. Initial', value: project.investInit },
+            { label: 'Invest. Reel', value: project.investReel, color },
+            { label: 'Delta', value: project.deltaInvest, color: project.deltaInvest === '\u2014' ? undefined : deltaColor },
+            { label: 'TRI', value: `${project.triInit}${project.triReel && project.triReel !== '\u2014' ? ` / ${project.triReel}` : ''}`, color: '#4ecdc4' },
+          ].map((k, i) => (
+            <div key={i} className="cpj-block">
+              <div className="cpj-block-label">{k.label}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: k.color || 'rgba(255,255,255,0.9)' }}>{k.value}</div>
             </div>
-          </div>
+          ))}
         </div>
 
         {/* Progress */}
-        <div className="border-t border-[var(--border)] pt-4">
-          <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-2">
-            Etat d'investissement
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
+          <div className="cpj-block-label" style={{ marginBottom: 8 }}>Etat d'investissement</div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
+            {project.etatEnCours} sur {project.etatTotal}
           </div>
-          <div className="text-xs text-[var(--text-muted)] mb-2">{project.etatEnCours} sur {project.etatTotal}</div>
-          <div className="w-full h-2 rounded-full mb-2" style={{ background: `rgba(${colorRgb},0.1)` }}>
-            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${project.etatPct}%`, background: color }} />
+          <div style={{ width: '100%', height: 6, background: `rgba(${colorRgb},0.1)`, borderRadius: 3 }}>
+            <div style={{ width: `${project.etatPct}%`, height: '100%', background: color, borderRadius: 3 }} />
           </div>
-          <div className="text-2xl font-extrabold" style={{ color }}>{project.etatPct}%</div>
-          <div className="text-[9px] text-[var(--text-muted)]">engage sur budget total</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color, marginTop: 8 }}>{project.etatPct}%</div>
+          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>engage sur budget total</div>
         </div>
 
         {/* Dates */}
-        <div className="border-t border-[var(--border)] pt-4 mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Debut Init</div>
-            <div className="text-sm font-bold">{project.dateDebInit}</div>
-          </div>
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Debut Reel</div>
-            <div className="text-sm font-bold">{project.dateDebReel}</div>
-          </div>
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Fin Init</div>
-            <div className="text-sm font-bold">{project.dateFinInit}</div>
-          </div>
-          <div>
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">Fin Reel</div>
-            <div className="text-sm font-bold">{project.dateFinReel}</div>
-          </div>
-        </div>
-
-        {/* Cash flow mini chart */}
-        {project.cfOut && project.cfOut.some(v => v > 0) && (
-          <div className="border-t border-[var(--border)] pt-4 mt-4">
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-2">Cash Flow (6 mois)</div>
-            <div className="flex gap-1.5 items-end h-12">
-              {['J', 'F', 'M', 'A', 'M', 'J'].map((m, i) => {
-                const maxVal = Math.max(...project.cfIn, ...project.cfOut, 1)
-                return (
-                  <div key={i} className="flex flex-col items-center gap-0.5 flex-1">
-                    <div className="flex gap-0.5 items-end h-9">
-                      <div
-                        className="w-2 rounded-t"
-                        style={{
-                          background: 'rgba(0,171,99,0.7)',
-                          height: `${Math.round((project.cfIn[i] / maxVal) * 100)}%`,
-                          minHeight: project.cfIn[i] > 0 ? '2px' : '0',
-                        }}
-                      />
-                      <div
-                        className="w-2 rounded-t"
-                        style={{
-                          background: 'rgba(255,107,107,0.6)',
-                          height: `${Math.round((project.cfOut[i] / maxVal) * 100)}%`,
-                          minHeight: project.cfOut[i] > 0 ? '2px' : '0',
-                        }}
-                      />
-                    </div>
-                    <span className="text-[7px] text-[var(--text-muted)]">{m}</span>
-                  </div>
-                )
-              })}
+        <div className="cpj-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
+          {[
+            { label: 'Debut Init', value: project.dateDebInit },
+            { label: 'Debut Reel', value: project.dateDebReel },
+            { label: 'Fin Init', value: project.dateFinInit },
+            { label: 'Fin Reel', value: project.dateFinReel },
+          ].map((k, i) => (
+            <div key={i}>
+              <div className="cpj-block-label">{k.label}</div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>{k.value}</div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </div>
   )
 }
 
-export default function Capex() {
-  const [activeCategory, setActiveCategory] = useState(null)
-  const [selectedProject, setSelectedProject] = useState(null)
+/* ========== CATEGORY DRILL-DOWN VIEW ========== */
+function CategoryView({ poleKey, onBack, onSelectProject }) {
+  const catData = capexData[poleKey]
+  if (!catData) return null
 
-  // Global KPIs across all categories
-  const globalKpis = useMemo(() => {
-    let totalProjects = 0
-    let totalBudget = 0
-    let totalEngage = 0
-    let totalDelayed = 0
+  const pole = POLES.find(p => p.key === poleKey)
+  const color = catData.color
+  const colorRgb = catData.colorRgb
 
-    Object.values(capexData).forEach(cat => {
-      const kpis = computeCategoryKpis(cat)
-      totalProjects += kpis.total
-      totalBudget += kpis.etatTotal
-      totalEngage += kpis.engageTotal
-      totalDelayed += kpis.delayed
-    })
+  const projects = catData.projects
+  const total = projects.length
+  const delayed = projects.filter(p => p.status === 'delayed').length
+  let engageTotal = 0
+  let etatTotal = 0
+  projects.forEach(p => {
+    engageTotal += parseDollar(p.etatEnCours)
+    etatTotal += parseDollar(p.etatTotal)
+  })
+  const avgPct = projects.length > 0 ? Math.round(projects.reduce((s, p) => s + (p.etatPct || 0), 0) / projects.length) : 0
 
-    const pctEngage = totalBudget > 0 ? Math.round((totalEngage / totalBudget) * 100) : 0
-    return { totalProjects, totalBudget, totalEngage, pctEngage, totalDelayed }
-  }, [])
-
-  // Active category data
-  const activeCat = activeCategory ? capexData[activeCategory] : null
-  const activeKpis = activeCat ? computeCategoryKpis(activeCat) : null
-
-  // If showing a project detail
-  if (selectedProject && activeCat) {
-    return (
-      <div className="p-4 md:p-6 max-w-5xl mx-auto">
-        <ProjectDetail
-          project={selectedProject}
-          color={activeCat.color}
-          colorRgb={activeCat.colorRgb}
-          onClose={() => setSelectedProject(null)}
-        />
-      </div>
-    )
-  }
-
-  // If showing a category drill-down
-  if (activeCat && activeKpis) {
-    const colorRgb = activeCat.colorRgb
-    const color = activeCat.color
-    return (
-      <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-        {/* Back + title */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setActiveCategory(null)}
-            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            &larr; CAPEX
-          </button>
-          <h2 className="text-lg font-bold" style={{ color }}>{activeCat.title}</h2>
-        </div>
-
-        {/* Category KPIs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: 'Projets', value: activeKpis.total, color },
-            { label: 'En retard', value: activeKpis.delayed, color: activeKpis.delayed > 0 ? '#E05C5C' : color },
-            { label: 'Budget total', value: fmtM(activeKpis.etatTotal), color },
-            { label: 'Engage moyen', value: activeKpis.avgPct + '%', color: '#4ecdc4' },
-          ].map((k, i) => (
-            <div key={i} className="glass-card p-4 text-center">
-              <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">{k.label}</div>
-              <div className="text-xl font-extrabold" style={{ color: k.color }}>{k.value}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Project cards grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {activeCat.projects.map(p => (
-            <ProjectCard
-              key={p.id}
-              project={p}
-              color={color}
-              colorRgb={colorRgb}
-              onClick={() => setSelectedProject(p)}
-            />
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // Landing: overview of all categories
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-      {/* Page header */}
-      <div>
-        <h1 className="text-xl font-bold" style={{ color: ACCENT }}>CAPEX</h1>
-        <p className="text-xs text-[var(--text-muted)] mt-1">Suivi des investissements par categorie</p>
+    <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
+      {/* Back + Title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+        <button onClick={onBack} className="back-btn-react" style={{ borderColor: `rgba(${colorRgb},0.3)`, color }}>
+          CAPEX
+        </button>
+        <span style={{ fontSize: 18, fontWeight: 800, color }}>{catData.title}</span>
       </div>
 
-      {/* Global KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* KPI row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28 }}>
         {[
-          { label: 'Total projets', value: globalKpis.totalProjects },
-          { label: 'Budget total', value: fmtM(globalKpis.totalBudget) },
-          { label: 'Engage', value: globalKpis.pctEngage + '%', color: '#4ecdc4' },
-          { label: 'En retard', value: globalKpis.totalDelayed, color: globalKpis.totalDelayed > 0 ? '#E05C5C' : ACCENT },
+          { label: 'Projets', value: total, color },
+          { label: 'En retard', value: delayed, color: delayed > 0 ? '#E05C5C' : color },
+          { label: 'Budget total', value: fmtM(etatTotal), color },
+          { label: 'Engage moyen', value: avgPct + '%', color: '#4ecdc4' },
         ].map((k, i) => (
-          <div key={i} className="glass-card p-4 text-center">
-            <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-1">{k.label}</div>
-            <div className="text-2xl font-extrabold" style={{ color: k.color || ACCENT }}>{k.value}</div>
+          <div key={i} className="capex-kpi-card" style={{ textAlign: 'center' }}>
+            <div className="ckpi-label">{k.label}</div>
+            <div className="ckpi-val" style={{ color: k.color }}>{k.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Category cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {CATEGORIES.map(cat => {
-          const data = capexData[cat.key]
-          if (!data) return null
-          const kpis = computeCategoryKpis(data)
-          const colorRgb = data.colorRgb
-          const color = data.color
-          return (
-            <button
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
-              className="glass-card p-5 text-left cursor-pointer border transition-all duration-200
-                         hover:-translate-y-1 hover:shadow-lg relative overflow-hidden"
-              style={{ borderColor: `rgba(${colorRgb},0.15)` }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.4)` }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.15)` }}
-            >
-              {/* Accent top bar */}
-              <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: color }} />
-
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold" style={{ color }}>{data.title}</h3>
-                <span className="text-xs text-[var(--text-muted)]">{kpis.total} projets</span>
+      {/* Project cards grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
+        {projects.map(p => (
+          <div
+            key={p.id}
+            className="capex-section-card"
+            onClick={() => onSelectProject(p)}
+            style={{ borderColor: `rgba(${colorRgb},0.2)`, padding: 16 }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.5)`; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 24px rgba(${colorRgb},0.15)` }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.2)`; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}` }} />
+                <span style={{ fontSize: 'clamp(13px,1.2vw,16px)', fontWeight: 800, color: 'rgba(255,255,255,0.9)' }}>{p.name}</span>
               </div>
+              <StatusBadge status={p.status} color={color} />
+            </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">Budget</div>
-                  <div className="text-base font-extrabold" style={{ color }}>{fmtM(kpis.etatTotal)}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">Engage</div>
-                  <div className="text-base font-extrabold" style={{ color: '#4ecdc4' }}>{kpis.avgPct}%</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[9px] text-[var(--text-muted)] uppercase tracking-wider">Retard</div>
-                  <div className="text-base font-extrabold" style={{ color: kpis.delayed > 0 ? '#E05C5C' : 'rgba(255,255,255,0.3)' }}>
-                    {kpis.delayed}
+            {/* Investment row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
+              <div>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Init.</div>
+                <div style={{ fontSize: 14, fontWeight: 800 }}>{p.investInit}</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Reel</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color }}>{p.investReel}</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>TRI</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: '#4ecdc4' }}>{p.triInit}</div>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div style={{ marginTop: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                  {p.etatEnCours} sur {p.etatTotal}
+                </span>
+                <span style={{ fontSize: 11, fontWeight: 800, color }}>{p.etatPct}%</span>
+              </div>
+              <div style={{ width: '100%', height: 4, background: `rgba(${colorRgb},0.1)`, borderRadius: 2 }}>
+                <div style={{ width: `${p.etatPct}%`, height: '100%', background: color, borderRadius: 2, transition: 'width 0.5s' }} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ========== MAIN CAPEX COMPONENT ========== */
+export default function Capex() {
+  const [activeCategory, setActiveCategory] = useState(null)
+  const [selectedProject, setSelectedProject] = useState(null)
+
+  // Project detail view
+  if (selectedProject && activeCategory) {
+    const catData = capexData[activeCategory]
+    return (
+      <ProjectDetail
+        project={selectedProject}
+        color={catData.color}
+        colorRgb={catData.colorRgb}
+        onClose={() => setSelectedProject(null)}
+      />
+    )
+  }
+
+  // Category drill-down view
+  if (activeCategory) {
+    return (
+      <CategoryView
+        poleKey={activeCategory}
+        onBack={() => setActiveCategory(null)}
+        onSelectProject={(p) => setSelectedProject(p)}
+      />
+    )
+  }
+
+  // Landing page
+  return (
+    <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
+
+      {/* ══ GLOBAL SUMMARY ══ */}
+      <div style={{ marginBottom: 40 }}>
+        <div className="capex-section-label">Vue consolidee \u00b7 Tous poles</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 16 }}>
+
+          {/* Projets Actifs */}
+          <div className="capex-kpi-card">
+            <div className="ckpi-label">Projets actifs</div>
+            <div className="ckpi-val">72</div>
+            <div className="ckpi-sub">4 poles</div>
+          </div>
+
+          {/* Budget revise */}
+          <div className="capex-kpi-card">
+            <div className="ckpi-label">Budget revise</div>
+            <div className="ckpi-val">296 M$</div>
+            <div className="ckpi-sub-row">
+              <span className="ckpi-tag-init">Initial 386 M$</span>
+              <span className="ckpi-delta down">-23%</span>
+            </div>
+          </div>
+
+          {/* Realise / Engage */}
+          <div className="capex-kpi-card">
+            <div className="ckpi-label">Realise / Engage</div>
+            <div className="ckpi-val">35.9 M$</div>
+            <div className="ckpi-progress-wrap">
+              <div className="ckpi-progress-track">
+                <div className="ckpi-progress-bar" style={{ width: '12%', background: ACCENT }} />
+              </div>
+              <span className="ckpi-pct">12%</span>
+            </div>
+          </div>
+
+          {/* Repartition budget */}
+          <div className="capex-kpi-card">
+            <div className="ckpi-label">Repartition budget</div>
+            <div className="ckpi-val" style={{ fontSize: 18 }}>EnR 52%</div>
+            <div className="ckpi-sub-row">
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>IMMO 36%</span>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>VEN 10%</span>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>HFO 3%</span>
+            </div>
+          </div>
+
+          {/* Alertes */}
+          <div className="capex-kpi-card">
+            <div className="ckpi-label">Alertes projets</div>
+            <div className="ckpi-val" style={{ color: '#f37056' }}>3</div>
+            <div className="ckpi-sub-row">
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>2 retards EnR</span>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>1 restructuration</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ══ POLES D'INVESTISSEMENT ══ */}
+      <div className="capex-section-label">Poles d'investissement</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }}>
+
+        {POLES.map(pole => (
+          <div
+            key={pole.key}
+            className="capex-section-card"
+            data-pole={pole.key}
+            onClick={() => setActiveCategory(pole.key)}
+          >
+            {/* Header */}
+            <div className="csec-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className="csec-dot" style={{ background: pole.dot, boxShadow: `0 0 10px ${pole.dotShadow}` }} />
+                <span className="csec-title" style={{ color: pole.titleColor }}>{pole.label}</span>
+                <span className="csec-badge">{pole.projets} projets</span>
+              </div>
+              <span className="csec-arrow">&rarr;</span>
+            </div>
+
+            {/* KPIs */}
+            <div className="csec-kpis">
+              {pole.kpis.map((kpi, i) => (
+                <div key={i} className="csec-kpi">
+                  <div className="csec-kpi-label">{kpi.label}</div>
+                  <div className="csec-kpi-val" style={kpi.valColor ? { color: kpi.valColor } : {}}>
+                    {kpi.val || pole[kpi.valKey]}
                   </div>
+                  {kpi.vsKey && (
+                    <div className="csec-kpi-vs">/ {pole[kpi.vsKey]} initial</div>
+                  )}
+                  {kpi.vs && (
+                    <div className="csec-kpi-vs">{kpi.vs}</div>
+                  )}
+                  {kpi.progressKey && (
+                    <div className="csec-progress-mini">
+                      <div style={{ width: `${pole[kpi.progressKey]}%`, background: pole.barColor }} />
+                    </div>
+                  )}
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
+        ))}
 
-              {/* Mini progress */}
-              <div className="mt-3 w-full h-1 rounded-full" style={{ background: `rgba(${colorRgb},0.1)` }}>
-                <div className="h-full rounded-full" style={{ width: `${kpis.avgPct}%`, background: color }} />
-              </div>
-            </button>
-          )
-        })}
       </div>
     </div>
   )
