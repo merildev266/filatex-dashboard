@@ -1,6 +1,6 @@
 {
-  "name": "Filatex PMO Dashboard",
-  "short_name": "Filatex PMO",
+  "name": "Filatex Dashboard",
+  "short_name": "Filatex",
   "description": "Dashboard PMO du Groupe Filatex",
   "start_url": "./index.html",
   "display": "standalone",
