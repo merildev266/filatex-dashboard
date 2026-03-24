@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const NAV_ITEMS = [
@@ -89,34 +90,108 @@ const NAV_ICONS = {
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false)
 
   const activePole = NAV_ITEMS.find(
     (item) => item.path !== '/' && location.pathname.startsWith(item.path)
   )?.pole || 'home'
 
+  const activeColor = POLE_COLORS[activePole] || 'rgba(255,255,255,0.7)'
+
+  // Close menu on scroll
+  useEffect(() => {
+    if (!isOpen) return
+    const close = () => setIsOpen(false)
+    window.addEventListener('scroll', close, { passive: true })
+    return () => window.removeEventListener('scroll', close)
+  }, [isOpen])
+
+  // Close menu on route change
+  useEffect(() => { setIsOpen(false) }, [location.pathname])
+
+  const handleNav = (path) => {
+    navigate(path)
+    setIsOpen(false)
+  }
+
   return (
-    <nav className="bnav-bar">
-      {NAV_ITEMS.map((item) => {
-        const isActive = activePole === item.pole
-        const color = isActive ? POLE_COLORS[item.pole] : 'rgba(255,255,255,0.25)'
-        return (
-          <button
-            key={item.pole}
-            onClick={() => navigate(item.path)}
-            className={`bnav-item${isActive ? ' active' : ''}`}
-            style={{ color }}
-          >
-            {NAV_ICONS[item.pole]}
-            <span>{item.label}</span>
-            {isActive && (
-              <span
-                className="bnav-active-dot"
-                style={{ backgroundColor: color }}
-              />
-            )}
-          </button>
-        )
-      })}
-    </nav>
+    <>
+      {/* ── Desktop: normal bar ── */}
+      <nav className="bnav-bar bnav-desktop">
+        {NAV_ITEMS.map((item) => {
+          const isActive = activePole === item.pole
+          const color = isActive ? POLE_COLORS[item.pole] : 'rgba(255,255,255,0.25)'
+          return (
+            <button
+              key={item.pole}
+              onClick={() => navigate(item.path)}
+              className={`bnav-item${isActive ? ' active' : ''}`}
+              style={{ color }}
+            >
+              {NAV_ICONS[item.pole]}
+              <span>{item.label}</span>
+              {isActive && (
+                <span className="bnav-active-dot" style={{ backgroundColor: color }} />
+              )}
+            </button>
+          )
+        })}
+      </nav>
+
+      {/* ── Mobile: floating menu button + expandable nav ── */}
+      {/* Expanded nav panel */}
+      <div className={`bnav-mobile-panel ${isOpen ? 'open' : ''}`}>
+        <div className="bnav-mobile-grid">
+          {NAV_ITEMS.map((item) => {
+            const isActive = activePole === item.pole
+            const color = isActive ? POLE_COLORS[item.pole] : 'rgba(255,255,255,0.4)'
+            return (
+              <button
+                key={item.pole}
+                onClick={() => handleNav(item.path)}
+                className={`bnav-mobile-item ${isActive ? 'active' : ''}`}
+                style={{ '--item-color': color }}
+              >
+                <div className="bnav-mobile-icon" style={{ color }}>
+                  {NAV_ICONS[item.pole]}
+                </div>
+                <span className="bnav-mobile-label" style={{ color }}>
+                  {item.label}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+      {/* Backdrop */}
+      <div
+        className={`bnav-mobile-backdrop ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(false)}
+      />
+
+      {/* Floating menu button */}
+      <button
+        className="bnav-mobile-fab"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{ '--fab-color': activeColor }}
+      >
+        {isOpen ? (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{width:22,height:22}}>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:22,height:22}}>
+            <circle cx="12" cy="12" r="1"/>
+            <circle cx="12" cy="5" r="1"/>
+            <circle cx="12" cy="19" r="1"/>
+            <circle cx="5" cy="12" r="1"/>
+            <circle cx="19" cy="12" r="1"/>
+            <circle cx="5" cy="5" r="1"/>
+            <circle cx="19" cy="19" r="1"/>
+          </svg>
+        )}
+      </button>
+    </>
   )
 }

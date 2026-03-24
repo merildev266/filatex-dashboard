@@ -72,6 +72,98 @@ body::-webkit-scrollbar { display: none; }
   border-top: 1px solid rgba(255,255,255,0.06);
   padding: 0 8px;
 }
+
+/* ── Mobile floating nav ── */
+.bnav-mobile-fab,
+.bnav-mobile-panel,
+.bnav-mobile-backdrop { display: none; }
+
+@media (max-width: 640px) {
+  .bnav-desktop { display: none !important; }
+
+  .bnav-mobile-fab {
+    display: flex;
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 950;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(8,11,24,0.95);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--fab-color, rgba(255,255,255,0.7));
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+  }
+  .bnav-mobile-fab:active { transform: scale(0.92); }
+
+  .bnav-mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 940;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .bnav-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 72px;
+    z-index: 945;
+    background: rgba(8,11,24,0.97);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: 12px 0;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    justify-content: center;
+    gap: 0;
+  }
+  .bnav-mobile-panel.open {
+    transform: translateX(0);
+  }
+  .bnav-mobile-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .bnav-mobile-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .bnav-mobile-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 4px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 64px;
+  }
+  .bnav-mobile-item:active { transform: scale(0.92); }
+  .bnav-mobile-item.active {
+    background: rgba(255,255,255,0.06);
+  }
+  .bnav-mobile-icon svg { width: 20px; height: 20px; }
+  .bnav-mobile-label { font-size: 7px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+}
 .bnav-item {
   flex: 1;
   display: flex;
