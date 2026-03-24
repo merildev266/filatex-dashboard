@@ -40,7 +40,7 @@ export default function Energy() {
       </div>
 
       {/* Child routes */}
-      <div style={{padding:'18px 48px 60px', maxWidth:'1440px', margin:'0 auto', position:'relative', zIndex:1}}>
+      <div className="inner-page-inner">
         <Outlet />
       </div>
     </div>
