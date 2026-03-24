@@ -28,7 +28,7 @@ function GroupeFilatexLogo() {
 /* ── Scrolling motif SVG pattern ── */
 function MotifSvg() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 604.26 202.36" style={{width:'50%',flexShrink:0,display:'block'}}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 604.26 202.36" preserveAspectRatio="none" style={{width:'50%',height:'100%',flexShrink:0,display:'block'}}>
       <defs><style>{`.motif-cls{fill:none;stroke:#1a1d35;stroke-miterlimit:10;stroke-width:.6px;}`}</style></defs>
       <g>
         <path className="motif-cls" d="M50.23,201.96h14.43l3.4-57.77c1.68-28.54,1.68-57.49,0-86.03L64.66.4h-14.43l3.45,58.61c1.65,27.98,1.65,56.35,0,84.33l-3.45,58.61Z"/>
@@ -235,8 +235,8 @@ export default function Accueil() {
       </div>
 
       {/* ══ MOTIF DEFILANT ══ */}
-      <div id="home-motif" style={{position:'fixed',left:0,right:0,top:'50%',transform:'translateY(-50%)',pointerEvents:'none',zIndex:0,opacity:0.55,lineHeight:0,overflow:'hidden'}}>
-        <div style={{display:'flex',width:'200%',animation:'scrollMotif 40s linear infinite'}}>
+      <div id="home-motif" style={{position:'fixed',left:0,right:0,top:0,bottom:'56px',pointerEvents:'none',zIndex:0,opacity:0.65,lineHeight:0,overflow:'hidden'}}>
+        <div style={{display:'flex',width:'200%',height:'100%',animation:'scrollMotif 40s linear infinite'}}>
           <MotifSvg />
           <MotifSvg />
         </div>
