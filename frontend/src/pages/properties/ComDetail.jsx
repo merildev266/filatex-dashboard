@@ -1,169 +1,267 @@
-import { useMemo, Fragment } from 'react'
-import KpiBox from '../../components/KpiBox'
+import { useState, useMemo, Fragment } from 'react'
 import {
   comData_venteImmo, comData_venteImmoTotal,
   comData_venteFonciere, comData_venteFonciereTotal,
   comData_location, comData_locationTotal
 } from '../../data/commercial_objectives'
 
-const ORANGE = '#f37056'
 const VERT = '#00ab63'
+const YELLOW = '#FDB823'
 const RED = '#E05C5C'
-const QUARTERS = ['T1', 'T2', 'T3', 'T4']
+const TEAL = '#5aafaf'
 
-function formatEur(v) {
-  if (v == null) return '-'
-  if (v >= 1000000) return (v / 1000000).toFixed(2) + ' M'
-  if (v >= 1000) return Math.round(v).toLocaleString()
-  return v.toFixed(0)
+const Q = Math.floor(new Date().getMonth() / 3) + 1
+const Q_LABELS = ['Jan-Mar', 'Avr-Jun', 'Jul-Sep', 'Oct-Dec']
+
+function fmtEur(v) {
+  if (v == null) return '\u2014'
+  if (v >= 1000000) return (v / 1000000).toFixed(1).replace('.', ',') + ' M\u20AC'
+  if (v >= 1000) return Math.round(v / 1000) + ' k\u20AC'
+  return Math.round(v).toLocaleString('fr-FR') + ' \u20AC'
 }
 
-function QuarterTable({ data, total, title, unit }) {
-  // Calculate quarterly totals
-  const qTotals = useMemo(() => {
-    const totals = { t1: 0, t1r: 0, t2: 0, t2r: 0, t3: 0, t3r: 0, t4: 0, t4r: 0 }
-    data.forEach(row => {
-      QUARTERS.forEach((_, qi) => {
-        const key = `t${qi + 1}`
-        const keyR = `t${qi + 1}r`
-        totals[key] += row[key] || 0
-        totals[keyR] += row[keyR] || 0
-      })
-    })
-    return totals
-  }, [data])
+function fmtCell(v) {
+  if (v == null) return <span style={{ color: 'rgba(255,255,255,0.15)' }}>&mdash;</span>
+  return fmtEur(v)
+}
 
-  const totalRealised = qTotals.t1r + qTotals.t2r + qTotals.t3r + qTotals.t4r
+function sumF(arr, field) {
+  return arr.reduce((s, r) => s + (r[field] || 0), 0)
+}
+
+function pct(realise, objectif) {
+  if (!objectif) return '\u2014'
+  if (!realise) return <span style={{ color: 'rgba(255,255,255,0.25)' }}>0 %</span>
+  const p = Math.round(realise / objectif * 100)
+  const col = p >= 80 ? VERT : p >= 40 ? YELLOW : RED
+  return <span style={{ color: col, fontWeight: 700 }}>{p} %</span>
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r},${g},${b}`
+}
+
+/* ═══ Category section: header card + collapsible detail table ═══ */
+function CategorySection({ cat }) {
+  const [open, setOpen] = useState(false)
+  const rgb = hexToRgb(cat.color)
+
+  // Computed values
+  let catRealise = 0
+  for (let qi = 1; qi <= 4; qi++) catRealise += sumF(cat.data, 't' + qi + 'r')
+  const catPct = cat.total ? Math.round(catRealise / cat.total * 100) : 0
+  const catQObj = sumF(cat.data, 't' + Q)
+  const catQReal = sumF(cat.data, 't' + Q + 'r')
 
   return (
-    <div className="glass-card p-5 mb-6" style={{ borderColor: `${ORANGE}20` }}>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold" style={{ color: ORANGE }}>{title}</h3>
-        <div className="text-[10px] text-[var(--text-muted)]">
-          Objectif: <span className="font-bold text-white/80">{formatEur(total)} {unit}</span>
-        </div>
-      </div>
-
-      {/* Realised summary */}
-      <div className="mb-4 p-3 rounded-lg bg-[rgba(243,112,86,0.06)] border border-[rgba(243,112,86,0.12)]">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] text-[var(--text-dim)]">Realise total</span>
-          <span className="text-sm font-bold" style={{ color: totalRealised > 0 ? VERT : 'rgba(255,255,255,0.4)' }}>
-            {totalRealised > 0 ? formatEur(totalRealised) + ' ' + unit : 'Aucune donnee'}
-          </span>
-        </div>
-        {total > 0 && totalRealised > 0 && (
-          <div className="mt-2">
-            <div className="h-1.5 bg-[rgba(255,255,255,0.08)] rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full"
-                style={{
-                  width: `${Math.min((totalRealised / total) * 100, 100)}%`,
-                  backgroundColor: (totalRealised / total) >= 0.5 ? VERT : ORANGE
-                }}
-              />
+    <div style={{ marginBottom: 36 }}>
+      {/* Clickable header card */}
+      <div
+        className="com-obj-card"
+        style={{ borderColor: `rgba(${rgb},0.25)`, cursor: 'pointer' }}
+        onClick={() => setOpen(!open)}
+      >
+        <div className="com-obj-card-header">
+          <div className="com-obj-card-title" style={{ color: cat.color }}>{cat.title}</div>
+          <div className="com-obj-card-kpis">
+            <div className="com-obj-kpi">
+              <div className="com-obj-kpi-val" style={{ color: cat.color }}>{fmtEur(cat.total)}</div>
+              <div className="com-obj-kpi-label">Objectif</div>
             </div>
-            <div className="text-[9px] text-[var(--text-muted)] mt-1 text-right">
-              {((totalRealised / total) * 100).toFixed(1)}%
+            <div className="com-obj-kpi">
+              <div className="com-obj-kpi-val">{cat.data.length}</div>
+              <div className="com-obj-kpi-label">{cat.itemLabel}</div>
+            </div>
+            <div className="com-obj-kpi">
+              <div className="com-obj-kpi-val" style={{ color: TEAL }}>{fmtEur(catQObj)}</div>
+              <div className="com-obj-kpi-label">Obj. Q{Q}</div>
+            </div>
+            <div className="com-obj-kpi">
+              <div className="com-obj-kpi-val" style={{ color: catPct >= 80 ? VERT : catPct >= 40 ? YELLOW : RED }}>{catPct} %</div>
+              <div className="com-obj-kpi-label">Realise</div>
             </div>
           </div>
-        )}
+          <div className="com-obj-expand" style={{
+            transform: open ? 'rotate(180deg)' : 'none',
+            transition: 'transform 0.3s'
+          }}>&#9660;</div>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-[10px]">
-          <thead>
-            <tr className="border-b border-[var(--border)]">
-              <th className="text-left py-2 px-2 font-bold text-[var(--text-dim)] uppercase tracking-wider">Projet</th>
-              <th className="text-right py-2 px-2 font-bold text-[var(--text-dim)]">Objectif</th>
-              {QUARTERS.map(q => (
-                <th key={q} className="text-center py-2 px-2 font-bold text-[var(--text-dim)]" colSpan={2}>
-                  {q}
-                </th>
-              ))}
-            </tr>
-            <tr className="border-b border-[rgba(255,255,255,0.04)]">
-              <th></th>
-              <th></th>
-              {QUARTERS.map(q => (
-                <Fragment key={q + 'sub'}>
-                  <th className="text-right py-1 px-1 text-[8px] text-[var(--text-dim)]">Obj</th>
-                  <th className="text-right py-1 px-1 text-[8px] text-[var(--text-dim)]">Real</th>
-                </Fragment>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, i) => (
-              <tr key={i} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
-                <td className="py-2 px-2 font-semibold text-white/80">{row.name}</td>
-                <td className="py-2 px-2 text-right font-bold" style={{ color: ORANGE }}>
-                  {formatEur(row.objectif)}
-                </td>
-                {QUARTERS.map((_, qi) => {
-                  const obj = row[`t${qi + 1}`]
-                  const real = row[`t${qi + 1}r`]
-                  return (
-                    <Fragment key={`q${qi}`}>
-                      <td className="py-2 px-1 text-right text-[var(--text-dim)]">
-                        {obj ? formatEur(obj) : '-'}
-                      </td>
-                      <td className="py-2 px-1 text-right font-bold"
-                        style={{ color: real != null ? (obj && real >= obj ? VERT : ORANGE) : 'rgba(255,255,255,0.2)' }}>
-                        {real != null ? formatEur(real) : '-'}
-                      </td>
+      {/* Detail table (collapsible) */}
+      {open && (
+        <div className="com-obj-detail open">
+          <div className="table-wrap" style={{
+            background: `rgba(${rgb},0.02)`,
+            borderColor: `rgba(${rgb},0.12)`,
+            marginTop: 12,
+            border: `1px solid rgba(${rgb},0.12)`,
+            borderRadius: 12,
+            overflow: 'hidden'
+          }}>
+            <table className="groups-table com-obj-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Nom</th>
+                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>Objectif</th>
+                  {[1, 2, 3, 4].map(qi => {
+                    const isActive = qi === Q
+                    return (
+                      <th key={qi} colSpan={2} style={{
+                        textAlign: 'center', padding: '10px 6px', fontSize: 10, fontWeight: 700,
+                        color: isActive ? cat.color : 'rgba(255,255,255,0.4)',
+                        letterSpacing: '0.05em'
+                      }}>
+                        Q{qi}{isActive ? ' \u25CF' : ''}
+                      </th>
+                    )
+                  })}
+                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>% Annuel</th>
+                </tr>
+                <tr style={{ fontSize: 8, opacity: 0.5 }}>
+                  <th></th>
+                  <th></th>
+                  {[1, 2, 3, 4].map(qi => (
+                    <Fragment key={qi}>
+                      <th style={{ padding: '4px 4px', textAlign: 'center', color: 'rgba(255,255,255,0.35)' }}>Obj.</th>
+                      <th style={{ padding: '4px 4px', textAlign: 'center', color: 'rgba(255,255,255,0.35)' }}>Realise</th>
                     </Fragment>
+                  ))}
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {cat.data.map((row, i) => {
+                  let rowRealise = 0
+                  for (let qi = 1; qi <= 4; qi++) rowRealise += (row['t' + qi + 'r'] || 0)
+                  const rowPct = row.objectif ? Math.round(rowRealise / row.objectif * 100) : 0
+
+                  return (
+                    <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, textAlign: 'left', color: 'rgba(255,255,255,0.8)' }}>{row.name}</td>
+                      <td style={{ padding: '8px 8px', fontSize: 11, textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}>{fmtEur(row.objectif)}</td>
+                      {[1, 2, 3, 4].map(qi => {
+                        const obj = row['t' + qi]
+                        const real = row['t' + qi + 'r']
+                        const isActive = qi === Q
+                        const bgS = isActive ? `rgba(${rgb},0.06)` : 'transparent'
+                        return (
+                          <Fragment key={qi}>
+                            <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: bgS }}>
+                              {fmtCell(obj)}
+                            </td>
+                            <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', fontWeight: 600, background: bgS,
+                              color: real != null ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.15)'
+                            }}>
+                              {real != null ? fmtEur(real) : <span style={{ color: 'rgba(255,255,255,0.15)' }}>&mdash;</span>}
+                            </td>
+                          </Fragment>
+                        )
+                      })}
+                      <td style={{ padding: '8px 8px', textAlign: 'center', fontSize: 11 }}>
+                        {pct(rowRealise, row.objectif)}
+                      </td>
+                    </tr>
                   )
                 })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+
+                {/* TOTAL row */}
+                <tr style={{ borderTop: `2px solid rgba(${rgb},0.2)`, fontWeight: 800 }}>
+                  <td style={{ padding: '10px 12px', fontSize: 11, textAlign: 'left', color: cat.color }}>TOTAL</td>
+                  <td style={{ padding: '10px 8px', fontSize: 11, textAlign: 'center', color: cat.color }}>{fmtEur(cat.total)}</td>
+                  {[1, 2, 3, 4].map(qi => {
+                    const tObj = sumF(cat.data, 't' + qi)
+                    const tReal = sumF(cat.data, 't' + qi + 'r')
+                    const isActive = qi === Q
+                    const bgS = isActive ? `rgba(${rgb},0.06)` : 'transparent'
+                    return (
+                      <Fragment key={qi}>
+                        <td style={{ padding: '10px 4px', fontSize: 10, textAlign: 'center', color: cat.color, background: bgS }}>
+                          {fmtCell(tObj || null)}
+                        </td>
+                        <td style={{ padding: '10px 4px', fontSize: 10, textAlign: 'center', color: VERT, fontWeight: 700, background: bgS }}>
+                          {fmtCell(tReal || null)}
+                        </td>
+                      </Fragment>
+                    )
+                  })}
+                  <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 11 }}>
+                    {pct(catRealise, cat.total)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
+/* ═══ MAIN COMPONENT ═══ */
 export default function ComDetail() {
-  const globalTotal = (comData_venteImmoTotal || 0) + (comData_venteFonciereTotal || 0) + (comData_locationTotal || 0)
+  const cats = [
+    {
+      id: 'vente-projet', title: 'Vente Projet', color: VERT,
+      data: comData_venteImmo || [],
+      total: comData_venteImmoTotal || 0,
+      itemLabel: 'Projets'
+    },
+    {
+      id: 'vente-terrain', title: 'Vente Terrain', color: YELLOW,
+      data: comData_venteFonciere || [],
+      total: comData_venteFonciereTotal || 0,
+      itemLabel: 'Terrains'
+    },
+    {
+      id: 'location', title: 'Location', color: TEAL,
+      data: comData_location || [],
+      total: comData_locationTotal || 0,
+      itemLabel: 'Biens'
+    }
+  ]
+
+  const grandTotal = cats.reduce((s, c) => s + c.total, 0)
+  const nbItems = cats.reduce((s, c) => s + c.data.length, 0)
+  let grandRealise = 0
+  cats.forEach(cat => {
+    for (let qi = 1; qi <= 4; qi++) grandRealise += sumF(cat.data, 't' + qi + 'r')
+  })
+  const globalPct = grandTotal ? Math.round(grandRealise / grandTotal * 100) : 0
 
   return (
     <div>
-      {/* Global KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="glass-card p-4" style={{ borderColor: `${ORANGE}25` }}>
-          <KpiBox value={formatEur(comData_venteImmoTotal) + ' EUR'} label="Vente Immobiliere" color={ORANGE} size="sm" />
+      {/* KPI bar */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
+          <div className="props-kpi-label">Objectif total 2026</div>
+          <div className="props-kpi-val" style={{ color: VERT }}>{fmtEur(grandTotal)}</div>
+          <div className="props-kpi-sub">Ventes + Location</div>
         </div>
-        <div className="glass-card p-4" style={{ borderColor: `${ORANGE}25` }}>
-          <KpiBox value={formatEur(comData_venteFonciereTotal) + ' EUR'} label="Vente Fonciere" color={ORANGE} size="sm" />
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
+          <div className="props-kpi-label">Projets / Biens</div>
+          <div className="props-kpi-val" style={{ color: VERT }}>{nbItems}</div>
+          <div className="props-kpi-sub">{cats[0].data.length} projets &middot; {cats[1].data.length} terrains &middot; {cats[2].data.length} biens</div>
         </div>
-        <div className="glass-card p-4" style={{ borderColor: `${ORANGE}25` }}>
-          <KpiBox value={formatEur(comData_locationTotal) + ' EUR'} label="Location" color={ORANGE} size="sm" />
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
+          <div className="props-kpi-label">Realise global</div>
+          <div className="props-kpi-val" style={{ color: globalPct >= 80 ? VERT : globalPct >= 40 ? YELLOW : RED }}>{globalPct} %</div>
+          <div className="props-kpi-sub">{fmtEur(grandRealise)} encaisse</div>
+        </div>
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.25)' }}>
+          <div className="props-kpi-label">Trimestre</div>
+          <div className="props-kpi-val" style={{ color: TEAL }}>Q{Q}</div>
+          <div className="props-kpi-sub">{Q_LABELS[Q - 1]} 2026</div>
         </div>
       </div>
 
-      {/* Sections */}
-      <QuarterTable
-        data={comData_venteImmo}
-        total={comData_venteImmoTotal}
-        title="Vente Immobiliere"
-        unit="EUR"
-      />
-
-      <QuarterTable
-        data={comData_venteFonciere}
-        total={comData_venteFonciereTotal}
-        title="Vente Fonciere"
-        unit="EUR"
-      />
-
-      <QuarterTable
-        data={comData_location}
-        total={comData_locationTotal}
-        title="Location"
-        unit="EUR"
-      />
+      {/* Category sections */}
+      {cats.map(cat => (
+        <CategorySection key={cat.id} cat={cat} />
+      ))}
     </div>
   )
 }

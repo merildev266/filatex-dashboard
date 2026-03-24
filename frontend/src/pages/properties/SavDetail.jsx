@@ -1,29 +1,34 @@
 import { useState, useMemo } from 'react'
 import { propsData_sav } from '../../data/props_data'
-import KpiBox from '../../components/KpiBox'
-import StatusBadge from '../../components/StatusBadge'
 
 const TEAL = '#5aafaf'
 const RED = '#E05C5C'
 const VERT = '#00ab63'
-
-function getTimingStatus(t) {
-  if (t === 'Delay' || t === 'delay') return 'delay'
-  return 'en_cours'
-}
+const YELLOW = '#FDB823'
 
 function getTimingColor(t) {
-  if (t === 'Delay' || t === 'delay') return RED
+  if (!t) return 'rgba(255,255,255,0.4)'
+  const lower = t.toLowerCase()
+  if (lower.includes('delay') && lower.includes('>=30')) return RED
+  if (lower.includes('delay')) return YELLOW
   return VERT
 }
 
-function getStatusLabel(s) {
-  if (!s) return 'indefini'
+function getTimingLabel(t) {
+  if (!t) return 'N/A'
+  const lower = t.toLowerCase()
+  if (lower.includes('delay') && lower.includes('>=30')) return 'Retard >=30j'
+  if (lower.includes('delay')) return 'Retard <30j'
+  if (lower.includes('on time')) return 'On Time'
+  return t
+}
+
+function getStatusColor(s) {
+  if (!s) return 'rgba(255,255,255,0.4)'
   const lower = s.toLowerCase()
-  if (lower.includes('termin')) return 'termine'
-  if (lower.includes('en cours') || lower.includes('started')) return 'en_cours'
-  if (lower.includes('non')) return 'non_demarre'
-  return 'indefini'
+  if (lower.includes('termin')) return VERT
+  if (lower.includes('en cours') || lower.includes('travaux')) return TEAL
+  return 'rgba(255,255,255,0.4)'
 }
 
 export default function SavDetail() {
@@ -34,7 +39,7 @@ export default function SavDetail() {
 
   const kpis = useMemo(() => {
     const total = projects.length
-    const delayed = projects.filter(p => p.timing_var === 'Delay' || p.timing_var === 'delay').length
+    const delayed = projects.filter(p => p.timing_var && p.timing_var.toLowerCase().includes('delay')).length
     const onTime = total - delayed
     const mgmtRequired = projects.filter(p =>
       p.status_cps && p.status_cps.toLowerCase().includes('management')
@@ -43,8 +48,8 @@ export default function SavDetail() {
   }, [projects])
 
   const filtered = useMemo(() => {
-    if (filter === 'ontime') return projects.filter(p => p.timing_var !== 'Delay' && p.timing_var !== 'delay')
-    if (filter === 'delay') return projects.filter(p => p.timing_var === 'Delay' || p.timing_var === 'delay')
+    if (filter === 'ontime') return projects.filter(p => !p.timing_var || !p.timing_var.toLowerCase().includes('delay'))
+    if (filter === 'delay') return projects.filter(p => p.timing_var && p.timing_var.toLowerCase().includes('delay'))
     if (filter === 'mgmt') return projects.filter(p =>
       p.status_cps && p.status_cps.toLowerCase().includes('management'))
     return projects
@@ -53,23 +58,31 @@ export default function SavDetail() {
   return (
     <div>
       {/* KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div className="glass-card p-4" style={{ borderColor: `${TEAL}25` }}>
-          <KpiBox value={kpis.total} label="Projets SAV" color={TEAL} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.15)' }}>
+          <div className="props-kpi-label">Projets SAV</div>
+          <div className="props-kpi-val" style={{ color: TEAL }}>{kpis.total}</div>
+          <div className="props-kpi-sub">Total</div>
         </div>
-        <div className="glass-card p-4" style={{ borderColor: `${VERT}25` }}>
-          <KpiBox value={kpis.onTime} label="On Time" color={VERT} />
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.15)' }}>
+          <div className="props-kpi-label">On Time</div>
+          <div className="props-kpi-val" style={{ color: VERT }}>{kpis.onTime}</div>
+          <div className="props-kpi-sub">Dans les temps</div>
         </div>
-        <div className="glass-card p-4" style={{ borderColor: `${RED}25` }}>
-          <KpiBox value={kpis.delayed} label="En retard" color={RED} />
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(224,92,92,0.15)' }}>
+          <div className="props-kpi-label">En retard</div>
+          <div className="props-kpi-val" style={{ color: kpis.delayed > 0 ? RED : VERT }}>{kpis.delayed}</div>
+          <div className="props-kpi-sub">Projets en retard</div>
         </div>
-        <div className="glass-card p-4" style={{ borderColor: `${TEAL}25` }}>
-          <KpiBox value={kpis.mgmtRequired} label="Decision requise" color={TEAL} />
+        <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.15)' }}>
+          <div className="props-kpi-label">Decision requise</div>
+          <div className="props-kpi-val" style={{ color: TEAL }}>{kpis.mgmtRequired}</div>
+          <div className="props-kpi-sub">Management</div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         {[
           { key: 'all', label: `Tous (${projects.length})` },
           { key: 'ontime', label: 'On Time' },
@@ -79,133 +92,154 @@ export default function SavDetail() {
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider
-                        border transition-colors cursor-pointer
-                        ${filter === f.key
-                          ? 'bg-[rgba(90,175,175,0.2)] border-[rgba(90,175,175,0.4)] text-white'
-                          : 'bg-transparent border-[var(--border)] text-[var(--text-muted)] hover:border-[rgba(90,175,175,0.3)]'
-                        }`}
+            style={{
+              padding: '6px 12px', borderRadius: 8, fontSize: 10, fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
+              border: `1px solid ${filter === f.key ? 'rgba(90,175,175,0.4)' : 'rgba(255,255,255,0.1)'}`,
+              background: filter === f.key ? 'rgba(90,175,175,0.2)' : 'transparent',
+              color: filter === f.key ? '#fff' : 'rgba(255,255,255,0.5)',
+              transition: 'all 0.2s'
+            }}
           >
             {f.label}
           </button>
         ))}
       </div>
 
-      {/* Project list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((p, i) => (
-          <div
-            key={i}
-            onClick={() => setSelectedProject(p)}
-            className="glass-card p-4 cursor-pointer hover:-translate-y-1 transition-transform"
-            style={{ borderColor: `${TEAL}20` }}
-          >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div>
-                <h3 className="text-[13px] font-bold">{p.site}</h3>
-                {p.resp && (
-                  <div className="text-[9px] text-[var(--text-dim)]">Resp: {p.resp}</div>
-                )}
+      {/* Project cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 12 }}>
+        {filtered.map((p, i) => {
+          const timingColor = getTimingColor(p.timing_var)
+          const isMgmt = p.status_cps && p.status_cps.toLowerCase().includes('management')
+          return (
+            <div
+              key={i}
+              onClick={() => setSelectedProject(p)}
+              style={{
+                background: 'rgba(90,175,175,0.04)',
+                border: '1px solid rgba(90,175,175,0.12)',
+                borderRadius: 12, padding: 16, cursor: 'pointer',
+                transition: 'border-color 0.2s, transform 0.15s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(90,175,175,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(90,175,175,0.12)'; e.currentTarget.style.transform = 'none' }}
+            >
+              {/* Name + badges */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{p.site}</div>
+                  {p.resp && (
+                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Resp: {p.resp}</div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                  <span style={{
+                    fontSize: 9, fontWeight: 700, color: timingColor,
+                    background: timingColor + '15', padding: '2px 6px', borderRadius: 4
+                  }}>{getTimingLabel(p.timing_var)}</span>
+                  <span style={{
+                    fontSize: 9, fontWeight: 600, color: getStatusColor(p.status),
+                    background: getStatusColor(p.status) + '15', padding: '2px 6px', borderRadius: 4
+                  }}>{p.status || 'N/A'}</span>
+                </div>
               </div>
-              <div className="flex flex-col items-end gap-1">
-                <StatusBadge status={getTimingStatus(p.timing_var)} />
-                <StatusBadge status={getStatusLabel(p.status)} />
+
+              {/* Current step */}
+              <div style={{
+                fontSize: 10, color: 'rgba(255,255,255,0.45)',
+                overflow: 'hidden', textOverflow: 'ellipsis',
+                display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                marginBottom: 6
+              }}>
+                {p.etape}
               </div>
+
+              {p.interlocuteur && (
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
+                  Interlocuteur: <span style={{ color: 'rgba(255,255,255,0.5)' }}>{p.interlocuteur}</span>
+                </div>
+              )}
+
+              {isMgmt && (
+                <div style={{
+                  marginTop: 8, fontSize: 9, fontWeight: 700,
+                  display: 'inline-block', padding: '2px 8px', borderRadius: 4,
+                  background: `${TEAL}15`, color: TEAL
+                }}>
+                  Decision management requise
+                </div>
+              )}
             </div>
-
-            <div className="text-[10px] text-[var(--text-dim)] line-clamp-2 mb-2">
-              {p.etape}
-            </div>
-
-            {p.interlocuteur && (
-              <div className="text-[9px] text-[var(--text-muted)]">
-                Interlocuteur: <span className="text-white/60">{p.interlocuteur}</span>
-              </div>
-            )}
-
-            {p.status_cps && p.status_cps.toLowerCase().includes('management') && (
-              <div className="mt-2 text-[9px] font-bold px-2 py-0.5 rounded inline-block"
-                style={{ background: `${TEAL}15`, color: TEAL }}>
-                Decision management requise
-              </div>
-            )}
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Detail modal */}
       {selectedProject && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-          onClick={() => setSelectedProject(null)}
-        >
+        <>
           <div
-            className="glass-card p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
-            style={{ borderColor: `${TEAL}30` }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold" style={{ color: TEAL }}>
-                {selectedProject.site}
-              </h2>
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
-              >
-                &#10005;
-              </button>
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }}
+            onClick={() => setSelectedProject(null)}
+          />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+            background: '#0d1025', border: '1px solid rgba(90,175,175,0.2)',
+            borderRadius: 16, padding: 24, maxWidth: 500, width: '90%',
+            maxHeight: '80vh', overflowY: 'auto', zIndex: 100
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <span style={{ fontSize: 16, fontWeight: 800, color: TEAL }}>{selectedProject.site}</span>
+              <button onClick={() => setSelectedProject(null)} style={{
+                background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)',
+                fontSize: 18, cursor: 'pointer'
+              }}>&times;</button>
             </div>
 
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-[10px]">
-                  <span className="text-[var(--text-dim)]">Responsable: </span>
-                  <span className="font-bold text-white/80">{selectedProject.resp || 'N/A'}</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+              {[
+                { label: 'Responsable', value: selectedProject.resp || 'N/A' },
+                { label: 'Interlocuteur', value: selectedProject.interlocuteur || 'N/A' },
+                { label: 'Timing', value: getTimingLabel(selectedProject.timing_var), color: getTimingColor(selectedProject.timing_var) },
+                { label: 'Budget', value: selectedProject.budget_var || 'N/A' },
+              ].map((item, i) => (
+                <div key={i} style={{ fontSize: 10 }}>
+                  <span style={{ color: 'rgba(255,255,255,0.35)' }}>{item.label}: </span>
+                  <span style={{ fontWeight: 700, color: item.color || 'rgba(255,255,255,0.8)' }}>{item.value}</span>
                 </div>
-                <div className="text-[10px]">
-                  <span className="text-[var(--text-dim)]">Interlocuteur: </span>
-                  <span className="font-bold text-white/80">{selectedProject.interlocuteur || 'N/A'}</span>
-                </div>
-                <div className="text-[10px]">
-                  <span className="text-[var(--text-dim)]">Timing: </span>
-                  <span className="font-bold" style={{ color: getTimingColor(selectedProject.timing_var) }}>
-                    {selectedProject.timing_var}
-                  </span>
-                </div>
-                <div className="text-[10px]">
-                  <span className="text-[var(--text-dim)]">Budget: </span>
-                  <span className="font-bold text-white/80">{selectedProject.budget_var || 'N/A'}</span>
-                </div>
-              </div>
-
-              <div className="text-[10px]">
-                <span className="text-[var(--text-dim)]">Statut: </span>
-                <span className="font-bold text-white/80">{selectedProject.status || 'N/A'}</span>
-              </div>
-
-              <div className="text-[10px]">
-                <span className="text-[var(--text-dim)]">CPs: </span>
-                <span className="font-bold text-white/80">{selectedProject.status_cps || 'N/A'}</span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-[rgba(90,175,175,0.06)] border border-[rgba(90,175,175,0.12)]">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-dim)] mb-1">
-                  Etape en cours
-                </div>
-                <div className="text-[11px] text-white/80">{selectedProject.etape}</div>
-              </div>
-
-              {selectedProject.latest_comment && (
-                <div className="p-3 rounded-lg bg-[rgba(90,175,175,0.04)] border border-[rgba(90,175,175,0.1)]">
-                  <div className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-dim)] mb-1">
-                    Dernier commentaire
-                  </div>
-                  <div className="text-[10px] text-white/60">{selectedProject.latest_comment}</div>
-                </div>
-              )}
+              ))}
             </div>
+
+            <div style={{ fontSize: 10, marginBottom: 12 }}>
+              <span style={{ color: 'rgba(255,255,255,0.35)' }}>Statut: </span>
+              <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.status || 'N/A'}</span>
+            </div>
+            <div style={{ fontSize: 10, marginBottom: 12 }}>
+              <span style={{ color: 'rgba(255,255,255,0.35)' }}>CPs: </span>
+              <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.status_cps || 'N/A'}</span>
+            </div>
+
+            <div style={{
+              padding: '10px 14px', borderRadius: 8,
+              background: 'rgba(90,175,175,0.06)', border: '1px solid rgba(90,175,175,0.12)',
+              marginBottom: 12
+            }}>
+              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>Etape en cours</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.etape}</div>
+            </div>
+
+            {selectedProject.latest_comment && (
+              <div style={{
+                padding: '10px 14px', borderRadius: 8,
+                background: 'rgba(90,175,175,0.04)', border: '1px solid rgba(90,175,175,0.1)'
+              }}>
+                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>
+                  Dernier commentaire ({selectedProject.latest_week})
+                </div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>{selectedProject.latest_comment}</div>
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
     </div>
   )

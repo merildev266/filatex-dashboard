@@ -691,6 +691,31 @@ body::-webkit-scrollbar { display: none; }
 /* Investments grid KPI */
 .inv-grid-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(6px,1vw,10px);}
 
+/* ══ PROPERTIES KPI CARDS ══ */
+.props-kpi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;text-align:center;}
+.props-kpi-label{font-size:9px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:8px;}
+.props-kpi-val{font-size:28px;font-weight:800;color:#fff;}
+.props-kpi-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;}
+
+/* ══ COMMERCIAL OBJECTIFS ══ */
+.com-obj-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 24px;transition:all 0.25s;}
+.com-obj-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);}
+.com-obj-card-header{display:flex;align-items:center;gap:20px;}
+.com-obj-card-title{font-size:18px;font-weight:800;letter-spacing:-0.02em;min-width:140px;}
+.com-obj-card-kpis{display:flex;gap:28px;flex:1;}
+.com-obj-kpi{text-align:center;}
+.com-obj-kpi-val{font-size:20px;font-weight:800;color:#fff;}
+.com-obj-kpi-label{font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:2px;}
+.com-obj-expand{font-size:10px;color:rgba(255,255,255,0.2);transition:transform 0.3s;margin-left:auto;}
+.com-obj-detail{overflow:hidden;}
+.com-obj-detail.open{max-height:none;}
+.com-obj-table{table-layout:fixed;width:100%;}
+.com-obj-table th,.com-obj-table td{text-align:center;}
+.com-obj-table th:first-child,.com-obj-table td:first-child{text-align:left;}
+
+/* ══ GANTT ANIMATION ══ */
+@keyframes pulse-delay{0%,100%{opacity:0.8;}50%{opacity:1;}}
+
 /* ══ CAPEX + INVESTMENTS MOBILE ══ */
 @media (max-width:768px) {
   .csec-kpis{grid-template-columns:repeat(2,1fr);gap:10px;}
@@ -703,4 +728,11 @@ body::-webkit-scrollbar { display: none; }
   .inv-page-inner .e-wrap{width:100% !important;gap:20px;}
   .inv-page-inner{padding:12px 14px 70px;}
   .inv-grid-kpi{grid-template-columns:repeat(2,1fr) !important;gap:8px;}
+  .props-kpi-val{font-size:22px;}
+  .props-kpi-card{padding:14px;}
+  .com-obj-card{padding:14px 16px;}
+  .com-obj-card-header{flex-direction:column;gap:10px;}
+  .com-obj-card-title{min-width:auto;text-align:center;font-size:16px;}
+  .com-obj-card-kpis{flex-wrap:wrap;gap:14px;justify-content:center;}
+  .com-obj-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 }
