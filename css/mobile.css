@@ -1,8 +1,10 @@
 /* ══ MOBILE OVERRIDES — s'ajoute par-dessus le CSS desktop ══ */
 /* Ce fichier ne fait que surcharger ce qui doit changer sur mobile */
 
-/* Skip login */
+/* Skip login + force bottom nav visible */
 #login-screen{display:none !important;}
+#login-screen:not(.hidden) ~ #bottom-nav{display:flex !important;}
+.home-values{display:flex !important;}
 
 /* Accueil — grille 2x3 au lieu de 3x2 */
 .cards-row1{grid-template-columns:repeat(2,1fr) !important;gap:12px !important;width:100% !important;}
