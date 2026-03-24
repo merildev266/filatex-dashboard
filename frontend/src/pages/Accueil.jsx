@@ -223,7 +223,7 @@ export default function Accueil() {
       </div>
 
       {/* ══ MOTIF DEFILANT ══ */}
-      <div id="home-motif" style={{position:'fixed',left:0,right:0,top:0,bottom:'56px',pointerEvents:'none',zIndex:0,opacity:0.55,overflow:'hidden',display:'flex',alignItems:'center'}}>
+      <div id="home-motif" style={{position:'fixed',left:0,right:0,top:'50%',transform:'translateY(-50%)',pointerEvents:'none',zIndex:0,opacity:0.55,lineHeight:0,overflow:'hidden'}}>
         <div style={{display:'flex',width:'200%',animation:'scrollMotif 40s linear infinite'}}>
           <MotifSvg />
           <MotifSvg />
@@ -231,7 +231,7 @@ export default function Accueil() {
       </div>
 
       {/* ══ HOME ══ */}
-      <div id="home" style={{position:'relative',zIndex:1,minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',paddingTop:'180px',paddingBottom:'80px',gap:0,width:'100%',boxSizing:'border-box'}}>
+      <div id="home" style={{position:'relative',zIndex:1,height:'calc(100vh - 56px)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
 
         {/* ── HEADER ── */}
         <header className="home-header" style={{position:'absolute',top:'48px',left:0,right:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px',padding:'0 24px',boxSizing:'border-box',animation:'fadeIn 0.8s ease both'}}>
