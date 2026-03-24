@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#080b18"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<title>Filatex Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/mobile.css"/>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div id="login-box">
+    <h1>Groupe Filatex</h1>
+    <div class="login-sub">PMO Dashboard</div>
+    <input type="password" id="login-pwd" placeholder="Mot de passe" autofocus
+      onkeydown="if(event.key==='Enter')checkLogin()"/>
+    <button onclick="checkLogin()">Accéder</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<!-- ══ ACCUEIL ══ -->
+<div id="m-home">
+
+  <div class="m-header">
+    <div class="m-logo">Groupe Filatex</div>
+    <div class="m-sub">PMO Dashboard</div>
+  </div>
+
+  <div class="m-cards">
+
+    <div class="m-card m-card-energy" onclick="goTo('energy')">
+      <div class="m-card-icon">⚡</div>
+      <div class="m-card-info">
+        <div class="m-card-title">Energy</div>
+        <div class="m-card-desc">HFO · ENR · 5 sites</div>
+      </div>
+      <div class="m-card-arrow">›</div>
+    </div>
+
+    <div class="m-card m-card-invest" onclick="goTo('investments')">
+      <div class="m-card-icon">📊</div>
+      <div class="m-card-info">
+        <div class="m-card-title">Investments</div>
+        <div class="m-card-desc">19 projets · Int. & Ext.</div>
+      </div>
+      <div class="m-card-arrow">›</div>
+    </div>
+
+    <div class="m-card m-card-props" onclick="goTo('properties')">
+      <div class="m-card-icon">🏗</div>
+      <div class="m-card-info">
+        <div class="m-card-title">Properties</div>
+        <div class="m-card-desc">Dev · Travaux · SAV · Com</div>
+      </div>
+      <div class="m-card-arrow">›</div>
+    </div>
+
+    <div class="m-card m-card-capex" onclick="goTo('capex')">
+      <div class="m-card-icon">💰</div>
+      <div class="m-card-info">
+        <div class="m-card-title">CAPEX</div>
+        <div class="m-card-desc">Suivi budgétaire</div>
+      </div>
+      <div class="m-card-arrow">›</div>
+    </div>
+
+    <div class="m-card m-card-csi" onclick="goTo('csi')">
+      <div class="m-card-icon">🔍</div>
+      <div class="m-card-info">
+        <div class="m-card-title">CSI</div>
+        <div class="m-card-desc">Contrôle & Suivi</div>
+      </div>
+      <div class="m-card-arrow">›</div>
+    </div>
+
+    <div class="m-card m-card-reporting" onclick="goTo('reporting')">
+      <div class="m-card-icon">📋</div>
+      <div class="m-card-info">
+        <div class="m-card-title">Reporting</div>
+        <div class="m-card-desc">Suivi hebdomadaire</div>
+      </div>
+      <div class="m-card-arrow">›</div>
+    </div>
+
+  </div>
+
+  <div class="m-footer">Filatex PMO · 2026</div>
+
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<div id="m-nav">
+  <button class="m-nav-item active" data-pole="home" onclick="goHome()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+    <span>Accueil</span>
+  </button>
+  <button class="m-nav-item" data-pole="energy" onclick="goTo('energy')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span>Energy</span>
+  </button>
+  <button class="m-nav-item" data-pole="properties" onclick="goTo('properties')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <span>Properties</span>
+  </button>
+  <button class="m-nav-item" data-pole="reporting" onclick="goTo('reporting')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span>Reporting</span>
+  </button>
+</div>
+
+<script>
+// Login
+function checkLogin(){
+  var pwd = document.getElementById('login-pwd').value;
+  if(pwd === '1979'){
+    sessionStorage.setItem('dash_auth','1');
+    document.getElementById('login-screen').classList.add('hidden');
+  } else {
+    document.getElementById('login-error').textContent = 'Mot de passe incorrect';
+  }
+}
+if(sessionStorage.getItem('dash_auth')==='1'){
+  document.getElementById('login-screen').classList.add('hidden');
+}
+
+// Navigation — pour l'instant redirige vers index.html avec hash
+function goTo(pole){
+  window.location.href = 'index.html#page-' + pole;
+}
+function goHome(){
+  // Déjà sur l'accueil mobile
+}
+</script>
+
+</body>
+</html>
