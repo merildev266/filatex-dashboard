@@ -1,5 +1,16 @@
 /* === Shared JS === */
 
+// ══ PWA SERVICE WORKER ══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./service-worker.js').then(function(reg) {
+      console.log('SW registered:', reg.scope);
+    }).catch(function(err) {
+      console.log('SW error:', err);
+    });
+  });
+}
+
 // ══ STATE (must be at top for cross-file access) ══
 var currentFilter = 'month', currentSite = null;
 var selectedMonthIndex = new Date().getMonth();
