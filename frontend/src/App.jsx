@@ -19,6 +19,13 @@ const SavDetail = lazy(() => import('./pages/properties/SavDetail'))
 const ComDetail = lazy(() => import('./pages/properties/ComDetail'))
 const Capex = lazy(() => import('./pages/Capex'))
 const Investments = lazy(() => import('./pages/Investments'))
+const Reporting = lazy(() => import('./pages/reporting/Reporting'))
+const ReportingHub = lazy(() => import('./pages/reporting/ReportingHub'))
+const RptEnr = lazy(() => import('./pages/reporting/RptEnr'))
+const RptHfo = lazy(() => import('./pages/reporting/RptHfo'))
+const RptLfo = lazy(() => import('./pages/reporting/RptLfo'))
+const RptProps = lazy(() => import('./pages/reporting/RptProps'))
+const RptInvest = lazy(() => import('./pages/reporting/RptInvest'))
 
 // Loading fallback
 const Loading = () => (
@@ -61,7 +68,14 @@ function App() {
                 </Route>
                 <Route path="capex" element={<Capex />} />
                 <Route path="investments" element={<Investments />} />
-                <Route path="reporting/*" element={<Placeholder name="Reporting" />} />
+                <Route path="reporting" element={<Reporting />}>
+                  <Route index element={<ReportingHub />} />
+                  <Route path="enr" element={<RptEnr />} />
+                  <Route path="hfo" element={<RptHfo />} />
+                  <Route path="lfo" element={<RptLfo />} />
+                  <Route path="properties" element={<RptProps />} />
+                  <Route path="investments" element={<RptInvest />} />
+                </Route>
                 <Route path="csi" element={<Placeholder name="CSI" />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
