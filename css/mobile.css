@@ -12,7 +12,7 @@
   box-sizing:border-box !important;
 }
 
-/* Header — en haut, séparé des cartes */
+/* Header — ne pas toucher, reste en haut */
 .home-header{
   position:relative !important;
   top:auto !important;
@@ -68,9 +68,14 @@
 .card-csi .card-logo-wrap svg{height:38px !important;}
 .card-reporting .card-logo-wrap svg{height:38px !important;}
 
-/* Footer */
-#home-footer{bottom:72px !important;}
-#home-footer-magritte{font-size:9px !important;}
+/* Footer — caché sur mobile pour centrage propre */
+#home-footer{display:none !important;}
+#home-footer-magritte{display:none !important;}
+
+/* Motif défilant — doublé en taille */
+#home-motif{
+  transform:translateY(-50%) scale(2) !important;
+}
 
 /* Bottom nav — toujours visible + safe area */
 #bottom-nav{
