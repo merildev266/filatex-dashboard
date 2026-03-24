@@ -27,9 +27,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'DM S
 .m-sub{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-top:4px;}
 
 /* ══ CARDS LIST ══ */
-.m-cards{display:flex;flex-direction:column;gap:12px;flex:1;}
+.m-cards{display:grid;grid-template-columns:1fr;gap:12px;flex:1;}
 
-.m-card{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.m-card{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;min-height:72px;}
 .m-card:active{transform:scale(0.98);background:rgba(255,255,255,0.06);}
 
 .m-card-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex-shrink:0;}
