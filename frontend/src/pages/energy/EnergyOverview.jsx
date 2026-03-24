@@ -414,7 +414,7 @@ export default function EnergyOverview() {
         <div className="e-col-title e-col-title-proj" style={{ color: '#00ab63' }}>Projets</div>
         <div
           className="capex-section-card e-card e-enr e-card-mini"
-          onClick={() => navigate('/energy/enr')}
+          onClick={() => navigate('/energy/enr-projets')}
           style={{ borderColor: 'rgba(0,171,99,0.15)', cursor: 'pointer' }}
           {...enrHover}
         >

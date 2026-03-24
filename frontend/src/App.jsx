@@ -12,6 +12,7 @@ const EnergyOverview = lazy(() => import('./pages/energy/EnergyOverview'))
 const HfoDetail = lazy(() => import('./pages/energy/HfoDetail'))
 const EnrDetail = lazy(() => import('./pages/energy/EnrDetail'))
 const HfoProjets = lazy(() => import('./pages/energy/HfoProjets'))
+const EnrProjets = lazy(() => import('./pages/energy/EnrProjets'))
 const Properties = lazy(() => import('./pages/properties/Properties'))
 const PropertiesOverview = lazy(() => import('./pages/properties/PropertiesOverview'))
 const DevDetail = lazy(() => import('./pages/properties/DevDetail'))
@@ -61,6 +62,7 @@ function App() {
                   <Route path="hfo" element={<HfoDetail />} />
                   <Route path="hfo-projets" element={<HfoProjets />} />
                   <Route path="enr" element={<EnrDetail />} />
+                  <Route path="enr-projets" element={<EnrProjets />} />
                 </Route>
                 <Route path="properties" element={<Properties />}>
                   <Route index element={<PropertiesOverview />} />
