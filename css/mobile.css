@@ -6,22 +6,27 @@
 
 /* Accueil — grille 2x3 au lieu de 3x2 */
 .cards-row1{grid-template-columns:repeat(2,1fr) !important;gap:12px !important;width:100% !important;}
-.cards-grid{padding:0 16px !important;}
+.cards-grid{padding:0 16px !important;gap:12px !important;}
 
 /* Cartes — plus petites */
 .card{padding:20px 14px !important;border-radius:16px !important;}
 .card-logo-wrap svg{height:40px !important;}
 
-/* Header — plus compact */
-.home-header{top:20px !important;gap:8px !important;}
-.logo-groupe{height:50px !important;}
-.home-values{display:none !important;}
+/* Header — plus compact, moins d'espace */
+.home-header{top:16px !important;gap:6px !important;}
+.logo-groupe{height:45px !important;}
+.home-values span{font-size:7px !important;letter-spacing:0.2em !important;}
+.home-val-sep{width:14px !important;margin:0 8px !important;}
+
+/* Réduire l'espace entre header et cartes */
+#home{padding-top:0 !important;gap:0 !important;}
 
 /* Footer */
 #home-footer{bottom:72px !important;}
+#home-footer-magritte{font-size:9px !important;}
 
-/* Bottom nav — safe area */
-#bottom-nav{padding-bottom:env(safe-area-inset-bottom);}
+/* Bottom nav — toujours visible + safe area */
+#bottom-nav{position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;z-index:900 !important;display:flex !important;padding-bottom:env(safe-area-inset-bottom);}
 
 /* Pages internes — padding adapté */
 .page-inner{padding:20px 14px 80px !important;}
