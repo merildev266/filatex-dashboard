@@ -6,8 +6,11 @@
     || (window.innerWidth <= 768 && 'ontouchstart' in window);
   var onMobilePage = window.location.pathname.indexOf('mobile.html') !== -1;
   var onIndexPage = !onMobilePage;
-  if(isMobile && onIndexPage){
-    window.location.replace('mobile.html' + window.location.hash);
+  var hasPageHash = window.location.hash && window.location.hash.indexOf('#page-') === 0;
+  // Si mobile sur index.html SANS hash de page → redirige vers accueil mobile
+  // Si mobile sur index.html AVEC hash → on reste (l'utilisateur veut voir une section)
+  if(isMobile && onIndexPage && !hasPageHash){
+    window.location.replace('mobile.html');
     return;
   }
   if(!isMobile && onMobilePage){
