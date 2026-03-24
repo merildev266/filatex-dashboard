@@ -158,12 +158,11 @@ export default function HfoDetail() {
 
   return (
     <div>
-      {/* Title + Filter bar */}
+      {/* Title */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-base font-bold tracking-wide uppercase" style={{ letterSpacing: '0.12em' }}>
           Consolide HFO
         </h2>
-        <FilterBar current={currentFilter} onChange={setFilter} />
       </div>
 
       {/* Consolidated KPIs — 4 s1-card style boxes matching original renderConsolidated */}
@@ -282,7 +281,6 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           &#8592;
         </button>
         <h2 className="text-base font-bold uppercase tracking-wider">{s.name}</h2>
-        <FilterBar current={currentFilter} onChange={setFilter} />
       </div>
 
       {/* Site navigation strip */}
@@ -832,9 +830,6 @@ function GeneratorDetailPanel({
           <div className="text-[10px] text-[var(--text-muted)] mt-0.5">
             {g.model || ''} &middot; {s.name} &middot; {g.mw} MW
           </div>
-        </div>
-        <div className="ml-auto">
-          <FilterBar current={currentFilter} onChange={setFilter} />
         </div>
       </div>
 
