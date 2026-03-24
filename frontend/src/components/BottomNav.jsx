@@ -176,19 +176,33 @@ export default function BottomNav() {
         style={{ '--fab-color': activeColor }}
       >
         {isOpen ? (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{width:22,height:22}}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{width:24,height:24}}>
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         ) : (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:22,height:22}}>
-            <circle cx="12" cy="12" r="1"/>
-            <circle cx="12" cy="5" r="1"/>
-            <circle cx="12" cy="19" r="1"/>
-            <circle cx="5" cy="12" r="1"/>
-            <circle cx="19" cy="12" r="1"/>
-            <circle cx="5" cy="5" r="1"/>
-            <circle cx="19" cy="19" r="1"/>
+          /* Ship wheel / helm icon */
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{width:26,height:26}}>
+            {/* Outer ring */}
+            <circle cx="12" cy="12" r="9"/>
+            {/* Inner ring */}
+            <circle cx="12" cy="12" r="4"/>
+            {/* Center dot */}
+            <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+            {/* 8 spokes */}
+            <line x1="12" y1="3" x2="12" y2="8"/>
+            <line x1="12" y1="16" x2="12" y2="21"/>
+            <line x1="3" y1="12" x2="8" y2="12"/>
+            <line x1="16" y1="12" x2="21" y2="12"/>
+            <line x1="5.64" y1="5.64" x2="9.17" y2="9.17"/>
+            <line x1="14.83" y1="14.83" x2="18.36" y2="18.36"/>
+            <line x1="5.64" y1="18.36" x2="9.17" y2="14.83"/>
+            <line x1="14.83" y1="9.17" x2="18.36" y2="5.64"/>
+            {/* Handle knobs at spoke ends */}
+            <circle cx="12" cy="2.5" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="12" cy="21.5" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="2.5" cy="12" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="21.5" cy="12" r="1" fill="currentColor" stroke="none"/>
           </svg>
         )}
       </button>
