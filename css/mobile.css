@@ -3,30 +3,39 @@
 /* Valeurs toujours visibles */
 .home-values{display:flex !important;}
 
-/* ══ ACCUEIL — layout compact ══ */
+/* ══ ACCUEIL ══ */
 #home{
   justify-content:flex-start !important;
-  padding:20px 0 80px !important;
+  padding:0 !important;
   gap:0 !important;
-  min-height:auto !important;
+  min-height:100vh !important;
+  box-sizing:border-box !important;
 }
 
-
-/* Header — compact, pas absolu sur mobile */
+/* Header — en haut, séparé des cartes */
 .home-header{
   position:relative !important;
   top:auto !important;
-  margin-top:30px !important;
-  margin-bottom:20px !important;
+  margin-top:24px !important;
+  margin-bottom:0 !important;
   gap:8px !important;
   padding:0 16px !important;
 }
-.logo-groupe{height:36px !important;}
+.logo-groupe,.home-header svg[aria-label="Groupe Filatex"],.home-header svg{height:42px !important;}
 .home-values span{font-size:7px !important;letter-spacing:0.2em !important;}
 .home-val-sep{width:14px !important;margin:0 6px !important;}
 
-/* Cartes — grille 3x2, centrées */
-.cards-grid{padding:0 20px !important;gap:12px !important;width:100% !important;box-sizing:border-box !important;}
+/* Cartes — centrées dans l'espace restant (entre header et nav) */
+.cards-grid{
+  flex:1 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 20px 56px !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
 .cards-row1{
   display:grid !important;
   grid-template-columns:repeat(3,1fr) !important;
