@@ -1,4 +1,4 @@
-var CACHE_NAME = 'filatex-pmo-v6';
+var CACHE_NAME = 'filatex-pmo-v7';
 var ASSETS = [
   './',
   './index.html',
