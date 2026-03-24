@@ -28,13 +28,15 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'DM S
 
 /* ══ CARDS LIST ══ */
 /* Cards container — grille 2x3 */
-.m-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;flex:1;padding:0 4px;}
+.m-cards{display:grid !important;grid-template-columns:repeat(2,1fr) !important;gap:12px !important;flex:1;padding:0 4px;}
+.m-cards.cards-row1{display:grid !important;grid-template-columns:repeat(2,1fr) !important;gap:12px !important;}
 
 /* Override accueil.css card styles for mobile */
-.m-cards .card{width:100% !important;height:auto !important;min-height:0 !important;aspect-ratio:1/1;padding:16px 12px;border-radius:16px;display:flex;align-items:center;justify-content:center;}
-.m-cards .card .card-logo-wrap{max-width:90%;height:auto;}
-.m-cards .card .card-logo-wrap svg{width:100%;height:auto;}
+.m-cards .card{width:100% !important;height:auto !important;min-height:0 !important;aspect-ratio:1/1;padding:16px 12px;border-radius:16px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
+.m-cards .card .card-logo-wrap{max-width:85%;height:auto;}
+.m-cards .card .card-logo-wrap svg{width:100%;height:auto;max-height:50px;}
 .m-cards .card .card-accent{display:none;}
+.m-cards .card:hover{transform:none;box-shadow:none;}
 .m-cards .card:active{transform:scale(0.97);}
 
 /* ══ FOOTER ══ */
