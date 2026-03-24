@@ -769,7 +769,8 @@ body::-webkit-scrollbar { display: none; }
     max-width: 100% !important;
     width: 100% !important;
   }
-  .card { padding: 16px 10px !important; border-radius: 12px !important; }
+  .card { padding: 16px 10px !important; border-radius: 12px !important; box-shadow: none !important; backdrop-filter: none !important; }
+  .card:hover { box-shadow: none !important; transform: none !important; }
   .card-logo-wrap svg { max-width: 100%; }
   .card-energy .card-logo-wrap svg { height: 34px !important; }
   .card-invest .card-logo-wrap svg { height: 27px !important; }
