@@ -697,19 +697,81 @@ function GeneratorDetailPanel({
     { label: 'Arret planifie', value: s1_apVal, unit: 'h', sub: s1_apSub, color: parseFloat(s1_apVal) > 0 ? 'var(--orange)' : null },
   ]
 
-  // ── Section 2 — Production KPIs (filter-aware) ──
+  // ── Section 2 — Production & Energie (chart + KPIs, fully filter-aware) ──
+
+  // Chart data — filter-aware
+  let chartData, chartLabels, chartTitle, chartUnit
+  if (f === '24h') {
+    chartData = g.hourlyLoad || Array(24).fill(0)
+    chartLabels = chartData.map((_, i) => i + 'h')
+    chartTitle = 'Charge horaire — J-1'
+    chartUnit = 'kW'
+  } else if (f === 'month') {
+    const _cmChart = isCurrentMonth(selectedMonthIndex)
+    if (_cmChart) {
+      const raw = g.dailyProd || Array(31).fill(0)
+      let lastDay = raw.length
+      while (lastDay > 0 && raw[lastDay - 1] === 0) lastDay--
+      if (lastDay === 0) lastDay = new Date().getDate()
+      chartData = raw.slice(0, Math.max(lastDay, 1))
+      chartLabels = chartData.map((_, i) => String(i + 1))
+    } else {
+      const monthTotal = (g.monthlyProd || [])[selectedMonthIndex] || 0
+      chartData = [monthTotal]
+      chartLabels = [MONTH_SHORT[selectedMonthIndex]]
+    }
+    const mName = _cmChart ? 'Ce mois' : MONTH_SHORT[selectedMonthIndex]
+    chartTitle = 'Production journaliere — ' + mName
+    chartUnit = 'kWh'
+  } else if (f === 'quarter') {
+    const startMC = (selectedQuarter - 1) * 3
+    const qMonths = (g.monthlyProd || Array(12).fill(0)).slice(startMC, startMC + 3)
+    chartData = qMonths
+    chartLabels = [MONTH_SHORT[startMC], MONTH_SHORT[startMC + 1], MONTH_SHORT[startMC + 2]]
+    chartTitle = 'Production mensuelle — Q' + selectedQuarter
+    chartUnit = 'kWh'
+  } else {
+    chartData = g.monthlyProd || Array(12).fill(0)
+    chartLabels = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec']
+    chartTitle = 'Production mensuelle — ' + selectedYear
+    chartUnit = 'kWh'
+  }
+
+  const barCount = chartData.length
+  const maxChartVal = Math.max(...chartData, 1)
+  const totalChartVal = chartData.reduce((a, b) => a + b, 0)
+
+  // SVG bar chart dimensions
+  const W = 960, H = 120, PAD_L = 48, PAD_R = 10, PAD_T = 10, PAD_B = 28
+  const chartW = W - PAD_L - PAD_R
+  const chartH = H - PAD_T - PAD_B
+  const barGap = Math.floor(chartW / barCount)
+  const barW = Math.max(2, barGap - (barCount > 24 ? 1 : 2))
+  const labelFreq = barCount <= 12 ? 1 : barCount <= 24 ? 4 : 5
+
+  const prodColor = isKO ? 'var(--red)' : 'var(--energy)'
+  const peakVal = Math.max(...chartData)
+  const peakFmt = peakVal >= 1000 ? (peakVal / 1000).toFixed(1) + ' MWh' : peakVal.toFixed(1) + ' ' + chartUnit
+  const totalFmt = totalChartVal >= 1000 ? (totalChartVal / 1000).toFixed(1) + ' MWh' : totalChartVal.toFixed(1) + ' ' + chartUnit
+
+  // Production KPIs — fully filter-aware (matches original: energie, charge max, conso LV/MV, heures)
   let prodVal, prodUnit, prodSub, hVal, hUnit2, hSub, hColor
+  let loadVal, loadUnit, loadSub, lvmvVal, lvmvUnit, lvmvSub
+
   if (f === '24h') {
     const dProd = g.energieProd || 0
     prodVal = dProd > 1000 ? (dProd / 1000).toFixed(1) : dProd.toFixed(1)
     prodUnit = dProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production J-1'
     hVal = parseFloat(g.hToday || 0).toFixed(1); hUnit2 = 'h'; hSub = 'Heures de marche J-1'
     hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)'
+    loadVal = parseFloat(g.maxLoad || 0).toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge J-1'
+    lvmvVal = parseFloat(g.consLVMV || 0) > 0 ? parseFloat(g.consLVMV).toFixed(1) : '—'
+    lvmvUnit = parseFloat(g.consLVMV || 0) > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires J-1'
   } else if (f === 'month') {
-    const _cm = isCurrentMonth(selectedMonthIndex)
-    const _mLbl = _cm ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
+    const _cm2 = isCurrentMonth(selectedMonthIndex)
+    const _mLbl = _cm2 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
     let mProd, jours
-    if (_cm) {
+    if (_cm2) {
       const dp = g.dailyProd || []; mProd = dp.reduce((a, b) => a + b, 0)
       jours = dp.filter(v => v > 0).length
     } else {
@@ -720,17 +782,30 @@ function GeneratorDetailPanel({
     prodUnit = mProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + _mLbl
     hVal = jours; hUnit2 = 'jours'; hSub = 'Jours de production'
     hColor = jours > 20 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
+    let mxLoad
+    if (_cm2) { const dml = g.dailyMaxLoad || []; mxLoad = Math.max(...dml, 0) }
+    else { mxLoad = (g.monthlyMaxLoad || [])[selectedMonthIndex] || 0 }
+    loadVal = mxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + _mLbl
+    let mLvmv
+    if (_cm2) { const dlv = g.dailyConsLVMV || []; mLvmv = dlv.reduce((a, b) => a + b, 0) }
+    else { mLvmv = (g.monthlyConsLVMV || [])[selectedMonthIndex] || 0 }
+    lvmvVal = mLvmv > 0 ? mLvmv.toFixed(1) : '—'; lvmvUnit = mLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + _mLbl
   } else if (f === 'quarter') {
     const startM = (selectedQuarter - 1) * 3
-    let qProd = 0, qJours = 0
+    let qProd = 0, qJours = 0, qMaxLoad = 0, qLvmv = 0
     for (let mi = startM; mi < startM + 3; mi++) {
       qProd += (g.monthlyProd || [])[mi] || 0
       qJours += ((g.monthlyHours || [])[mi] || 0) > 0 ? Math.ceil((g.monthlyHours || [])[mi] / 24) : 0
+      const ml = (g.monthlyMaxLoad || [])[mi] || 0; if (ml > qMaxLoad) qMaxLoad = ml
+      qLvmv += (g.monthlyConsLVMV || [])[mi] || 0
     }
+    const qLbl = 'Q' + selectedQuarter
     prodVal = qProd > 1000 ? (qProd / 1000).toFixed(1) : qProd.toFixed(1)
-    prodUnit = qProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production Q' + selectedQuarter
+    prodUnit = qProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + qLbl
     hVal = qJours; hUnit2 = 'jours'; hSub = 'Jours de production'
     hColor = qJours > 60 ? 'var(--energy)' : qJours > 0 ? 'var(--orange)' : 'var(--red)'
+    loadVal = qMaxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + qLbl
+    lvmvVal = qLvmv > 0 ? qLvmv.toFixed(1) : '—'; lvmvUnit = qLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + qLbl
   } else {
     const mp = g.monthlyProd || []; const yProd = mp.reduce((a, b) => a + b, 0)
     const mois = mp.filter(v => v > 0).length
@@ -738,19 +813,95 @@ function GeneratorDetailPanel({
     prodUnit = yProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + selectedYear
     hVal = mois; hUnit2 = 'mois'; hSub = 'Mois de production sur 12'
     hColor = mois > 6 ? 'var(--energy)' : mois > 0 ? 'var(--orange)' : 'var(--red)'
+    const yml = g.monthlyMaxLoad || []; const mxLoad = Math.max(...yml, 0)
+    loadVal = mxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + selectedYear
+    const ylv = g.monthlyConsLVMV || []; const yLvmv = ylv.reduce((a, b) => a + b, 0)
+    lvmvVal = yLvmv > 0 ? yLvmv.toFixed(1) : '—'; lvmvUnit = yLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + selectedYear
   }
-
-  // SFOC per generator
-  const gSfoc = calcGenSfoc(g)
-  const sfocStr = gSfoc != null ? gSfoc.toFixed(1) : '—'
-  const sfocColor = gSfoc != null ? (gSfoc <= 250 ? 'var(--energy)' : 'var(--red)') : 'var(--text-dim)'
-  const gSlocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '—'
 
   const prodRow = [
     { label: 'Energie produite', value: prodVal, unit: prodUnit, sub: prodSub, color: isKO ? 'var(--red)' : null },
-    { label: 'SFOC', value: sfocStr, unit: 'g/kWh', sub: 'Specific Fuel Oil Consumption', color: sfocColor },
-    { label: 'SLOC', value: gSlocVal, unit: 'g/kWh', sub: 'Specific Lube Oil Consumption', color: null },
+    { label: 'Charge max', value: loadVal, unit: loadUnit, sub: loadSub, color: isKO ? 'var(--red)' : null },
+    { label: 'Conso LV/MV', value: lvmvVal, unit: lvmvUnit, sub: lvmvSub, color: null },
     { label: 'Heures de marche', value: hVal, unit: hUnit2, sub: hSub, color: hColor },
+  ]
+
+  // ── Section 3 — Combustible (filter-aware) ──
+  let fHFO, fLFO, fuelPeriod
+  if (f === '24h') {
+    fHFO = g.consoHFO || 0
+    fLFO = g.consoLFO || 0
+    fuelPeriod = 'J-1'
+  } else if (f === 'month') {
+    const _cm4 = isCurrentMonth(selectedMonthIndex)
+    if (_cm4) {
+      const dhfo = g.dailyHFO || []; fHFO = dhfo.reduce((a, b) => a + b, 0)
+      const dlfo = g.dailyLFO || []; fLFO = dlfo.reduce((a, b) => a + b, 0)
+    } else {
+      fHFO = (g.monthlyHFO || [])[selectedMonthIndex] || 0
+      fLFO = (g.monthlyLFO || [])[selectedMonthIndex] || 0
+    }
+    fuelPeriod = _cm4 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3; fHFO = 0; fLFO = 0
+    for (let mi = startM; mi < startM + 3; mi++) {
+      fHFO += (g.monthlyHFO || [])[mi] || 0
+      fLFO += (g.monthlyLFO || [])[mi] || 0
+    }
+    fuelPeriod = 'Q' + selectedQuarter
+  } else {
+    const mhfo = g.monthlyHFO || []; fHFO = mhfo.reduce((a, b) => a + b, 0)
+    const mlfo = g.monthlyLFO || []; fLFO = mlfo.reduce((a, b) => a + b, 0)
+    fuelPeriod = String(selectedYear)
+  }
+
+  const fuelMetrics = [
+    { label: 'Conso HFO', icon: '\u{1F6E2}\uFE0F', value: fHFO > 0 ? parseFloat(fHFO).toFixed(1) : '\u2014', unit: fHFO > 0 ? 'L' : '', sub: 'Heavy Fuel Oil \u00B7 ' + fuelPeriod },
+    { label: 'Conso LFO', icon: '\u26FD', value: fLFO > 0 ? parseFloat(fLFO).toFixed(1) : '0', unit: 'L', sub: 'Light Fuel Oil \u00B7 ' + fuelPeriod },
+    { label: 'Temp. Fuel', icon: '\u{1F321}\uFE0F', value: g.fuelOilTemp > 0 ? parseFloat(g.fuelOilTemp).toFixed(1) : '\u2014', unit: g.fuelOilTemp > 0 ? '\u00B0C' : '', sub: 'Temperature fuel oil',
+      color: g.fuelOilTemp > 100 ? 'var(--red)' : g.fuelOilTemp > 90 ? 'var(--orange)' : (g.fuelOilTemp > 0 ? 'var(--energy)' : null) },
+  ]
+
+  // ── Section 4 — Huile moteur (filter-aware) ──
+  let fOilC, fOilT, oilPeriod
+  if (f === '24h') {
+    fOilC = g.oilConso || 0
+    fOilT = g.oilTopUp || 0
+    oilPeriod = 'J-1'
+  } else if (f === 'month') {
+    const _cm5 = isCurrentMonth(selectedMonthIndex)
+    if (_cm5) {
+      const doc = g.dailyOilConso || []; fOilC = doc.reduce((a, b) => a + b, 0)
+      const dot = g.dailyOilTopUp || []; fOilT = dot.reduce((a, b) => a + b, 0)
+    } else {
+      fOilC = (g.monthlyOilConso || [])[selectedMonthIndex] || 0
+      fOilT = (g.monthlyOilTopUp || [])[selectedMonthIndex] || 0
+    }
+    oilPeriod = _cm5 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
+  } else if (f === 'quarter') {
+    const startM = (selectedQuarter - 1) * 3; fOilC = 0; fOilT = 0
+    for (let mi = startM; mi < startM + 3; mi++) {
+      fOilC += (g.monthlyOilConso || [])[mi] || 0
+      fOilT += (g.monthlyOilTopUp || [])[mi] || 0
+    }
+    oilPeriod = 'Q' + selectedQuarter
+  } else {
+    const moc = g.monthlyOilConso || []; fOilC = moc.reduce((a, b) => a + b, 0)
+    const mot = g.monthlyOilTopUp || []; fOilT = mot.reduce((a, b) => a + b, 0)
+    oilPeriod = String(selectedYear)
+  }
+
+  const slocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '\u2014'
+  const slocColor = g.sloc != null ? (parseFloat(g.sloc) <= 1.0 ? 'var(--energy)' : 'var(--red)') : null
+  const oilStock = s.oilStock ? s.oilStock.stock : null
+
+  const oilMetrics = [
+    { label: 'Conso huile', icon: '\u{1F6E2}\uFE0F', value: fOilC > 0 ? fOilC.toFixed(1) : '\u2014', unit: fOilC > 0 ? 'L' : '', sub: 'Conso \u00B7 ' + oilPeriod },
+    { label: 'Top-up huile', icon: '\u2795', value: fOilT > 0 ? parseFloat(fOilT).toFixed(1) : '0', unit: 'L', sub: 'Top-up \u00B7 ' + oilPeriod,
+      color: fOilT > 50 ? 'var(--orange)' : null },
+    { label: 'SLOC', icon: '\u{1F4CA}', value: slocVal, unit: 'g/kWh', sub: 'Specific Lube Oil Consumption',
+      color: slocColor },
+    { label: 'Stock huile', icon: '\u{1F4E6}', value: oilStock != null ? parseFloat(oilStock).toFixed(0) : '\u2014', unit: oilStock != null ? 'L' : '', sub: 'Stock site ' + s.name },
   ]
 
   return (
@@ -872,6 +1023,50 @@ function GeneratorDetailPanel({
 
       {/* Section 2 — Production & Energie */}
       <div className="gd-section-title">Production & Energie</div>
+
+      {/* SVG bar chart */}
+      <div className="gd-chart-card">
+        <div className="gd-chart-title">
+          <span>{chartTitle}</span>
+          <span className="gd-chart-peak">
+            Pic : <strong style={{ color: prodColor }}>{peakFmt}</strong> &middot; Total : <strong style={{ color: prodColor }}>{totalFmt}</strong>
+          </span>
+        </div>
+        <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: 'auto' }}>
+          {/* Grid lines at 25%, 50%, 75%, 100% */}
+          {[0.25, 0.5, 0.75, 1.0].map(pct => {
+            const y = PAD_T + chartH * (1 - pct)
+            const v = Math.round(maxChartVal * pct)
+            const lbl = v >= 1000000 ? (v / 1000000).toFixed(1) + 'M' : v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
+            return (
+              <g key={pct}>
+                <line x1={PAD_L} y1={y} x2={W - PAD_R} y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+                <text x={PAD_L - 4} y={y + 4} textAnchor="end" fontSize="8" fill="rgba(255,255,255,0.2)">{lbl}</text>
+              </g>
+            )
+          })}
+          {/* Bars */}
+          {chartData.map((val, i) => {
+            const x = PAD_L + i * barGap
+            const barH = val > 0 ? Math.max(2, (val / maxChartVal) * chartH) : 0
+            const y = PAD_T + chartH - barH
+            const barColor = val === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(174,193,205,0.75)'
+            return (
+              <g key={i}>
+                <rect x={x} y={y} width={barW} height={Math.max(barH, 0)} rx="2" fill={barColor} />
+                {val > 0 && <rect x={x} y={y} width={barW} height="2" rx="1" fill="rgba(174,193,205,0.9)" />}
+                {i % labelFreq === 0 && (
+                  <text x={x + barW / 2} y={H - 8} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.3)">
+                    {chartLabels[i]}
+                  </text>
+                )}
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* Production KPIs */}
       <div className="gd-kpi-grid">
         {prodRow.map((c, i) => (
           <div key={i} className="gd-kpi-card" style={{ background: bg, borderColor: bc }}>
@@ -887,6 +1082,42 @@ function GeneratorDetailPanel({
               {c.unit && <span className="gd-kpi-unit">{c.unit}</span>}
             </div>
             <div className="gd-kpi-sub">{c.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section 3 — Combustible */}
+      <div className="gd-section-title">Combustible</div>
+      <div className="gd-metrics-grid">
+        {fuelMetrics.map((m, i) => (
+          <div key={i} className="gd-metric-card" style={{ background: bg, borderColor: bc }}>
+            <div className="gd-metric-top">
+              <div className="gd-metric-label" style={{ color: lc }}>{m.label}</div>
+              <div className="gd-metric-icon">{m.icon}</div>
+            </div>
+            <div className="gd-metric-value" style={m.color ? { color: m.color } : {}}>
+              {m.value}
+              {m.unit && <span className="gd-metric-unit">{m.unit}</span>}
+            </div>
+            <div className="gd-metric-sub">{m.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section 4 — Huile moteur */}
+      <div className="gd-section-title">Huile moteur</div>
+      <div className="gd-metrics-grid gd-metrics-grid-4">
+        {oilMetrics.map((m, i) => (
+          <div key={i} className="gd-metric-card" style={{ background: bg, borderColor: bc }}>
+            <div className="gd-metric-top">
+              <div className="gd-metric-label" style={{ color: lc }}>{m.label}</div>
+              <div className="gd-metric-icon">{m.icon}</div>
+            </div>
+            <div className="gd-metric-value" style={m.color ? { color: m.color } : {}}>
+              {m.value}
+              {m.unit && <span className="gd-metric-unit">{m.unit}</span>}
+            </div>
+            <div className="gd-metric-sub">{m.sub}</div>
           </div>
         ))}
       </div>

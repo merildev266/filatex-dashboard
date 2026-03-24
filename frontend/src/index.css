@@ -430,6 +430,54 @@ body::-webkit-scrollbar { display: none; }
   font-size:9px;color:rgba(255,255,255,0.3);margin-top:3px;
 }
 
+/* Chart card */
+.gd-chart-card{
+  background:rgba(138,146,171,0.06);border:1px solid rgba(138,146,171,0.12);
+  border-radius:clamp(10px,1.3vw,16px);padding:clamp(10px,1.4vw,16px);
+  margin-bottom:14px;
+}
+.gd-chart-title{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:8px;font-size:clamp(9px,0.8vw,11px);color:rgba(255,255,255,0.5);
+}
+.gd-chart-peak{
+  font-size:clamp(9px,0.8vw,11px);color:rgba(255,255,255,0.4);
+}
+.gd-chart-peak strong{font-weight:700;}
+
+/* Metric cards (combustible, huile) */
+.gd-metrics-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;
+}
+.gd-metrics-grid-4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:767px){
+  .gd-metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .gd-metrics-grid-4{grid-template-columns:repeat(2,1fr);}
+}
+.gd-metric-card{
+  border:1px solid rgba(138,146,171,0.18);border-radius:clamp(10px,1.3vw,16px);
+  padding:clamp(10px,1.4vw,16px);
+  display:flex;flex-direction:column;
+}
+.gd-metric-top{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:clamp(6px,0.8vw,10px);
+}
+.gd-metric-label{
+  font-size:clamp(7px,0.7vw,9px);text-transform:uppercase;letter-spacing:0.15em;
+}
+.gd-metric-icon{font-size:clamp(14px,1.5vw,18px);opacity:0.6;}
+.gd-metric-value{
+  font-size:clamp(20px,2.4vw,28px);font-weight:700;color:var(--text);
+  line-height:1;letter-spacing:-0.5px;
+}
+.gd-metric-unit{
+  font-size:clamp(10px,1vw,13px);font-weight:400;color:var(--text-muted);margin-left:3px;
+}
+.gd-metric-sub{
+  font-size:clamp(8px,0.7vw,10px);color:rgba(255,255,255,0.3);margin-top:clamp(4px,0.5vw,7px);
+  letter-spacing:0.02em;
+}
+
 @layer components {
   .glass-card {
     @apply rounded-[20px] border border-[rgba(58,57,92,0.35)] backdrop-blur-[16px];
