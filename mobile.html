@@ -14,18 +14,6 @@
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
-<div id="login-screen">
-  <div id="login-box">
-    <h1>Groupe Filatex</h1>
-    <div class="login-sub">PMO Dashboard</div>
-    <input type="password" id="login-pwd" placeholder="Mot de passe" autofocus
-      onkeydown="if(event.key==='Enter')checkLogin()"/>
-    <button onclick="checkLogin()">Accéder</button>
-    <div id="login-error"></div>
-  </div>
-</div>
-
 <!-- ══ ACCUEIL ══ -->
 <div id="m-home">
 
@@ -102,20 +90,6 @@
 </div>
 
 <script>
-// Login
-function checkLogin(){
-  var pwd = document.getElementById('login-pwd').value;
-  if(pwd === '1979'){
-    sessionStorage.setItem('dash_auth','1');
-    document.getElementById('login-screen').classList.add('hidden');
-  } else {
-    document.getElementById('login-error').textContent = 'Mot de passe incorrect';
-  }
-}
-if(sessionStorage.getItem('dash_auth')==='1'){
-  document.getElementById('login-screen').classList.add('hidden');
-}
-
 // Navigation — pour l'instant redirige vers index.html avec hash
 function goTo(pole){
   window.location.href = 'index.html#page-' + pole;
