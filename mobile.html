@@ -19,10 +19,15 @@
 <link rel="stylesheet" href="css/capex.css">
 <link rel="stylesheet" href="css/csi.css">
 <link rel="stylesheet" href="css/reporting.css">
-<link rel="stylesheet" href="css/mobile.css">
+<link rel="stylesheet" href="css/mobile.css?v=8">
 <script>
-// Auto-skip login sur mobile
+// Auto-skip login + force unregister old service worker
 sessionStorage.setItem('dash_auth','1');
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){r.unregister();});
+  });
+}
 </script>
 </head>
 <body>
