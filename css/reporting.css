@@ -75,3 +75,11 @@
   .rpt-summary-grid{grid-template-columns:repeat(2,1fr);}
   .rpt-kpi-bar{grid-template-columns:repeat(2,1fr);}
 }
+@media(max-width:768px){
+  .rpt-kpi-item .kv{font-size:18px;}
+  .rpt-pole-card{padding:20px 16px;}
+  .rpt-summary-card .rpt-val{font-size:22px;}
+  .rpt-table{font-size:11px;}
+  .rpt-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .rpt-detail-header{flex-wrap:wrap;gap:8px;}
+}

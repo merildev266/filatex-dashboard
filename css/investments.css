@@ -50,3 +50,15 @@
 #inv-grid-view .kpi-unit{font-size:9px;}
 #inv-grid-view .section-title{font-size:9px;}
 #inv-cards-container{grid-template-columns:repeat(3,1fr) !important;gap:12px !important;}
+
+/* ══ MOBILE ══ */
+@media (max-width:768px) {
+  #page-investments .e-wrap{width:100% !important;gap:20px;}
+  #page-investments .inner-page-inner{padding:12px 14px 70px;}
+  #inv-grid-kpi{grid-template-columns:repeat(2,1fr) !important;gap:8px;}
+  #inv-cards-container{grid-template-columns:1fr !important;}
+  #inv-grid-view .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  #inv-grid-view .kpi-value{font-size:18px;}
+  #page-investments .inv-proj-count{font-size:42px;}
+  #page-investments .inv-capex-val{font-size:22px;}
+}
