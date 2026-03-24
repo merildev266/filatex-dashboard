@@ -288,9 +288,9 @@ export default function Accueil() {
       </div>
 
       {/* ══ FOOTER ══ */}
-      <div id="home-footer" style={{position:'fixed',bottom:'68px',left:'50%',transform:'translateX(-50%)',zIndex:2,opacity:0.2,pointerEvents:'none',textAlign:'center',whiteSpace:'nowrap',display:'flex',flexDirection:'column',alignItems:'center',gap:'4px'}}>
-        <span id="home-footer-pmo" style={{fontSize:'6px',fontFamily:"'Aeonik','DM Sans',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(200,200,220,0.4)',fontWeight:500}}>Made by PMO with <span style={{fontSize:'8px',color:'#ff6b8a'}}>&#9829;</span></span>
-        <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik','DM Sans',sans-serif",color:'rgba(255,255,255,0.85)',letterSpacing:'0.14em',fontStyle:'italic'}}>Ceci n'est pas un Dashboard.</span>
+      <div id="home-footer" style={{position:'fixed',bottom:'62px',left:'50%',transform:'translateX(-50%)',zIndex:2,pointerEvents:'none',textAlign:'center',whiteSpace:'nowrap',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
+        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik','DM Sans',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(200,200,220,0.15)',fontWeight:500}}>Made by PMO with <span style={{fontSize:'7px',color:'rgba(255,107,138,0.25)'}}>&#9829;</span></span>
+        <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik','DM Sans',sans-serif",color:'rgba(255,255,255,0.18)',letterSpacing:'0.14em',fontStyle:'italic'}}>Ceci n'est pas un Dashboard.</span>
       </div>
     </>
   )
