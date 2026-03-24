@@ -1,7 +1,6 @@
 import { useState, useMemo, useContext } from 'react'
 import { FilterContext } from '../../context/FilterContext'
 import FilterBar from '../../components/FilterBar'
-import SlidePanel from '../../components/SlidePanel'
 import KpiBox from '../../components/KpiBox'
 import HfoSite from './HfoSite'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
@@ -11,6 +10,7 @@ import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, HFO_CAT_LABELS, formatDateFR } fr
 // Default site data (same structure as energy.js siteData)
 // We merge live data from site_data.js exports
 const SITE_ORDER = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe', 'fihaonana']
+const NAVIGABLE_SITES = ['tamatave', 'tulear', 'diego', 'majunga']
 
 const DEFAULT_SITES = {
   tamatave: {
@@ -68,6 +68,22 @@ function getKpiForSite(site, filter) {
   return site.kpi[key] || site.kpi['month'] || {}
 }
 
+// Format generator ID: "ADG1" -> "ADG 1"
+function fmtGId(id) {
+  return id ? id.replace(/(\D+)(\d+)/, '$1 $2') : id
+}
+
+// Generator SFOC calculation (simplified — uses 24h data for now)
+function calcGenSfoc(g) {
+  const HFO_D = 0.96
+  const pKwh = g.energieProd || 0
+  const hfoL = g.consoHFO || 0
+  if (pKwh > 0 && hfoL > 0) {
+    return Math.round((hfoL * HFO_D) / pKwh * 1000 * 10) / 10
+  }
+  return null
+}
+
 export default function HfoDetail() {
   const { currentFilter, setFilter } = useContext(FilterContext)
   const [selectedSite, setSelectedSite] = useState(null)
@@ -115,6 +131,20 @@ export default function HfoDetail() {
 
   // Site detail panel
   const selectedSiteData = selectedSite ? siteData[selectedSite] : null
+
+  // If a site is selected, show full site detail instead of the main view
+  if (selectedSite && selectedSiteData) {
+    return (
+      <SiteDetailPanel
+        siteId={selectedSite}
+        siteData={siteData}
+        currentFilter={currentFilter}
+        setFilter={setFilter}
+        onClose={() => setSelectedSite(null)}
+        onNavigate={(id) => setSelectedSite(id)}
+      />
+    )
+  }
 
   return (
     <div>
@@ -256,92 +286,284 @@ export default function HfoDetail() {
           </div>
         )}
       </div>
-
-      {/* Site detail slide panel */}
-      <SlidePanel
-        isOpen={!!selectedSite}
-        onClose={() => setSelectedSite(null)}
-        title={selectedSiteData?.name || ''}
-      >
-        {selectedSiteData && (
-          <SiteDetail site={selectedSiteData} kpi={getKpiForSite(selectedSiteData, currentFilter)} />
-        )}
-      </SlidePanel>
     </div>
   )
 }
 
-/** Site detail panel content */
-function SiteDetail({ site, kpi }) {
-  const s = site
-  const k = kpi || {}
+
+/** Full site detail panel — replaces main view when a site is selected */
+function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, onNavigate }) {
+  const s = siteData[siteId]
+  const k = getKpiForSite(s, currentFilter)
+
+  const isConstruction = s.status === 'construction' || s.status === 'reconstruction'
+
+  // Fuel stock data
+  const fs = s.fuelStock || {}
+  const hfoStock = fs.latestHfoStock
+  const hfoAuto = fs.hfoAutonomyDays
+  const hfoAutoColor = hfoAuto == null ? 'var(--text-dim)' : hfoAuto <= 3 ? 'var(--red)' : hfoAuto <= 10 ? '#f37056' : 'var(--energy)'
+
+  // Station use
+  const su = s.stationUse || {}
+  const grossMwh = su.totalGrossMwh
+  const netMwh = su.totalNetMwh
+  const stUsePct = su.avgStationUsePct
+  const stUseColor = stUsePct == null ? 'var(--text-dim)' : stUsePct <= 5 ? 'var(--energy)' : stUsePct <= 8 ? '#f37056' : 'var(--red)'
+
+  // Solar
+  const sol = s.solar || null
+  const solarAvg = sol ? sol.avgDailyKwh : null
+  const solarTotal = sol ? sol.totalKwh : null
+
+  // Oil stock
+  const oil = s.oilStock || {}
+  const oilStock = oil.stock
+  const oilAuto = oil.autonomy_days
+  const oilAutoColor = oilAuto == null ? 'var(--text-dim)' : oilAuto <= 5 ? 'var(--red)' : oilAuto <= 15 ? '#f37056' : 'var(--energy)'
+
+  // Blackouts
+  const bs = s.blackoutStats || {}
+  const boCount = bs.count || 0
+  const boColor = boCount === 0 ? 'var(--energy)' : boCount <= 10 ? '#f37056' : 'var(--red)'
 
   return (
-    <div>
-      {/* Status overview */}
-      <div className="mb-6">
-        <div className="text-xs text-[var(--text-muted)] mb-1">
-          {s.latestDate ? `Donnees du ${formatDateFR(s.latestDate)}` : ''}
-        </div>
-        <div className="text-2xl font-extrabold">
-          {parseFloat(s.mw).toFixed(1)} <span className="text-sm text-[var(--text-muted)]">/ {s.contrat} MW</span>
-        </div>
+    <div className="site-detail-panel">
+      {/* Header: back button + site name */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          onClick={onClose}
+          className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
+        >
+          &#8592;
+        </button>
+        <h2 className="text-base font-bold uppercase tracking-wider">{s.name}</h2>
+        <FilterBar current={currentFilter} onChange={setFilter} />
       </div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="glass-card p-3">
-          <KpiBox value={k.prod ? Math.round(k.prod).toLocaleString() + ' MWh' : '—'} label="Production" color="#00ab63" size="sm" />
-        </div>
-        <div className="glass-card p-3">
-          <KpiBox value={k.sfoc ? k.sfoc.toFixed(1) : '—'} label="SFOC (g/kWh)" color={k.sfoc && k.sfoc <= 250 ? '#00ab63' : '#E05C5C'} size="sm" />
-        </div>
-        <div className="glass-card p-3">
-          <KpiBox value={k.sloc ? k.sloc.toFixed(2) : '—'} label="SLOC (g/kWh)" color={k.sloc && k.sloc <= 1.0 ? '#00ab63' : '#E05C5C'} size="sm" />
-        </div>
+      {/* Site navigation strip */}
+      <div className="site-nav-strip">
+        {NAVIGABLE_SITES.map(id => (
+          <button
+            key={id}
+            className={`site-nav-btn ${id === siteId ? 'active' : ''}`}
+            onClick={() => onNavigate(id)}
+          >
+            {siteData[id].name}
+          </button>
+        ))}
       </div>
 
-      {/* Moteurs list */}
-      {s.groupes && s.groupes.length > 0 && (
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
-            Moteurs ({s.groupes.length})
-          </h3>
-          <div className="space-y-2">
-            {s.groupes.map(g => {
-              const statusColor = g.statut === 'ok' ? '#00ab63' : g.statut === 'warn' ? '#f37056' : '#E05C5C'
-              return (
-                <div key={g.id} className="glass-card p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="w-2 h-2 rounded-full inline-block"
-                      style={{ backgroundColor: statusColor }}
-                    />
-                    <div>
-                      <div className="text-xs font-bold">{g.id}</div>
-                      <div className="text-[9px] text-[var(--text-dim)]">{g.model} · {g.mw} MW</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[9px] font-bold uppercase" style={{ color: statusColor }}>
-                      {g.condition || g.statut}
-                    </div>
-                    {g.energieProd > 0 && (
-                      <div className="text-[10px] text-white/60 mt-0.5">
-                        {Math.round(g.energieProd).toLocaleString()} kWh
-                      </div>
-                    )}
-                    {g.maint && (
-                      <div className="text-[8px] text-[var(--text-dim)] mt-0.5 max-w-[150px] truncate">
-                        {g.maint}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+      {/* Banner for construction/reconstruction sites */}
+      {isConstruction && (
+        <div className="rounded-xl p-6 mb-6 text-center flex flex-col items-center gap-2"
+          style={{
+            background: s.status === 'reconstruction' ? 'rgba(243,112,86,0.1)' : 'rgba(0,171,99,0.1)',
+            border: `1px solid ${s.status === 'reconstruction' ? 'rgba(243,112,86,0.25)' : 'rgba(0,171,99,0.25)'}`,
+          }}>
+          <span className="text-xl">{s.status === 'reconstruction' ? 'En reparation' : 'En construction'}</span>
+          <span className="text-[13px] text-[var(--text-muted)]">
+            Les donnees operationnelles seront disponibles des la remise en service.
+          </span>
+        </div>
+      )}
+
+      {!isConstruction && (
+        <>
+          {/* Section 1 — Donnees generales */}
+          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-2">
+            Donnees generales
           </div>
-        </div>
+          <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
+            <div className="s1-card">
+              <div className="s1-card-label">Contrat</div>
+              <div className="s1-card-value">{s.contrat}</div>
+              <div className="s1-card-unit-line">MW</div>
+            </div>
+            <div className="s1-card">
+              <div className="s1-card-label">Production</div>
+              <div className="s1-card-value">{k.prod != null ? parseFloat(k.prod).toFixed(1) : '—'}</div>
+              <div className="s1-card-unit-line">MWh</div>
+            </div>
+            <div className="s1-card">
+              <div className="s1-card-label">SFOC</div>
+              <div className="s1-card-value" style={{ color: k.sfoc != null && k.sfoc <= 250 ? 'var(--energy)' : k.sfoc != null ? 'var(--red)' : 'var(--text)' }}>
+                {k.sfoc != null ? parseFloat(k.sfoc).toFixed(1) : '—'}
+              </div>
+              <div className="s1-card-unit-line">g/kWh</div>
+            </div>
+            <div className="s1-card">
+              <div className="s1-card-label">SLOC</div>
+              <div className="s1-card-value" style={{ color: k.sloc != null && k.sloc <= 1.0 ? 'var(--energy)' : k.sloc != null ? 'var(--red)' : 'var(--text)' }}>
+                {k.sloc != null ? parseFloat(k.sloc).toFixed(2) : '—'}
+              </div>
+              <div className="s1-card-unit-line">g/kWh</div>
+            </div>
+          </div>
+
+          {/* Section 1b — KPIs operationnels */}
+          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
+            KPIs operationnels
+          </div>
+          <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
+            {/* Stock HFO */}
+            <div className="s1-card">
+              <div className="s1-card-label">Stock HFO</div>
+              <div className="s1-card-value" style={{ color: hfoAutoColor }}>
+                {hfoStock != null ? Math.round(hfoStock).toLocaleString() : '—'}
+              </div>
+              <div className="s1-card-unit-line">Litres</div>
+              <div className="text-[10px] mt-1" style={{ color: hfoAutoColor }}>
+                {hfoAuto != null ? `${hfoAuto.toFixed(1)} jours autonomie` : 'Donnees non dispo'}
+              </div>
+            </div>
+            {/* Conso Station */}
+            <div className="s1-card">
+              <div className="s1-card-label">Conso Station</div>
+              <div className="s1-card-value" style={{ color: stUseColor }}>
+                {stUsePct != null ? stUsePct.toFixed(1) : '—'}
+              </div>
+              <div className="s1-card-unit-line">% auxiliaires</div>
+              <div className="text-[9px] text-[var(--text-muted)] mt-1">
+                {grossMwh != null ? `Brut ${Math.round(grossMwh).toLocaleString()} / Net ${Math.round(netMwh).toLocaleString()} MWh` : ''}
+              </div>
+            </div>
+            {/* Solaire (conditionally shown) */}
+            {sol && (
+              <div className="s1-card">
+                <div className="s1-card-label">Solaire</div>
+                <div className="s1-card-value" style={{ color: 'var(--energy)' }}>
+                  {solarAvg != null ? Math.round(solarAvg).toLocaleString() : '—'}
+                </div>
+                <div className="s1-card-unit-line">kWh/jour moy.</div>
+                <div className="text-[9px] text-[var(--text-muted)] mt-1">
+                  {solarTotal != null ? `Total ${Math.round(solarTotal).toLocaleString()} kWh` : ''}
+                </div>
+              </div>
+            )}
+            {/* Stock Huile */}
+            <div className="s1-card">
+              <div className="s1-card-label">Stock Huile</div>
+              <div className="s1-card-value" style={{ color: oilAutoColor }}>
+                {oilStock != null ? Math.round(oilStock).toLocaleString() : '—'}
+              </div>
+              <div className="s1-card-unit-line">Litres</div>
+              <div className="text-[10px] mt-1" style={{ color: oilAutoColor }}>
+                {oilAuto != null ? `${oilAuto.toFixed(1)} jours autonomie` : ''}
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2 — Generateurs */}
+          {s.groupes && s.groupes.length > 0 && (
+            <>
+              <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-3">
+                Generateurs ({s.groupes.length})
+              </div>
+              <div className="gen-cards-row">
+                {s.groupes.map(g => {
+                  const isContra = g.contradictory === true
+                  const dotColor = isContra ? '#7b5fbf' : g.statut === 'ok' ? 'var(--energy)' : g.statut === 'warn' ? '#f0a030' : 'var(--red)'
+                  const statusLabel = isContra ? 'A verifier' : g.statut === 'ok' ? 'En marche' : g.statut === 'warn' ? 'Maintenance' : 'Arret'
+                  const daysLabel = (g.jourArret > 0 && !isContra) ? ` · ${g.jourArret}j` : ''
+
+                  // SFOC per generator
+                  const gSfoc = calcGenSfoc(g)
+                  const sfocStr = gSfoc != null ? gSfoc.toFixed(0) : '—'
+                  const sfocColor = gSfoc != null ? (gSfoc <= 250 ? 'var(--energy)' : 'var(--red)') : 'var(--text-dim)'
+
+                  // SLOC
+                  const gSlocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '—'
+
+                  // Border color
+                  const borderColor = isContra ? 'rgba(160,90,255,0.3)'
+                    : g.statut === 'ok' ? 'rgba(0,171,99,0.2)'
+                    : g.statut === 'warn' ? 'rgba(240,160,48,0.2)'
+                    : 'rgba(243,112,86,0.2)'
+
+                  const mw = parseFloat(g.mw).toFixed(1)
+
+                  return (
+                    <div key={g.id} className="gen-card-wrapper">
+                      {/* Generator ID with status dot */}
+                      <div className="gen-card-title" style={{ color: isContra ? '#7b5fbf' : 'var(--text)' }}>
+                        <span
+                          className="gen-status-dot"
+                          style={{
+                            backgroundColor: dotColor,
+                            boxShadow: `0 0 4px ${dotColor}, 0 0 8px ${dotColor}`,
+                          }}
+                        />
+                        {fmtGId(g.id)}
+                      </div>
+                      {/* Card body */}
+                      <div
+                        className="s1-card gen-card-body"
+                        style={{ borderColor, cursor: 'pointer' }}
+                      >
+                        <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">Puissance</div>
+                        <div className="text-[16px] font-bold text-[var(--text)] leading-none">
+                          {mw}<span className="text-[9px] text-[var(--text-muted)] font-normal ml-0.5">MW</span>
+                        </div>
+                        <div className="text-[8px] font-bold mt-1.5" style={{ color: dotColor }}>
+                          {statusLabel}{daysLabel}
+                        </div>
+                        <div className="flex justify-center gap-2 mt-1.5">
+                          <div className="text-center">
+                            <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">SFOC</div>
+                            <div className="text-[12px] font-bold" style={{ color: sfocColor }}>{sfocStr}</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">SLOC</div>
+                            <div className="text-[12px] font-bold text-[var(--text)]">{gSlocVal}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
+
+          {/* Section 3 — Blackouts */}
+          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-6">
+            Blackouts
+          </div>
+          <div className="s1-card mb-6" style={{ maxWidth: 200 }}>
+            <div className="s1-card-label">Coupures</div>
+            <div className="s1-card-value" style={{ color: boColor }}>{boCount}</div>
+            <div className="s1-card-unit-line">blackouts</div>
+          </div>
+
+          {/* Section 4 — Fuel Stock detail */}
+          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
+            Stock Fuel
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-6">
+            <div className="s1-card">
+              <div className="s1-card-label">HFO</div>
+              <div className="s1-card-value" style={{ color: hfoAutoColor }}>
+                {hfoStock != null ? Math.round(hfoStock).toLocaleString() : '—'}
+              </div>
+              <div className="s1-card-unit-line">Litres</div>
+            </div>
+            {fs.latestLfoStock != null && (
+              <div className="s1-card">
+                <div className="s1-card-label">LFO</div>
+                <div className="s1-card-value">{Math.round(fs.latestLfoStock).toLocaleString()}</div>
+                <div className="s1-card-unit-line">Litres</div>
+              </div>
+            )}
+            <div className="s1-card">
+              <div className="s1-card-label">Autonomie HFO</div>
+              <div className="s1-card-value" style={{ color: hfoAutoColor }}>
+                {hfoAuto != null ? hfoAuto.toFixed(1) : '—'}
+              </div>
+              <div className="s1-card-unit-line">jours</div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
