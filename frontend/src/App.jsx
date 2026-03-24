@@ -51,7 +51,7 @@ function Placeholder({ name }) {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/filatex-dashboard">
       <AuthProvider>
         <FilterProvider>
           <Suspense fallback={<Loading />}>
