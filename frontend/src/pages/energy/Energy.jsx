@@ -1,7 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useFilters } from '../../hooks/useFilters'
-
-const FILTER_KEYS = ['J-1', 'M', 'Q', 'A']
+import FilterBar from '../../components/FilterBar'
 
 export default function Energy() {
   const navigate = useNavigate()
@@ -24,18 +23,7 @@ export default function Energy() {
         </div>
         <div className="sd-site-name" style={{color:'#00ab63'}}>Energy</div>
         <div className="nav-filter">
-          <div className="time-filter">
-            {FILTER_KEYS.map((key) => (
-              <button
-                key={key}
-                className={`tfilter${currentFilter === key ? ' active' : ''}`}
-                onClick={() => setFilter(key)}
-                style={key === 'J-1' ? {marginRight:'8px'} : undefined}
-              >
-                {key}
-              </button>
-            ))}
-          </div>
+          <FilterBar current={currentFilter} onChange={setFilter} />
         </div>
       </div>
 
