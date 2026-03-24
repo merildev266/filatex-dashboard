@@ -100,3 +100,21 @@
 .cpj-cf-label{font-size:7px;color:rgba(255,255,255,0.3);}
 .cpj-delta-row{display:flex;align-items:center;gap:6px;margin-top:8px;}
 .cpj-delta{font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;}
+
+/* ══ MOBILE ══ */
+@media (max-width:768px) {
+  .csec-kpis{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .csec-kpi-val{font-size:14px;}
+  .capex-section-card{padding:16px 14px;border-radius:14px;}
+  .csec-header{margin-bottom:14px;}
+  .csec-title{font-size:13px;}
+  .capex-panel-topbar{padding:16px 14px;}
+  .capex-proj-card{padding:16px;border-radius:14px;margin-bottom:12px;}
+  .cpj-header{flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .cpj-name{font-size:14px;}
+  .cpj-grid{grid-template-columns:1fr;gap:10px;}
+  .cpj-block{padding:12px;}
+  .ckpi-val{font-size:20px;}
+  .sg-task-name{width:100px;font-size:9px;}
+  .gantt-zp-viewport{max-height:350px;}
+}

@@ -106,3 +106,9 @@
 
 .enr-kpi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;transition:all 0.25s;}
 .enr-kpi-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);box-shadow:0 8px 30px rgba(0,0,0,0.2);}
+
+/* ══ MOBILE ══ */
+@media (max-width:768px) {
+  #page-energy .e-wrap{width:100% !important;gap:20px;}
+  .enr-kpi-card{padding:14px;}
+}

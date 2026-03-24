@@ -387,3 +387,50 @@ body::-webkit-scrollbar{display:none;}
 .e-kpi-left,.e-kpi-right{flex:1;text-align:center;}
 .e-kpi-center{flex:0 0 clamp(50px,6vw,80px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .e-kpi-sep{width:1px;height:30px;background:rgba(138,146,171,0.2);}
+
+/* ══ MOBILE (<768px) ══ */
+@media (max-width:768px) {
+  /* Layout principal */
+  .page-inner{padding:20px 14px 80px;}
+  .inner-page-inner{padding:12px 14px 70px;max-width:100%;}
+  .page-header{flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;}
+  .inner-topbar{flex-wrap:wrap;gap:10px;margin-bottom:20px;padding-bottom:14px;}
+
+  /* Navigation */
+  .nav-back{top:14px;left:12px;}
+  .nav-filter{top:14px;right:12px;}
+  .sd-sticky-bar .sd-site-name{font-size:16px;position:static;transform:none;text-align:center;width:100%;}
+
+  /* E-wrap (Energy + Investments deux colonnes → empilé) */
+  .e-wrap{flex-direction:column;width:100% !important;gap:16px;}
+  .e-col{width:100%;}
+  .e-col-title{font-size:16px;}
+  .e-card .e-big{font-size:18px;}
+  .e-card .e-mid{font-size:14px;}
+  .e-card .e-sec-label{font-size:8px;}
+
+  /* KPI grids → 2 colonnes */
+  .kpi-grid,.gd-kpi-grid,.detail-kpi-grid{grid-template-columns:repeat(2,1fr) !important;gap:10px;}
+  .gd-metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .gd-gauge-row{grid-template-columns:1fr;}
+  .conso-grid{grid-template-columns:1fr;}
+
+  /* Sites grid */
+  .sites-grid{grid-template-columns:repeat(2,1fr) !important;gap:10px;}
+  .site-card{min-height:auto;}
+
+  /* Banners stack */
+  .contrib-banner,.gd-arret-banner,.gd-maint-card{flex-direction:column;gap:10px;padding:14px 16px;text-align:center;}
+
+  /* Tables scroll horizontal */
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;}
+  thead,tbody,tr{display:table;width:100%;table-layout:auto;}
+
+  /* Time filter */
+  .time-filter{flex-wrap:wrap;gap:6px;}
+  .time-filter button{padding:4px 10px;font-size:9px;}
+
+  /* Bottom nav — plus compact */
+  .bnav-item span{font-size:7px;}
+  .bnav-item svg{width:18px;height:18px;}
+}
