@@ -5,10 +5,10 @@
 
 /* ══ ACCUEIL — layout compact ══ */
 #home{
-  justify-content:flex-start !important;
+  justify-content:center !important;
+  align-items:center !important;
   padding:20px 0 80px !important;
   gap:0 !important;
-  min-height:auto !important;
 }
 
 /* Header — compact, pas absolu sur mobile */
@@ -24,8 +24,8 @@
 .home-values span{font-size:7px !important;letter-spacing:0.2em !important;}
 .home-val-sep{width:14px !important;margin:0 6px !important;}
 
-/* Cartes — grille 3x2, plus grandes */
-.cards-grid{padding:0 12px !important;gap:12px !important;}
+/* Cartes — grille 3x2, centrées */
+.cards-grid{padding:0 16px !important;gap:12px !important;width:100% !important;align-items:center !important;}
 .cards-row1{
   grid-template-columns:repeat(3,1fr) !important;
   gap:10px 10px !important;
