@@ -299,7 +299,7 @@ export default function EnergyOverview() {
         <div className="e-col-title e-col-title-proj" style={{ color: 'rgba(138,146,171,0.8)' }}>Projets</div>
         <div
           className="capex-section-card e-card e-card-mini"
-          onClick={() => navigate('/energy/hfo')}
+          onClick={() => navigate('/energy/hfo-projets')}
           style={{ borderColor: 'rgba(138,146,171,0.35)', cursor: 'pointer' }}
           {...hfoHover}
         >
