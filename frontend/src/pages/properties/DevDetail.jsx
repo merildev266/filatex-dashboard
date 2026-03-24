@@ -487,7 +487,7 @@ function ProjectDetail({ project, onBack }) {
             fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase'
           }}
         >
-          &larr; DEVELOPPEMENT
+          &larr; DÉVELOPPEMENT
         </button>
       </div>
 
@@ -581,10 +581,10 @@ export default function DevDetail() {
         <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
           <div className="props-kpi-label">Projets en cours</div>
           <div className="props-kpi-val" style={{ color: AZUR }}>{total}</div>
-          <div className="props-kpi-sub">Developpement actif</div>
+          <div className="props-kpi-sub">Développement actif</div>
         </div>
         <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
-          <div className="props-kpi-label">Permis deposes</div>
+          <div className="props-kpi-label">Permis déposés</div>
           <div className="props-kpi-val">{permisDeposes} / {total}</div>
           <div className="props-kpi-sub">En instruction</div>
         </div>
