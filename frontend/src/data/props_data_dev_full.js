@@ -1,0 +1,678 @@
+/* DEV data with history - auto-generated */
+export const propsData_dev_full = [
+  {
+    name: "IVATOSOA",
+    etapes: [
+      {
+        etape: "BM de Rentabilité projet",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S50 - 08/12/2025",comment:"12/12/2025 : Présenté en CA et clos"},
+          {week:"S2 - 05/01/2026",comment:"A revoir en fonction du CSI exeptionnel"},
+        ]
+      },
+      {
+        etape: "Programme final",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 15/01/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 15/01/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 15/01/2026"},
+          {week:"S3 - 12/01/2026",comment:"Attente nouveau plan de masse de Fetra avec des parcelles de 300m². Précisions founies à Fetra après le COPIL du 22/01"},
+          {week:"S4 - 19/01/2026",comment:"Attente nouveau plan de masse de Fetra avec des parcelles de 300m². Précisions founies à Fetra après le COPIL du 22/01"},
+          {week:"S5 - 26/01/2026",comment:"Etablissement de budget plus précis sur les trois options de maisons de 70m²  | DL : 03/02/26"},
+          {week:"S6 - 02/02/2026",comment:"Modification du TDR afin de réduire le coût  | Nouveau budget partagé le 05/02/2026"},
+          {week:"S7 - 09/02/2026",comment:"En attente d'instruction à la suite de l'envoie du budget  le 05/02/2026"},
+          {week:"S8 - 16/02/2026",comment:"En attente d'instruction à la suite de l'envoie du budget  le 05/02/2026"},
+          {week:"S9 - 23/02/2026",comment:"En attente d'instruction à la suite de l'envoie du budget  le 05/02/2026"},
+          {week:"S10 - 02/03/2026",comment:"En attente d'instruction à la suite de l'envoie du budget  le 05/02/2026"},
+          {week:"S11 - 09/03/2026",comment:"En attente d'instruction à la suite de l'envoie du budget  le 05/02/2026"},
+        ]
+      },
+      {
+        etape: "Passage en CSI exeptionel",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 15/01/2026"},
+          {week:"S2 - 05/01/2026",comment:"Suite à la demande de DG. | Document transmis à Mehz/imtiaz et Vonjy. | CSI à programmer par Vonjy pdt la présence de DG en janvier."},
+        ]
+      },
+      {
+        etape: "Conception complète y compris consultation des entreprises ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 01/03/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 01/03/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 01/03/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 01/03/2026"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 31/03/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 31/03/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 31/03/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 31/03/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "BRUGASSUR",
+    etapes: [
+      {
+        etape: "Programme du Projet",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S49 - 01/12/2025",comment:"Reprise du concept d'Odile Decq et visite de lieu à effectuer le 10/12/25"},
+          {week:"S50 - 08/12/2025",comment:"VIsite effectuée le 12/12/25 avec Emmanuel Sur le fond du projet d'odile"},
+          {week:"S51 - 15/12/2025",comment:"VIsite effectuée le 12/12/25 avec Emmanuel Sur le fond du projet d'odile | DL : 30/03/2026"},
+          {week:"S52 - 22/12/2025",comment:"VIsite effectuée le 12/12/25 avec Emmanuel Sur le fond du projet d'odile | DL : 30/03/2026"},
+          {week:"S1 - 29/12/2025",comment:"VIsite effectuée le 12/12/25 avec Emmanuel Sur le fond du projet d'odile | DL : 30/03/2026"},
+          {week:"S2 - 05/01/2026",comment:"Mail de demande d'infos adressé à Emmanuel Bérard le 11/01"},
+          {week:"S3 - 12/01/2026",comment:"En attente de programme de projet "},
+          {week:"S4 - 19/01/2026",comment:"En attente de défintion de programme "},
+          {week:"S5 - 26/01/2026",comment:"En attente de défintion de programme "},
+          {week:"S6 - 02/02/2026",comment:"En attente de défintion de programme "},
+          {week:"S7 - 09/02/2026",comment:"En attente de défintion de programme "},
+        ]
+      },
+      {
+        etape: "Conception complète y compris consultation des entreprises ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/10/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/10/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/10/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/10/2026"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 04/11/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 04/11/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 04/11/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 04/11/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "AGENCE AFG - Tuléar",
+    etapes: [
+      {
+        etape: "Plan AFG",
+        resp: "Philippe",
+        timing_var: "Delay <30 days",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S48 - 24/11/2025",comment:"01/12/2025: Plan de bureau à dessier par AFG | Next step: à transmettre au constructeur pour avoir le devis des travaux | DL:  10 jours"},
+          {week:"S49 - 01/12/2025",comment:"01/12/2025: Plan de bureau à dessier par AFG | Next step: à transmettre au constructeur pour avoir le devis des travaux | DL:  10 jours"},
+          {week:"S50 - 08/12/2025",comment:"10/12/2025: Relance AFG pour les plans, demande de 15 jours supplémentaire | Next step: à transmettre au constructeur pour avoir le devis des travaux | DL:  26/12/2025"},
+          {week:"S51 - 15/12/2025",comment:"18/12/2025 : Mail recu - Toujours en attente des plans de AFG malgré l'engagement de Mr Nonla"},
+          {week:"S52 - 22/12/2025",comment:"18/12/2025 : Mail recu - Toujours en attente des plans de AFG malgré l'engagement de Mr Nonla"},
+          {week:"S1 - 29/12/2025",comment:"03/01 : Plan 2D reçu et transmis à Titan. AFG à augmenter le surface à 306m²"},
+          {week:"S2 - 05/01/2026",comment:"Ok de Vrane sur plan. Il a adapté le plan masse avec logements. OK de DG en réponse."},
+          {week:"S3 - 12/01/2026",comment:"Plans APD et CCTP reçus de la part d'AFG. Quelques points à voir avec eux. Transmis par mail mais réunion technique à organiser sur place"},
+          {week:"S4 - 19/01/2026",comment:"Réunion de coordination effectué le 21/01/26 | TITAN a envoyé le plan de coupe pour validation le 22/01/26"},
+          {week:"S5 - 26/01/2026",comment:"Réunion de coordination effectué le 21/01/26 | Modification de la toiture d'une pente en deux versants, plan de coupe et toiture envoyés par TITAN le 29/01/26 "},
+          {week:"S6 - 02/02/2026",comment:"Plan pour permis demandé pour dépot  | DL S07"},
+          {week:"S7 - 09/02/2026",comment:"Plan pour PC envoyé le 10/02/2026"},
+          {week:"S8 - 16/02/2026",comment:"En attente de MAJ des plans à la suite de remarques de VRANE sur les façacdes le 19/02/26"},
+          {week:"S9 - 23/02/2026",comment:"En attente de MAJ des plans à la suite de remarques de VRANE sur les façacdes le 19/02/26"},
+        ]
+      },
+      {
+        etape: "Devis des travaux - clos",
+        resp: "Philippe",
+        timing_var: "Delay <30 days",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"En attente des plans de AFG pour contacter Titan"},
+          {week:"S52 - 22/12/2025",comment:"En attente des plans de AFG pour contacter Titan"},
+          {week:"S1 - 29/12/2025",comment:"Mais on attend le cahier des charges pour finialiser le devis de Titan"},
+          {week:"S2 - 05/01/2026",comment:"On attend toujours le cahier des charges pour finialiser le devis de Titan. Relance faite"},
+          {week:"S3 - 12/01/2026",comment:"Cahier de charges envoyé par AFG le 15/01/26 | Analyse en cours jusqu'au 23/01/26 | Fichiers aussi transmis à Titan pour adaptation de son devis"},
+          {week:"S4 - 19/01/2026",comment:"Devis GO proposé par TITAN en attente des autres lots qui seront traités à partir de la réunion du 21/01/26"},
+          {week:"S5 - 26/01/2026",comment:"TITAN a envoyé un devis complet du projet le 29/01/26 pour validation | Analyse en cours "},
+          {week:"S6 - 02/02/2026",comment:"Devis valideé à passer en DA "},
+          {week:"S7 - 09/02/2026",comment:"Devis valideé à passer en DA  | En attente de validation de budget "},
+          {week:"S8 - 16/02/2026",comment:"Devis valideé à passer en DA  | En attente de validation de budget "},
+          {week:"S9 - 23/02/2026",comment:"En attente de réponse de la demande de Hors Budget par Philippe  qui va directement discuter avec Jasveer à la suite de la mise au point effectuée le 24/02/26  | "},
+          {week:"S10 - 02/03/2026",comment:"03/03/2026:  | HB signé par DG | DA introduit sur SAGE hors expression de besoin sur Docuware, transformé en BC, régule de DA pour signature DG le 05/03/2026 | 05/03/2026: transmission BC au prestataire"},
+        ]
+      },
+      {
+        etape: "Travaux de construction",
+        resp: "Philippe",
+        timing_var: "Delay <30 days",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S2 - 05/01/2026",comment:"Impossible de tenir le délai de fin mars souhaité par AFG. Délai à revoir à fin juin mini."},
+          {week:"S4 - 19/01/2026",comment:"TITAN propose de faire valider le lot GO afin de commencer les travaux en début février et une livraison prévisionnelle fin Avril 2026"},
+          {week:"S5 - 26/01/2026",comment:"Titan pourra garder la livraison prévisionnelle fin Avril s'il commence les travaux en début février"},
+          {week:"S6 - 02/02/2026",comment:"Durée de travaux : 04 Mois | Livraison : Si les travaux débutent en S07, Titan essaiera de garder une livraison fin Avril  "},
+          {week:"S7 - 09/02/2026",comment:"Durée de travaux : 04 Mois | Livraison : Si les travaux débutent en S07, Titan essaiera de garder une livraison fin Avril  "},
+          {week:"S8 - 16/02/2026",comment:"En atttente de BC pour débuter  | Délais : 04 mois"},
+          {week:"S9 - 23/02/2026",comment:"En atttente de BC pour débuter  | Délais : 04 mois"},
+          {week:"S10 - 02/03/2026",comment:"Passation à l'equipe suivi travaux en cours DL : S11"},
+          {week:"S11 - 09/03/2026",comment:"Début des travaux prévu en S12"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "ZFI - Extension 3 entrepôts",
+    etapes: [
+      {
+        etape: "Programme - CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S49 - 01/12/2025",comment:"05/12/2025: Plan validé par DG | --> BM à faire"},
+          {week:"S50 - 08/12/2025",comment:"CLOS"},
+          {week:"S2 - 05/01/2026",comment:"Confirmation de stand-by??"},
+          {week:"S4 - 19/01/2026",comment:"Stand-by confirmé en COPIL du 22/01"},
+        ]
+      },
+      {
+        etape: "BM - estimé -CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S50 - 08/12/2025",comment:"12/12/2025: Fait et validé par DG | --> Consulation des entreprises de construction"},
+          {week:"S51 - 15/12/2025",comment:"12/12/2025: Fait et validé par DG | --> Consulation des entreprises de construction"},
+          {week:"S52 - 22/12/2025",comment:"12/12/2025: Fait et validé par DG | --> Consulation des entreprises de construction"},
+          {week:"S1 - 29/12/2025",comment:"12/12/2025: Fait et validé par DG | --> Consulation des entreprises de construction"},
+          {week:"S2 - 05/01/2026",comment:"Confirmation de stand-by??"},
+        ]
+      },
+      {
+        etape: "Cahier des charges - CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"Etablissement en cours  | DL : 15/01/2025"},
+          {week:"S52 - 22/12/2025",comment:"Etablissement en cours  | DL : 15/01/2025"},
+          {week:"S1 - 29/12/2025",comment:"Etablissement en cours  | DL : 15/01/2025"},
+          {week:"S2 - 05/01/2026",comment:"Confirmation de stand-by??"},
+          {week:"S3 - 12/01/2026",comment:"Dossier de consultation achevé, le 15/01/25"},
+          {week:"S4 - 19/01/2026",comment:"Dossier de consultation achevé, le 15/01/25. Mise en stand-by confirmé en COPIL le 22/01"},
+          {week:"S5 - 26/01/2026",comment:"Dossier de consultation achevé, le 15/01/25. Mise en stand-by confirmé en COPIL le 22/01"},
+          {week:"S6 - 02/02/2026",comment:"Dossier de consultation achevé, le 15/01/25. Mise en stand-by confirmé en COPIL le 22/01"},
+          {week:"S7 - 09/02/2026",comment:"Dossier de consultation achevé, le 15/01/25. Mise en stand-by confirmé en COPIL le 22/01"},
+          {week:"S8 - 16/02/2026",comment:"Dossier de consultation achevé, le 15/01/25. Mise en stand-by confirmé en COPIL le 22/01"},
+        ]
+      },
+      {
+        etape: "P2P Constructeur - CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S2 - 05/01/2026",comment:"Confirmation de stand-by??"},
+        ]
+      },
+      {
+        etape: "BM -  Final - CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S2 - 05/01/2026",comment:"Confirmation de stand-by??"},
+        ]
+      },
+      {
+        etape: "Passation de marché - CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S2 - 05/01/2026",comment:"Confirmation de stand-by??"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "Ecole Alahambra",
+    etapes: [
+      {
+        etape: "Programme - CLOS",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S50 - 08/12/2025",comment:"12/12/2025 : Presenté et fair au CA - clos"},
+        ]
+      },
+      {
+        etape: "BM estimé ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S50 - 08/12/2025",comment:"12/12/2025 : Presenté et fair au CA - clos"},
+          {week:"S3 - 12/01/2026",comment:"Suite à rencontre Patrick Collard et MLF le 16/01, BM à revoir par Imtiaz."},
+          {week:"S4 - 19/01/2026",comment:"Nouveau BM partagé par Imtiaz cette semaine"},
+        ]
+      },
+      {
+        etape: "Obtention de l'accord MLF",
+        resp: "PHILIPPE",
+        timing_var: "Delay <30 days",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 06/01/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 06/01/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 06/01/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 06/01/2026 => repoussé au 16/01 lors de la rencontre prévue Patrick Collard et MLF. | Ouverture en septembre 28 plutôt qu'en 27 trop difficile à tenir."},
+          {week:"S3 - 12/01/2026",comment:"Call Patrick COllard/Imtiaz/Mehz prévu le 19/01. Puis call Filatex/MLF le 20ou 21/01"},
+          {week:"S4 - 19/01/2026",comment:"Sujet en cours chez Ventures. En particulier obtention d'un accord formel de MLF"},
+        ]
+      },
+      {
+        etape: "Choix architecte et bureau d'étude",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 28/01/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 28/01/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 28/01/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 28/01/2026. | Offre de Z architecture passée de 500k€ à 300k€"},
+          {week:"S4 - 19/01/2026",comment:"Dépendra du point ci-dessus."},
+        ]
+      },
+      {
+        etape: "Conception complète du batiment ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 01/06/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 01/06/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 01/06/2026"},
+          {week:"S2 - 05/01/2026",comment:"Prochain COPIL projets Immo. Confirmer auprès la structure en préfa Polymur"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 01/06/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 01/06/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 01/06/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 01/06/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "EDEN Extension 6 Villas",
+    etapes: [
+      {
+        etape: "Conception complète ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/04/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/04/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/04/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/04/2026"},
+        ]
+      },
+      {
+        etape: "Consultation des entreprises",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 15/06/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 15/06/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 15/06/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 15/06/2026"},
+          {week:"S3 - 12/01/2026",comment:"En attente de consigne pour établir le DCE "},
+          {week:"S4 - 19/01/2026",comment:"En attente de consigne pour établir le DCE "},
+          {week:"S5 - 26/01/2026",comment:"En attente de consigne pour établir le DCE "},
+          {week:"S6 - 02/02/2026",comment:"En attente de consigne pour établir le DCE "},
+          {week:"S7 - 09/02/2026",comment:"En attente de consigne pour établir le DCE "},
+          {week:"S8 - 16/02/2026",comment:"En attente de consigne pour établir le DCE "},
+        ]
+      },
+      {
+        etape: "Passation équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 01/07/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 01/07/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 01/07/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 01/07/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "HERMES",
+    etapes: [
+      {
+        etape: "Finalisation de la consultation des entreprises",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S2 - 05/01/2026",comment:"Négos finales en cours par les achats"},
+          {week:"S3 - 12/01/2026",comment:"Négos finales en cours par les achats"},
+          {week:"S4 - 19/01/2026",comment:"Vu en COPIL. Les achats ont d'autres priorités. DL repoussé à mi-février"},
+          {week:"S5 - 26/01/2026",comment:"En attente de retour de comparatif des achats pour mi-février "},
+          {week:"S6 - 02/02/2026",comment:"Comparatif du Lot Gros Oeuvre partagé par le service achat  | Et en attente de retour de comparatif des achats  | DL : 13/02/2026"},
+          {week:"S7 - 09/02/2026",comment:"Comparatif du Lot Gros Oeuvre partagé par le service achat  | Et en attente de retour de comparatif des achats  | DL : 13/02/2026 | Realncé : 13/02/2026"},
+          {week:"S8 - 16/02/2026",comment:"Comparatif du Lot Gros Oeuvre partagé par le service achat  | Et en attente de retour de comparatif des achats  | DL : 13/02/2026 | Realncé : 13/02/2026 | Deumière relance le 17/02/26"},
+          {week:"S9 - 23/02/2026",comment:"Comparatif envoyé le 25/02/26 | Analyse en cours  | DL S11 | Demande à envoyer à ECRS pour déduire la partie étude de leur offre | DL S10"},
+          {week:"S10 - 02/03/2026",comment:"Comparatif envoyé le 25/02/26 | Analyse en cours  | DL S11 | Prix d'études d'ECRS envoyé au BET, en attente de retour"},
+          {week:"S11 - 09/03/2026",comment:"Nouvelles negociations à entamer sur la base des devis négociés par FIRM et non sur les devis initiaux"},
+        ]
+      },
+      {
+        etape: "Surcout structurel sur à diag SOCOTEC",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S2 - 05/01/2026",comment:"Prochain COPIL projets Immo. Demandes: | - Mission à IES Consulting uniquement pour optimiser les précos SOCOTEC; Devis en attente. | - Suppression de la piscine et salle de sport pour faire des économies."},
+          {week:"S3 - 12/01/2026",comment:"Mme Fara doit nous transmettre les devis de IES Consulting la semaine du 19/01"},
+          {week:"S4 - 19/01/2026",comment:"Devis reçu pour env. 400 M.Ar. Vu avec Fara pour éclaircir avec le prestatire car cela semble très chèr. A relancer la semaine prochaine"},
+        ]
+      },
+      {
+        etape: "Prix de vente des caves",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "Management decision required",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S2 - 05/01/2026",comment:"Prochain COPIL projets Immo. Validation du prix de vente."},
+          {week:"S4 - 19/01/2026",comment:"Vu en COPIL, prix de vente entre 5 et 10 k€"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/03/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/03/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/03/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/03/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "Hotel TAMATAVE",
+    etapes: [
+      {
+        etape: "Finalisation consultation des entreprises ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 28/02/2026"},
+          {week:"S3 - 12/01/2026",comment:"DCE prévu livré le 21/01/26 | Pour une consutlation le 26/01/26"},
+          {week:"S4 - 19/01/2026",comment:"A relancer la semaine prochaine"},
+          {week:"S5 - 26/01/2026",comment:"DCE MOE reçu le 27/01/26 | DCE ARCHI à compléter avant de pouvoir lancer la consultation "},
+          {week:"S6 - 02/02/2026",comment:"DCE MOE reçu le 27/01/26 | DCE ARCHI à compléter avant de pouvoir lancer la consultation depuis le 29/02/2026 | Relancer le 06/02/2026"},
+          {week:"S7 - 09/02/2026",comment:"DCE MOE reçu le 27/01/26 | DCE ARCHI à compléter avant de pouvoir lancer la consultation depuis le 29/02/2026 | Relancé le 06/02/2026 | Deuxième Relance le 13/02/2026"},
+          {week:"S8 - 16/02/2026",comment:"En attente de CCTP partie architecurale venant de ARA et la possibilité de créer une salle de réception  | Relance effectuée le 17/02/26"},
+          {week:"S9 - 23/02/2026",comment:"Compilation des dossiers architecturaux et techniques pour une consutlation d'entreprises en S10"},
+          {week:"S10 - 02/03/2026",comment:"Consultation lancée le 06/03/26 | Retour comparatif estimé le 07/04/26"},
+          {week:"S11 - 09/03/2026",comment:"Processus bloqué pour cause de Hors Budget"},
+        ]
+      },
+      {
+        etape: "Finalisation dossier de financement",
+        resp: "PHILIPPE",
+        timing_var: "Delay >=30 days",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 28/02/2026"},
+          {week:"S2 - 05/01/2026",comment:"Relance faite à DAC le 12/01"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/03/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/03/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/03/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/03/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "CASA DEL LAGO",
+    etapes: [
+      {
+        etape: "Finalisation de la conception - Clos",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/01/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/01/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/01/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/01/2026"},
+          {week:"S3 - 12/01/2026",comment:"Validation de principe du VRD donnée à NOMADE, qui va finir les MAJ et renvoyé le PRO-DCE  | Plan envoyé à VISIO pour dernière MAJ des plans architecturaux suivant les spécificités techniques | DL : 30/01/26"},
+          {week:"S4 - 19/01/2026",comment:"Validation de principe du VRD donnée à NOMADE, qui va finir les MAJ et renvoyé le PRO-DCE  | Plan envoyé à VISIO pour dernière MAJ des plans architecturaux suivant les spécificités techniques | DL : 30/01/26"},
+          {week:"S5 - 26/01/2026",comment:"En attente de MAJ des plans pour le choix du MOA et demande de l'ARCHI en béton venant de NOMADE "},
+          {week:"S6 - 02/02/2026",comment:"Plan Final envoyé par VISIO le 02/02/2026"},
+        ]
+      },
+      {
+        etape: "Consultation des entreprises",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 15/03/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 15/03/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 15/03/2026"},
+          {week:"S2 - 05/01/2026",comment:"Relance Renaud pour finalisation du dossier auprès de la maitrise d'oeuvre"},
+          {week:"S3 - 12/01/2026",comment:"Mise au point effectué avec NOMADE le 13/01/26"},
+          {week:"S4 - 19/01/2026",comment:"Mise au point effectué avec NOMADE le 13/01/26"},
+          {week:"S5 - 26/01/2026",comment:"En attente de livrable pour archi et MOE pour lancer la consultation en février "},
+          {week:"S6 - 02/02/2026",comment:"Livrable PRO-DCE envoyé par Nomande le 02/02/26 | En attente d eMAJ sur le CCTP de Plomberie (GALA) et CCTP Electricité (T° des luminaire >3000k)"},
+          {week:"S7 - 09/02/2026",comment:"Livrable validé archi et BET | En attente de détail sur les pergolas et Moucharbieh "},
+          {week:"S8 - 16/02/2026",comment:"Détails sur les décorations extérieures seront traités par VISIO à la suite du mise au point du 18/02/2026 | DL : S10"},
+          {week:"S9 - 23/02/2026",comment:"Détails architecturaux envoyés par VISIO le 25/02/26 | Etablissement de DCE architecturaux en cours pour une consultation la semaine S10"},
+          {week:"S10 - 02/03/2026",comment:"Consultation lancée le 05/03/26 | Retour comparatif estimé le 07/04/26"},
+          {week:"S11 - 09/03/2026",comment:"Processus bloqué pour cause de Hors Budget"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 01/04/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 01/04/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 01/04/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 01/04/2026"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "ZF COLINA",
+    etapes: [
+      {
+        etape: "Dossier financement bancaire",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/06/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/06/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/06/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/06/2026"},
+        ]
+      },
+      {
+        etape: "Appui politique pour sortir un PC rapidement",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/06/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/04/2026"},
+        ]
+      },
+      {
+        etape: "Consultation avec JIRAMA pour confirmer ressoources disponible",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/06/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/03/2026 | Mobilisation de Renaud sur le sujet le 12/01"},
+          {week:"S3 - 12/01/2026",comment:"Etablissement de demande officielle en cours | DL : 30/03/2026"},
+          {week:"S4 - 19/01/2026",comment:"Etablissement de demande officielle en cours | DL : 30/03/2026"},
+          {week:"S5 - 26/01/2026",comment:"Etablissement de demande officielle en cours | DL : 30/03/2026"},
+          {week:"S6 - 02/02/2026",comment:"Etablissement de demande officielle en cours | DL : 30/03/2026"},
+          {week:"S7 - 09/02/2026",comment:"Etablissement de demande officielle en cours | DL : 30/03/2026"},
+          {week:"S8 - 16/02/2026",comment:"Etablissement de demande officielle en cours | DL : 30/03/2026"},
+          {week:"S9 - 23/02/2026",comment:"La demande doit être accompagné de PDC  | Nécessité de discuter avec l'équipe Energie pour contacter directement la JIRAMA "},
+          {week:"S10 - 02/03/2026",comment:"En attente de noveau plan pour établir le budget  | DL: S12"},
+        ]
+      },
+    ]
+  },
+  {
+    name: "CASA DEL LAGO - CENTRE COMMERCIAL",
+    etapes: [
+      {
+        etape: "Programme ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 15/04/2026"},
+          {week:"S52 - 22/12/2025",comment:"DL : 15/04/2026"},
+          {week:"S1 - 29/12/2025",comment:"DL : 15/04/2026"},
+          {week:"S2 - 05/01/2026",comment:"DL : 15/04/2026"},
+          {week:"S3 - 12/01/2026",comment:"En attente de figeage de programme "},
+          {week:"S4 - 19/01/2026",comment:"En attente de figeage de programme "},
+          {week:"S5 - 26/01/2026",comment:"En attente de figeage de programme "},
+          {week:"S6 - 02/02/2026",comment:"En attente de figeage de programme "},
+          {week:"S7 - 09/02/2026",comment:"En attente de figeage de programme "},
+        ]
+      },
+      {
+        etape: "Conception complète ",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 25/11/26"},
+          {week:"S52 - 22/12/2025",comment:"DL : 25/11/26"},
+          {week:"S1 - 29/12/2025",comment:"DL : 25/11/26"},
+          {week:"S2 - 05/01/2026",comment:"DL : 25/11/26"},
+        ]
+      },
+      {
+        etape: "Passation à l'équipe travaux",
+        resp: "PHILIPPE",
+        timing_var: "On Time",
+        budget_var: "No overrun",
+        status_cps: "All CPs met",
+        history: [
+          {week:"S51 - 15/12/2025",comment:"DL : 30/11/26"},
+          {week:"S52 - 22/12/2025",comment:"DL : 30/11/26"},
+          {week:"S1 - 29/12/2025",comment:"DL : 30/11/26"},
+          {week:"S2 - 05/01/2026",comment:"DL : 30/11/26"},
+        ]
+      },
+    ]
+  },
+];
