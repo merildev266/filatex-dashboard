@@ -13,8 +13,8 @@
 .card-logo-wrap svg{height:30px !important;}
 
 /* Header — plus compact, moins d'espace */
-.home-header{top:16px !important;gap:6px !important;}
-.logo-groupe{height:45px !important;}
+.home-header{top:28px !important;gap:6px !important;}
+.logo-groupe{height:40px !important;}
 .home-values span{font-size:7px !important;letter-spacing:0.2em !important;}
 .home-val-sep{width:14px !important;margin:0 8px !important;}
 
