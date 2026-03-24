@@ -223,7 +223,7 @@ export default function Accueil() {
       </div>
 
       {/* ══ MOTIF DEFILANT ══ */}
-      <div id="home-motif" style={{position:'absolute',left:0,right:0,top:'50%',transform:'translateY(-50%)',pointerEvents:'none',zIndex:0,opacity:0.55,lineHeight:0,overflow:'hidden'}}>
+      <div id="home-motif" style={{position:'fixed',left:0,right:0,top:0,bottom:'56px',pointerEvents:'none',zIndex:0,opacity:0.55,overflow:'hidden',display:'flex',alignItems:'center'}}>
         <div style={{display:'flex',width:'200%',animation:'scrollMotif 40s linear infinite'}}>
           <MotifSvg />
           <MotifSvg />

@@ -759,7 +759,7 @@ body::-webkit-scrollbar { display: none; }
   .home-values span { font-size: 7px !important; letter-spacing: 0.2em !important; }
   .home-values .home-val-sep { width: 10px !important; margin: 0 4px !important; }
   #home { padding-top: 90px !important; padding-bottom: 60px !important; min-height: calc(100dvh - 56px); overflow: hidden; }
-  #home-motif { display: none !important; }
+  #home-motif { opacity: 0.25 !important; }
   body, #root { overflow-x: hidden !important; }
   #home-footer { bottom: 60px !important; }
   .cards-grid { padding: 0 12px !important; gap: 12px !important; }
