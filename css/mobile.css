@@ -1,43 +1,31 @@
-/* ══ MOBILE STYLES — 100% indépendant du desktop ══ */
+/* ══ MOBILE OVERRIDES — s'ajoute par-dessus le CSS desktop ══ */
+/* Ce fichier ne fait que surcharger ce qui doit changer sur mobile */
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --dark:#080b18;--dark2:#0d1025;--dark3:#1a1d35;
-  --text:#ffffff;--text-muted:#c7c6c4;
-  --energy:#00ab63;--invest:#f37056;--props:#FDB823;--capex:#5e4c9f;--csi:#0096c7;--reporting:#5aafaf;
-}
-html,body{height:100%;background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
+/* Skip login */
+#login-screen{display:none !important;}
 
-/* ══ ACCUEIL ══ */
-#m-home{min-height:100vh;padding:0 16px 80px;display:flex;flex-direction:column;}
+/* Accueil — grille 2x3 au lieu de 3x2 */
+.cards-row1{grid-template-columns:repeat(2,1fr) !important;gap:12px !important;width:100% !important;}
+.cards-grid{padding:0 16px !important;}
 
-.m-header{text-align:center;padding:40px 0 28px;}
-.m-logo{font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
-.m-sub{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-top:4px;}
+/* Cartes — plus petites */
+.card{padding:20px 14px !important;border-radius:16px !important;}
+.card-logo-wrap svg{height:40px !important;}
 
-/* ══ CARDS — grille 2x3, rectangulaires ══ */
-.m-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;flex:1;}
+/* Header — plus compact */
+.home-header{top:20px !important;gap:8px !important;}
+.logo-groupe{height:50px !important;}
+.home-values{display:none !important;}
 
-.m-card{display:flex;align-items:center;justify-content:center;padding:20px 16px;border-radius:20px;background:rgba(58,57,92,0.18);border:1px solid rgba(58,57,92,0.35);cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);backdrop-filter:blur(16px);height:100px;}
-.m-card:active{transform:scale(0.97);background:rgba(58,57,92,0.25);}
-.m-card svg{width:80%;height:auto;max-height:40px;pointer-events:none;}
+/* Footer */
+#home-footer{bottom:72px !important;}
 
-/* ══ FOOTER ══ */
-.m-footer{text-align:center;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.1);padding:20px 0;}
+/* Bottom nav — safe area */
+#bottom-nav{padding-bottom:env(safe-area-inset-bottom);}
 
-/* ══ BOTTOM NAV ══ */
-#m-nav{position:fixed;bottom:0;left:0;right:0;z-index:900;display:flex;justify-content:space-around;align-items:center;height:60px;background:rgba(8,11,24,0.95);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,0.06);padding:0 8px;}
+/* Pages internes — padding adapté */
+.page-inner{padding:20px 14px 80px !important;}
+.inner-page-inner{padding:12px 14px 70px !important;max-width:100% !important;}
 
-.m-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:rgba(255,255,255,0.25);cursor:pointer;padding:8px 0;font-family:'DM Sans',sans-serif;}
-.m-nav-item svg{width:22px;height:22px;}
-.m-nav-item span{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;}
-.m-nav-item.active{color:rgba(255,255,255,0.7);}
-.m-nav-item[data-pole="energy"].active{color:var(--energy);}
-.m-nav-item[data-pole="properties"].active{color:var(--props);}
-.m-nav-item[data-pole="reporting"].active{color:var(--reporting);}
-
-/* ══ SAFE AREAS (notch, home indicator) ══ */
-@supports (padding: env(safe-area-inset-bottom)){
-  #m-nav{padding-bottom:env(safe-area-inset-bottom);}
-  #m-home{padding-bottom:calc(80px + env(safe-area-inset-bottom));}
-}
+/* Désactiver le zoom viewport de shared.js — on laisse le CSS gérer */
+body.is-mobile{zoom:1 !important;}

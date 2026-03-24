@@ -1,21 +1,11 @@
 /* === Shared JS === */
 
-// ══ MOBILE REDIRECT — redirige vers mobile.html si écran < 768px ══
+// ══ MOBILE REDIRECT — redirige vers mobile.html si mobile sur index.html ══
 (function(){
-  var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    || (window.innerWidth <= 768 && 'ontouchstart' in window);
+  var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   var onMobilePage = window.location.pathname.indexOf('mobile.html') !== -1;
-  var onIndexPage = !onMobilePage;
-  var hasPageHash = window.location.hash && window.location.hash.indexOf('#page-') === 0;
-  // Si mobile sur index.html SANS hash de page → redirige vers accueil mobile
-  // Si mobile sur index.html AVEC hash → on reste (l'utilisateur veut voir une section)
-  if(isMobile && onIndexPage && !hasPageHash){
+  if(isMobile && !onMobilePage){
     window.location.replace('mobile.html');
-    return;
-  }
-  if(!isMobile && onMobilePage){
-    window.location.replace('index.html');
-    return;
   }
 })();
 
