@@ -1,13 +1,5 @@
 /* === Shared JS === */
 
-// ══ MOBILE REDIRECT — redirige vers mobile.html si mobile sur index.html ══
-(function(){
-  var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  var onMobilePage = window.location.pathname.indexOf('mobile.html') !== -1;
-  if(isMobile && !onMobilePage){
-    window.location.replace('mobile.html');
-  }
-})();
 
 // ══ PWA SERVICE WORKER ══
 if ('serviceWorker' in navigator) {
