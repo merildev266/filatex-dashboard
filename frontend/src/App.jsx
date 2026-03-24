@@ -11,6 +11,14 @@ const Energy = lazy(() => import('./pages/energy/Energy'))
 const EnergyOverview = lazy(() => import('./pages/energy/EnergyOverview'))
 const HfoDetail = lazy(() => import('./pages/energy/HfoDetail'))
 const EnrDetail = lazy(() => import('./pages/energy/EnrDetail'))
+const Properties = lazy(() => import('./pages/properties/Properties'))
+const PropertiesOverview = lazy(() => import('./pages/properties/PropertiesOverview'))
+const DevDetail = lazy(() => import('./pages/properties/DevDetail'))
+const TvxDetail = lazy(() => import('./pages/properties/TvxDetail'))
+const SavDetail = lazy(() => import('./pages/properties/SavDetail'))
+const ComDetail = lazy(() => import('./pages/properties/ComDetail'))
+const Capex = lazy(() => import('./pages/Capex'))
+const Investments = lazy(() => import('./pages/Investments'))
 
 // Loading fallback
 const Loading = () => (
@@ -44,9 +52,15 @@ function App() {
                   <Route path="hfo" element={<HfoDetail />} />
                   <Route path="enr" element={<EnrDetail />} />
                 </Route>
-                <Route path="properties/*" element={<Placeholder name="Properties" />} />
-                <Route path="capex" element={<Placeholder name="CAPEX" />} />
-                <Route path="investments" element={<Placeholder name="Investments" />} />
+                <Route path="properties" element={<Properties />}>
+                  <Route index element={<PropertiesOverview />} />
+                  <Route path="dev" element={<DevDetail />} />
+                  <Route path="tvx" element={<TvxDetail />} />
+                  <Route path="sav" element={<SavDetail />} />
+                  <Route path="com" element={<ComDetail />} />
+                </Route>
+                <Route path="capex" element={<Capex />} />
+                <Route path="investments" element={<Investments />} />
                 <Route path="reporting/*" element={<Placeholder name="Reporting" />} />
                 <Route path="csi" element={<Placeholder name="CSI" />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
