@@ -226,8 +226,8 @@ export default function Accueil() {
         <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#080b18"/>
-              <stop offset="100%" stopColor="#0d1025"/>
+              <stop offset="0%" stopColor="#000000"/>
+              <stop offset="100%" stopColor="#000000"/>
             </linearGradient>
           </defs>
           <rect width="1400" height="900" fill="url(#bgGrad)"/>

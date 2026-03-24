@@ -6,7 +6,7 @@ export default function Csi() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--dark, #080b18)' }}>
+    <div className="min-h-screen" style={{ background: 'var(--dark, #000000)' }}>
       {/* Header */}
       <div
         className="flex items-center gap-3 px-6 py-4"

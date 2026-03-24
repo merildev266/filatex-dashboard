@@ -181,28 +181,20 @@ export default function BottomNav() {
             <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         ) : (
-          /* Ship wheel / helm icon */
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{width:26,height:26}}>
-            {/* Outer ring */}
-            <circle cx="12" cy="12" r="9"/>
-            {/* Inner ring */}
-            <circle cx="12" cy="12" r="4"/>
-            {/* Center dot */}
-            <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>
-            {/* 8 spokes */}
-            <line x1="12" y1="3" x2="12" y2="8"/>
-            <line x1="12" y1="16" x2="12" y2="21"/>
-            <line x1="3" y1="12" x2="8" y2="12"/>
-            <line x1="16" y1="12" x2="21" y2="12"/>
-            <line x1="5.64" y1="5.64" x2="9.17" y2="9.17"/>
-            <line x1="14.83" y1="14.83" x2="18.36" y2="18.36"/>
-            <line x1="5.64" y1="18.36" x2="9.17" y2="14.83"/>
-            <line x1="14.83" y1="9.17" x2="18.36" y2="5.64"/>
-            {/* Handle knobs at spoke ends */}
-            <circle cx="12" cy="2.5" r="1" fill="currentColor" stroke="none"/>
-            <circle cx="12" cy="21.5" r="1" fill="currentColor" stroke="none"/>
-            <circle cx="2.5" cy="12" r="1" fill="currentColor" stroke="none"/>
-            <circle cx="21.5" cy="12" r="1" fill="currentColor" stroke="none"/>
+          /* Ship helm — spokes extend beyond outer ring */
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{width:26,height:26}}>
+            <circle cx="12" cy="12" r="7.5"/>
+            <circle cx="12" cy="12" r="3"/>
+            <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>
+            {/* 8 spokes going through the ring to the edge */}
+            <line x1="12" y1="1" x2="12" y2="9"/>
+            <line x1="12" y1="15" x2="12" y2="23"/>
+            <line x1="1" y1="12" x2="9" y2="12"/>
+            <line x1="15" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="4.22" x2="9.5" y2="9.5"/>
+            <line x1="14.5" y1="14.5" x2="19.78" y2="19.78"/>
+            <line x1="4.22" y1="19.78" x2="9.5" y2="14.5"/>
+            <line x1="14.5" y1="9.5" x2="19.78" y2="4.22"/>
           </svg>
         )}
       </button>

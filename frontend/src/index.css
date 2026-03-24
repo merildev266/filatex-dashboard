@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  --dark: #080b18;
-  --dark2: #0d1025;
+  --dark: #000000;
+  --dark2: #000000;
   --dark3: #1a1d35;
   --border: rgba(58,57,92,0.20);
   --text: #ffffff;

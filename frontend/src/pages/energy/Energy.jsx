@@ -9,7 +9,7 @@ export default function Energy() {
   const { currentFilter, setFilter } = useFilters()
 
   return (
-    <div style={{minHeight:'calc(100dvh - 56px)', background:'#080d18'}}>
+    <div style={{minHeight:'calc(100dvh - 56px)', background:'#000000'}}>
       {/* Sticky bar matching original sd-sticky-bar */}
       <div className="sd-sticky-bar">
         <div className="nav-back">

@@ -246,7 +246,7 @@ function ProjectDetailPanel({ project, onClose }) {
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000,
-      background: 'var(--dark, #080b18)',
+      background: 'var(--dark, #000000)',
       overflowY: 'auto',
       padding: '24px 32px 48px',
     }}>

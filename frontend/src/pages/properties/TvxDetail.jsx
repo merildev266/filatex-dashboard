@@ -187,7 +187,7 @@ export default function TvxDetail() {
           />
           <div style={{
             position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-            background: '#0d1025', border: '1px solid rgba(253,184,35,0.2)',
+            background: '#000000', border: '1px solid rgba(253,184,35,0.2)',
             borderRadius: 16, padding: 24, maxWidth: 500, width: '90%',
             maxHeight: '80vh', overflowY: 'auto', zIndex: 100
           }}>
