@@ -11,11 +11,11 @@ export default function Properties() {
   const handleBack = () => isRoot ? navigate('/') : navigate('/properties')
 
   return (
-    <div style={{ background: '#0a0916', minHeight: '100dvh' }}>
+    <div style={{ background: '#000000', minHeight: '100dvh' }}>
       {/* Sticky header matching original sd-sticky-bar */}
       <div className="sticky top-0 z-50 flex items-center px-4 py-3"
         style={{
-          background: 'rgba(10,9,22,0.95)',
+          background: 'rgba(0,0,0,0.95)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(253,184,35,0.08)',
         }}
