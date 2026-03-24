@@ -11,6 +11,7 @@
 <title>Filatex Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="css/mobile.css"/>
+<link rel="stylesheet" href="css/accueil.css"/>
 </head>
 <body>
 
@@ -22,52 +23,30 @@
     <div class="m-sub">PMO Dashboard</div>
   </div>
 
-  <div class="m-cards">
-
-    <div class="m-card m-card-energy" onclick="goTo('energy')">
-      <div class="m-card-logo">
-        <span style="color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.5px;">filatex</span>
-        <span style="color:#00ab63;font-size:14px;font-weight:700;margin-left:4px;">Energy</span>
-      </div>
-    </div>
-
-    <div class="m-card m-card-invest" onclick="goTo('investments')">
-      <div class="m-card-logo">
-        <span style="color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.5px;">filatex</span>
-        <span style="color:#f37056;font-size:14px;font-weight:700;margin-left:4px;">Investments</span>
-      </div>
-    </div>
-
-    <div class="m-card m-card-props" onclick="goTo('properties')">
-      <div class="m-card-logo">
-        <span style="color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.5px;">filatex</span>
-        <span style="color:#FDB823;font-size:14px;font-weight:700;margin-left:4px;">Properties</span>
-      </div>
-    </div>
-
-    <div class="m-card m-card-capex" onclick="goTo('capex')">
-      <div class="m-card-logo">
-        <span style="color:#fff;font-size:22px;font-weight:400;font-style:italic;font-family:'Larken','Playfair Display',serif;">CAPEX</span>
-      </div>
-    </div>
-
-    <div class="m-card m-card-csi" onclick="goTo('csi')">
-      <div class="m-card-logo">
-        <span style="color:#fff;font-size:22px;font-weight:400;font-style:italic;font-family:'Larken','Playfair Display',serif;">CSI</span>
-      </div>
-    </div>
-
-    <div class="m-card m-card-reporting" onclick="goTo('reporting')">
-      <div class="m-card-logo">
-        <span style="color:#fff;font-size:22px;font-weight:400;font-style:italic;font-family:'Larken','Playfair Display',serif;">Reporting</span>
-      </div>
-    </div>
-
-  </div>
+  <div class="m-cards" id="m-cards-container"></div>
 
   <div class="m-footer">Filatex PMO · 2026</div>
 
 </div>
+
+<script>
+// Copie les cartes depuis index.html via fetch
+fetch('index.html').then(function(r){return r.text();}).then(function(html){
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(html, 'text/html');
+  var cards = doc.querySelectorAll('.cards-row1 .card');
+  var container = document.getElementById('m-cards-container');
+  cards.forEach(function(card){
+    var clone = card.cloneNode(true);
+    // Remplace onclick desktop par mobile
+    clone.removeAttribute('onclick');
+    var pole = clone.id.replace('btn-','');
+    clone.addEventListener('click', function(){ goTo(pole); });
+    clone.classList.add('m-card');
+    container.appendChild(clone);
+  });
+});
+</script>
 
 <!-- ══ BOTTOM NAV ══ -->
 <div id="m-nav">
