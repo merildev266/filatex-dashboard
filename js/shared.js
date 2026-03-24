@@ -1,5 +1,21 @@
 /* === Shared JS === */
 
+// ══ MOBILE REDIRECT — redirige vers mobile.html si écran < 768px ══
+(function(){
+  var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (window.innerWidth <= 768 && 'ontouchstart' in window);
+  var onMobilePage = window.location.pathname.indexOf('mobile.html') !== -1;
+  var onIndexPage = !onMobilePage;
+  if(isMobile && onIndexPage){
+    window.location.replace('mobile.html' + window.location.hash);
+    return;
+  }
+  if(!isMobile && onMobilePage){
+    window.location.replace('index.html');
+    return;
+  }
+})();
+
 // ══ PWA SERVICE WORKER ══
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
