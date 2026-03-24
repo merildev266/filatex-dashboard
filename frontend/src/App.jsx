@@ -7,6 +7,10 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 
 const Accueil = lazy(() => import('./pages/Accueil'))
+const Energy = lazy(() => import('./pages/energy/Energy'))
+const EnergyOverview = lazy(() => import('./pages/energy/EnergyOverview'))
+const HfoDetail = lazy(() => import('./pages/energy/HfoDetail'))
+const EnrDetail = lazy(() => import('./pages/energy/EnrDetail'))
 
 // Loading fallback
 const Loading = () => (
@@ -35,7 +39,11 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                 <Route index element={<Accueil />} />
-                <Route path="energy/*" element={<Placeholder name="Energy" />} />
+                <Route path="energy" element={<Energy />}>
+                  <Route index element={<EnergyOverview />} />
+                  <Route path="hfo" element={<HfoDetail />} />
+                  <Route path="enr" element={<EnrDetail />} />
+                </Route>
                 <Route path="properties/*" element={<Placeholder name="Properties" />} />
                 <Route path="capex" element={<Placeholder name="CAPEX" />} />
                 <Route path="investments" element={<Placeholder name="Investments" />} />
