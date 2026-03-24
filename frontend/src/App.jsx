@@ -26,6 +26,7 @@ const RptHfo = lazy(() => import('./pages/reporting/RptHfo'))
 const RptLfo = lazy(() => import('./pages/reporting/RptLfo'))
 const RptProps = lazy(() => import('./pages/reporting/RptProps'))
 const RptInvest = lazy(() => import('./pages/reporting/RptInvest'))
+const Csi = lazy(() => import('./pages/Csi'))
 
 // Loading fallback
 const Loading = () => (
@@ -76,7 +77,7 @@ function App() {
                   <Route path="properties" element={<RptProps />} />
                   <Route path="investments" element={<RptInvest />} />
                 </Route>
-                <Route path="csi" element={<Placeholder name="CSI" />} />
+                <Route path="csi" element={<Csi />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>

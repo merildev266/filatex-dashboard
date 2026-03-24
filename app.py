@@ -58,6 +58,10 @@ def _find_latest_sheet(wb):
 
 @app.route("/")
 def index():
+    """Serve React build if available, otherwise legacy index.html."""
+    dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+    if os.path.exists(os.path.join(dist_dir, "index.html")):
+        return send_from_directory(dist_dir, "index.html")
     return send_from_directory(".", "index.html")
 
 
@@ -179,6 +183,20 @@ def save_inv_comment():
         return jsonify({"error": "Fichier Excel ouvert dans une autre application. Fermez-le et reessayez."}), 423
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/<path:path>")
+def serve_react(path):
+    """Serve React static assets or fallback to index.html for SPA routing."""
+    dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+    if os.path.exists(os.path.join(dist_dir, path)):
+        return send_from_directory(dist_dir, path)
+    if os.path.exists(os.path.join(dist_dir, "index.html")):
+        return send_from_directory(dist_dir, "index.html")
+    # Fallback to legacy static files
+    if os.path.exists(os.path.join(".", path)):
+        return send_from_directory(".", path)
+    return send_from_directory(dist_dir, "index.html")
 
 
 if __name__ == "__main__":
