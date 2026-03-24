@@ -1,8 +1,10 @@
-var CACHE_NAME = 'filatex-pmo-v1';
+var CACHE_NAME = 'filatex-pmo-v2';
 var ASSETS = [
   './',
   './index.html',
+  './mobile.html',
   './manifest.json',
+  './css/mobile.css',
   './css/shared.css',
   './css/accueil.css',
   './css/energy.css',
