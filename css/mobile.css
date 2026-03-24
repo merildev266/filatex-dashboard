@@ -27,39 +27,19 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'DM S
 .m-sub{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-top:4px;}
 
 /* ══ CARDS LIST ══ */
-.m-cards{display:grid;grid-template-columns:1fr;gap:12px;flex:1;}
+.m-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;flex:1;padding:0 4px;}
 
-.m-card{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;min-height:72px;}
-.m-card:active{transform:scale(0.98);background:rgba(255,255,255,0.06);}
+.m-card{display:flex;align-items:center;justify-content:center;padding:20px 14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;aspect-ratio:1/1;}
+.m-card:active{transform:scale(0.97);background:rgba(255,255,255,0.06);}
 
-.m-card-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex-shrink:0;}
+.m-card-logo{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:2px;}
 
-.m-card-energy .m-card-icon{background:rgba(0,171,99,0.1);}
-.m-card-invest .m-card-icon{background:rgba(243,112,86,0.1);}
-.m-card-props .m-card-icon{background:rgba(253,184,35,0.1);}
-.m-card-capex .m-card-icon{background:rgba(94,76,159,0.1);}
-.m-card-csi .m-card-icon{background:rgba(0,150,199,0.1);}
-.m-card-reporting .m-card-icon{background:rgba(90,175,175,0.1);}
-
-.m-card-energy{border-color:rgba(0,171,99,0.12);}
-.m-card-invest{border-color:rgba(243,112,86,0.12);}
-.m-card-props{border-color:rgba(253,184,35,0.12);}
-.m-card-capex{border-color:rgba(94,76,159,0.12);}
-.m-card-csi{border-color:rgba(0,150,199,0.12);}
-.m-card-reporting{border-color:rgba(90,175,175,0.12);}
-
-.m-card-info{flex:1;min-width:0;}
-.m-card-title{font-size:16px;font-weight:700;color:#fff;}
-.m-card-desc{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;}
-
-.m-card-energy .m-card-title{color:var(--energy);}
-.m-card-invest .m-card-title{color:var(--invest);}
-.m-card-props .m-card-title{color:var(--props);}
-.m-card-capex .m-card-title{color:var(--capex);}
-.m-card-csi .m-card-title{color:var(--csi);}
-.m-card-reporting .m-card-title{color:var(--reporting);}
-
-.m-card-arrow{font-size:24px;color:rgba(255,255,255,0.15);font-weight:300;}
+.m-card-energy{border-color:rgba(0,171,99,0.15);}
+.m-card-invest{border-color:rgba(243,112,86,0.15);}
+.m-card-props{border-color:rgba(253,184,35,0.15);}
+.m-card-capex{border-color:rgba(94,76,159,0.15);}
+.m-card-csi{border-color:rgba(0,150,199,0.15);}
+.m-card-reporting{border-color:rgba(90,175,175,0.15);}
 
 /* ══ FOOTER ══ */
 .m-footer{text-align:center;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.1);padding:20px 0;}
