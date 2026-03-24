@@ -1,9 +1,7 @@
 /* ══ MOBILE OVERRIDES — s'ajoute par-dessus le CSS desktop ══ */
 /* Ce fichier ne fait que surcharger ce qui doit changer sur mobile */
 
-/* Skip login + force bottom nav visible */
-#login-screen{display:none !important;}
-#login-screen:not(.hidden) ~ #bottom-nav{display:flex !important;}
+/* Valeurs toujours visibles */
 .home-values{display:flex !important;}
 
 /* Accueil — grille 2x3 au lieu de 3x2 */
