@@ -4,19 +4,19 @@ import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, HFO_CAT_LABELS, formatDateFR } from '../../utils/projects'
 
 function parseProjects() {
-  const projects = (HFO_PROJECTS || []).map(p => ({ ...p }))
-  const total = projects.length
-  const overhauls = projects.filter(p => (p.categorie || '').toLowerCase() === 'overhaul').length
-  const enCours = projects.filter(p => p.status === 'En cours').length
-  const termine = projects.filter(p => p.status === 'Terminé').length
-  const urgents = projects.filter(p => p.dayToGo != null && p.dayToGo <= 7 && p.status === 'En cours').length
-  const sites = [...new Set(projects.map(p => p.site).filter(Boolean))]
-  const bySite = {}
-  sites.forEach(s => {
-    const sp = projects.filter(p => p.site === s)
-    bySite[s] = { total: sp.length }
-  })
-  return { projects, total, overhauls, enCours, termine, urgents, sites, bySite }
+  // HFO_PROJECTS is an object with .projects array, .total, .overhauls, etc.
+  const data = HFO_PROJECTS || {}
+  const projects = (data.projects || []).map(p => ({ ...p }))
+  return {
+    projects,
+    total: data.total || projects.length,
+    overhauls: data.overhauls || 0,
+    enCours: data.enCours || 0,
+    termine: data.termines || 0,
+    urgents: data.urgents || 0,
+    sites: data.sites || [],
+    bySite: data.bySite || {},
+  }
 }
 
 export default function HfoProjets() {
