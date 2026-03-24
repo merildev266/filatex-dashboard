@@ -47,6 +47,11 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
   const boCount = bs.count || 0
   const boColor = boCount === 0 ? '#00ab63' : boCount <= 10 ? '#f37056' : '#E05C5C'
 
+  // Station Use
+  const su = s.stationUse || {}
+  const stUsePct = su.avgStationUsePct != null ? su.avgStationUsePct : null
+  const stUseColor = stUsePct === null ? 'rgba(255,255,255,0.3)' : stUsePct <= 5 ? '#00ab63' : stUsePct <= 8 ? '#f37056' : '#E05C5C'
+
   // SFOC/SLOC
   const sfocVal = k.sfoc != null && k.sfoc > 0 ? k.sfoc : null
   const sfocColor = sfocVal === null ? 'rgba(255,255,255,0.3)' : sfocVal <= 250 ? '#00ab63' : '#E05C5C'
@@ -63,7 +68,10 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-center gap-2 h-[26px]">
-          <NeonDot status={isRecon ? 'ko' : 'ok'} size={8} />
+          {isRecon
+            ? <NeonDot status="ko" size={8} />
+            : <span className="inline-block rounded-full w-2 h-2" style={{ background: 'rgba(255,255,255,0.15)' }} />
+          }
           <span className="text-xs font-bold tracking-wider uppercase">{s.name}</span>
         </div>
         <div
@@ -77,7 +85,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             {isRecon ? 'Mise en service Avril 2026' : 'Mise en service 2027'}
           </div>
           <div className="text-[11px] text-[var(--text-muted)] font-semibold">
-            {parseFloat(s.contrat || s.mw || 0).toFixed(1)} MW
+            {parseFloat(s.mw || 0).toFixed(1)} MW
           </div>
         </div>
       </div>
@@ -175,6 +183,9 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
               {hfoAuto !== null ? hfoAuto.toFixed(1) : '—'}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">jours autonomie</div>
+            {fs.latestHfoStock != null && (
+              <div className="text-[7px] text-white/20 mt-0.5">{Math.round(fs.latestHfoStock).toLocaleString()} L</div>
+            )}
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
             <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>BLACKOUTS</div>
@@ -184,9 +195,9 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">coupures</div>
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>CONSO STA.</div>
-            <div className="text-[13px] font-extrabold leading-none" style={{ color: 'rgba(255,255,255,0.7)' }}>
-              {s.stationUse?.avgStationUsePct != null ? s.stationUse.avgStationUsePct.toFixed(1) : '—'}
+            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>CONSO STATION</div>
+            <div className="text-[13px] font-extrabold leading-none" style={{ color: stUseColor }}>
+              {stUsePct !== null ? stUsePct.toFixed(1) : '—'}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">% auxiliaires</div>
           </div>

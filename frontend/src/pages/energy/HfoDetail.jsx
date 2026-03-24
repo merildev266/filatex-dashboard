@@ -89,36 +89,16 @@ export default function HfoDetail() {
     return { totalProdAll: total, activeSites: active }
   }, [siteData, currentFilter])
 
-  // Consolidated KPIs
+  // Consolidated KPIs — matches original renderConsolidated()
   const consolidated = useMemo(() => {
-    let totalMW = 0, totalContrat = 0, totalProd = 0, totalProdObj = 0
-    let totalArret = 0, totalMoteurs = 0
-    let sfocWeighted = 0, slocWeighted = 0
+    const kpis = activeSites.map(a => a.kpi)
+    const tProd = kpis.reduce((s, k) => s + (k.prod || 0), 0)
+    const tMw = parseFloat(activeSites.reduce((s, a) => s + (a.site.mw || 0), 0).toFixed(1))
+    // Weighted average SFOC/SLOC by production
+    const aSfoc = tProd > 0 ? kpis.reduce((s, k) => s + (k.sfoc || 0) * (k.prod || 0), 0) / tProd : 0
+    const aSloc = tProd > 0 ? kpis.reduce((s, k) => s + (k.sloc || 0) * (k.prod || 0), 0) / tProd : 0
 
-    activeSites.forEach(({ site, kpi }) => {
-      totalMW += site.mw || 0
-      totalContrat += site.contrat || 0
-      totalMoteurs += site.groupes ? site.groupes.length : 0
-      if (site.groupes) {
-        site.groupes.forEach(g => {
-          if (g.statut !== 'ok') totalArret++
-        })
-      }
-      totalProd += kpi.prod || 0
-      totalProdObj += kpi.prodObj || 0
-      if (kpi.sfoc && kpi.prod) sfocWeighted += kpi.sfoc * kpi.prod
-      if (kpi.sloc && kpi.prod) slocWeighted += kpi.sloc * kpi.prod
-    })
-
-    const pct = totalContrat > 0 ? ((totalMW / totalContrat) * 100) : 0
-    const prodDelta = totalProdObj > 0 ? (((totalProd / totalProdObj) - 1) * 100) : null
-    const avgSfoc = totalProd > 0 ? sfocWeighted / totalProd : 0
-    const avgSloc = totalProd > 0 ? slocWeighted / totalProd : 0
-
-    return {
-      totalMW, totalContrat, pct, totalProd, totalProdObj, prodDelta,
-      totalArret, totalMoteurs, avgSfoc, avgSloc,
-    }
+    return { tProd, tMw, aSfoc, aSloc }
   }, [activeSites])
 
   // HFO Projects panel
@@ -128,7 +108,7 @@ export default function HfoDetail() {
   const filteredProjects = useMemo(() => {
     if (!projectFilter) return []
     if (projectFilter.type === 'cat') {
-      return hfp.projects.filter(p => p.categorie === 'overhaul')
+      return hfp.projects.filter(p => p.categorie === projectFilter.key.toLowerCase())
     }
     return hfp.projects.filter(p => p.site === projectFilter.key)
   }, [projectFilter, hfp])
@@ -138,73 +118,35 @@ export default function HfoDetail() {
 
   return (
     <div>
-      {/* Filter bar */}
+      {/* Title + Filter bar */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-base font-bold">HFO — Centrales Thermiques</h2>
+        <h2 className="text-base font-bold tracking-wide uppercase" style={{ letterSpacing: '0.12em' }}>
+          Consolide HFO
+        </h2>
         <FilterBar current={currentFilter} onChange={setFilter} />
       </div>
 
-      {/* Consolidated KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <div className="glass-card p-4 text-center">
-          <div className="text-[8px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
-            Puissance / Contrat
-          </div>
-          <div className="text-2xl font-extrabold" style={{ color: consolidated.pct >= 100 ? '#00ab63' : '#E05C5C' }}>
-            {consolidated.totalMW.toFixed(1)}
-            <span className="text-xs font-normal text-[var(--text-muted)] ml-1">/ {consolidated.totalContrat.toFixed(0)} MW</span>
-          </div>
-          <div className="text-[10px] font-bold mt-1" style={{ color: consolidated.pct >= 100 ? '#00ab63' : '#E05C5C' }}>
-            {consolidated.pct.toFixed(1)}%
-          </div>
+      {/* Consolidated KPIs — 4 s1-card style boxes matching original renderConsolidated */}
+      <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
+        <div className="s1-card">
+          <div className="s1-card-label">Production totale</div>
+          <div className="s1-card-value">{consolidated.tProd.toFixed(1)}</div>
+          <div className="s1-card-unit-line">MWh</div>
         </div>
-
-        <div className="glass-card p-4 text-center">
-          <div className="text-[8px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
-            Moteurs a l'arret
-          </div>
-          <div className="text-2xl font-extrabold" style={{ color: consolidated.totalArret === 0 ? '#00ab63' : '#E05C5C' }}>
-            {consolidated.totalArret}
-            <span className="text-xs font-normal text-[var(--text-muted)] ml-1">/ {consolidated.totalMoteurs}</span>
-          </div>
+        <div className="s1-card">
+          <div className="s1-card-label">Puissance installee</div>
+          <div className="s1-card-value">{consolidated.tMw.toFixed(1)}</div>
+          <div className="s1-card-unit-line">MW</div>
         </div>
-
-        <div className="glass-card p-4 text-center">
-          <div className="text-[8px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
-            Production
-          </div>
-          <div className="text-xl font-extrabold text-white/90">
-            {Math.round(consolidated.totalProd).toLocaleString()}
-            <span className="text-[10px] font-normal text-[var(--text-muted)] ml-1">MWh</span>
-          </div>
-          <div className="text-[10px] font-bold mt-1" style={{
-            color: consolidated.prodDelta === null ? 'rgba(255,255,255,0.3)'
-              : consolidated.prodDelta >= 0 ? '#00ab63' : '#E05C5C'
-          }}>
-            {consolidated.prodDelta !== null
-              ? `${consolidated.prodDelta > 0 ? '+' : ''}${consolidated.prodDelta.toFixed(1)}% vs prevu`
-              : '—'}
-          </div>
+        <div className="s1-card">
+          <div className="s1-card-label">SFOC moyen</div>
+          <div className="s1-card-value">{consolidated.aSfoc.toFixed(1)}</div>
+          <div className="s1-card-unit-line">g/kWh</div>
         </div>
-
-        <div className="glass-card p-4 text-center">
-          <div className="text-[8px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
-            SFOC / SLOC
-          </div>
-          <div className="flex justify-center gap-4">
-            <div>
-              <div className="text-lg font-extrabold" style={{ color: consolidated.avgSfoc > 0 && consolidated.avgSfoc <= 250 ? '#00ab63' : consolidated.avgSfoc > 250 ? '#E05C5C' : 'rgba(255,255,255,0.3)' }}>
-                {consolidated.avgSfoc > 0 ? consolidated.avgSfoc.toFixed(1) : '—'}
-              </div>
-              <div className="text-[8px] text-[var(--text-dim)]">g/kWh</div>
-            </div>
-            <div>
-              <div className="text-lg font-extrabold" style={{ color: consolidated.avgSloc > 0 && consolidated.avgSloc <= 1.0 ? '#00ab63' : consolidated.avgSloc > 1.0 ? '#E05C5C' : 'rgba(255,255,255,0.3)' }}>
-                {consolidated.avgSloc > 0 ? consolidated.avgSloc.toFixed(2) : '—'}
-              </div>
-              <div className="text-[8px] text-[var(--text-dim)]">g/kWh</div>
-            </div>
-          </div>
+        <div className="s1-card">
+          <div className="s1-card-label">SLOC moyen</div>
+          <div className="s1-card-value">{consolidated.aSloc.toFixed(1)}</div>
+          <div className="s1-card-unit-line">g/kWh</div>
         </div>
       </div>
 
@@ -246,7 +188,7 @@ export default function HfoDetail() {
           </div>
         </div>
 
-        {/* Filter cards */}
+        {/* Filter cards by site */}
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-2 mb-4">
           {[
             { key: 'OVERHAUL', label: 'Overhauls', type: 'cat', total: hfp.overhauls },

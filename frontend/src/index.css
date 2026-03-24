@@ -342,6 +342,14 @@ body::-webkit-scrollbar { display: none; }
   .e-wrap{flex-direction:column;}
 }
 
+/* == S1 CONSOLIDATED KPI CARDS (from original shared.css) == */
+.detail-s1-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(120px,100%),1fr));gap:clamp(6px,1vw,10px);margin-bottom:clamp(6px,1vw,10px);}
+.s1-card{background:var(--dark2);border:1px solid var(--border);border-radius:clamp(10px,1.3vw,16px);padding:clamp(12px,1.8vw,20px) clamp(10px,1.6vw,22px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.s1-card-label{font-size:clamp(7px,0.8vw,9px);text-transform:uppercase;letter-spacing:0.25em;color:var(--text-dim);margin-bottom:clamp(6px,0.9vw,10px);}
+.s1-card-value{font-size:clamp(22px,3.2vw,38px);font-weight:700;color:var(--text);line-height:1;letter-spacing:-1px;}
+.s1-card-unit{font-size:clamp(10px,1.2vw,15px);font-weight:400;color:var(--text-muted);margin-left:4px;}
+.s1-card-unit-line{font-size:clamp(10px,1.1vw,14px);font-weight:500;color:var(--text-muted);margin-top:clamp(3px,0.5vw,6px);letter-spacing:0.05em;}
+
 @layer components {
   .glass-card {
     @apply rounded-[20px] border border-[rgba(58,57,92,0.35)] backdrop-blur-[16px];
