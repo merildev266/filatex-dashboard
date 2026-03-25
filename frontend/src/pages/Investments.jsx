@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { invProjects } from '../data/investments_data'
+import SectionHeader from '../components/SectionHeader'
 
 const ACCENT = '#f37056'
 const ACCENT_RGB = '243,112,86'
@@ -348,13 +349,16 @@ export default function Investments() {
   if (selectedProject) {
     const allOfType = selectedProject.type === 'externe' ? extProjects : intProjects
     return (
-      <div className="inv-page-inner">
-        <InvDetail
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-          allOfType={allOfType}
-          onSelect={(p) => setSelectedProject(p)}
-        />
+      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+        <SectionHeader name="Investments" color={ACCENT} onBack={() => setSelectedProject(null)} />
+        <div className="inv-page-inner">
+          <InvDetail
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+            allOfType={allOfType}
+            onSelect={(p) => setSelectedProject(p)}
+          />
+        </div>
       </div>
     )
   }
@@ -362,23 +366,29 @@ export default function Investments() {
   // Grid view (level 2)
   if (activeType) {
     return (
-      <div className="inv-page-inner">
-        <GridView
-          type={activeType}
-          onBack={() => setActiveType(null)}
-          onSelectProject={(p) => setSelectedProject(p)}
-          onSwitchType={(t) => setActiveType(t)}
-        />
+      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+        <SectionHeader name="Investments" color={ACCENT} onBack={() => setActiveType(null)} />
+        <div className="inv-page-inner">
+          <GridView
+            type={activeType}
+            onBack={() => setActiveType(null)}
+            onSelectProject={(p) => setSelectedProject(p)}
+            onSwitchType={(t) => setActiveType(t)}
+          />
+        </div>
       </div>
     )
   }
 
   // Landing: two columns Externe / Interne
   return (
-    <div className="inv-page-inner">
-      <div className="e-wrap inv-wrap">
-        <SummaryColumn title="Externe" kpis={extKpis} onClick={() => setActiveType('externe')} />
-        <SummaryColumn title="Interne" kpis={intKpis} onClick={() => setActiveType('interne')} />
+    <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <SectionHeader name="Investments" color={ACCENT} />
+      <div className="inv-page-inner">
+        <div className="e-wrap inv-wrap">
+          <SummaryColumn title="Externe" kpis={extKpis} onClick={() => setActiveType('externe')} />
+          <SummaryColumn title="Interne" kpis={intKpis} onClick={() => setActiveType('interne')} />
+        </div>
       </div>
     </div>
   )

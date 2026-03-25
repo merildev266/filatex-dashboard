@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { capexData } from '../data/capex_data'
+import SectionHeader from '../components/SectionHeader'
 
 const ACCENT = '#5e4c9f'
 const ACCENT_RGB = '94,76,159'
@@ -261,28 +262,36 @@ export default function Capex() {
   if (selectedProject && activeCategory) {
     const catData = capexData[activeCategory]
     return (
-      <ProjectDetail
-        project={selectedProject}
-        color={catData.color}
-        colorRgb={catData.colorRgb}
-        onClose={() => setSelectedProject(null)}
-      />
+      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+        <SectionHeader name="CAPEX" color={ACCENT} onBack={() => setSelectedProject(null)} />
+        <ProjectDetail
+          project={selectedProject}
+          color={catData.color}
+          colorRgb={catData.colorRgb}
+          onClose={() => setSelectedProject(null)}
+        />
+      </div>
     )
   }
 
   // Category drill-down view
   if (activeCategory) {
     return (
-      <CategoryView
-        poleKey={activeCategory}
-        onBack={() => setActiveCategory(null)}
-        onSelectProject={(p) => setSelectedProject(p)}
-      />
+      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+        <SectionHeader name="CAPEX" color={ACCENT} onBack={() => setActiveCategory(null)} />
+        <CategoryView
+          poleKey={activeCategory}
+          onBack={() => setActiveCategory(null)}
+          onSelectProject={(p) => setSelectedProject(p)}
+        />
+      </div>
     )
   }
 
   // Landing page
   return (
+    <div style={{ background: '#000000', minHeight: '100dvh' }}>
+    <SectionHeader name="CAPEX" color={ACCENT} />
     <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
 
       {/* ══ GLOBAL SUMMARY ══ */}
@@ -390,6 +399,7 @@ export default function Capex() {
         ))}
 
       </div>
+    </div>
     </div>
   )
 }
