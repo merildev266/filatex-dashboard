@@ -21,7 +21,7 @@ const POLE_COLORS = {
   reporting: '#5aafaf',
 }
 
-/* ── SVG icons matching original HTML exactly ── */
+/* ── SVG icons ── */
 const NAV_ICONS = {
   home: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:20,height:20}}>
@@ -87,6 +87,26 @@ const NAV_ICONS = {
   ),
 }
 
+/* ── Radial positions: arc from bottom-right corner going counter-clockwise ── */
+/* 7 items spread from ~15° to ~165° (measured from the right axis, going up-left) */
+const RADIAL_POSITIONS = [
+  { angle: 165, radius: 140 }, // Accueil (top-left of arc)
+  { angle: 140, radius: 140 }, // Energy
+  { angle: 115, radius: 140 }, // Invest.
+  { angle: 90,  radius: 140 }, // Properties (straight up)
+  { angle: 65,  radius: 140 }, // CAPEX
+  { angle: 40,  radius: 140 }, // CSI
+  { angle: 15,  radius: 140 }, // Reporting (right of arc)
+]
+
+function getRadialXY(angle, radius) {
+  const rad = (angle * Math.PI) / 180
+  return {
+    x: -Math.cos(rad) * radius,
+    y: -Math.sin(rad) * radius,
+  }
+}
+
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -100,7 +120,7 @@ export default function BottomNav() {
 
   const activeColor = POLE_COLORS[activePole] || 'rgba(255,255,255,0.7)'
 
-  // Close menu on scroll
+  // Close menu on scroll or route change
   useEffect(() => {
     if (!isOpen) return
     const close = () => setIsOpen(false)
@@ -108,10 +128,8 @@ export default function BottomNav() {
     return () => window.removeEventListener('scroll', close)
   }, [isOpen])
 
-  // Close menu on route change
   useEffect(() => { setIsOpen(false) }, [location.pathname])
 
-  // Hide entire nav on Accueil — cards serve as navigation
   if (isHome) return null
 
   const handleNav = (path) => {
@@ -143,65 +161,65 @@ export default function BottomNav() {
         })}
       </nav>
 
-      {/* ── Mobile: floating menu button + expandable nav ── */}
-      {/* Expanded nav panel */}
-      <div className={`bnav-mobile-panel ${isOpen ? 'open' : ''}`}>
-        <div className="bnav-mobile-grid">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activePole === item.pole
-            const color = isActive ? POLE_COLORS[item.pole] : 'rgba(255,255,255,0.4)'
-            return (
-              <button
-                key={item.pole}
-                onClick={() => handleNav(item.path)}
-                className={`bnav-mobile-item ${isActive ? 'active' : ''}`}
-                style={{ '--item-color': color }}
-              >
-                <div className="bnav-mobile-icon" style={{ color }}>
-                  {NAV_ICONS[item.pole]}
-                </div>
-                <span className="bnav-mobile-label" style={{ color }}>
-                  {item.label}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      {/* ── Mobile: radial wheel menu ── */}
       {/* Backdrop */}
       <div
-        className={`bnav-mobile-backdrop ${isOpen ? 'open' : ''}`}
+        className={`radial-backdrop ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Floating menu button */}
+      {/* Radial items */}
+      <div className="radial-container" style={{ pointerEvents: isOpen ? 'auto' : 'none' }}>
+        {NAV_ITEMS.map((item, i) => {
+          const isActive = activePole === item.pole
+          const color = isActive ? POLE_COLORS[item.pole] : 'rgba(255,255,255,0.5)'
+          const pos = RADIAL_POSITIONS[i]
+          const { x, y } = getRadialXY(pos.angle, pos.radius)
+
+          return (
+            <button
+              key={item.pole}
+              onClick={() => handleNav(item.path)}
+              className={`radial-item ${isOpen ? 'open' : ''}`}
+              style={{
+                '--rx': `${x}px`,
+                '--ry': `${y}px`,
+                '--delay': `${i * 40}ms`,
+                '--item-color': color,
+              }}
+            >
+              <div className="radial-icon" style={{
+                color,
+                borderColor: isActive ? color : 'rgba(255,255,255,0.08)',
+                background: isActive ? `rgba(${color === '#00ab63' ? '0,171,99' : color === '#f37056' ? '243,112,86' : color === '#FDB823' ? '253,184,35' : color === '#5e4c9f' ? '94,76,159' : color === '#0096c7' ? '0,150,199' : color === '#5aafaf' ? '90,175,175' : '255,255,255'},0.12)` : 'rgba(255,255,255,0.03)',
+              }}>
+                {NAV_ICONS[item.pole]}
+              </div>
+              <span className="radial-label" style={{ color }}>{item.label}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Helm FAB button */}
       <button
-        className="bnav-mobile-fab"
+        className={`radial-fab ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         style={{ '--fab-color': activeColor }}
       >
-        {isOpen ? (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{width:24,height:24}}>
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        ) : (
-          /* Ship helm — spokes extend beyond outer ring */
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{width:26,height:26}}>
-            <circle cx="12" cy="12" r="7.5"/>
-            <circle cx="12" cy="12" r="3"/>
-            <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>
-            {/* 8 spokes going through the ring to the edge */}
-            <line x1="12" y1="1" x2="12" y2="9"/>
-            <line x1="12" y1="15" x2="12" y2="23"/>
-            <line x1="1" y1="12" x2="9" y2="12"/>
-            <line x1="15" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="4.22" x2="9.5" y2="9.5"/>
-            <line x1="14.5" y1="14.5" x2="19.78" y2="19.78"/>
-            <line x1="4.22" y1="19.78" x2="9.5" y2="14.5"/>
-            <line x1="14.5" y1="9.5" x2="19.78" y2="4.22"/>
-          </svg>
-        )}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{width:26,height:26}}>
+          <circle cx="12" cy="12" r="7.5"/>
+          <circle cx="12" cy="12" r="3"/>
+          <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <line x1="12" y1="1" x2="12" y2="9"/>
+          <line x1="12" y1="15" x2="12" y2="23"/>
+          <line x1="1" y1="12" x2="9" y2="12"/>
+          <line x1="15" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="4.22" x2="9.5" y2="9.5"/>
+          <line x1="14.5" y1="14.5" x2="19.78" y2="19.78"/>
+          <line x1="4.22" y1="19.78" x2="9.5" y2="14.5"/>
+          <line x1="14.5" y1="9.5" x2="19.78" y2="4.22"/>
+        </svg>
       </button>
     </>
   )
