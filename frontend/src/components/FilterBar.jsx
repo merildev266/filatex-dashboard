@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 const FILTER_OPTIONS = [
   { key: 'J-1', label: 'J-1', full: 'Jour', icon: (
@@ -25,14 +26,6 @@ const FILTER_OPTIONS = [
 
 export default function FilterBar({ current, onChange }) {
   const [isOpen, setIsOpen] = useState(false)
-  const ref = useRef(null)
-
-  useEffect(() => {
-    if (!isOpen) return
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setIsOpen(false) }
-    document.addEventListener('pointerdown', close)
-    return () => document.removeEventListener('pointerdown', close)
-  }, [isOpen])
 
   useEffect(() => {
     if (!isOpen) return
@@ -46,8 +39,41 @@ export default function FilterBar({ current, onChange }) {
     setIsOpen(false)
   }
 
+  /* Sidebar rendered via portal to body — escapes any stacking context */
+  const sidebar = isOpen ? createPortal(
+    <>
+      <div
+        className={`mob-nav-backdrop ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(false)}
+      />
+      <div className={`mob-nav-sidebar ${isOpen ? 'open' : ''}`}>
+        {FILTER_OPTIONS.map((opt, i) => {
+          const active = current === opt.key
+          return (
+            <button
+              key={opt.key}
+              onClick={() => handleSelect(opt.key)}
+              className={`mob-nav-item ${isOpen ? 'visible' : ''} ${active ? 'active' : ''}`}
+              style={{
+                '--delay': `${i * 35}ms`,
+                '--item-color': active ? '#00ab63' : 'rgba(255,255,255,0.4)',
+                '--item-rgb': '0,171,99',
+              }}
+            >
+              <div className="mob-nav-icon">
+                {opt.icon}
+              </div>
+              <span className="mob-nav-label">{opt.full}</span>
+            </button>
+          )
+        })}
+      </div>
+    </>,
+    document.body
+  ) : null
+
   return (
-    <div ref={ref} className="filter-bar-wrap">
+    <>
       {/* ── Desktop: icon circles + labels ── */}
       <div className="filter-bar-desktop">
         {FILTER_OPTIONS.map((opt) => {
@@ -83,33 +109,8 @@ export default function FilterBar({ current, onChange }) {
         </div>
       </button>
 
-      {/* ── Mobile sidebar: EXACT same as nav (mob-nav-*) ── */}
-      <div
-        className={`mob-nav-backdrop ${isOpen ? 'open' : ''}`}
-        onClick={() => setIsOpen(false)}
-      />
-      <div className={`mob-nav-sidebar ${isOpen ? 'open' : ''}`}>
-        {FILTER_OPTIONS.map((opt, i) => {
-          const active = current === opt.key
-          return (
-            <button
-              key={opt.key}
-              onClick={() => handleSelect(opt.key)}
-              className={`mob-nav-item ${isOpen ? 'visible' : ''} ${active ? 'active' : ''}`}
-              style={{
-                '--delay': `${i * 35}ms`,
-                '--item-color': active ? '#00ab63' : 'rgba(255,255,255,0.4)',
-                '--item-rgb': '0,171,99',
-              }}
-            >
-              <div className="mob-nav-icon">
-                {opt.icon}
-              </div>
-              <span className="mob-nav-label">{opt.full}</span>
-            </button>
-          )
-        })}
-      </div>
-    </div>
+      {/* Portal: sidebar + backdrop rendered at body level */}
+      {sidebar}
+    </>
   )
 }
