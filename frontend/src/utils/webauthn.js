@@ -3,7 +3,15 @@
 
 const CRED_KEY = 'filatex_webauthn_cred'
 const RP = { name: 'Filatex Dashboard', id: location.hostname }
-const USER = { id: new Uint8Array(16), name: 'dg', displayName: 'Directeur General' }
+
+function getUserId() {
+  let uid = localStorage.getItem('filatex_webauthn_uid')
+  if (!uid) {
+    uid = bufToB64(crypto.getRandomValues(new Uint8Array(16)))
+    localStorage.setItem('filatex_webauthn_uid', uid)
+  }
+  return b64ToBuf(uid)
+}
 
 function bufToB64(buf) {
   return btoa(String.fromCharCode(...new Uint8Array(buf)))
@@ -37,20 +45,21 @@ export async function registerBiometric() {
     publicKey: {
       challenge,
       rp: RP,
-      user: USER,
+      user: { id: getUserId(), name: 'filatex-dg', displayName: 'Directeur General' },
       pubKeyCredParams: [
         { alg: -7, type: 'public-key' },   // ES256
         { alg: -257, type: 'public-key' }, // RS256
       ],
       authenticatorSelection: {
         authenticatorAttachment: 'platform',
-        userVerification: 'required',
-        residentKey: 'preferred',
+        userVerification: 'preferred',
+        residentKey: 'discouraged',
+        requireResidentKey: false,
       },
-      timeout: 60000,
+      attestation: 'none',
+      timeout: 120000,
     }
   })
-  // Store credential ID for future authentication
   localStorage.setItem(CRED_KEY, bufToB64(credential.rawId))
   return true
 }
@@ -69,14 +78,14 @@ export async function authenticateBiometric() {
         type: 'public-key',
         transports: ['internal'],
       }],
-      userVerification: 'required',
-      timeout: 60000,
+      userVerification: 'preferred',
+      timeout: 120000,
     }
   })
-  // If we get here, biometric was verified by the device
   return !!assertion
 }
 
 export function removeBiometricCredential() {
   localStorage.removeItem(CRED_KEY)
+  localStorage.removeItem('filatex_webauthn_uid')
 }

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import GroupeFilatexLogo from './GroupeFilatexLogo'
 import {
   isBiometricSupported, hasBiometricCredential,
-  registerBiometric, authenticateBiometric
+  registerBiometric, authenticateBiometric, removeBiometricCredential
 } from '../utils/webauthn'
 
 export default function Login() {
@@ -161,6 +161,15 @@ export default function Login() {
         </button>
         {error && (
           <div className="mt-4 text-[#ff5a5a] text-sm">{error}</div>
+        )}
+        {bioRegistered && (
+          <button
+            type="button"
+            onClick={() => { removeBiometricCredential(); setBioRegistered(false); setError('') }}
+            className="mt-6 text-[rgba(255,255,255,0.25)] text-xs hover:text-[rgba(255,255,255,0.5)] transition-colors cursor-pointer"
+          >
+            Réinitialiser la biométrie
+          </button>
         )}
       </form>
     </div>
