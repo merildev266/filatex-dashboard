@@ -474,86 +474,45 @@ body::-webkit-scrollbar { display: none; }
 .filter-item.active .filter-item-label { color: #00ab63; }
 
 /* Mobile elements hidden on desktop */
-.filter-cal-btn { display: none; }
+.filter-fab-btn { display: none; }
 
 @media (max-width: 640px) {
   .filter-bar-desktop { display: none !important; }
 
-  /* ── Calendar button with page-flip effect ── */
-  .filter-cal-btn {
+  /* ── Hourglass FAB — rotates 180° when open (like helm) ── */
+  .filter-fab-btn {
     display: flex;
     align-items: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    position: relative;
-  }
-  .filter-cal-btn:active { transform: scale(0.92); }
-
-  .filter-cal-body {
-    width: 28px;
-    height: 28px;
+    justify-content: center;
+    gap: 4px;
+    width: 42px;
+    height: 30px;
     background: rgba(0,0,0,0.6);
     border: 1.5px solid rgba(0,171,99,0.3);
-    border-radius: 6px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .filter-cal-btn.open .filter-cal-body {
-    border-color: #00ab63;
-  }
-
-  /* Green header strip */
-  .filter-cal-header {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 8px;
-    background: #00ab63;
-    border-radius: 4px 4px 0 0;
-  }
-
-  /* Two small rings */
-  .filter-cal-rings {
-    position: absolute;
-    top: 2px;
-    left: 0; right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    z-index: 2;
-  }
-  .filter-cal-ring {
-    width: 3px; height: 8px;
-    background: rgba(255,255,255,0.7);
-    border-radius: 1.5px;
-  }
-
-  /* Page that flips backward when open */
-  .filter-cal-page {
-    position: absolute;
-    top: 8px; left: 1px; right: 1px; bottom: 1px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 0 0 4px 4px;
-    transform-origin: top center;
-    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    z-index: 1;
-  }
-  .filter-cal-page.flipped {
-    transform: rotateX(-140deg);
-  }
-
-  /* Current filter label inside calendar */
-  .filter-cal-label {
-    position: absolute;
-    bottom: 2px; left: 0; right: 0;
-    text-align: center;
-    font-size: 10px;
-    font-weight: 800;
+    border-radius: 10px;
+    cursor: pointer;
     color: #00ab63;
-    z-index: 3;
-    line-height: 1;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1),
+                border-color 0.3s,
+                background 0.3s;
+  }
+  .filter-fab-btn:active { transform: scale(0.9); }
+  .filter-fab-btn.open {
+    border-color: #00ab63;
+    background: rgba(0,171,99,0.1);
+  }
+  .filter-fab-icon {
+    width: 16px; height: 16px;
+    transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .filter-fab-btn.open .filter-fab-icon {
+    transform: rotate(180deg);
+  }
+  .filter-fab-label {
+    font-size: 9px; font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #00ab63;
   }
 
   /* Filter reuses mob-nav-* classes directly — no duplicate CSS */

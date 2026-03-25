@@ -117,20 +117,25 @@ export default function FilterBar({ current, onChange }) {
         })}
       </div>
 
-      {/* ── Mobile: calendar button in banner ── */}
+      {/* ── Mobile: hourglass FAB in banner ── */}
       <button
-        className={`filter-cal-btn ${isOpen ? 'open' : ''}`}
+        className={`filter-fab-btn ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="filter-cal-body">
-          <div className="filter-cal-header" />
-          <div className="filter-cal-rings">
-            <div className="filter-cal-ring" />
-            <div className="filter-cal-ring" />
-          </div>
-          <div className={`filter-cal-page ${isOpen ? 'flipped' : ''}`} />
-          <div className="filter-cal-label">{current}</div>
-        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="filter-fab-icon">
+          {/* Hourglass frame */}
+          <path d="M5 3h14"/>
+          <path d="M5 21h14"/>
+          {/* Glass body */}
+          <path d="M7 3v4.5a1 1 0 0 0 .4.8L12 12l-4.6 3.7a1 1 0 0 0-.4.8V21"/>
+          <path d="M17 3v4.5a1 1 0 0 1-.4.8L12 12l4.6 3.7a1 1 0 0 1 .4.8V21"/>
+          {/* Sand particles */}
+          <circle cx="12" cy="12" r="0.5" fill="currentColor" stroke="none"/>
+          <circle cx="11" cy="17.5" r="0.4" fill="currentColor" stroke="none" opacity="0.6"/>
+          <circle cx="13" cy="18" r="0.4" fill="currentColor" stroke="none" opacity="0.6"/>
+          <circle cx="12" cy="18.5" r="0.4" fill="currentColor" stroke="none" opacity="0.4"/>
+        </svg>
+        <span className="filter-fab-label">{current}</span>
       </button>
 
       {/* Portal: sidebar + backdrop at body level */}
