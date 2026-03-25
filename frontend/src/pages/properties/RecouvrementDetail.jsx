@@ -22,11 +22,11 @@ export default function RecouvrementDetail() {
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
-        <KpiCard label="Encours total" value={'\u2014 M$'} sub="Cr\u00E9ances clients" color={CLR} />
-        <KpiCard label="Taux recouvrement" value={'\u2014 %'} sub="Encaissements / CA" />
-        <KpiCard label="Impay\u00E9s" value={'\u2014 M$'} sub="En souffrance" color="#e05c5c" />
-        <KpiCard label="D\u00E9lai moyen" value={'\u2014 j'} sub="DSO (Days Sales Out.)" color={CLR} />
-        <KpiCard label="Recouvrement mois" value={'\u2014 M$'} sub="Encaiss\u00E9 ce mois" color="#00ab63" />
+        <KpiCard label="Encours total" value={'— M$'} sub="Créances clients" color={CLR} />
+        <KpiCard label="Taux recouvrement" value={'— %'} sub="Encaissements / CA" />
+        <KpiCard label="Impayés" value={'— M$'} sub="En souffrance" color="#e05c5c" />
+        <KpiCard label="Délai moyen" value={'— j'} sub="DSO (Days Sales Out.)" color={CLR} />
+        <KpiCard label="Recouvrement mois" value={'— M$'} sub="Encaissé ce mois" color="#00ab63" />
       </div>
 
       {/* Placeholders */}

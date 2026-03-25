@@ -22,10 +22,10 @@ export default function FoncierDetail() {
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        <KpiCard label="Terrains acquis" value={'\u2014'} sub="Total portefeuille" color={CLR} />
-        <KpiCard label="Surface totale" value={'\u2014 m\u00B2'} sub="Cumul acquisitions" />
-        <KpiCard label="Budget foncier" value={'\u2014 M$'} sub="Engag\u00E9 / planifi\u00E9" color={CLR} />
-        <KpiCard label="En cours d'acquisition" value={'\u2014'} sub="N\u00E9gociation / signature" color={CLR} />
+        <KpiCard label="Terrains acquis" value={'—'} sub="Total portefeuille" color={CLR} />
+        <KpiCard label="Surface totale" value={'— m²'} sub="Cumul acquisitions" />
+        <KpiCard label="Budget foncier" value={'— M$'} sub="Engagé / planifié" color={CLR} />
+        <KpiCard label="En cours d'acquisition" value={'—'} sub="Négociation / signature" color={CLR} />
       </div>
 
       {/* Placeholders */}

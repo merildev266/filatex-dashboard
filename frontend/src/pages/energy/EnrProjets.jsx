@@ -169,7 +169,7 @@ function EnrProjectCard({ project, onClick }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="enrp-card-title">{p.name}</div>
           <div className="enrp-card-sub">
-            {p.loc || ''}{p.lead ? ' \u00B7 ' + p.lead : ''}{p.epciste && p.epciste !== 'TBC' ? ' \u00B7 ' + p.epciste : ''}
+            {p.loc || ''}{p.lead ? ' · ' + p.lead : ''}{p.epciste && p.epciste !== 'TBC' ? ' · ' + p.epciste : ''}
           </div>
         </div>
         <span className="enrp-card-badge" style={{ color, background: `rgba(${rgb},0.12)` }}>{PHASE_LABELS[phase]}</span>
@@ -299,7 +299,7 @@ function ProjectDetailPanel({ project, onClose }) {
             {p.tri != null ? p.tri + '%' : '\u2014'}
           </div>
           <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
-            {p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : '\u00C0 d\u00e9terminer'}
+            {p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : 'À déterminer'}
           </div>
         </div>
         {/* Engineering */}
@@ -402,14 +402,14 @@ function ProjectDetailPanel({ project, onClose }) {
               </div>
               {/* Ecart Cout */}
               <div style={cardStyle}>
-                <div style={labelStyle}>\u00C9cart Co\u00fbt (CV)</div>
+                <div style={labelStyle}>Écart Coût (CV)</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: cv != null && cv >= 0 ? '#00ab63' : '#ff5050' }}>
-                  {cv != null ? fmtK(cv) : '\u2014'}
+                  {cv != null ? fmtK(cv) : '—'}
                 </div>
               </div>
               {/* Ecart Budget */}
               <div style={cardStyle}>
-                <div style={labelStyle}>\u00C9cart Budget</div>
+                <div style={labelStyle}>Écart Budget</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: cc.forecast <= cc.bac ? '#00ab63' : '#ff5050' }}>
                   {fmtK(cc.forecast - cc.bac)}
                 </div>

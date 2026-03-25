@@ -127,24 +127,24 @@ export default function PropertiesOverview() {
           accent={FONCIER_CLR}
           onClick={() => navigate('/properties/foncier')}
           kpis={[
-            { label: 'Terrains', value: '\u2014', color: FONCIER_CLR },
-            { label: 'Surface totale', value: '\u2014 m\u00B2' },
-            { label: 'Budget foncier', value: '\u2014 M$', color: FONCIER_CLR },
-            { label: 'En acquisition', value: '\u2014', color: FONCIER_CLR },
+            { label: 'Terrains', value: '—', color: FONCIER_CLR },
+            { label: 'Surface totale', value: '— m²' },
+            { label: 'Budget foncier', value: '— M$', color: FONCIER_CLR },
+            { label: 'En acquisition', value: '—', color: FONCIER_CLR },
           ]}
         />
 
         {/* DEVELOPPEMENT */}
         <SectionCard
-          title="D\u00E9veloppement"
-          subtitle="Permis & \u00E9tudes"
+          title="Développement"
+          subtitle="Permis & études"
           accent={DEV_CLR}
           onClick={() => navigate('/properties/dev')}
           kpis={[
             { label: 'Projets', value: String(devKpis.total), color: DEV_CLR },
             { label: 'Permis obtenus', value: devKpis.permisDeposes + ' / ' + devKpis.total },
-            { label: 'Budget Dev', value: '\u2014 M$', color: DEV_CLR },
-            { label: 'D\u00E9lai moyen', value: '\u2014 j', color: '#f37056' },
+            { label: 'Budget Dev', value: '— M$', color: DEV_CLR },
+            { label: 'Délai moyen', value: '— j', color: '#f37056' },
           ]}
         />
 
@@ -155,10 +155,10 @@ export default function PropertiesOverview() {
           accent={TVX_CLR}
           onClick={() => navigate('/properties/tvx')}
           kpis={[
-            { label: 'Chantiers actifs', value: '\u2014', color: TVX_CLR },
-            { label: 'Avancement moy.', value: '\u2014 %' },
-            { label: 'Budget Travaux', value: '\u2014 M$', color: TVX_CLR },
-            { label: 'Retard moyen', value: '\u2014 j', color: '#e05c5c' },
+            { label: 'Chantiers actifs', value: '—', color: TVX_CLR },
+            { label: 'Avancement moy.', value: '— %' },
+            { label: 'Budget Travaux', value: '— M$', color: TVX_CLR },
+            { label: 'Retard moyen', value: '— j', color: '#e05c5c' },
           ]}
         />
 
@@ -171,36 +171,36 @@ export default function PropertiesOverview() {
           kpis={[
             { label: 'Objectif 2026', value: comKpis.obj, color: COM_CLR },
             { label: 'Projets / Biens', value: comKpis.nb, color: COM_CLR },
-            { label: 'R\u00E9alis\u00E9', value: '\u2014', color: FONCIER_CLR },
-            { label: 'Trimestre', value: '\u2014', color: '#5aafaf' },
+            { label: 'Réalisé', value: '—', color: FONCIER_CLR },
+            { label: 'Trimestre', value: '—', color: '#5aafaf' },
           ]}
         />
 
         {/* RECOUVREMENT */}
         <SectionCard
           title="Recouvrement"
-          subtitle="Encaissements & cr\u00E9ances"
+          subtitle="Encaissements & créances"
           accent={RECOUV_CLR}
           onClick={() => navigate('/properties/recouvrement')}
           kpis={[
-            { label: 'Encours total', value: '\u2014 M$', color: RECOUV_CLR },
-            { label: 'Taux recouvrem.', value: '\u2014 %' },
-            { label: 'Impay\u00E9s', value: '\u2014 M$', color: '#e05c5c' },
-            { label: 'D\u00E9lai moyen', value: '\u2014 j', color: RECOUV_CLR },
+            { label: 'Encours total', value: '— M$', color: RECOUV_CLR },
+            { label: 'Taux recouvrem.', value: '— %' },
+            { label: 'Impayés', value: '— M$', color: '#e05c5c' },
+            { label: 'Délai moyen', value: '— j', color: RECOUV_CLR },
           ]}
         />
 
         {/* SAV */}
         <SectionCard
           title="SAV"
-          subtitle="Service apr\u00E8s-vente"
+          subtitle="Service après-vente"
           accent={SAV_CLR}
           onClick={() => navigate('/properties/sav')}
           kpis={[
-            { label: 'Tickets ouverts', value: '\u2014', color: SAV_CLR },
-            { label: 'R\u00E9solus / mois', value: '\u2014' },
-            { label: 'D\u00E9lai moyen', value: '\u2014 j', color: SAV_CLR },
-            { label: 'Satisfaction', value: '\u2014 %', color: '#00ab63' },
+            { label: 'Tickets ouverts', value: '—', color: SAV_CLR },
+            { label: 'Résolus / mois', value: '—' },
+            { label: 'Délai moyen', value: '— j', color: SAV_CLR },
+            { label: 'Satisfaction', value: '— %', color: '#00ab63' },
           ]}
         />
 
