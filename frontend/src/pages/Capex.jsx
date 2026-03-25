@@ -93,10 +93,6 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 24px' }}>
-      <button onClick={onClose} className="back-btn-react" style={{ borderColor: `rgba(${colorRgb},0.3)`, color }}>
-        &larr; Retour
-      </button>
-
       <div className="capex-proj-card" style={{ borderColor: `rgba(${colorRgb},0.2)`, marginTop: 16 }}>
         {/* Title */}
         <div className="cpj-header">
@@ -176,11 +172,9 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
 
   return (
     <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
-      {/* Back + Title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} className="back-btn-react" style={{ borderColor: `rgba(${colorRgb},0.3)`, color }}>
-          CAPEX
-        </button>
+      {/* Title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
         <span style={{ fontSize: 18, fontWeight: 800, color }}>{catData.title}</span>
       </div>
 

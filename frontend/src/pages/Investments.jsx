@@ -197,14 +197,6 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 24px' }}>
-      <button
-        onClick={onClose}
-        className="back-btn-react"
-        style={{ borderColor: `rgba(${ACCENT_RGB},0.3)`, color: ACCENT }}
-      >
-        {project.type === 'externe' ? 'Externe' : 'Interne'}
-      </button>
-
       {/* Peer navigation */}
       <div className="site-nav" style={{ margin: '8px 0 0', flexWrap: 'wrap', gap: 6, display: 'flex' }}>
         {allOfType.map(fp => (
@@ -278,14 +270,6 @@ function GridView({ type, onBack, onSelectProject, onSwitchType }) {
 
   return (
     <div style={{ paddingTop: 0 }}>
-      <button
-        onClick={onBack}
-        className="back-btn-react"
-        style={{ borderColor: `rgba(${ACCENT_RGB},0.3)`, color: ACCENT }}
-      >
-        Ventures
-      </button>
-
       {/* Type nav */}
       <div className="site-nav" style={{ margin: '8px auto 0', maxWidth: 400, justifyContent: 'center', display: 'flex', gap: 6 }}>
         <button
