@@ -21,6 +21,16 @@ const POLE_COLORS = {
   reporting: '#5aafaf',
 }
 
+const POLE_COLORS_RGB = {
+  home: '255,255,255',
+  energy: '0,171,99',
+  investments: '243,112,86',
+  properties: '253,184,35',
+  capex: '94,76,159',
+  csi: '0,150,199',
+  reporting: '90,175,175',
+}
+
 /* ── SVG icons ── */
 const NAV_ICONS = {
   home: (
@@ -87,26 +97,6 @@ const NAV_ICONS = {
   ),
 }
 
-/* ── Radial positions: arc from bottom-right corner going counter-clockwise ── */
-/* 7 items spread from ~15° to ~165° (measured from the right axis, going up-left) */
-const RADIAL_POSITIONS = [
-  { angle: 165, radius: 140 }, // Accueil (top-left of arc)
-  { angle: 140, radius: 140 }, // Energy
-  { angle: 115, radius: 140 }, // Invest.
-  { angle: 90,  radius: 140 }, // Properties (straight up)
-  { angle: 65,  radius: 140 }, // CAPEX
-  { angle: 40,  radius: 140 }, // CSI
-  { angle: 15,  radius: 140 }, // Reporting (right of arc)
-]
-
-function getRadialXY(angle, radius) {
-  const rad = (angle * Math.PI) / 180
-  return {
-    x: -Math.cos(rad) * radius,
-    y: -Math.sin(rad) * radius,
-  }
-}
-
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -161,49 +151,42 @@ export default function BottomNav() {
         })}
       </nav>
 
-      {/* ── Mobile: radial wheel menu ── */}
+      {/* ── Mobile: vertical sidebar right with colored icons ── */}
       {/* Backdrop */}
       <div
-        className={`radial-backdrop ${isOpen ? 'open' : ''}`}
+        className={`mob-nav-backdrop ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Radial items */}
-      <div className="radial-container" style={{ pointerEvents: isOpen ? 'auto' : 'none' }}>
+      {/* Sidebar panel */}
+      <div className={`mob-nav-sidebar ${isOpen ? 'open' : ''}`}>
         {NAV_ITEMS.map((item, i) => {
           const isActive = activePole === item.pole
-          const color = isActive ? POLE_COLORS[item.pole] : 'rgba(255,255,255,0.5)'
-          const pos = RADIAL_POSITIONS[i]
-          const { x, y } = getRadialXY(pos.angle, pos.radius)
-
+          const color = POLE_COLORS[item.pole]
+          const rgb = POLE_COLORS_RGB[item.pole]
           return (
             <button
               key={item.pole}
               onClick={() => handleNav(item.path)}
-              className={`radial-item ${isOpen ? 'open' : ''}`}
+              className={`mob-nav-item ${isOpen ? 'visible' : ''} ${isActive ? 'active' : ''}`}
               style={{
-                '--rx': `${x}px`,
-                '--ry': `${y}px`,
-                '--delay': `${i * 40}ms`,
+                '--delay': `${i * 35}ms`,
                 '--item-color': color,
+                '--item-rgb': rgb,
               }}
             >
-              <div className="radial-icon" style={{
-                color,
-                borderColor: isActive ? color : 'rgba(255,255,255,0.08)',
-                background: isActive ? `rgba(${color === '#00ab63' ? '0,171,99' : color === '#f37056' ? '243,112,86' : color === '#FDB823' ? '253,184,35' : color === '#5e4c9f' ? '94,76,159' : color === '#0096c7' ? '0,150,199' : color === '#5aafaf' ? '90,175,175' : '255,255,255'},0.12)` : 'rgba(255,255,255,0.03)',
-              }}>
+              <div className="mob-nav-icon">
                 {NAV_ICONS[item.pole]}
               </div>
-              <span className="radial-label" style={{ color }}>{item.label}</span>
+              <span className="mob-nav-label">{item.label}</span>
             </button>
           )
         })}
       </div>
 
-      {/* Helm FAB button */}
+      {/* Helm FAB button — bottom right */}
       <button
-        className={`radial-fab ${isOpen ? 'open' : ''}`}
+        className={`mob-nav-fab ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         style={{ '--fab-color': activeColor }}
       >
