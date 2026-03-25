@@ -72,38 +72,40 @@ export default function FilterBar({ current, onChange }) {
         className={`filter-cal-btn ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        {/* Calendar body */}
         <div className="filter-cal-body">
           <div className="filter-cal-header" />
           <div className="filter-cal-rings">
             <div className="filter-cal-ring" />
             <div className="filter-cal-ring" />
           </div>
-          {/* Page that flips back */}
           <div className={`filter-cal-page ${isOpen ? 'flipped' : ''}`} />
           <div className="filter-cal-label">{current}</div>
         </div>
       </button>
 
-      {/* ── Sidebar (same as nav) — slides from left ── */}
+      {/* ── Mobile sidebar: EXACT same as nav (mob-nav-*) ── */}
       <div
-        className={`filter-mob-backdrop ${isOpen ? 'open' : ''}`}
+        className={`mob-nav-backdrop ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(false)}
       />
-      <div className={`filter-mob-sidebar ${isOpen ? 'open' : ''}`}>
+      <div className={`mob-nav-sidebar ${isOpen ? 'open' : ''}`}>
         {FILTER_OPTIONS.map((opt, i) => {
           const active = current === opt.key
           return (
             <button
               key={opt.key}
               onClick={() => handleSelect(opt.key)}
-              className={`filter-mob-item ${isOpen ? 'visible' : ''} ${active ? 'active' : ''}`}
-              style={{ '--delay': `${i * 40}ms` }}
+              className={`mob-nav-item ${isOpen ? 'visible' : ''} ${active ? 'active' : ''}`}
+              style={{
+                '--delay': `${i * 35}ms`,
+                '--item-color': active ? '#00ab63' : 'rgba(255,255,255,0.4)',
+                '--item-rgb': '0,171,99',
+              }}
             >
-              <div className="filter-mob-icon">
+              <div className="mob-nav-icon">
                 {opt.icon}
               </div>
-              <span className="filter-mob-label">{opt.full}</span>
+              <span className="mob-nav-label">{opt.full}</span>
             </button>
           )
         })}
