@@ -138,20 +138,18 @@ export default function EnrDetail() {
 
     return (
       <div style={{ padding: '0 20px 40px' }}>
-        {/* Back button */}
-        <button
-          onClick={() => setSelectedSite(null)}
-          style={{
-            background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)',
-            fontSize: 11, fontWeight: 700, cursor: 'pointer', padding: '12px 0',
-            letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 6,
-          }}
-        >
-          ← PRODUCTION ENR
-        </button>
-
         {/* Site navigation strip */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 24, justifyContent: 'center' }}>
+          {/* Back to overview */}
+          <button
+            onClick={() => setSelectedSite(null)}
+            style={{
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+              color: 'rgba(255,255,255,0.5)', padding: '6px 0', borderRadius: 20, fontSize: 10,
+              fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer',
+              fontFamily: 'inherit', transition: 'all 0.2s', minWidth: 80, textAlign: 'center',
+            }}
+          >← Tous</button>
           {sites.map((ns, ni) => {
             const active = ni === si
             const nCol = ENR_COLORS[ni % ENR_COLORS.length]

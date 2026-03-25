@@ -438,53 +438,149 @@ body::-webkit-scrollbar { display: none; }
 .tfilter.active { background: rgba(0,171,99,0.15); color: #00ab63; border: 1px solid rgba(0,171,99,0.3); }
 
 /* ── FilterBar component ── */
+/* ── Filter bar — same design language as nav ── */
 .filter-bar-wrap { position: relative; }
+
+/* Desktop: icon circles + labels */
 .filter-bar-desktop {
-  display: flex; gap: 1px; background: rgba(58,57,92,0.18); border-radius: 8px; padding: 2px;
+  display: flex; gap: 4px; align-items: center;
 }
-.filter-btn {
-  padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
-  letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
-  background: transparent; border: none; color: var(--text-muted);
-  font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+.filter-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px 6px; border-radius: 10px; background: transparent;
+  border: none; cursor: pointer; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
 }
-.filter-btn:hover { color: white; }
-.filter-btn.active { background: rgba(58,57,92,0.5); color: white; }
-.filter-fab { display: none; }
-.filter-dropdown { display: none; }
+.filter-item:hover { background: rgba(0,171,99,0.06); }
+.filter-icon-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.35);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  transition: all 0.2s;
+}
+.filter-icon-circle svg { width: 16px; height: 16px; }
+.filter-item.active .filter-icon-circle {
+  color: #00ab63;
+  border-color: #00ab63;
+  background: rgba(0,171,99,0.12);
+  box-shadow: 0 0 10px rgba(0,171,99,0.25);
+}
+.filter-item-label {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+}
+.filter-item.active .filter-item-label { color: #00ab63; }
+
+/* Mobile elements hidden on desktop */
+.filter-mob-fab,
+.filter-mob-sidebar,
+.filter-mob-backdrop { display: none; }
 
 @media (max-width: 640px) {
   .filter-bar-desktop { display: none !important; }
-  .filter-fab {
-    display: flex; align-items: center; gap: 5px;
-    background: rgba(8,11,24,0.9); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 10px; padding: 6px 10px; cursor: pointer;
-    color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
-    backdrop-filter: blur(12px);
+
+  /* FAB — bottom left (opposite to nav on right) */
+  .filter-mob-fab {
+    display: flex;
+    position: fixed;
+    bottom: 18px;
+    left: 18px;
+    z-index: 960;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.92);
+    border: 1.5px solid rgba(0,171,99,0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: #00ab63;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s;
   }
-  .filter-fab-label { font-size: 11px; font-weight: 700; color: #00ab63; }
-  .filter-dropdown {
-    display: block; position: absolute; top: 100%; right: 0; margin-top: 6px;
-    background: rgba(8,11,24,0.97); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 14px; padding: 6px; min-width: 150px; z-index: 960;
-    backdrop-filter: blur(24px); box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    transform: scale(0.9) translateY(-8px); opacity: 0; pointer-events: none;
-    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.15s;
-    transform-origin: top right;
+  .filter-mob-fab.open {
+    border-color: rgba(0,171,99,0.6);
   }
-  .filter-dropdown.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
-  .filter-dropdown-item {
-    display: flex; align-items: center; gap: 10px; width: 100%;
-    padding: 10px 12px; border-radius: 10px; border: none; cursor: pointer;
-    background: transparent; color: rgba(255,255,255,0.5);
-    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+  .filter-mob-fab:active { transform: scale(0.9); }
+  .filter-mob-fab-label {
+    font-size: 7px; font-weight: 800; letter-spacing: 0.1em;
+    color: #00ab63; margin-top: -2px;
   }
-  .filter-dropdown-item:active { transform: scale(0.97); }
-  .filter-dropdown-item.active { background: rgba(0,171,99,0.1); color: #00ab63; }
-  .filter-dropdown-key {
-    font-size: 14px; font-weight: 800; min-width: 28px; text-align: center;
+
+  /* Backdrop */
+  .filter-mob-backdrop {
+    display: block;
+    position: fixed; inset: 0; z-index: 940;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
   }
-  .filter-dropdown-full { font-size: 11px; font-weight: 500; }
+  .filter-mob-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  /* Sidebar — slides from left */
+  .filter-mob-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 72px;
+    z-index: 955;
+    background: rgba(0,0,0,0.95);
+    border-right: 1px solid rgba(0,171,99,0.1);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    padding: 16px 0;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  }
+  .filter-mob-sidebar.open { transform: translateX(0); }
+
+  /* Each filter item — spring animation */
+  .filter-mob-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 10px 4px; border-radius: 12px;
+    background: transparent; border: none; cursor: pointer;
+    width: 64px; opacity: 0; transform: translateX(-20px);
+    transition: opacity 0.3s ease var(--delay, 0ms),
+                transform 0.35s cubic-bezier(0.34,1.56,0.64,1) var(--delay, 0ms),
+                background 0.2s;
+  }
+  .filter-mob-item.visible { opacity: 1; transform: translateX(0); }
+  .filter-mob-item:active { transform: scale(0.9) !important; }
+  .filter-mob-item.active { background: rgba(0,171,99,0.1); }
+
+  .filter-mob-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.4);
+    border: 1.5px solid rgba(0,171,99,0.15);
+    background: rgba(0,171,99,0.04);
+    transition: all 0.2s;
+  }
+  .filter-mob-item.active .filter-mob-icon {
+    color: #00ab63;
+    border-color: #00ab63;
+    background: rgba(0,171,99,0.15);
+    box-shadow: 0 0 12px rgba(0,171,99,0.3);
+  }
+  .filter-mob-icon svg { width: 18px; height: 18px; }
+
+  .filter-mob-label {
+    font-size: 7px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+  }
+  .filter-mob-item.active .filter-mob-label { color: #00ab63; }
 }
 
 /* == RESPONSIVE HOME == */
