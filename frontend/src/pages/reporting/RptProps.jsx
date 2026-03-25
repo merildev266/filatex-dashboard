@@ -43,7 +43,7 @@ function groupByProject(rows) {
 
 // Sub-section tabs
 const SUB_TABS = [
-  { key: 'dev', label: 'Developpement', color: '#FDB823' },
+  { key: 'dev', label: 'D\u00e9veloppement', color: '#FDB823' },
   { key: 'tvx', label: 'Travaux', color: '#FDB823' },
   { key: 'sav', label: 'SAV', color: '#FDB823' },
   { key: 'com', label: 'Commercial', color: '#FDB823' },
