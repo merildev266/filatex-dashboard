@@ -479,9 +479,12 @@ body::-webkit-scrollbar { display: none; }
 @media (max-width: 640px) {
   .filter-bar-desktop { display: none !important; }
 
-  /* ── Hourglass button — in banner, same style as helm ── */
+  /* ── Hourglass button — fixed top-right, ABOVE sidebar (like helm is above) ── */
   .filter-time-fab {
     display: flex;
+    position: fixed;
+    top: 10px;
+    right: 12px;
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -493,7 +496,7 @@ body::-webkit-scrollbar { display: none; }
     cursor: pointer;
     box-shadow: 0 2px 12px rgba(0,0,0,0.4);
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s;
-    z-index: 960;
+    z-index: 970;
   }
   .filter-time-fab svg { width: 18px; height: 18px; }
   .filter-time-fab.open {
