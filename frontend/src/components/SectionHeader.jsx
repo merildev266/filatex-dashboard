@@ -10,14 +10,8 @@ export default function SectionHeader({ name, color, onBack }) {
   const label = onBack ? name : 'Accueil'
 
   return (
-    <div
-      className="sticky top-0 z-50 flex items-center px-4 py-3"
-      style={{
-        background: 'rgba(0,0,0,0.95)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: `1px solid ${color}22`,
-      }}
-    >
+    <div className="sticky top-0 z-50" style={{ background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(12px)' }}>
+      <div className="flex items-center px-4 py-3">
       <div className="nav-back">
         <button
           onClick={handleBack}
@@ -38,6 +32,8 @@ export default function SectionHeader({ name, color, onBack }) {
         {name}
       </div>
       <div style={{ width: 70 }} />
+      </div>
+      <div style={{ height: 2, background: color, opacity: 0.5 }} />
     </div>
   )
 }
