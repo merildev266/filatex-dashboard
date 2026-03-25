@@ -23,10 +23,7 @@ export default function Login() {
     })
   }, [])
 
-  // Auto-prompt biometric on load if registered
-  useEffect(() => {
-    if (bioRegistered) handleBiometricLogin()
-  }, [bioRegistered])
+  // No auto-prompt — Samsung/Knox requires user gesture for WebAuthn
 
   const handleSubmit = (e) => {
     e.preventDefault()
