@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar globally */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
 :root {
   --dark: #000000;
   --dark2: #000000;

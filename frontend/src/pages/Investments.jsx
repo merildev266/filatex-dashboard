@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { invProjects } from '../data/investments_data'
 import SectionHeader from '../components/SectionHeader'
 
@@ -336,8 +336,26 @@ function GridView({ type, onBack, onSelectProject, onSwitchType }) {
 
 /* ========== MAIN INVESTMENTS COMPONENT ========== */
 export default function Investments() {
-  const [activeType, setActiveType] = useState(null) // 'externe' | 'interne'
-  const [selectedProject, setSelectedProject] = useState(null)
+  const [activeType, _setActiveType] = useState(null) // 'externe' | 'interne'
+  const [selectedProject, _setSelectedProject] = useState(null)
+
+  const setActiveType = useCallback((t) => {
+    if (t) window.history.pushState({ inv: 'type' }, '')
+    _setActiveType(t)
+  }, [])
+  const setSelectedProject = useCallback((p) => {
+    if (p) window.history.pushState({ inv: 'project' }, '')
+    _setSelectedProject(p)
+  }, [])
+
+  useEffect(() => {
+    const onPopState = () => {
+      if (selectedProject) { _setSelectedProject(null); return }
+      if (activeType) { _setActiveType(null); return }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [activeType, selectedProject])
 
   const extKpis = useMemo(() => calcCapexKpis('externe'), [])
   const intKpis = useMemo(() => calcCapexKpis('interne'), [])

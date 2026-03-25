@@ -5,6 +5,7 @@ import { FilterProvider } from './context/FilterContext'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
+import ScrollToTop from './components/ScrollToTop'
 
 const Accueil = lazy(() => import('./pages/Accueil'))
 const Energy = lazy(() => import('./pages/energy/Energy'))
@@ -43,6 +44,7 @@ const Loading = () => (
 function App() {
   return (
     <BrowserRouter basename="/filatex-dashboard">
+      <ScrollToTop />
       <AuthProvider>
         <FilterProvider>
           <Suspense fallback={<Loading />}>

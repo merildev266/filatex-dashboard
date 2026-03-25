@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { capexData } from '../data/capex_data'
 import SectionHeader from '../components/SectionHeader'
 
@@ -255,8 +256,29 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
 
 /* ========== MAIN CAPEX COMPONENT ========== */
 export default function Capex() {
-  const [activeCategory, setActiveCategory] = useState(null)
-  const [selectedProject, setSelectedProject] = useState(null)
+  const navigate = useNavigate()
+  const [activeCategory, _setActiveCategory] = useState(null)
+  const [selectedProject, _setSelectedProject] = useState(null)
+
+  // Wrap setters to push browser history entries
+  const setActiveCategory = useCallback((cat) => {
+    if (cat) window.history.pushState({ capex: 'category' }, '')
+    _setActiveCategory(cat)
+  }, [])
+  const setSelectedProject = useCallback((proj) => {
+    if (proj) window.history.pushState({ capex: 'project' }, '')
+    _setSelectedProject(proj)
+  }, [])
+
+  // Handle browser back button (Samsung, swipe, etc.)
+  useEffect(() => {
+    const onPopState = () => {
+      if (selectedProject) { _setSelectedProject(null); return }
+      if (activeCategory) { _setActiveCategory(null); return }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [activeCategory, selectedProject])
 
   // Project detail view
   if (selectedProject && activeCategory) {
