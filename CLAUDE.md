@@ -1,5 +1,17 @@
 # Filatex PMO Dashboard
 
+## Skills obligatoires (toujours actifs)
+
+**Ces 4 skills doivent être utilisés systématiquement, sans attendre que l'utilisateur le demande :**
+
+1. **Context7** — Toujours consulter la documentation à jour (via `mcp__plugin_context7_context7`) quand on travaille avec une librairie (React, Tailwind, Vite, React Router, etc.). Ne jamais coder "de mémoire" si la doc est disponible.
+
+2. **Code Review** — Toujours lancer une code review (`code-review:code-review` ou `superpowers:requesting-code-review`) après chaque feature significative ou avant un commit important. Ne jamais merger du code non reviewé.
+
+3. **Feature Dev** — Toujours utiliser le workflow feature dev (`feature-dev:feature-dev`) quand on démarre une nouvelle feature : analyser l'existant, planifier l'architecture, puis implémenter. Ne jamais coder une feature directement sans comprendre le contexte.
+
+4. **Skill Creator** — Toujours utiliser le skill creator (`skill-creator:skill-creator`) quand on crée ou modifie un skill. Suivre le workflow de création/test/optimisation.
+
 ## Vision produit
 
 Dashboard PMO du Groupe Filatex à destination du **Directeur Général**.
