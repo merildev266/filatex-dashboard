@@ -5,8 +5,8 @@ import GroupeFilatexLogo from '../components/GroupeFilatexLogo'
 /* ── Scrolling motif SVG pattern ── */
 function MotifSvg() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 604.26 202.36" preserveAspectRatio="none" style={{width:'50%',height:'100%',flexShrink:0,display:'block'}}>
-      <defs><style>{`.motif-cls{fill:none;stroke:#1a1d35;stroke-miterlimit:10;stroke-width:.6px;}`}</style></defs>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 604.26 202.36" preserveAspectRatio="none" className="motif-svg" style={{width:'50%',height:'100%',flexShrink:0,display:'block'}}>
+      <defs><style>{`.motif-cls{fill:none;stroke:#1a1d35;stroke-miterlimit:10;stroke-width:.6px;}@media(max-width:768px){.motif-cls{stroke-width:1.8px;stroke:#1e2140;}}`}</style></defs>
       <g>
         <path className="motif-cls" d="M50.23,201.96h14.43l3.4-57.77c1.68-28.54,1.68-57.49,0-86.03L64.66.4h-14.43l3.45,58.61c1.65,27.98,1.65,56.35,0,84.33l-3.45,58.61Z"/>
         <path className="motif-cls" d="M38.97,143.35c-1.65-27.98-1.65-56.35,0-84.33L42.43.4h-14.43l-3.4,57.77c-1.68,28.54-1.68,57.49,0,86.03l3.4,57.77h14.43l-3.45-58.61Z"/>
