@@ -33,6 +33,45 @@ const RptProps = lazy(() => import('./pages/reporting/RptProps'))
 const RptInvest = lazy(() => import('./pages/reporting/RptInvest'))
 const Csi = lazy(() => import('./pages/Csi'))
 
+// Prefetch all chunks after login so navigation is instant
+export function prefetchAllPages() {
+  const pages = [
+    () => import('./pages/Accueil'),
+    () => import('./pages/energy/Energy'),
+    () => import('./pages/energy/EnergyOverview'),
+    () => import('./pages/energy/HfoDetail'),
+    () => import('./pages/energy/EnrDetail'),
+    () => import('./pages/energy/HfoProjets'),
+    () => import('./pages/energy/EnrProjets'),
+    () => import('./pages/properties/Properties'),
+    () => import('./pages/properties/PropertiesOverview'),
+    () => import('./pages/properties/DevDetail'),
+    () => import('./pages/properties/TvxDetail'),
+    () => import('./pages/properties/SavDetail'),
+    () => import('./pages/properties/ComDetail'),
+    () => import('./pages/Capex'),
+    () => import('./pages/Investments'),
+    () => import('./pages/reporting/Reporting'),
+    () => import('./pages/reporting/ReportingHub'),
+    () => import('./pages/reporting/RptEnr'),
+    () => import('./pages/reporting/RptHfo'),
+    () => import('./pages/reporting/RptLfo'),
+    () => import('./pages/reporting/RptProps'),
+    () => import('./pages/reporting/RptInvest'),
+    () => import('./pages/Csi'),
+    // Data files too
+    () => import('./data/site_data'),
+    () => import('./data/enr_site_data'),
+    () => import('./data/enr_projects_data'),
+    () => import('./data/hfo_projects'),
+    () => import('./data/investments_data'),
+    () => import('./data/props_data'),
+    () => import('./data/reporting_data'),
+  ]
+  // Stagger loads to not block the main thread
+  pages.forEach((load, i) => setTimeout(load, i * 50))
+}
+
 // Loading fallback
 const Loading = () => (
   <div className="flex items-center justify-center h-64">

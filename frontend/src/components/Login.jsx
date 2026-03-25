@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import GroupeFilatexLogo from './GroupeFilatexLogo'
+import { prefetchAllPages } from '../App'
 
 export default function Login() {
   const [password, setPassword] = useState('')
@@ -12,6 +13,7 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (login(password)) {
+      prefetchAllPages() // Preload all pages in background
       navigate('/')
     } else {
       setError('Mot de passe incorrect')
