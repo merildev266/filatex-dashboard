@@ -39,15 +39,6 @@ const Loading = () => (
   </div>
 )
 
-// Placeholder for sections not yet built
-function Placeholder({ name }) {
-  return (
-    <div className="p-8 text-center">
-      <h1 className="text-xl font-bold">{name}</h1>
-      <p className="text-[var(--text-muted)] mt-2">En construction...</p>
-    </div>
-  )
-}
 
 function App() {
   return (

@@ -1,17 +1,10 @@
 import { useState, useMemo, Fragment } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { propsData_sav, propsData_tvx, propsData_dev } from '../../data/props_data'
+import KpiItem from '../../components/KpiItem'
 import { propsData_dev_full } from '../../data/props_data_dev_full'
 import { comReport_venteProjet, comReport_venteTerrain, comReport_location } from '../../data/com_reporting_data'
 
-function KpiItem({ value, label, color }) {
-  return (
-    <div className="text-center px-3">
-      <div className="text-xl font-bold" style={{ color }}>{value}</div>
-      <div className="text-[10px] text-[var(--text-muted)]">{label}</div>
-    </div>
-  )
-}
 
 function TimingBadge({ timing }) {
   if (!timing) return <span className="text-[var(--text-dim)]">{'\u2014'}</span>

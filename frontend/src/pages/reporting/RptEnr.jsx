@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { REPORTING_ENR } from '../../data/reporting_data'
+import KpiItem from '../../components/KpiItem'
 
 const PHASE_ORDER = { Construction: 0, Developpement: 1, Planifie: 2, Termine: 3 }
 
@@ -15,15 +16,6 @@ function PhaseBadge({ phase }) {
     <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${cls}`}>
       {phase || '\u2014'}
     </span>
-  )
-}
-
-function KpiItem({ value, label, color }) {
-  return (
-    <div className="text-center px-3">
-      <div className="text-xl font-bold" style={{ color }}>{value}</div>
-      <div className="text-[10px] text-[var(--text-muted)]">{label}</div>
-    </div>
   )
 }
 

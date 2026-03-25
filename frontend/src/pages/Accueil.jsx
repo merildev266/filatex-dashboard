@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GroupeFilatexLogo from '../components/GroupeFilatexLogo'
 
@@ -180,7 +181,6 @@ const SECTIONS = [
   { pole: 'reporting', label: 'Reporting', color: '#5aafaf', path: '/reporting', cardClass: 'card-reporting' },
 ]
 
-import { useEffect } from 'react'
 
 export default function Accueil() {
   const navigate = useNavigate()

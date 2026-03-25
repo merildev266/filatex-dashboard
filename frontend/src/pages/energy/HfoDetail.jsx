@@ -1,7 +1,5 @@
-import { useState, useMemo, useContext } from 'react'
-import { FilterContext } from '../../context/FilterContext'
-import FilterBar from '../../components/FilterBar'
-import KpiBox from '../../components/KpiBox'
+import { useState, useMemo } from 'react'
+import { useFilters } from '../../hooks/useFilters'
 import HfoSite from './HfoSite'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
@@ -95,7 +93,7 @@ function calcGenSfoc(g) {
 }
 
 export default function HfoDetail() {
-  const { currentFilter, setFilter } = useContext(FilterContext)
+  const { currentFilter, setFilter } = useFilters()
   const [selectedSite, setSelectedSite] = useState(null)
   const [projectFilter, setProjectFilter] = useState(null) // { type: 'site'|'cat', key: string }
 
@@ -215,7 +213,7 @@ export default function HfoDetail() {
 
 /** Full site detail panel — replaces main view when a site is selected */
 function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, onNavigate }) {
-  const { selectedMonthIndex, selectedQuarter, selectedYear } = useContext(FilterContext)
+  const { selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
   const [selectedGenerator, setSelectedGenerator] = useState(null)
   const s = siteData[siteId]
   const k = getKpiForSite(s, currentFilter)

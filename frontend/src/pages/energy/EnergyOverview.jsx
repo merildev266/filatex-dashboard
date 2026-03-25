@@ -1,6 +1,6 @@
-import { useMemo, useContext } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FilterContext } from '../../context/FilterContext'
+import { useFilters } from '../../hooks/useFilters'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
 import { ENR_SITES } from '../../data/enr_site_data'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
@@ -49,7 +49,7 @@ function getPhase(p) {
 
 export default function EnergyOverview() {
   const navigate = useNavigate()
-  const { currentFilter } = useContext(FilterContext)
+  const { currentFilter } = useFilters()
 
   // HFO aggregates
   const hfo = useMemo(() => {

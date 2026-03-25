@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import KpiItem from '../../components/KpiItem'
 
 // LFO motor data (inline, matches reporting.js lfoMoteurs)
 const LFO_MOTEURS = [
@@ -63,14 +64,6 @@ const TABS = [
   { key: 'a_definir', label: 'A definir' },
 ]
 
-function KpiItem({ value, label, color }) {
-  return (
-    <div className="text-center px-3">
-      <div className="text-xl font-bold" style={{ color }}>{value}</div>
-      <div className="text-[10px] text-[var(--text-muted)]">{label}</div>
-    </div>
-  )
-}
 
 export default function RptLfo() {
   const [filter, setFilter] = useState('all')
