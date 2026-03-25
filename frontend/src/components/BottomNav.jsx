@@ -150,7 +150,7 @@ export default function BottomNav() {
       <nav
         className="bnav-bar bnav-desktop"
         style={{
-          transform: barVisible ? 'translateY(0)' : 'translateY(calc(100% + 20px))',
+          transform: barVisible ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(calc(100% + 20px))',
           opacity: barVisible ? 1 : 0,
         }}
       >
