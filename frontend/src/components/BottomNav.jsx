@@ -100,9 +100,6 @@ export default function BottomNav() {
 
   const activeColor = POLE_COLORS[activePole] || 'rgba(255,255,255,0.7)'
 
-  // Hide entire nav on Accueil — cards serve as navigation
-  if (isHome) return null
-
   // Close menu on scroll
   useEffect(() => {
     if (!isOpen) return
@@ -113,6 +110,9 @@ export default function BottomNav() {
 
   // Close menu on route change
   useEffect(() => { setIsOpen(false) }, [location.pathname])
+
+  // Hide entire nav on Accueil — cards serve as navigation
+  if (isHome) return null
 
   const handleNav = (path) => {
     navigate(path)
