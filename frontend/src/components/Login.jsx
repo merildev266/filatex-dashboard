@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
+import GroupeFilatexLogo from './GroupeFilatexLogo'
 
 export default function Login() {
   const [password, setPassword] = useState('')
@@ -21,9 +22,11 @@ export default function Login() {
   return (
     <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center">
       <form onSubmit={handleSubmit} className="w-[90%] max-w-[360px] text-center">
-        <h1 className="text-2xl font-bold tracking-wide mb-1">Groupe Filatex</h1>
+        <div className="flex justify-center mb-2">
+          <GroupeFilatexLogo style={{width:'280px',maxWidth:'80vw',height:'auto'}} />
+        </div>
         <div className="text-xs text-[var(--text-muted)] uppercase tracking-[0.3em] mb-8">
-          PMO Dashboard
+          Dashboard
         </div>
         <input
           type="password"

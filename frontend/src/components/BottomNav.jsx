@@ -92,11 +92,16 @@ export default function BottomNav() {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
 
+  const isHome = location.pathname === '/'
+
   const activePole = NAV_ITEMS.find(
     (item) => item.path !== '/' && location.pathname.startsWith(item.path)
   )?.pole || 'home'
 
   const activeColor = POLE_COLORS[activePole] || 'rgba(255,255,255,0.7)'
+
+  // Hide entire nav on Accueil — cards serve as navigation
+  if (isHome) return null
 
   // Close menu on scroll
   useEffect(() => {

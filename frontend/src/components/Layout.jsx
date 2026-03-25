@@ -1,9 +1,11 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import BottomNav from './BottomNav'
 
 export default function Layout() {
+  const location = useLocation()
+  const isHome = location.pathname === '/'
   return (
-    <div className="min-h-screen bg-dark pb-14">
+    <div className={`min-h-screen bg-dark ${isHome ? '' : 'pb-14'}`}>
       <Outlet />
       <BottomNav />
     </div>
