@@ -63,38 +63,62 @@ export default function FilterBar({ current, onChange }) {
     setIsOpen(false)
   }
 
-  /* Sidebar rendered via portal to body — escapes any stacking context */
-  const sidebar = isOpen ? createPortal(
+  /* Everything rendered via portal — FAB + sidebar + backdrop */
+  const mobilePortal = createPortal(
     <>
-      <div
-        className="mob-nav-backdrop open"
-        onClick={() => setIsOpen(false)}
-      />
-      <div className="mob-nav-sidebar open">
-        {FILTER_OPTIONS.map((opt, i) => {
-          const active = current === opt.key
-          return (
-            <button
-              key={opt.key}
-              onClick={() => handleSelect(opt.key)}
-              className={`mob-nav-item visible ${active ? 'active' : ''}`}
-              style={{
-                '--delay': `${i * 35}ms`,
-                '--item-color': active ? '#00ab63' : 'rgba(255,255,255,0.4)',
-                '--item-rgb': '0,171,99',
-              }}
-            >
-              <div className="mob-nav-icon">
-                {opt.icon}
-              </div>
-              <span className="mob-nav-label">{opt.full}</span>
-            </button>
-          )
-        })}
-      </div>
+      {/* FAB button — fixed position like helm */}
+      <button
+        className={`filter-time-fab ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{width:26,height:26}}>
+          <path d="M5 3h14"/>
+          <path d="M5 21h14"/>
+          <path d="M7 3v4.5a1 1 0 0 0 .4.8L12 12l-4.6 3.7a1 1 0 0 0-.4.8V21"/>
+          <path d="M17 3v4.5a1 1 0 0 1-.4.8L12 12l4.6 3.7a1 1 0 0 1 .4.8V21"/>
+          <circle cx="12" cy="12" r="0.5" fill="currentColor" stroke="none"/>
+          <circle cx="11" cy="17.5" r="0.4" fill="currentColor" stroke="none" opacity="0.6"/>
+          <circle cx="13" cy="18" r="0.4" fill="currentColor" stroke="none" opacity="0.6"/>
+          <circle cx="12" cy="18.5" r="0.4" fill="currentColor" stroke="none" opacity="0.4"/>
+        </svg>
+      </button>
+
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          className="mob-nav-backdrop open"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      {isOpen && (
+        <div className="mob-nav-sidebar open">
+          {FILTER_OPTIONS.map((opt, i) => {
+            const active = current === opt.key
+            return (
+              <button
+                key={opt.key}
+                onClick={() => handleSelect(opt.key)}
+                className={`mob-nav-item visible ${active ? 'active' : ''}`}
+                style={{
+                  '--delay': `${i * 35}ms`,
+                  '--item-color': active ? '#00ab63' : 'rgba(255,255,255,0.4)',
+                  '--item-rgb': '0,171,99',
+                }}
+              >
+                <div className="mob-nav-icon">
+                  {opt.icon}
+                </div>
+                <span className="mob-nav-label">{opt.full}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </>,
     document.body
-  ) : null
+  )
 
   return (
     <>
@@ -117,29 +141,8 @@ export default function FilterBar({ current, onChange }) {
         })}
       </div>
 
-      {/* ── Mobile: hourglass FAB in banner ── */}
-      <button
-        className={`filter-fab-btn ${isOpen ? 'open' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="filter-fab-icon">
-          {/* Hourglass frame */}
-          <path d="M5 3h14"/>
-          <path d="M5 21h14"/>
-          {/* Glass body */}
-          <path d="M7 3v4.5a1 1 0 0 0 .4.8L12 12l-4.6 3.7a1 1 0 0 0-.4.8V21"/>
-          <path d="M17 3v4.5a1 1 0 0 1-.4.8L12 12l4.6 3.7a1 1 0 0 1 .4.8V21"/>
-          {/* Sand particles */}
-          <circle cx="12" cy="12" r="0.5" fill="currentColor" stroke="none"/>
-          <circle cx="11" cy="17.5" r="0.4" fill="currentColor" stroke="none" opacity="0.6"/>
-          <circle cx="13" cy="18" r="0.4" fill="currentColor" stroke="none" opacity="0.6"/>
-          <circle cx="12" cy="18.5" r="0.4" fill="currentColor" stroke="none" opacity="0.4"/>
-        </svg>
-        <span className="filter-fab-label">{current}</span>
-      </button>
-
-      {/* Portal: sidebar + backdrop at body level */}
-      {sidebar}
+      {/* Portal: FAB + sidebar + backdrop at body level */}
+      {mobilePortal}
     </>
   )
 }
