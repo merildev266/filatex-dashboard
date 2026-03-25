@@ -23,9 +23,6 @@ const FILTER_OPTIONS = [
   )},
 ]
 
-const ACCENT = '#00ab63'
-const ACCENT_RGB = '0,171,99'
-
 export default function FilterBar({ current, onChange }) {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef(null)
@@ -38,7 +35,6 @@ export default function FilterBar({ current, onChange }) {
     return () => document.removeEventListener('pointerdown', close)
   }, [isOpen])
 
-  // Close on scroll
   useEffect(() => {
     if (!isOpen) return
     const close = () => setIsOpen(false)
@@ -53,7 +49,7 @@ export default function FilterBar({ current, onChange }) {
 
   return (
     <div ref={ref} className="filter-bar-wrap">
-      {/* ── Desktop: icon circles like nav bar ── */}
+      {/* ── Desktop: icon circles + labels ── */}
       <div className="filter-bar-desktop">
         {FILTER_OPTIONS.map((opt) => {
           const active = current === opt.key
@@ -72,14 +68,24 @@ export default function FilterBar({ current, onChange }) {
         })}
       </div>
 
-      {/* ── Mobile: FAB button + sidebar like nav ── */}
+      {/* ── Mobile: inline button in banner that opens sidebar ── */}
+      <button
+        className="filter-banner-btn"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>{current}</span>
+      </button>
+
       {/* Backdrop */}
       <div
         className={`filter-mob-backdrop ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Sidebar */}
+      {/* Sidebar — slides from left */}
       <div className={`filter-mob-sidebar ${isOpen ? 'open' : ''}`}>
         {FILTER_OPTIONS.map((opt, i) => {
           const active = current === opt.key
@@ -98,17 +104,6 @@ export default function FilterBar({ current, onChange }) {
           )
         })}
       </div>
-
-      {/* FAB — calendar icon */}
-      <button
-        className={`filter-mob-fab ${isOpen ? 'open' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{width:22,height:22}}>
-          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        <span className="filter-mob-fab-label">{current}</span>
-      </button>
     </div>
   )
 }

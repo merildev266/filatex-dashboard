@@ -474,44 +474,31 @@ body::-webkit-scrollbar { display: none; }
 .filter-item.active .filter-item-label { color: #00ab63; }
 
 /* Mobile elements hidden on desktop */
-.filter-mob-fab,
+.filter-banner-btn,
 .filter-mob-sidebar,
 .filter-mob-backdrop { display: none; }
 
 @media (max-width: 640px) {
   .filter-bar-desktop { display: none !important; }
 
-  /* FAB — bottom left (opposite to nav on right) */
-  .filter-mob-fab {
+  /* Inline button in the banner — top left area */
+  .filter-banner-btn {
     display: flex;
-    position: fixed;
-    bottom: 18px;
-    left: 18px;
-    z-index: 960;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.92);
-    border: 1.5px solid rgba(0,171,99,0.25);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    color: #00ab63;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 0;
+    gap: 5px;
+    background: rgba(0,171,99,0.08);
+    border: 1px solid rgba(0,171,99,0.25);
+    border-radius: 8px;
+    padding: 5px 10px;
     cursor: pointer;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s;
+    color: #00ab63;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
   }
-  .filter-mob-fab.open {
-    border-color: rgba(0,171,99,0.6);
-  }
-  .filter-mob-fab:active { transform: scale(0.9); }
-  .filter-mob-fab-label {
-    font-size: 7px; font-weight: 800; letter-spacing: 0.1em;
-    color: #00ab63; margin-top: -2px;
-  }
+  .filter-banner-btn:active { transform: scale(0.95); }
 
   /* Backdrop */
   .filter-mob-backdrop {
