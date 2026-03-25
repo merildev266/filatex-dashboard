@@ -474,33 +474,91 @@ body::-webkit-scrollbar { display: none; }
 .filter-item.active .filter-item-label { color: #00ab63; }
 
 /* Mobile elements hidden on desktop */
-.filter-banner-btn,
+.filter-cal-btn,
 .filter-mob-sidebar,
 .filter-mob-backdrop { display: none; }
 
 @media (max-width: 640px) {
   .filter-bar-desktop { display: none !important; }
 
-  /* Inline button in the banner — top left area */
-  .filter-banner-btn {
+  /* ── Calendar button with page-flip effect ── */
+  .filter-cal-btn {
     display: flex;
     align-items: center;
-    gap: 5px;
-    background: rgba(0,171,99,0.08);
-    border: 1px solid rgba(0,171,99,0.25);
-    border-radius: 8px;
-    padding: 5px 10px;
+    background: none;
+    border: none;
     cursor: pointer;
-    color: #00ab63;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    transition: all 0.2s;
+    padding: 4px;
+    position: relative;
   }
-  .filter-banner-btn:active { transform: scale(0.95); }
+  .filter-cal-btn:active { transform: scale(0.92); }
 
-  /* Backdrop */
+  .filter-cal-body {
+    width: 28px;
+    height: 28px;
+    background: rgba(0,0,0,0.6);
+    border: 1.5px solid rgba(0,171,99,0.3);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .filter-cal-btn.open .filter-cal-body {
+    border-color: #00ab63;
+  }
+
+  /* Green header strip */
+  .filter-cal-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: #00ab63;
+    border-radius: 4px 4px 0 0;
+  }
+
+  /* Two small rings */
+  .filter-cal-rings {
+    position: absolute;
+    top: 2px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+  }
+  .filter-cal-ring {
+    width: 3px; height: 8px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 1.5px;
+  }
+
+  /* Page that flips backward when open */
+  .filter-cal-page {
+    position: absolute;
+    top: 8px; left: 1px; right: 1px; bottom: 1px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 0 0 4px 4px;
+    transform-origin: top center;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 1;
+  }
+  .filter-cal-page.flipped {
+    transform: rotateX(-140deg);
+  }
+
+  /* Current filter label inside calendar */
+  .filter-cal-label {
+    position: absolute;
+    bottom: 2px; left: 0; right: 0;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #00ab63;
+    z-index: 3;
+    line-height: 1;
+  }
+
+  /* ── Sidebar — same as nav, slides from left ── */
   .filter-mob-backdrop {
     display: block;
     position: fixed; inset: 0; z-index: 940;
@@ -512,7 +570,6 @@ body::-webkit-scrollbar { display: none; }
   }
   .filter-mob-backdrop.open { opacity: 1; pointer-events: auto; }
 
-  /* Sidebar — slides from left */
   .filter-mob-sidebar {
     display: flex;
     flex-direction: column;
@@ -533,7 +590,7 @@ body::-webkit-scrollbar { display: none; }
   }
   .filter-mob-sidebar.open { transform: translateX(0); }
 
-  /* Each filter item — spring animation */
+  /* Items — spring animation identical to nav */
   .filter-mob-item {
     display: flex; flex-direction: column; align-items: center;
     gap: 4px; padding: 10px 4px; border-radius: 12px;
@@ -547,6 +604,7 @@ body::-webkit-scrollbar { display: none; }
   .filter-mob-item:active { transform: scale(0.9) !important; }
   .filter-mob-item.active { background: rgba(0,171,99,0.1); }
 
+  /* Icon circle — same dimensions as nav */
   .filter-mob-icon {
     width: 38px; height: 38px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -563,6 +621,7 @@ body::-webkit-scrollbar { display: none; }
   }
   .filter-mob-icon svg { width: 18px; height: 18px; }
 
+  /* Label — same style as nav */
   .filter-mob-label {
     font-size: 7px; font-weight: 700; letter-spacing: 0.06em;
     text-transform: uppercase; color: rgba(255,255,255,0.4);
