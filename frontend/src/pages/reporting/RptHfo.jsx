@@ -90,14 +90,22 @@ export default function RptHfo() {
 
   return (
     <div>
-      {/* Back to sub-cards */}
-      <button
-        onClick={() => { setView('cards'); setSiteFilter('all') }}
-        className="text-[#00ab63] text-xs font-semibold mb-4 bg-transparent border border-[rgba(0,171,99,0.3)]
-                   rounded-lg px-3 py-1 cursor-pointer hover:bg-[rgba(0,171,99,0.05)]"
-      >
-        {'\u2190'} Retour
-      </button>
+      {/* View nav tabs */}
+      <div className="flex gap-2 mb-4">
+        {['overhauls','projets','info'].map(v => (
+          <button
+            key={v}
+            onClick={() => { setView(v); setSiteFilter('all') }}
+            className={`px-3 py-1 rounded-lg text-[10px] font-bold border cursor-pointer transition-all
+              ${view === v
+                ? 'bg-[rgba(0,171,99,0.15)] border-[rgba(0,171,99,0.4)] text-[#00ab63]'
+                : 'bg-transparent border-[rgba(255,255,255,0.08)] text-[rgba(255,255,255,0.4)] hover:text-[rgba(255,255,255,0.6)]'
+              }`}
+          >
+            {v === 'overhauls' ? 'Overhauls' : v === 'projets' ? 'Projets' : 'Info'}
+          </button>
+        ))}
+      </div>
 
       {/* Site filter tabs */}
       <div className="flex flex-wrap gap-2 mb-4">

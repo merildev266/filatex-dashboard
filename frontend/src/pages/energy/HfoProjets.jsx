@@ -32,16 +32,8 @@ export default function HfoProjets() {
 
   return (
     <div className="inner-page-inner">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <button
-          onClick={() => navigate('/energy')}
-          className="text-[#00ab63] text-sm font-bold bg-transparent border border-[rgba(0,171,99,0.3)] rounded-lg px-3 py-1 cursor-pointer hover:bg-[rgba(0,171,99,0.08)]"
-        >
-          ← Energy
-        </button>
-        <h2 className="text-lg font-extrabold tracking-wider uppercase">Projets HFO</h2>
-      </div>
+      {/* Title */}
+      <h2 className="text-lg font-extrabold tracking-wider uppercase mb-6">Projets HFO</h2>
 
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">

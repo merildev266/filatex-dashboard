@@ -477,20 +477,6 @@ function ProjectDetail({ project, onBack }) {
 
   return (
     <div>
-      {/* Back button */}
-      <div style={{ marginBottom: 16 }}>
-        <button
-          onClick={onBack}
-          style={{
-            background: 'transparent', border: '1px solid rgba(253,184,35,0.3)',
-            color: YELLOW, padding: '5px 14px', borderRadius: 8, cursor: 'pointer',
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase'
-          }}
-        >
-          &larr; DÉVELOPPEMENT
-        </button>
-      </div>
-
       {/* Title */}
       <div style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 20 }}>
         {project.name}
