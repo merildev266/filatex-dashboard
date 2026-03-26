@@ -899,7 +899,7 @@ function GeneratorDetailPanel({
               {parseFloat(g.arretForce || 0).toFixed(1)}
               <span style={{ fontSize: 11, fontWeight: 400, color: 'rgba(224,92,92,0.5)', marginLeft: 3 }}>h</span>
             </div>
-            <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 6 }}>
+            <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 6 }}>
               Arret planifie : {parseFloat(g.arretPlanifie || 0).toFixed(1)} h
             </div>
           </div>

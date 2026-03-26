@@ -132,7 +132,7 @@ export default function TvxDetail() {
             >
               {/* Name + status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{p.site}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{p.site}</div>
                 <span style={{
                   fontSize: 9, fontWeight: 700, color: timingColor,
                   background: timingColor + '15', padding: '3px 8px', borderRadius: 6
@@ -141,14 +141,14 @@ export default function TvxDetail() {
 
               {/* Resp */}
               {p.resp && (
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>
-                  Resp: <span style={{ fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>{p.resp}</span>
+                <div style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>
+                  Resp: <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{p.resp}</span>
                 </div>
               )}
 
               {/* Current step */}
               <div style={{
-                fontSize: 10, color: 'rgba(255,255,255,0.45)',
+                fontSize: 10, color: 'var(--text-muted)',
                 overflow: 'hidden', textOverflow: 'ellipsis',
                 display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                 marginBottom: 8
@@ -194,7 +194,7 @@ export default function TvxDetail() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <span style={{ fontSize: 16, fontWeight: 800, color: PROPS }}>{selectedProject.site}</span>
               <button onClick={() => setSelectedProject(null)} style={{
-                background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)',
+                background: 'transparent', border: 'none', color: 'var(--text-muted)',
                 fontSize: 18, cursor: 'pointer'
               }}>&times;</button>
             </div>
@@ -207,7 +207,7 @@ export default function TvxDetail() {
                 { label: 'CPs', value: selectedProject.status_cps || 'N/A' },
               ].map((item, i) => (
                 <div key={i} style={{ fontSize: 10 }}>
-                  <span style={{ color: 'rgba(255,255,255,0.35)' }}>{item.label}: </span>
+                  <span style={{ color: 'var(--text-dim)' }}>{item.label}: </span>
                   <span style={{ fontWeight: 700, color: item.color || 'rgba(255,255,255,0.8)' }}>{item.value}</span>
                 </div>
               ))}
@@ -218,8 +218,8 @@ export default function TvxDetail() {
               background: 'rgba(253,184,35,0.06)', border: '1px solid rgba(253,184,35,0.12)',
               marginBottom: 12
             }}>
-              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>Etape en cours</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.etape}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{selectedProject.etape}</div>
             </div>
 
             {selectedProject.latest_comment && (
@@ -227,10 +227,10 @@ export default function TvxDetail() {
                 padding: '10px 14px', borderRadius: 8,
                 background: 'rgba(253,184,35,0.04)', border: '1px solid rgba(253,184,35,0.1)'
               }}>
-                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})
                 </div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>{selectedProject.latest_comment}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{selectedProject.latest_comment}</div>
               </div>
             )}
           </div>

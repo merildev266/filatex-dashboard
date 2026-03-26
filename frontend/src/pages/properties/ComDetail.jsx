@@ -21,7 +21,7 @@ function fmtEur(v) {
 }
 
 function fmtCell(v) {
-  if (v == null) return <span style={{ color: 'rgba(255,255,255,0.15)' }}>&mdash;</span>
+  if (v == null) return <span style={{ color: 'var(--text-dim)' }}>&mdash;</span>
   return fmtEur(v)
 }
 
@@ -31,7 +31,7 @@ function sumF(arr, field) {
 
 function pct(realise, objectif) {
   if (!objectif) return '\u2014'
-  if (!realise) return <span style={{ color: 'rgba(255,255,255,0.25)' }}>0 %</span>
+  if (!realise) return <span style={{ color: 'var(--text-dim)' }}>0 %</span>
   const p = Math.round(realise / objectif * 100)
   const col = p >= 80 ? VERT : p >= 40 ? YELLOW : RED
   return <span style={{ color: col, fontWeight: 700 }}>{p} %</span>
@@ -105,8 +105,8 @@ function CategorySection({ cat }) {
             <table className="groups-table com-obj-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Nom</th>
-                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>Objectif</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Nom</th>
+                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Objectif</th>
                   {[1, 2, 3, 4].map(qi => {
                     const isActive = qi === Q
                     return (
@@ -119,15 +119,15 @@ function CategorySection({ cat }) {
                       </th>
                     )
                   })}
-                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>% Annuel</th>
+                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>% Annuel</th>
                 </tr>
                 <tr style={{ fontSize: 8, opacity: 0.5 }}>
                   <th></th>
                   <th></th>
                   {[1, 2, 3, 4].map(qi => (
                     <Fragment key={qi}>
-                      <th style={{ padding: '4px 4px', textAlign: 'center', color: 'rgba(255,255,255,0.35)' }}>Obj.</th>
-                      <th style={{ padding: '4px 4px', textAlign: 'center', color: 'rgba(255,255,255,0.35)' }}>Realise</th>
+                      <th style={{ padding: '4px 4px', textAlign: 'center', color: 'var(--text-dim)' }}>Obj.</th>
+                      <th style={{ padding: '4px 4px', textAlign: 'center', color: 'var(--text-dim)' }}>Realise</th>
                     </Fragment>
                   ))}
                   <th></th>
@@ -141,8 +141,8 @@ function CategorySection({ cat }) {
 
                   return (
                     <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                      <td style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, textAlign: 'left', color: 'rgba(255,255,255,0.8)' }}>{row.name}</td>
-                      <td style={{ padding: '8px 8px', fontSize: 11, textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}>{fmtEur(row.objectif)}</td>
+                      <td style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, textAlign: 'left', color: 'var(--text-secondary)' }}>{row.name}</td>
+                      <td style={{ padding: '8px 8px', fontSize: 11, textAlign: 'center', color: 'var(--text-secondary)' }}>{fmtEur(row.objectif)}</td>
                       {[1, 2, 3, 4].map(qi => {
                         const obj = row['t' + qi]
                         const real = row['t' + qi + 'r']
@@ -150,13 +150,13 @@ function CategorySection({ cat }) {
                         const bgS = isActive ? `rgba(${rgb},0.06)` : 'transparent'
                         return (
                           <Fragment key={qi}>
-                            <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', color: 'rgba(255,255,255,0.4)', background: bgS }}>
+                            <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', color: 'var(--text-muted)', background: bgS }}>
                               {fmtCell(obj)}
                             </td>
                             <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', fontWeight: 600, background: bgS,
                               color: real != null ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.15)'
                             }}>
-                              {real != null ? fmtEur(real) : <span style={{ color: 'rgba(255,255,255,0.15)' }}>&mdash;</span>}
+                              {real != null ? fmtEur(real) : <span style={{ color: 'var(--text-dim)' }}>&mdash;</span>}
                             </td>
                           </Fragment>
                         )

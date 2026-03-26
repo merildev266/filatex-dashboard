@@ -32,7 +32,7 @@ function KpiCell({ label, value, color, borderRight, borderBottom, accentColor }
       }}
     >
       <div className="text-[clamp(6px,0.55vw,9px)] font-bold tracking-[0.15em] uppercase"
-        style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+        style={{ color: 'var(--text-muted)' }}>{label}</div>
       <div className="text-[clamp(14px,1.5vw,24px)] font-extrabold"
         style={{ color: color || '#fff' }}>{value}</div>
     </div>

@@ -244,8 +244,8 @@ export default function Accueil() {
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
 
-        {/* ── THEME TOGGLE ── */}
-        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10}}>
+        {/* ── THEME TOGGLE — bottom right ── */}
+        <div style={{position:'absolute',bottom:'16px',right:'16px',zIndex:10}}>
           <ThemeToggle />
         </div>
 
@@ -294,7 +294,7 @@ export default function Accueil() {
       {/* ══ FOOTER ══ */}
       <div id="home-footer" style={{position:'fixed',bottom:'10px',left:'50%',transform:'translateX(-50%)',zIndex:2,pointerEvents:'none',textAlign:'center',whiteSpace:'nowrap',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
         <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik','DM Sans',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(200,200,220,0.08)',fontWeight:500}}>Made by PMO with <span style={{fontSize:'7px',color:'rgba(255,107,138,0.12)'}}>&#9829;</span></span>
-        <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik','DM Sans',sans-serif",color:'rgba(255,255,255,0.18)',letterSpacing:'0.14em',fontStyle:'italic'}}>Ceci n'est pas un Dashboard.</span>
+        <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik','DM Sans',sans-serif",color:'var(--text-dim)',letterSpacing:'0.14em',fontStyle:'italic'}}>Ceci n'est pas un Dashboard.</span>
       </div>
     </>
   )

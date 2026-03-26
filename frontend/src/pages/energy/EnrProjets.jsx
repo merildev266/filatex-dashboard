@@ -181,17 +181,17 @@ function EnrProjectCard({ project, onClick }) {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
         <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
-          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Engineering</div>
+          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Engineering</div>
           <div className="enrp-bar"><div className="enrp-bar-fill" style={{ width: `${engPct}%`, background: color }} /></div>
           <div style={{ fontSize: 12, fontWeight: 800, color }}>{p.engPct != null ? engPct + '%' : '\u2014'}</div>
         </div>
         <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
-          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Construction</div>
+          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Construction</div>
           <div className="enrp-bar"><div className="enrp-bar-fill" style={{ width: `${constProg}%`, background: '#4a9eff' }} /></div>
           <div style={{ fontSize: 12, fontWeight: 800, color: '#4a9eff' }}>{constProg}%</div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: 10, color: 'var(--text-muted)' }}>
         <span>{fmtDate(p.constStart)} {'\u2192'} {fmtDate(p.constEnd)}</span>
         {avReel != null && <span style={{ marginLeft: 'auto', fontWeight: 700, color }}>R\u00e9el: {avReel}%</span>}
         {p.cc && p.cc.spi != null && (
@@ -240,7 +240,7 @@ function ProjectDetailPanel({ project, onClose }) {
     padding: 16,
     textAlign: 'center',
   }
-  const labelStyle = { fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 6 }
+  const labelStyle = { fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }
   const valStyle = (c) => ({ fontSize: 20, fontWeight: 800, color: c })
 
   return (
@@ -289,8 +289,8 @@ function ProjectDetailPanel({ project, onClose }) {
         <div className="enr-kpi-card" style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>CAPEX Total</div>
           <div style={valStyle(color)}>{fmtM(p.capexM)}</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>D\u00e9v. {fmtK(p.costDev)}</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>PV {fmtK(p.costPv)}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>D\u00e9v. {fmtK(p.costDev)}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>PV {fmtK(p.costPv)}</div>
         </div>
         {/* TRI */}
         <div style={cardStyle}>
@@ -298,7 +298,7 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={valStyle(p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.3)')}>
             {p.tri != null ? p.tri + '%' : '\u2014'}
           </div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>
             {p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : 'À déterminer'}
           </div>
         </div>
@@ -309,12 +309,12 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ height: 5, background: `rgba(${rgb},0.12)`, borderRadius: 3, overflow: 'hidden', margin: '6px 0' }}>
             <div style={{ height: '100%', width: `${engPct}%`, background: color, borderRadius: 3 }} />
           </div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{fmtDate(p.engStart)} {'\u2192'} {fmtDate(p.engEnd)}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{fmtDate(p.engStart)} {'\u2192'} {fmtDate(p.engEnd)}</div>
         </div>
         {/* Construction */}
         <div style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>Construction</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, marginTop: 6 }}>
+          <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8, marginTop: 6 }}>
             <div>D\u00e9but: <span style={{ color, fontWeight: 700 }}>{fmtDate(p.constStart)}</span></div>
             <div>COD: <span style={{ color, fontWeight: 700 }}>{fmtDate(p.constEnd)}</span></div>
           </div>
@@ -328,10 +328,10 @@ function ProjectDetailPanel({ project, onClose }) {
               <div style={{ height: 5, background: `rgba(${rgb},0.12)`, borderRadius: 3, overflow: 'hidden', margin: '6px 0' }}>
                 <div style={{ height: '100%', width: `${avReel}%`, background: color, borderRadius: 3 }} />
               </div>
-              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>SPI: {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>SPI: {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}</div>
             </>
           ) : (
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)', marginTop: 10 }}>Donn\u00e9es \u00e0 venir</div>
+            <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>Donn\u00e9es \u00e0 venir</div>
           )}
         </div>
         {/* Performance */}
@@ -340,10 +340,10 @@ function ProjectDetailPanel({ project, onClose }) {
           {cc.perf && !String(cc.perf).startsWith('#') ? (
             <>
               <div style={{ fontSize: 11, fontWeight: 600, color: String(cc.perf).includes('temps') ? '#00ab63' : '#f37056', marginTop: 8, lineHeight: 1.5 }}>{cc.perf}</div>
-              {cc.cpi != null && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>CPI: {cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)}</div>}
+              {cc.cpi != null && <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>CPI: {cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)}</div>}
             </>
           ) : (
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)', marginTop: 10 }}>{'\u2014'}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>{'\u2014'}</div>
           )}
         </div>
       </div>
@@ -413,7 +413,7 @@ function ProjectDetailPanel({ project, onClose }) {
                 <div style={{ fontSize: 18, fontWeight: 800, color: cc.forecast <= cc.bac ? '#00ab63' : '#ff5050' }}>
                   {fmtK(cc.forecast - cc.bac)}
                 </div>
-                <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 4 }}>
+                <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 4 }}>
                   {cc.forecast <= cc.bac ? 'Sous budget' : 'D\u00e9passement'}
                 </div>
               </div>
@@ -437,7 +437,7 @@ function ProjectDetailPanel({ project, onClose }) {
               <div style={{ flex: Math.max(pPv, 0.5), background: 'rgba(0,171,99,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff' }}>
                 {pPv > 8 ? 'PV / EPC' : ''}
               </div>
-              <div style={{ flex: Math.max(pOth, 0.5), background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>
+              <div style={{ flex: Math.max(pOth, 0.5), background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text-muted)' }}>
                 {pOth > 8 ? 'Autres' : ''}
               </div>
             </div>
@@ -446,17 +446,17 @@ function ProjectDetailPanel({ project, onClose }) {
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(90,175,175,0.6)', marginBottom: 4 }}>D\u00e9veloppement</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#5aafaf' }}>{fmtK(dev)}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{pDev.toFixed(1)}%</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pDev.toFixed(1)}%</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.6)', marginBottom: 4 }}>PV / EPC</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#00ab63' }}>{fmtK(pv)}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{pPv.toFixed(1)}%</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pPv.toFixed(1)}%</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Autres</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: 'rgba(255,255,255,0.5)' }}>{fmtK(other)}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{pOth.toFixed(1)}%</div>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Autres</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-muted)' }}>{fmtK(other)}</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pOth.toFixed(1)}%</div>
               </div>
             </div>
           </div>
@@ -474,7 +474,7 @@ function ProjectDetailPanel({ project, onClose }) {
           style={{
             width: '100%', minHeight: 80, background: 'rgba(0,0,0,0.2)',
             border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12,
-            color: 'rgba(255,255,255,0.7)', padding: 16, fontSize: 12,
+            color: 'var(--text-secondary)', padding: 16, fontSize: 12,
             resize: 'vertical', outline: 'none', fontFamily: 'inherit',
           }}
         />
@@ -484,13 +484,13 @@ function ProjectDetailPanel({ project, onClose }) {
       {p.blocages && (
         <div style={{ background: 'rgba(224,92,92,0.06)', border: '1px solid rgba(224,92,92,0.15)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#E05C5C', marginBottom: 6 }}>Blocages</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{p.blocages}</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.blocages}</div>
         </div>
       )}
       {p.actionsS && (
         <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 6 }}>Actions</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{p.actionsS}</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.actionsS}</div>
         </div>
       )}
     </div>

@@ -38,8 +38,8 @@ export default function HfoProjets() {
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         {[
-          { value: hfp.total, label: 'Total', color: 'rgba(255,255,255,0.9)' },
-          { value: hfp.overhauls, label: 'Overhauls', color: 'rgba(255,255,255,0.9)' },
+          { value: hfp.total, label: 'Total', color: 'var(--text)' },
+          { value: hfp.overhauls, label: 'Overhauls', color: 'var(--text)' },
           { value: hfp.enCours, label: 'En cours', color: '#FDB823' },
           { value: hfp.termine, label: 'Terminés', color: '#00ab63' },
           { value: hfp.urgents, label: 'Urgents', color: '#f37056' },

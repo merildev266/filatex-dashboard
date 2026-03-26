@@ -121,14 +121,14 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
         {/* Progress */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
           <div className="cpj-block-label" style={{ marginBottom: 8 }}>Etat d'investissement</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
+          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8 }}>
             {project.etatEnCours} sur {project.etatTotal}
           </div>
           <div style={{ width: '100%', height: 6, background: `rgba(${colorRgb},0.1)`, borderRadius: 3 }}>
             <div style={{ width: `${project.etatPct}%`, height: '100%', background: color, borderRadius: 3 }} />
           </div>
           <div style={{ fontSize: 26, fontWeight: 800, color, marginTop: 8 }}>{project.etatPct}%</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>engage sur budget total</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>engage sur budget total</div>
         </div>
 
         {/* Dates */}
@@ -208,7 +208,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}` }} />
-                <span style={{ fontSize: 'clamp(13px,1.2vw,16px)', fontWeight: 800, color: 'rgba(255,255,255,0.9)' }}>{p.name}</span>
+                <span style={{ fontSize: 'clamp(13px,1.2vw,16px)', fontWeight: 800, color: 'var(--text)' }}>{p.name}</span>
               </div>
               <StatusBadge status={p.status} color={color} />
             </div>
@@ -216,15 +216,15 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
             {/* Investment row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
               <div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Init.</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Init.</div>
                 <div style={{ fontSize: 14, fontWeight: 800 }}>{p.investInit}</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Reel</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Reel</div>
                 <div style={{ fontSize: 14, fontWeight: 800, color }}>{p.investReel}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>TRI</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>TRI</div>
                 <div style={{ fontSize: 14, fontWeight: 800, color: '#4ecdc4' }}>{p.triInit}</div>
               </div>
             </div>
@@ -232,7 +232,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
             {/* Progress bar */}
             <div style={{ marginTop: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                <span style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                   {p.etatEnCours} sur {p.etatTotal}
                 </span>
                 <span style={{ fontSize: 11, fontWeight: 800, color }}>{p.etatPct}%</span>
@@ -349,9 +349,9 @@ export default function Capex() {
             <div className="ckpi-label">Repartition budget</div>
             <div className="ckpi-val" style={{ fontSize: 18 }}>EnR 52%</div>
             <div className="ckpi-sub-row">
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>IMMO 36%</span>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>VEN 10%</span>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>HFO 3%</span>
+              <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>IMMO 36%</span>
+              <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>VEN 10%</span>
+              <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>HFO 3%</span>
             </div>
           </div>
 
@@ -360,8 +360,8 @@ export default function Capex() {
             <div className="ckpi-label">Alertes projets</div>
             <div className="ckpi-val" style={{ color: '#f37056' }}>3</div>
             <div className="ckpi-sub-row">
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>2 retards EnR</span>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>1 restructuration</span>
+              <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>2 retards EnR</span>
+              <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>1 restructuration</span>
             </div>
           </div>
 

@@ -36,10 +36,10 @@ html::-webkit-scrollbar { display: none; }
   --card: rgba(12,12,20,0.85);
   --card-border: rgba(58,57,92,0.20);
   --border: rgba(58,57,92,0.20);
-  --text: #ffffff;
-  --text-secondary: #c7c6c4;
-  --text-muted: #c7c6c4;
-  --text-dim: #aec1cd;
+  --text: #e4f4fd;
+  --text-secondary: #c7d8e4;
+  --text-muted: #aec1cd;
+  --text-dim: #8a9ab0;
   --banner-bg: rgba(0,0,0,0.92);
   --banner-border: rgba(255,255,255,0.08);
   --kpi-bg: rgba(20,20,35,0.7);

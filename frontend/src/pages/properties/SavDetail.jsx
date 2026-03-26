@@ -127,9 +127,9 @@ export default function SavDetail() {
               {/* Name + badges */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{p.site}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{p.site}</div>
                   {p.resp && (
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Resp: {p.resp}</div>
+                    <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 2 }}>Resp: {p.resp}</div>
                   )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
@@ -146,7 +146,7 @@ export default function SavDetail() {
 
               {/* Current step */}
               <div style={{
-                fontSize: 10, color: 'rgba(255,255,255,0.45)',
+                fontSize: 10, color: 'var(--text-muted)',
                 overflow: 'hidden', textOverflow: 'ellipsis',
                 display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                 marginBottom: 6
@@ -155,8 +155,8 @@ export default function SavDetail() {
               </div>
 
               {p.interlocuteur && (
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
-                  Interlocuteur: <span style={{ color: 'rgba(255,255,255,0.5)' }}>{p.interlocuteur}</span>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>
+                  Interlocuteur: <span style={{ color: 'var(--text-muted)' }}>{p.interlocuteur}</span>
                 </div>
               )}
 
@@ -190,7 +190,7 @@ export default function SavDetail() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <span style={{ fontSize: 16, fontWeight: 800, color: TEAL }}>{selectedProject.site}</span>
               <button onClick={() => setSelectedProject(null)} style={{
-                background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)',
+                background: 'transparent', border: 'none', color: 'var(--text-muted)',
                 fontSize: 18, cursor: 'pointer'
               }}>&times;</button>
             </div>
@@ -203,19 +203,19 @@ export default function SavDetail() {
                 { label: 'Budget', value: selectedProject.budget_var || 'N/A' },
               ].map((item, i) => (
                 <div key={i} style={{ fontSize: 10 }}>
-                  <span style={{ color: 'rgba(255,255,255,0.35)' }}>{item.label}: </span>
+                  <span style={{ color: 'var(--text-dim)' }}>{item.label}: </span>
                   <span style={{ fontWeight: 700, color: item.color || 'rgba(255,255,255,0.8)' }}>{item.value}</span>
                 </div>
               ))}
             </div>
 
             <div style={{ fontSize: 10, marginBottom: 12 }}>
-              <span style={{ color: 'rgba(255,255,255,0.35)' }}>Statut: </span>
-              <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.status || 'N/A'}</span>
+              <span style={{ color: 'var(--text-dim)' }}>Statut: </span>
+              <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{selectedProject.status || 'N/A'}</span>
             </div>
             <div style={{ fontSize: 10, marginBottom: 12 }}>
-              <span style={{ color: 'rgba(255,255,255,0.35)' }}>CPs: </span>
-              <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.status_cps || 'N/A'}</span>
+              <span style={{ color: 'var(--text-dim)' }}>CPs: </span>
+              <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{selectedProject.status_cps || 'N/A'}</span>
             </div>
 
             <div style={{
@@ -223,8 +223,8 @@ export default function SavDetail() {
               background: 'rgba(90,175,175,0.06)', border: '1px solid rgba(90,175,175,0.12)',
               marginBottom: 12
             }}>
-              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>Etape en cours</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)' }}>{selectedProject.etape}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{selectedProject.etape}</div>
             </div>
 
             {selectedProject.latest_comment && (
@@ -232,10 +232,10 @@ export default function SavDetail() {
                 padding: '10px 14px', borderRadius: 8,
                 background: 'rgba(90,175,175,0.04)', border: '1px solid rgba(90,175,175,0.1)'
               }}>
-                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})
                 </div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>{selectedProject.latest_comment}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{selectedProject.latest_comment}</div>
               </div>
             )}
           </div>

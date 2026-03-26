@@ -287,7 +287,7 @@ export default function EnergyOverview() {
                   {hfo.totalArret > 0 ? '\u2212' + hfo.lostToDate.toLocaleString() : '0'}{' '}
                   <span className="e-mid-unit" style={{ color: 'rgba(243,112,86,0.5)' }}>MWh</span>
                 </div>
-                <div className="e-arret-sub2" style={{ fontSize: 'clamp(7px,0.6vw,10px)', color: 'rgba(255,255,255,0.3)', marginTop: '1px' }}>
+                <div className="e-arret-sub2" style={{ fontSize: 'clamp(7px,0.6vw,10px)', color: 'var(--text-dim)', marginTop: '1px' }}>
                   manque · {hfo.periodLabel}
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function EnergyOverview() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: 'rgba(255,255,255,0.9)' }}>{hfo.projectCount}</div>
+              <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)' }}>{hfo.projectCount}</div>
               <div style={{ fontSize: '7px', color: 'rgba(138,146,171,0.5)', textTransform: 'uppercase' }}>projets</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(138,146,171,0.15)' }}></div>
@@ -400,7 +400,7 @@ export default function EnergyOverview() {
                     <div style={{ fontSize: 'clamp(6px,0.5vw,8px)', color: `${col}80` }}>
                       MWh/j
                     </div>
-                    <div style={{ fontSize: 'clamp(6px,0.5vw,8px)', color: 'rgba(255,255,255,0.3)' }}>
+                    <div style={{ fontSize: 'clamp(6px,0.5vw,8px)', color: 'var(--text-dim)' }}>
                       {s.name}
                     </div>
                   </div>
@@ -426,7 +426,7 @@ export default function EnergyOverview() {
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(0,171,99,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{enr.totalMwcPipeline.toFixed(1)}</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-secondary)' }}>{enr.totalMwcPipeline.toFixed(1)}</div>
               <div style={{ fontSize: '7px', color: 'rgba(0,171,99,0.4)', textTransform: 'uppercase' }}>MWc total</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(0,171,99,0.15)' }}></div>
@@ -451,8 +451,8 @@ export default function EnergyOverview() {
               <span style={{ fontSize: '7px', color: 'rgba(90,175,175,0.5)', marginLeft: '3px' }}>Dev.</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(255,255,255,0.4)' }}>{enr.grouped.planifie.length}</span>
-              <span style={{ fontSize: '7px', color: 'rgba(255,255,255,0.25)', marginLeft: '3px' }}>Plan.</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)' }}>{enr.grouped.planifie.length}</span>
+              <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Plan.</span>
             </div>
           </div>
 
