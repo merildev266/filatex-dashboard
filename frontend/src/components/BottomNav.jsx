@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 
 const NAV_ITEMS = [
-  { pole: 'home', path: '/', label: 'Accueil' },
-  { pole: 'energy', path: '/energy', label: 'Energy' },
-  { pole: 'investments', path: '/investments', label: 'Invest.' },
-  { pole: 'properties', path: '/properties', label: 'Properties' },
-  { pole: 'capex', path: '/capex', label: 'CAPEX' },
-  { pole: 'csi', path: '/csi', label: 'CSI' },
-  { pole: 'reporting', path: '/reporting', label: 'Reporting' },
+  { pole: 'home', path: '/', label: 'Accueil', section: null },
+  { pole: 'energy', path: '/energy', label: 'Energy', section: 'energy' },
+  { pole: 'investments', path: '/investments', label: 'Invest.', section: 'investments' },
+  { pole: 'properties', path: '/properties', label: 'Properties', section: 'properties' },
+  { pole: 'capex', path: '/capex', label: 'CAPEX', section: 'capex' },
+  { pole: 'csi', path: '/csi', label: 'CSI', section: 'csi' },
+  { pole: 'reporting', path: '/reporting', label: 'Reporting', section: 'reporting' },
 ]
 
 const POLE_COLORS = {
@@ -120,13 +121,17 @@ const NAV_ICONS = {
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { hasAccess } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [barVisible, setBarVisible] = useState(true)
   const lastScrollY = useRef(0)
 
   const isHome = location.pathname === '/'
 
-  const activePole = NAV_ITEMS.find(
+  // Filter nav items by user permissions
+  const visibleItems = NAV_ITEMS.filter(item => !item.section || hasAccess(item.section))
+
+  const activePole = visibleItems.find(
     (item) => item.path !== '/' && location.pathname.startsWith(item.path)
   )?.pole || 'home'
 
@@ -174,7 +179,7 @@ export default function BottomNav() {
           opacity: barVisible ? 1 : 0,
         }}
       >
-        {NAV_ITEMS.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = activePole === item.pole
           const color = POLE_COLORS[item.pole]
           const rgb = POLE_COLORS_RGB[item.pole]

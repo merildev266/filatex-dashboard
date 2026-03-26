@@ -33,6 +33,7 @@ const RptLfo = lazy(() => import('./pages/reporting/RptLfo'))
 const RptProps = lazy(() => import('./pages/reporting/RptProps'))
 const RptInvest = lazy(() => import('./pages/reporting/RptInvest'))
 const Csi = lazy(() => import('./pages/Csi'))
+const Admin = lazy(() => import('./pages/Admin'))
 
 // Prefetch all chunks after login so navigation is instant
 export function prefetchAllPages() {
@@ -60,6 +61,7 @@ export function prefetchAllPages() {
     () => import('./pages/reporting/RptProps'),
     () => import('./pages/reporting/RptInvest'),
     () => import('./pages/Csi'),
+    () => import('./pages/Admin'),
     // Data files too
     () => import('./data/site_data'),
     () => import('./data/enr_site_data'),
@@ -120,6 +122,7 @@ function App() {
                   <Route path="investments" element={<RptInvest />} />
                 </Route>
                 <Route path="csi" element={<Csi />} />
+                <Route path="admin" element={<Admin />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>
