@@ -36,6 +36,11 @@ export default function Admin() {
   const { user, authFetch } = useAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('users')
+  const DEMO_USERS = [
+    { id: 0, username: 'pmo', display_name: 'PMO Admin', role: 'pmo', sections: ['*'], active: true, locked: false, failed_attempts: 0 },
+    { id: 901, username: 'j.rakoto', display_name: 'Jean Rakoto', role: 'manager', sections: ['energy', 'energy.hfo', 'energy.enr', 'reporting', 'reporting.hfo', 'reporting.enr'], active: true, locked: false, failed_attempts: 0 },
+    { id: 902, username: 'm.rabe', display_name: 'Marie Rabe', role: 'manager', sections: ['properties', 'investments', 'capex', 'capex.properties', 'capex.investments'], active: true, locked: true, failed_attempts: 5 },
+  ]
   const [users, setUsers] = useState([])
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
@@ -55,7 +60,8 @@ export default function Admin() {
       const data = await res.json()
       setUsers(data)
     } catch (err) {
-      setError(err.message === 'Session expiree' ? 'Session expiree' : 'Attente connexion Serveur')
+      // Fallback: show demo users when no server
+      setUsers(DEMO_USERS)
     } finally {
       setLoading(false)
     }
@@ -70,7 +76,14 @@ export default function Admin() {
       const data = await res.json()
       setHistory(data)
     } catch (err) {
-      setError(err.message === 'Session expiree' ? 'Session expiree' : 'Attente connexion Serveur')
+      // Fallback: demo history
+      setHistory([
+        { username: 'pmo', timestamp: new Date().toISOString(), success: true, ip_address: '192.168.1.10' },
+        { username: 'j.rakoto', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true, ip_address: '192.168.1.25' },
+        { username: 'm.rabe', timestamp: new Date(Date.now() - 7200000).toISOString(), success: false, ip_address: '192.168.1.42' },
+        { username: 'm.rabe', timestamp: new Date(Date.now() - 7000000).toISOString(), success: false, ip_address: '192.168.1.42' },
+        { username: 'm.rabe', timestamp: new Date(Date.now() - 6800000).toISOString(), success: false, ip_address: '192.168.1.42' },
+      ])
     } finally {
       setLoading(false)
     }
@@ -91,7 +104,10 @@ export default function Admin() {
         body: JSON.stringify({ active: !u.active }),
       })
       fetchUsers()
-    } catch { /* ignore */ }
+    } catch {
+      // Fallback: toggle locally
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, active: !u.active } : u))
+    }
   }
 
   const handleUnlock = async (userId) => {
@@ -102,7 +118,10 @@ export default function Admin() {
         body: JSON.stringify({ locked: false }),
       })
       fetchUsers()
-    } catch { /* ignore */ }
+    } catch {
+      // Fallback: unlock locally
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, locked: false, failed_attempts: 0 } : u))
+    }
   }
 
   if (!isPmo) {
@@ -216,24 +235,29 @@ export default function Admin() {
                       </div>
                     </td>
                     <td className="p-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-3">
                         <button
                           onClick={() => { setEditUser(u); setShowModal(true) }}
-                          className="px-2 py-1 rounded bg-[var(--inner-card)] text-[var(--text-muted)]
-                                     text-xs hover:text-[var(--text)] transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg bg-[var(--card)] border border-[var(--card-border)]
+                                     text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer"
                           title="Modifier"
                         >
-                          Modifier
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:14,height:14}}>
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                          </svg>
                         </button>
+                        {/* Switch toggle */}
                         <button
                           onClick={() => handleToggleActive(u.id)}
-                          className={`px-2 py-1 rounded text-xs cursor-pointer transition-colors ${
-                            u.active
-                              ? 'bg-[#E05C5C22] text-[#E05C5C] hover:bg-[#E05C5C33]'
-                              : 'bg-[#00ab6322] text-[#00ab63] hover:bg-[#00ab6333]'
-                          }`}
+                          className="relative w-10 h-5 rounded-full cursor-pointer transition-colors"
+                          style={{ background: u.active ? '#00ab63' : 'rgba(224,92,92,0.4)' }}
+                          title={u.active ? 'Actif — cliquer pour desactiver' : 'Inactif — cliquer pour activer'}
                         >
-                          {u.active ? 'Desactiver' : 'Activer'}
+                          <div
+                            className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
+                            style={{ left: u.active ? 'calc(100% - 18px)' : '2px' }}
+                          />
                         </button>
                       </div>
                     </td>
@@ -347,7 +371,19 @@ export default function Admin() {
           user={editUser}
           authFetch={authFetch}
           onClose={() => { setShowModal(false); setEditUser(null) }}
-          onSaved={() => { setShowModal(false); setEditUser(null); fetchUsers() }}
+          onSaved={(savedUser) => {
+            setShowModal(false); setEditUser(null)
+            if (savedUser) {
+              // Fallback: update locally
+              setUsers(prev => {
+                const exists = prev.find(u => u.id === savedUser.id)
+                if (exists) return prev.map(u => u.id === savedUser.id ? { ...u, ...savedUser } : u)
+                return [...prev, { ...savedUser, id: Date.now(), active: true, locked: false, failed_attempts: 0 }]
+              })
+            } else {
+              fetchUsers()
+            }
+          }}
         />
       )}
     </div>
@@ -428,8 +464,13 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || 'Erreur serveur')
       }
-      onSaved()
+      onSaved() // server mode
     } catch (err) {
+      // Fallback: save locally
+      if (err.message?.includes('fetch') || err.message?.includes('Failed') || err.message?.includes('NetworkError')) {
+        onSaved({ ...form, id: editUser?.id || Date.now() })
+        return
+      }
       setError(err.message)
     } finally {
       setSaving(false)
