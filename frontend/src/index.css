@@ -443,7 +443,7 @@ body::-webkit-scrollbar { display: none; }
 .card-props:hover  { box-shadow: 0 28px 80px rgba(253,184,35,0.18); border-color: rgba(253,184,35,0.38); background: rgba(253,184,35,0.04); }
 .card-capex:hover  { box-shadow: 0 28px 80px rgba(94,76,159,0.25); border-color: rgba(94,76,159,0.48); background: rgba(94,76,159,0.06); }
 .card-csi:hover    { box-shadow: 0 28px 80px rgba(0,150,199,0.22); border-color: rgba(0,150,199,0.45); background: rgba(0,150,199,0.06); }
-.card-reporting:hover { box-shadow: 0 28px 80px rgba(90,175,175,0.22); border-color: rgba(90,175,175,0.45); background: rgba(90,175,175,0.06); }
+.card-reporting:hover { box-shadow: 0 28px 80px rgba(66,106,179,0.22); border-color: rgba(66,106,179,0.45); background: rgba(66,106,179,0.06); }
 
 .card-logo-wrap {
   display: flex;
@@ -933,7 +933,7 @@ body::-webkit-scrollbar { display: none; }
 .rpt-badge-green{background:rgba(0,171,99,0.15);color:#00ab63;}
 .rpt-badge-orange{background:rgba(253,184,35,0.15);color:#FDB823;}
 .rpt-badge-red{background:rgba(224,92,92,0.15);color:#E05C5C;}
-.rpt-badge-blue{background:rgba(90,175,175,0.15);color:#5aafaf;}
+.rpt-badge-blue{background:rgba(66,106,179,0.15);color:#426ab3;}
 .rpt-badge-dim{background:rgba(138,146,171,0.12);color:var(--text-dim);}
 
 /* Reporting progress bar */

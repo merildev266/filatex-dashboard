@@ -18,7 +18,7 @@ const POLE_COLORS = {
   properties: '#FDB823',
   capex: '#5e4c9f',
   csi: '#0096c7',
-  reporting: '#5aafaf',
+  reporting: '#426ab3',
 }
 
 const POLE_COLORS_RGB = {
@@ -28,7 +28,7 @@ const POLE_COLORS_RGB = {
   properties: '253,184,35',
   capex: '94,76,159',
   csi: '0,150,199',
-  reporting: '90,175,175',
+  reporting: '66,106,179',
 }
 
 /* ── SVG icons ── */

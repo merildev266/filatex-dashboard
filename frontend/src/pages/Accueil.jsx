@@ -84,7 +84,7 @@ const SECTIONS = [
   { pole: 'properties', label: 'Properties', color: '#FDB823', path: '/properties', cardClass: 'card-props' },
   { pole: 'capex', label: 'CAPEX', color: '#5e4c9f', path: '/capex', cardClass: 'card-capex' },
   { pole: 'csi', label: 'CSI', color: '#0096c7', path: '/csi', cardClass: 'card-csi' },
-  { pole: 'reporting', label: 'Reporting', color: '#5aafaf', path: '/reporting', cardClass: 'card-reporting' },
+  { pole: 'reporting', label: 'Reporting', color: '#426ab3', path: '/reporting', cardClass: 'card-reporting' },
 ]
 
 
