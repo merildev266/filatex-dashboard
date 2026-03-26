@@ -96,7 +96,7 @@ export default function RptLfo() {
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${filter === t.key
                 ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
-                : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
           >
             {t.label}
           </button>
@@ -104,7 +104,7 @@ export default function RptLfo() {
       </div>
 
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[rgba(255,255,255,0.02)] rounded-xl">
+      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
         <KpiItem value={total} label="Moteurs" color="#00ab63" />
         <KpiItem value={`${(totalKw / 1000).toFixed(1)} MW`} label="Puissance totale" color="#5aafaf" />
         <KpiItem value={enProd} label="En production" color="#4ecdc4" />
@@ -117,7 +117,7 @@ export default function RptLfo() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[rgba(255,255,255,0.1)]">
+            <tr className="border-b border-[var(--inner-card-border)]">
               <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">N</th>
               <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Num Serie</th>
               <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Type</th>
@@ -138,7 +138,7 @@ export default function RptLfo() {
                   ? '#E05C5C'
                   : ''
               return (
-                <tr key={m.n} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
+                <tr key={m.n} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
                   <td className="px-2 py-2 text-[var(--text-dim)]">{m.n}</td>
                   <td className="px-2 py-2 font-mono text-[11px]">{m.serie}</td>
                   <td className="px-2 py-2 whitespace-nowrap">{m.type}</td>
@@ -147,7 +147,7 @@ export default function RptLfo() {
                   <td className="px-2 py-2 whitespace-nowrap font-semibold text-[var(--text)]">{m.affectation}</td>
                   {filter === 'all' && (
                     <td className="px-2 py-2">
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-[rgba(255,255,255,0.06)] text-[var(--text-muted)]">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--badge-dim-bg)] text-[var(--text-muted)]">
                         {SECTION_LABELS[m.section] || m.section}
                       </span>
                     </td>

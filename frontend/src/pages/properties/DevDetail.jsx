@@ -177,10 +177,10 @@ function DelayPopup({ task, project, position, onClose }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 200,
-      background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+      background: 'var(--overlay-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <div ref={popupRef} style={{
-        background: '#12101f', border: '1px solid rgba(255,64,96,0.25)',
+        background: 'var(--dark2)', border: '1px solid rgba(255,64,96,0.25)',
         borderRadius: 16, padding: 0, maxWidth: 440, width: '90%',
         boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,64,96,0.08)',
         overflow: 'hidden'
@@ -241,7 +241,7 @@ function DelayPopup({ task, project, position, onClose }) {
 
         {/* Resolution */}
         <div style={{
-          padding: '10px 18px 14px', borderTop: '1px solid rgba(255,255,255,0.04)'
+          padding: '10px 18px 14px', borderTop: '1px solid var(--separator-light)'
         }}>
           <div style={{
             fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
@@ -312,7 +312,7 @@ function GanttChart({ project, onTaskAlert }) {
           {years.map((y, i) => (
             <div key={i} style={{
               position: 'absolute', left: `${y.left}%`, top: 0, bottom: 60,
-              width: 1, background: 'rgba(255,255,255,0.04)', zIndex: 1, pointerEvents: 'none',
+              width: 1, background: 'var(--separator-light)', zIndex: 1, pointerEvents: 'none',
               marginLeft: NAME_W
             }} />
           ))}
@@ -437,7 +437,7 @@ function GanttChart({ project, onTaskAlert }) {
           {/* Legend */}
           <div style={{
             display: 'flex', gap: 16, marginTop: 16, paddingTop: 14,
-            borderTop: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap'
+            borderTop: '1px solid var(--separator)', flexWrap: 'wrap'
           }}>
             {[
               { bg: 'rgba(0,171,99,0.6)', label: 'Termine' },

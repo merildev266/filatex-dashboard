@@ -308,12 +308,12 @@ export default function EnergyOverview() {
               <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)' }}>{hfo.projectCount}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>projets</div>
             </div>
-            <div style={{ width: '1px', height: '24px', background: 'rgba(138,146,171,0.15)' }}></div>
+            <div style={{ width: '1px', height: '24px', background: 'var(--border)' }}></div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>{hfo.urgents}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>urgent</div>
             </div>
-            <div style={{ width: '1px', height: '24px', background: 'rgba(138,146,171,0.15)' }}></div>
+            <div style={{ width: '1px', height: '24px', background: 'var(--border)' }}></div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-secondary)' }}>{hfo.enCours}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>en cours</div>
@@ -450,7 +450,7 @@ export default function EnergyOverview() {
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.developpement.length}</span>
               <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Dev.</span>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
+            <div style={{ background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)' }}>{enr.grouped.planifie.length}</span>
               <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Plan.</span>
             </div>

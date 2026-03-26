@@ -103,7 +103,7 @@ function PropsTable({ sub }) {
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${siteFilter === 'all'
                 ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
-                : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
           >
             Tous
           </button>
@@ -114,7 +114,7 @@ function PropsTable({ sub }) {
               className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
                 ${siteFilter === p.name
                   ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
-                  : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                  : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
             >
               {p.name}
             </button>
@@ -122,7 +122,7 @@ function PropsTable({ sub }) {
         </div>
 
         {/* KPIs */}
-        <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[rgba(255,255,255,0.02)] rounded-xl">
+        <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
           <KpiItem value={propsData_dev_full.length} label="Projets" color="#00ab63" />
           <KpiItem value={propsData_dev_full.reduce((s, p) => s + p.etapes.length, 0)} label={'\u00c9tapes'} color="#5aafaf" />
           <KpiItem value={propsData_dev_full.reduce((s, p) => s + p.etapes.filter(e => e.timing_var === 'On Time').length, 0)} label="On Time" color="#FDB823" />
@@ -140,7 +140,7 @@ function PropsTable({ sub }) {
                 key={pi}
                 className="rounded-xl p-4"
                 style={{
-                  background: 'rgba(58,57,92,0.12)',
+                  background: 'var(--filatex-bg)',
                   border: `1px solid ${delayedP > 0 ? 'rgba(224,92,92,0.3)' : 'rgba(0,171,99,0.2)'}`,
                   borderLeft: `3px solid ${borderColor}`,
                 }}
@@ -164,7 +164,7 @@ function PropsTable({ sub }) {
                   const showHist = expandedProjects.has(histKey)
 
                   return (
-                    <div key={ei} className="mb-2 p-2 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)]">
+                    <div key={ei} className="mb-2 p-2 rounded-lg bg-[var(--inner-card)] border border-[var(--subtle-border)]">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-[13px] font-semibold text-[var(--text)]">{et.etape}</span>
                         <TimingBadge timing={et.timing_var} />
@@ -185,9 +185,9 @@ function PropsTable({ sub }) {
                             {showHist ? '\u25BC Masquer' : `\u25B6 Historique (${et.history.length})`}
                           </button>
                           {showHist && (
-                            <div className="mt-2 p-2 bg-[rgba(0,0,0,0.2)] rounded-lg max-h-[200px] overflow-y-auto">
+                            <div className="mt-2 p-2 bg-[var(--mini-card)] rounded-lg max-h-[200px] overflow-y-auto">
                               {[...et.history].reverse().map((h, hi) => (
-                                <div key={hi} className="py-1 border-b border-[rgba(255,255,255,0.04)] text-[11px]">
+                                <div key={hi} className="py-1 border-b border-[var(--separator-light)] text-[11px]">
                                   <span className="text-[var(--text-dim)] font-semibold">{h.week}</span>
                                   {' '}
                                   <span className="text-[var(--text)]">{h.comment}</span>
@@ -219,7 +219,7 @@ function PropsTable({ sub }) {
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${siteFilter === 'all'
                 ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
-                : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
           >
             Tous
           </button>
@@ -230,7 +230,7 @@ function PropsTable({ sub }) {
               className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
                 ${siteFilter === s
                   ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
-                  : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                  : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
             >
               {s}
             </button>
@@ -239,7 +239,7 @@ function PropsTable({ sub }) {
       )}
 
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[rgba(255,255,255,0.02)] rounded-xl">
+      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
         <KpiItem value={allProjects.length} label="Projets" color="#00ab63" />
         <KpiItem value={rawRows.length} label={'\u00c9tapes'} color="#5aafaf" />
         <KpiItem value={onTimeCount} label="On Time" color="#FDB823" />
@@ -250,7 +250,7 @@ function PropsTable({ sub }) {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[rgba(255,255,255,0.1)]">
+            <tr className="border-b border-[var(--inner-card-border)]">
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Resp.</th>
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">{'\u00c9tape / Objet'}</th>
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Timing</th>
@@ -288,7 +288,7 @@ function PropsTable({ sub }) {
                   </tr>
                   {/* Etape rows */}
                   {proj.etapes.map((et, ei) => (
-                    <tr key={`${pi}-${ei}`} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
+                    <tr key={`${pi}-${ei}`} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
                       <td className="px-3 py-2 whitespace-nowrap text-[11px]">{et.resp || ''}</td>
                       <td className="px-3 py-2 text-[11px] text-[var(--text-main)]">{et.etape || ''}</td>
                       <td className="px-3 py-2 text-center"><TimingBadge timing={et.timing_var} /></td>
@@ -323,13 +323,13 @@ function ComSection() {
   return (
     <div>
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[rgba(255,255,255,0.02)] rounded-xl">
+      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
         {cats.map(cat => (
           <div
             key={cat.key}
             onClick={() => setComFilter(comFilter === cat.key ? 'all' : cat.key)}
             className={`text-center px-4 py-1 rounded-lg cursor-pointer transition-all
-              ${comFilter === cat.key ? 'bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.15)]' : ''}`}
+              ${comFilter === cat.key ? 'bg-[var(--badge-dim-bg)] border border-[var(--card-border)]' : ''}`}
           >
             <div className="text-lg font-bold" style={{ color: cat.color }}>{cat.data.length}</div>
             <div className="text-[10px] text-[var(--text-muted)]">{cat.title}</div>
@@ -347,7 +347,7 @@ function ComSection() {
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${comFilter === t.key
                 ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
-                : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
           >
             {t.label}
           </button>
@@ -440,7 +440,7 @@ export default function RptProps() {
             className={`px-4 py-1.5 rounded-lg text-xs font-bold border cursor-pointer transition-all
               ${activeSub === t.key
                 ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
-                : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
           >
             {t.label}
           </button>

@@ -119,7 +119,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
         </div>
 
         {/* Progress */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
+        <div style={{ borderTop: '1px solid var(--separator)', paddingTop: 16, marginTop: 16 }}>
           <div className="cpj-block-label" style={{ marginBottom: 8 }}>Etat d'investissement</div>
           <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8 }}>
             {project.etatEnCours} sur {project.etatTotal}
@@ -132,7 +132,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
         </div>
 
         {/* Dates */}
-        <div className="cpj-grid cpj-grid-4" style={{ gridTemplateColumns: 'repeat(4,1fr)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginTop: 16 }}>
+        <div className="cpj-grid cpj-grid-4" style={{ gridTemplateColumns: 'repeat(4,1fr)', borderTop: '1px solid var(--separator)', paddingTop: 16, marginTop: 16 }}>
           {[
             { label: 'Debut Init', value: project.dateDebInit },
             { label: 'Debut Reel', value: project.dateDebReel },

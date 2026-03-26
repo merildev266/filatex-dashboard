@@ -180,12 +180,12 @@ function EnrProjectCard({ project, onClick }) {
         <div className="enrp-ck"><div className="v" style={{ color: p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'var(--text-dim)' }}>{p.tri ? p.tri + '%' : '\u2014'}</div><div className="l">TRI</div></div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
-        <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
+        <div style={{ padding: '6px 8px', background: 'var(--mini-card)', borderRadius: 8 }}>
           <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Engineering</div>
           <div className="enrp-bar"><div className="enrp-bar-fill" style={{ width: `${engPct}%`, background: color }} /></div>
           <div style={{ fontSize: 12, fontWeight: 800, color }}>{p.engPct != null ? engPct + '%' : '\u2014'}</div>
         </div>
-        <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
+        <div style={{ padding: '6px 8px', background: 'var(--mini-card)', borderRadius: 8 }}>
           <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Construction</div>
           <div className="enrp-bar"><div className="enrp-bar-fill" style={{ width: `${constProg}%`, background: '#4a9eff' }} /></div>
           <div style={{ fontSize: 12, fontWeight: 800, color: '#4a9eff' }}>{constProg}%</div>
@@ -234,8 +234,8 @@ function ProjectDetailPanel({ project, onClose }) {
   const pOth = total > 0 ? (other / total) * 100 : 0
 
   const cardStyle = {
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--inner-card)',
+    border: '1px solid var(--inner-card-border)',
     borderRadius: 14,
     padding: 16,
     textAlign: 'center',
@@ -354,7 +354,7 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: `rgba(${rgb},0.5)`, marginBottom: 18 }}>
             Earned Value Management (EVM)
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
+          <div style={{ background: 'var(--subtle-bg)', border: '1px solid var(--subtle-border)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
             {/* Row 1: 5 EVM cards */}
             <div className="enrp-evm-grid-5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 20 }}>
               <div style={cardStyle}>
@@ -388,7 +388,7 @@ function ProjectDetailPanel({ project, onClose }) {
                   {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}
                 </div>
                 {cc.spi != null && (
-                  <div style={{ height: 5, background: 'rgba(255,255,255,0.07)', borderRadius: 3, overflow: 'hidden', marginTop: 8 }}>
+                  <div style={{ height: 5, background: 'var(--progress-track)', borderRadius: 3, overflow: 'hidden', marginTop: 8 }}>
                     <div style={{ height: '100%', width: `${Math.min(cc.spi * 100, 100)}%`, background: cc.spi >= 1 ? '#00ab63' : '#f37056', borderRadius: 3 }} />
                   </div>
                 )}
@@ -428,7 +428,7 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: `rgba(${rgb},0.5)`, marginBottom: 18 }}>
             R\u00e9partition Budget
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
+          <div style={{ background: 'var(--subtle-bg)', border: '1px solid var(--subtle-border)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
             {/* Stacked bar */}
             <div style={{ display: 'flex', height: 28, borderRadius: 8, overflow: 'hidden', marginBottom: 18 }}>
               <div style={{ flex: Math.max(pDev, 0.5), background: 'rgba(90,175,175,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text)' }}>
@@ -467,13 +467,13 @@ function ProjectDetailPanel({ project, onClose }) {
       <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: `rgba(${rgb},0.5)`, marginBottom: 18 }}>
         Commentaire DG
       </div>
-      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
+      <div style={{ background: 'var(--subtle-bg)', border: '1px solid var(--subtle-border)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
         <textarea
           defaultValue={p.commentairesDG || p.comment || ''}
           placeholder="Ajouter un commentaire..."
           style={{
-            width: '100%', minHeight: 80, background: 'rgba(0,0,0,0.2)',
-            border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12,
+            width: '100%', minHeight: 80, background: 'var(--mini-card)',
+            border: '1px solid var(--inner-card-border)', borderRadius: 12,
             color: 'var(--text-secondary)', padding: 16, fontSize: 12,
             resize: 'vertical', outline: 'none', fontFamily: 'inherit',
           }}

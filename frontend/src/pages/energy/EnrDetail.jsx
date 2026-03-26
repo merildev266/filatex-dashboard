@@ -108,7 +108,7 @@ export default function EnrDetail() {
 
   /* -- Filter bar -- */
   const filterBar = (
-    <div style={{ display: 'flex', gap: 4, background: 'rgba(58,57,92,0.18)', borderRadius: 8, padding: 4, width: 'fit-content' }}>
+    <div style={{ display: 'flex', gap: 4, background: 'var(--card)', borderRadius: 8, padding: 4, width: 'fit-content' }}>
       {[
         { key: 'month', label: filterState.filter === 'month' ? MONTH_NAMES[filterState.monthIndex]?.slice(0, 3) : 'M', onClick: () => { filterState.setFilter('month'); filterState.setMonthIndex(maxDataMonth - 1) } },
         { key: 'quarter', label: filterState.filter === 'quarter' ? 'Q' + filterState.quarter : 'Q', onClick: () => filterState.setFilter('quarter') },
@@ -144,7 +144,7 @@ export default function EnrDetail() {
           <button
             onClick={() => setSelectedSite(null)}
             style={{
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)',
               color: 'var(--text-muted)', padding: '6px 0', borderRadius: 20, fontSize: 10,
               fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer',
               fontFamily: 'inherit', transition: 'all 0.2s', minWidth: 80, textAlign: 'center',
@@ -222,15 +222,15 @@ export default function EnrDetail() {
               </div>
               {/* 3 sub-KPIs */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Moy/j</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: col }}>{(monthData.avgDailyProdKwh / 1000).toFixed(1)} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>MWh</span></div>
                 </div>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Disponibilité</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-secondary)' }}>{monthData.totalAvailHours.toFixed(0)} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>h</span></div>
                 </div>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Irradiance moy.</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-secondary)' }}>{monthData.avgIrradiance || '—'}</div>
                 </div>
@@ -276,11 +276,11 @@ export default function EnrDetail() {
                       })}
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                      <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
+                      <div style={{ background: 'var(--mini-card)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
                         <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Moy/j</div>
                         <div style={{ fontSize: 16, fontWeight: 800, color: col }}>{(m.avgDailyProdKwh / 1000).toFixed(1)} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>MWh</span></div>
                       </div>
-                      <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
+                      <div style={{ background: 'var(--mini-card)', borderRadius: 8, padding: 10, textAlign: 'center' }}>
                         <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Pic</div>
                         <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-secondary)' }}>{m.maxPeakKw} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>kW</span></div>
                       </div>
@@ -372,19 +372,19 @@ export default function EnrDetail() {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 3 }}>Capacité</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{s.capacityMw} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>MWc</span></div>
                 </div>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 3 }}>Livré</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: col }}>{(fd.deliveredKwh / 1000).toFixed(1)} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>MWh</span></div>
                 </div>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 3 }}>Pic</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-secondary)' }}>{fd.peakKw} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>kW</span></div>
                 </div>
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
+                <div style={{ background: 'var(--mini-card)', borderRadius: 10, padding: '10px 6px', textAlign: 'center' }}>
                   <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 3 }}>Jours</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-secondary)' }}>{fd.days} <span style={{ fontSize: 9, color: 'var(--text-dim)' }}>j</span></div>
                 </div>

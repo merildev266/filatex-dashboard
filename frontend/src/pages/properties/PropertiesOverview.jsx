@@ -54,7 +54,7 @@ function SectionCard({ title, subtitle, accent, kpis, onClick }) {
         style={{
           aspectRatio: '1/1',
           display: 'flex', flexDirection: 'column', justifyContent: 'center', boxSizing: 'border-box',
-          background: 'rgba(255,255,255,0.02)',
+          background: 'var(--subtle-bg)',
           border: `1px solid ${rgba(accent, 0.2)}`,
           borderRadius: '16px',
         }}

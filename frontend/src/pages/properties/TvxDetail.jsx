@@ -182,7 +182,7 @@ export default function TvxDetail() {
       {selectedProject && (
         <>
           <div
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }}
+            style={{ position: 'fixed', inset: 0, background: 'var(--overlay-bg)', zIndex: 99 }}
             onClick={() => setSelectedProject(null)}
           />
           <div style={{

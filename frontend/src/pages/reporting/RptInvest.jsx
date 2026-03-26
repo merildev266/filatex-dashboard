@@ -47,7 +47,7 @@ export default function RptInvest() {
               className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
                 ${filter === t.key
                   ? 'bg-[rgba(243,112,86,0.15)] text-[var(--text)] border-[rgba(243,112,86,0.3)]'
-                  : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
+                  : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
             >
               {t.label}
             </button>
@@ -56,7 +56,7 @@ export default function RptInvest() {
       </div>
 
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[rgba(255,255,255,0.02)] rounded-xl">
+      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
         <KpiItem value={total} label="Total Projets" color="#f37056" />
         <KpiItem value={ext} label="Externe" color="#5aafaf" />
         <KpiItem value={int} label="Interne" color="#FDB823" />
@@ -67,7 +67,7 @@ export default function RptInvest() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[rgba(255,255,255,0.1)]">
+            <tr className="border-b border-[var(--inner-card-border)]">
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Projet</th>
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Type</th>
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Status</th>
@@ -84,7 +84,7 @@ export default function RptInvest() {
               const typeColor = p.type === 'externe' ? 'var(--text-dim)' : 'var(--text-dim)'
 
               return (
-                <tr key={p.id} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
+                <tr key={p.id} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
                   <td className="px-3 py-2 font-semibold text-[var(--text)]">{p.nom}</td>
                   <td className="px-3 py-2">
                     <span

@@ -36,15 +36,15 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Mot de passe"
           autoFocus
-          className="w-full bg-[rgba(58,57,92,0.18)] border border-[rgba(58,57,92,0.35)] rounded-xl
+          className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl
                      px-4 py-3 text-[var(--text)] text-base text-center outline-none
-                     focus:border-[rgba(58,57,92,0.6)] transition-colors mb-4"
+                     focus:border-[var(--card-border)] transition-colors mb-4"
         />
         <button
           type="submit"
-          className="w-full bg-[rgba(58,57,92,0.25)] border border-[rgba(58,57,92,0.35)] rounded-xl
+          className="w-full bg-[var(--card)] border border-[var(--card-border)] rounded-xl
                      px-4 py-3 text-[var(--text)] text-sm font-semibold uppercase tracking-wider
-                     hover:bg-[rgba(58,57,92,0.4)] transition-colors cursor-pointer"
+                     hover:bg-[var(--inner-card-hover)] transition-colors cursor-pointer"
         >
           Acceder
         </button>

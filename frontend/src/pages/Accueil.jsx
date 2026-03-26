@@ -163,11 +163,11 @@ export default function Accueil() {
           {/* ── VALUES ── */}
           <div className="home-values" style={{display:'flex',alignItems:'center',gap:0,animation:'fadeIn 0.9s 0.1s ease both'}}>
             <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Excellence</span>
-            <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)',margin:'0 18px'}} />
+            <span className="home-val-sep" style={{width:'28px',height:'1px',background:'var(--border)',margin:'0 18px'}} />
             <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Innovation</span>
-            <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)',margin:'0 18px'}} />
+            <span className="home-val-sep" style={{width:'28px',height:'1px',background:'var(--border)',margin:'0 18px'}} />
             <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Engagement</span>
-            <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)',margin:'0 18px'}} />
+            <span className="home-val-sep" style={{width:'28px',height:'1px',background:'var(--border)',margin:'0 18px'}} />
             <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Respect</span>
           </div>
         </header>

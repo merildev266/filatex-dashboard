@@ -70,7 +70,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
         <div className="flex items-center justify-center gap-2 h-[26px]">
           {isRecon
             ? <NeonDot status="ko" size={8} />
-            : <span className="inline-block rounded-full w-2 h-2" style={{ background: 'rgba(255,255,255,0.15)' }} />
+            : <span className="inline-block rounded-full w-2 h-2" style={{ background: 'var(--border)' }} />
           }
           <span className="text-xs font-bold tracking-wider uppercase">{s.name}</span>
         </div>
