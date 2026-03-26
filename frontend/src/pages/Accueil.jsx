@@ -151,24 +151,8 @@ export default function Accueil() {
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
 
-        {/* ── TOP RIGHT: Admin + Logout ── */}
-        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10,display:'flex',gap:'8px',alignItems:'center'}}>
-          {user?.role === 'pmo' && (
-            <button
-              onClick={() => navigate('/admin')}
-              style={{
-                background:'rgba(58,57,92,0.15)',border:'1px solid var(--card-border)',
-                borderRadius:'50%',width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',
-                cursor:'pointer',color:'var(--text-muted)',transition:'all 0.2s'
-              }}
-              title="Administration"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-              </svg>
-            </button>
-          )}
+        {/* ── TOP RIGHT: Logout ── */}
+        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10}}>
           <button
             onClick={logout}
             style={{
@@ -186,7 +170,27 @@ export default function Accueil() {
           </button>
         </div>
 
-        {/* ── THEME TOGGLE — bottom right ── */}
+        {/* ── BOTTOM LEFT: Admin (PMO only) ── */}
+        {user?.role === 'pmo' && (
+          <div style={{position:'absolute',bottom:'16px',left:'16px',zIndex:10}}>
+            <button
+              onClick={() => navigate('/admin')}
+              style={{
+                background:'rgba(58,57,92,0.15)',border:'1px solid var(--card-border)',
+                borderRadius:'50%',width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',
+                cursor:'pointer',color:'var(--text-muted)',transition:'all 0.2s'
+              }}
+              title="Administration"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {/* ── BOTTOM RIGHT: Theme toggle ── */}
         <div style={{position:'absolute',bottom:'16px',right:'16px',zIndex:10}}>
           <ThemeToggle />
         </div>

@@ -56,7 +56,7 @@ export default function Admin() {
       const data = await res.json()
       setUsers(data)
     } catch (err) {
-      setError(err.message === 'Session expiree' ? 'Session expiree' : 'Impossible de charger les utilisateurs. Le serveur est-il lance ?')
+      setError(err.message === 'Session expiree' ? 'Session expiree' : 'Attente connexion Serveur')
     } finally {
       setLoading(false)
     }
@@ -71,7 +71,7 @@ export default function Admin() {
       const data = await res.json()
       setHistory(data)
     } catch (err) {
-      setError(err.message === 'Session expiree' ? 'Session expiree' : 'Impossible de charger l\'historique. Le serveur est-il lance ?')
+      setError(err.message === 'Session expiree' ? 'Session expiree' : 'Attente connexion Serveur')
     } finally {
       setLoading(false)
     }
