@@ -8,9 +8,8 @@ const TABS = [
 ]
 
 const ROLES = [
-  { value: 'pmo', label: 'PMO' },
-  { value: 'directeur', label: 'Directeur' },
-  { value: 'manager', label: 'Manager' },
+  { value: 'pmo', label: 'Admin' },
+  { value: 'manager', label: 'Utilisateur' },
 ]
 
 const SECTIONS = [
@@ -191,10 +190,9 @@ export default function Admin() {
                     <td className="p-3">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                         u.role === 'pmo' ? 'bg-[#5e4c9f33] text-[#a78bfa]' :
-                        u.role === 'directeur' ? 'bg-[#00ab6322] text-[#00ab63]' :
                         'bg-[#426ab322] text-[#7ba4e0]'
                       }`}>
-                        {u.role}
+                        {u.role === 'pmo' ? 'Admin' : 'Utilisateur'}
                       </span>
                     </td>
                     <td className="p-3 text-[var(--text-muted)] text-xs">
