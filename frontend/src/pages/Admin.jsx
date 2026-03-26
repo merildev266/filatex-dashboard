@@ -502,47 +502,62 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
             </select>
           </div>
 
-          {/* Sections */}
+          {/* Sections — checkboxes */}
           <div>
             <label className="block text-xs text-[var(--text-muted)] mb-2">Sections</label>
-            <div className="space-y-1">
+            <div className="space-y-1.5 bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-3">
               {SECTIONS.filter(s => !s.parent).map(sec => {
                 const children = SECTIONS.filter(s => s.parent === sec.id)
-                const isAll = sec.id === '*'
                 const isActive = form.sections.includes(sec.id)
                 const allSelected = form.sections.includes('*')
+                const checked = isActive || allSelected
                 return (
                   <div key={sec.id}>
-                    {/* Parent section */}
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(sec.id)}
-                      className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
-                        isActive || allSelected
-                          ? 'admin-section-active'
-                          : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text)]'
-                      }`}
-                    >
-                      {sec.label}
-                    </button>
-                    {/* Children — show if parent is selected or any child is selected */}
+                    {/* Parent checkbox */}
+                    <label className="flex items-center gap-2.5 py-1 cursor-pointer hover:opacity-80 transition-opacity">
+                      <div
+                        onClick={(e) => { e.preventDefault(); toggleSection(sec.id) }}
+                        className="w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors"
+                        style={{
+                          borderColor: checked ? 'var(--selected)' : 'var(--card-border)',
+                          background: checked ? 'var(--selected)' : 'transparent',
+                        }}
+                      >
+                        {checked && (
+                          <svg viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:10,height:10}}>
+                            <path d="M2 6l3 3 5-5"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-xs font-semibold ${checked ? 'text-[var(--text)]' : 'text-[var(--text-muted)]'}`}>
+                        {sec.label}
+                      </span>
+                    </label>
+                    {/* Children checkboxes */}
                     {children.length > 0 && !allSelected && (isActive || children.some(c => form.sections.includes(c.id))) && (
-                      <div className="ml-4 mt-1 mb-1 flex flex-wrap gap-1.5">
+                      <div className="ml-6 space-y-1 mb-1">
                         {children.map(child => {
-                          const childActive = form.sections.includes(child.id) || allSelected
+                          const childChecked = form.sections.includes(child.id) || allSelected
                           return (
-                            <button
-                              key={child.id}
-                              type="button"
-                              onClick={() => toggleSection(child.id)}
-                              className={`px-2 py-0.5 rounded text-[10px] font-medium border transition-colors cursor-pointer ${
-                                childActive
-                                  ? 'admin-section-active'
-                                  : 'border-transparent text-[var(--text-dim)] hover:text-[var(--text-muted)]'
-                              }`}
-                            >
-                              {child.label}
-                            </button>
+                            <label key={child.id} className="flex items-center gap-2 py-0.5 cursor-pointer hover:opacity-80 transition-opacity">
+                              <div
+                                onClick={(e) => { e.preventDefault(); toggleSection(child.id) }}
+                                className="w-3.5 h-3.5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors"
+                                style={{
+                                  borderColor: childChecked ? 'var(--selected)' : 'var(--card-border)',
+                                  background: childChecked ? 'var(--selected)' : 'transparent',
+                                }}
+                              >
+                                {childChecked && (
+                                  <svg viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:8,height:8}}>
+                                    <path d="M2 6l3 3 5-5"/>
+                                  </svg>
+                                )}
+                              </div>
+                              <span className={`text-[11px] ${childChecked ? 'text-[var(--text)]' : 'text-[var(--text-dim)]'}`}>
+                                {child.label}
+                              </span>
+                            </label>
                           )
                         })}
                       </div>
