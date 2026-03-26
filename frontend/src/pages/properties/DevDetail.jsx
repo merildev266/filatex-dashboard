@@ -210,7 +210,7 @@ function DelayPopup({ task, project, position, onClose }) {
         <div style={{ padding: '12px 18px' }}>
           <div style={{
             fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'rgba(255,100,100,0.6)', marginBottom: 6
+            color: 'var(--text-dim)', marginBottom: 6
           }}>Cause</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             {project.comment || "Cause en cours d'analyse"}
@@ -222,7 +222,7 @@ function DelayPopup({ task, project, position, onClose }) {
           <div style={{ padding: '0 18px 14px' }}>
             <div style={{
               fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
-              color: 'rgba(90,175,175,0.6)', marginBottom: 8
+              color: 'var(--text-dim)', marginBottom: 8
             }}>Historique hebdomadaire</div>
             <div style={{ maxHeight: 180, overflowY: 'auto' }}>
               {comments.map((c, i) => (
@@ -245,7 +245,7 @@ function DelayPopup({ task, project, position, onClose }) {
         }}>
           <div style={{
             fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'rgba(0,171,99,0.6)', marginBottom: 6
+            color: 'var(--text-dim)', marginBottom: 6
           }}>Suivi</div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
             Suivi en cours — voir notes projet
@@ -284,7 +284,7 @@ function GanttChart({ project, onTaskAlert }) {
 
   return (
     <div style={{ background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.18)', borderRadius: 20, position: 'relative' }}>
-      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'rgba(66,106,179,0.5)', padding: '16px 24px 0' }}>
+      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'var(--text-dim)', padding: '16px 24px 0' }}>
         Planning &middot; Gantt
       </div>
 
@@ -346,7 +346,7 @@ function GanttChart({ project, onTaskAlert }) {
                 <div style={{
                   width: NAME_W, flexShrink: 0,
                   fontSize: 10, fontWeight: isDelayed ? 700 : 500,
-                  color: isDelayed ? 'rgba(255,135,88,0.9)' : 'rgba(255,255,255,0.5)',
+                  color: isDelayed ? 'var(--text)' : 'var(--text-muted)',
                   paddingRight: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                   background: 'rgba(66,106,179,0.06)'
                 }}>
@@ -385,7 +385,7 @@ function GanttChart({ project, onTaskAlert }) {
                         <div style={{ height: '100%', width: '100%', background: 'rgba(220,50,50,0.55)', borderRadius: '0 3px 3px 0' }} />
                         <div style={{
                           position: 'absolute', right: 3, top: '50%', transform: 'translateY(-50%)',
-                          fontSize: 7, fontWeight: 700, color: 'rgba(255,180,180,0.9)'
+                          fontSize: 7, fontWeight: 700, color: 'var(--text)'
                         }}>&#9888;</div>
                       </div>
                       {/* Percentage label */}
@@ -398,7 +398,7 @@ function GanttChart({ project, onTaskAlert }) {
                       {/* Delay badge */}
                       <div style={{
                         position: 'absolute', left: `${leftPct + widthPct + (pctVal > 0 ? 4 : 0.5)}%`, top: 3,
-                        fontSize: 8, fontWeight: 800, color: 'rgba(255,135,88,0.9)',
+                        fontSize: 8, fontWeight: 800, color: 'var(--text)',
                         textShadow: '0 0 6px rgba(255,135,88,0.5)'
                       }}>+{t.g}j</div>
                     </>

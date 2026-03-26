@@ -444,12 +444,12 @@ function ProjectDetailPanel({ project, onClose }) {
             {/* Legend */}
             <div className="enrp-legend-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(90,175,175,0.6)', marginBottom: 4 }}>D\u00e9veloppement</div>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>D\u00e9veloppement</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#5aafaf' }}>{fmtK(dev)}</div>
                 <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pDev.toFixed(1)}%</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.6)', marginBottom: 4 }}>PV / EPC</div>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>PV / EPC</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#00ab63' }}>{fmtK(pv)}</div>
                 <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pPv.toFixed(1)}%</div>
               </div>

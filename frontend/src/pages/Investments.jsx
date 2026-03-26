@@ -98,7 +98,7 @@ function SummaryColumn({ title, kpis, onClick }) {
             </div>
             <div className="e-kpi-center">
               <div className="e-pct" style={{ color: TEAL }}>{kpis.pct}</div>
-              <div className="e-pct-arrow" style={{ color: 'rgba(78,205,196,0.5)' }}>decaisse</div>
+              <div className="e-pct-arrow" style={{ color: 'var(--text-dim)' }}>decaisse</div>
             </div>
             <div className="e-kpi-right">
               <div className="e-big">{kpis.decaisse} <span className="e-big-unit">M$</span></div>
@@ -133,8 +133,8 @@ function SummaryColumn({ title, kpis, onClick }) {
             </div>
             <div className="e-kpi-center"><div className="e-kpi-sep" /></div>
             <div className="e-kpi-right">
-              <div className="e-mid" style={{ color: 'rgba(253,184,35,0.8)' }}>
-                {kpis.reste} <span className="e-mid-unit" style={{ color: 'rgba(253,184,35,0.5)' }}>M$</span>
+              <div className="e-mid" style={{ color: 'var(--text-secondary)' }}>
+                {kpis.reste} <span className="e-mid-unit" style={{ color: 'var(--text-dim)' }}>M$</span>
               </div>
               <div className="e-arret-sub2">reste a decaisser</div>
             </div>
@@ -152,7 +152,7 @@ function InvProjectCard({ project, onClick }) {
   const decaisseVal = hasCx ? project.capex.etat : '\u2014'
   const execVal = hasCx ? project.capex.pct + '%' : '\u2014'
   const pctWidth = hasCx ? project.capex.pct : 0
-  const statusColor = project.status === 'En cours' ? TEAL : (project.status === 'Termine' ? '#a8d98a' : 'rgba(255,255,255,0.4)')
+  const statusColor = project.status === 'En cours' ? TEAL : (project.status === 'Termine' ? '#a8d98a' : 'var(--text-muted)')
 
   return (
     <div

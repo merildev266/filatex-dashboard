@@ -16,7 +16,7 @@ export default function FoncierDetail() {
   return (
     <div style={{ maxWidth: 1240, margin: '0 auto' }}>
       <div className="text-[9px] font-bold tracking-[0.4em] uppercase mb-[18px]"
-        style={{ color: 'rgba(253,184,35,0.5)' }}>
+        style={{ color: 'var(--text-dim)' }}>
         Vue consolid&eacute;e &middot; Acquisitions terrain
       </div>
 

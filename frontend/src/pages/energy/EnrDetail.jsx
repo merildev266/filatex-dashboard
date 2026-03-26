@@ -306,7 +306,7 @@ export default function EnrDetail() {
       {/* Title */}
       <div style={{ textAlign: 'center', borderBottom: '1px solid rgba(0,171,99,0.15)', paddingBottom: 20, marginBottom: 36 }}>
         <div style={{ fontSize: 28, fontWeight: 800, color: '#00ab63' }}>Production EnR</div>
-        <div style={{ fontSize: 11, color: 'rgba(0,171,99,0.5)', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+        <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
           Détail par site · Données réelles de production
         </div>
       </div>
@@ -314,27 +314,27 @@ export default function EnrDetail() {
       {/* Global KPIs (3 cards) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 36 }}>
         <div style={{ background: 'rgba(0,171,99,0.07)', border: '1px solid rgba(0,171,99,0.2)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.55)', marginBottom: 8 }}>Production totale</div>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 8 }}>Production totale</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
             {(totalProdKwh / 1000).toFixed(1)}
-            <span style={{ fontSize: 16, fontWeight: 400, color: 'rgba(0,171,99,0.5)', marginLeft: 4 }}>MWh</span>
+            <span style={{ fontSize: 16, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 4 }}>MWh</span>
           </div>
-          <div style={{ fontSize: 10, color: 'rgba(0,171,99,0.4)', marginTop: 6 }}>{filterLabel} · {sites.length} centrales</div>
+          <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>{filterLabel} · {sites.length} centrales</div>
         </div>
         <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.5)', marginBottom: 8 }}>Moy. journalière</div>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 8 }}>Moy. journalière</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
             {(totalAvgDaily / 1000).toFixed(1)}
-            <span style={{ fontSize: 16, fontWeight: 400, color: 'rgba(0,171,99,0.5)', marginLeft: 4 }}>MWh/j</span>
+            <span style={{ fontSize: 16, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 4 }}>MWh/j</span>
           </div>
-          <div style={{ fontSize: 10, color: 'rgba(0,171,99,0.4)', marginTop: 6 }}>{totalCapMw.toFixed(1)} MWc installés</div>
+          <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>{totalCapMw.toFixed(1)} MWc installés</div>
         </div>
         <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.5)', marginBottom: 8 }}>Part EnR dans le mix</div>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 8 }}>Part EnR dans le mix</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
-            —<span style={{ fontSize: 16, fontWeight: 400, color: 'rgba(0,171,99,0.5)', marginLeft: 2 }}>%</span>
+            —<span style={{ fontSize: 16, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 2 }}>%</span>
           </div>
-          <div style={{ fontSize: 10, color: 'rgba(0,171,99,0.4)', marginTop: 6 }}>EnR / (EnR + HFO)</div>
+          <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>EnR / (EnR + HFO)</div>
         </div>
       </div>
 

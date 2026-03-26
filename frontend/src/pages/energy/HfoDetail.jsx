@@ -882,7 +882,7 @@ function GeneratorDetailPanel({
         <div className="gd-arret-banner">
           <div className="gd-arret-days">
             {g.jourArret || '—'}
-            <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 4, color: 'rgba(224,92,92,0.6)' }}>j</span>
+            <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 4, color: 'var(--text-dim)' }}>j</span>
           </div>
           <div>
             <div className="gd-arret-label">Arret en cours</div>
@@ -892,12 +892,12 @@ function GeneratorDetailPanel({
             <div className="gd-arret-reason">{g.maint}</div>
           </div>
           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(224,92,92,0.5)', marginBottom: 4 }}>
+            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>
               Arret force
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#e05c5c' }}>
               {parseFloat(g.arretForce || 0).toFixed(1)}
-              <span style={{ fontSize: 11, fontWeight: 400, color: 'rgba(224,92,92,0.5)', marginLeft: 3 }}>h</span>
+              <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 3 }}>h</span>
             </div>
             <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 6 }}>
               Arret planifie : {parseFloat(g.arretPlanifie || 0).toFixed(1)} h

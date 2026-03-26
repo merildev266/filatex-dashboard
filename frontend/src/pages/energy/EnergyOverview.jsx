@@ -283,9 +283,9 @@ export default function EnergyOverview() {
               </div>
               <div className="e-kpi-center"><div className="e-kpi-sep"></div></div>
               <div className="e-kpi-right">
-                <div className="e-mid" style={{ color: 'rgba(243,112,86,0.8)' }}>
+                <div className="e-mid" style={{ color: 'var(--text-secondary)' }}>
                   {hfo.totalArret > 0 ? '\u2212' + hfo.lostToDate.toLocaleString() : '0'}{' '}
-                  <span className="e-mid-unit" style={{ color: 'rgba(243,112,86,0.5)' }}>MWh</span>
+                  <span className="e-mid-unit" style={{ color: 'var(--text-dim)' }}>MWh</span>
                 </div>
                 <div className="e-arret-sub2" style={{ fontSize: 'clamp(7px,0.6vw,10px)', color: 'var(--text-dim)', marginTop: '1px' }}>
                   manque · {hfo.periodLabel}
@@ -310,13 +310,13 @@ export default function EnergyOverview() {
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(138,146,171,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'rgba(243,112,86,0.9)' }}>{hfo.urgents}</div>
-              <div style={{ fontSize: '7px', color: 'rgba(243,112,86,0.5)', textTransform: 'uppercase' }}>urgent</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>{hfo.urgents}</div>
+              <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>urgent</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(138,146,171,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'rgba(253,184,35,0.8)' }}>{hfo.enCours}</div>
-              <div style={{ fontSize: '7px', color: 'rgba(253,184,35,0.5)', textTransform: 'uppercase' }}>en cours</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-secondary)' }}>{hfo.enCours}</div>
+              <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>en cours</div>
             </div>
           </div>
         </div>
@@ -335,7 +335,7 @@ export default function EnergyOverview() {
         >
           {/* Production moyenne vs Capacite */}
           <div className="e-sec">
-            <div className="e-sec-label" style={{ color: 'rgba(0,171,99,0.55)' }}>Production moyenne vs Capacité</div>
+            <div className="e-sec-label" style={{ color: 'var(--text-dim)' }}>Production moyenne vs Capacité</div>
             <div className="e-kpi-row">
               <div className="e-kpi-left">
                 <div className="e-big">
@@ -345,7 +345,7 @@ export default function EnergyOverview() {
               </div>
               <div className="e-kpi-center">
                 <div className="e-pct" style={{ color: '#00ab63' }}>{enr.ratioKwhKwc}</div>
-                <div className="e-pct-arrow" style={{ color: 'rgba(0,171,99,0.5)' }}>kWh/kWc</div>
+                <div className="e-pct-arrow" style={{ color: 'var(--text-dim)' }}>kWh/kWc</div>
               </div>
               <div className="e-kpi-right">
                 <div className="e-big">
@@ -358,17 +358,17 @@ export default function EnergyOverview() {
 
           {/* Production cumulee / Mix EnR */}
           <div className="e-sec">
-            <div className="e-sec-label" style={{ color: 'rgba(0,171,99,0.55)' }}>Production cumulée · Mix EnR</div>
+            <div className="e-sec-label" style={{ color: 'var(--text-dim)' }}>Production cumulée · Mix EnR</div>
             <div className="e-kpi-row">
               <div className="e-kpi-left">
                 <div className="e-big" style={{ color: '#00ab63' }}>
-                  {enr.cumulMwh.toLocaleString()} <span className="e-big-unit" style={{ color: 'rgba(0,171,99,0.5)' }}>MWh</span>
+                  {enr.cumulMwh.toLocaleString()} <span className="e-big-unit" style={{ color: 'var(--text-dim)' }}>MWh</span>
                 </div>
                 <div className="e-sub">Depuis janvier</div>
               </div>
               <div className="e-kpi-center">
                 <div className="e-pct" style={{ color: '#00ab63' }}>{enr.mixPct.toFixed(2)}%</div>
-                <div className="e-pct-arrow" style={{ color: 'rgba(0,171,99,0.5)' }}>moy. jour.</div>
+                <div className="e-pct-arrow" style={{ color: 'var(--text-dim)' }}>moy. jour.</div>
               </div>
               <div className="e-kpi-right">
                 <div className="e-big">
@@ -381,7 +381,7 @@ export default function EnergyOverview() {
 
           {/* Par site */}
           <div className="e-sec">
-            <div className="e-sec-label" style={{ color: 'rgba(0,171,99,0.55)' }}>Par site</div>
+            <div className="e-sec-label" style={{ color: 'var(--text-dim)' }}>Par site</div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
               {enr.sites.map((s, i) => {
                 const colors = ['#00ab63', '#5aafaf', '#4a8fe7']
@@ -422,33 +422,33 @@ export default function EnergyOverview() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', marginBottom: '10px' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '22px', fontWeight: 800, color: '#00ab63' }}>{enr.projectCount}</div>
-              <div style={{ fontSize: '7px', color: 'rgba(0,171,99,0.5)', textTransform: 'uppercase' }}>projets</div>
+              <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>projets</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(0,171,99,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-secondary)' }}>{enr.totalMwcPipeline.toFixed(1)}</div>
-              <div style={{ fontSize: '7px', color: 'rgba(0,171,99,0.4)', textTransform: 'uppercase' }}>MWc total</div>
+              <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>MWc total</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(0,171,99,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '16px', fontWeight: 700, color: '#FDB823' }}>{enr.totalCapex.toFixed(1)}</div>
-              <div style={{ fontSize: '7px', color: 'rgba(253,184,35,0.5)', textTransform: 'uppercase' }}>CAPEX M$</div>
+              <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>CAPEX M$</div>
             </div>
           </div>
 
           {/* Row 2: Phase badges */}
           <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '8px' }}>
             <div style={{ background: 'rgba(0,171,99,0.1)', border: '1px solid rgba(0,171,99,0.25)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(0,171,99,0.8)' }}>{enr.grouped.termine.length}</span>
-              <span style={{ fontSize: '7px', color: 'rgba(0,171,99,0.5)', marginLeft: '3px' }}>Terminé</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.termine.length}</span>
+              <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Terminé</span>
             </div>
             <div style={{ background: 'rgba(253,184,35,0.08)', border: '1px solid rgba(253,184,35,0.2)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(253,184,35,0.8)' }}>{enr.grouped.construction.length}</span>
-              <span style={{ fontSize: '7px', color: 'rgba(253,184,35,0.5)', marginLeft: '3px' }}>Const.</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.construction.length}</span>
+              <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Const.</span>
             </div>
             <div style={{ background: 'rgba(90,175,175,0.08)', border: '1px solid rgba(90,175,175,0.2)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'rgba(90,175,175,0.8)' }}>{enr.grouped.developpement.length}</span>
-              <span style={{ fontSize: '7px', color: 'rgba(90,175,175,0.5)', marginLeft: '3px' }}>Dev.</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.developpement.length}</span>
+              <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Dev.</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
               <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)' }}>{enr.grouped.planifie.length}</span>
@@ -459,7 +459,7 @@ export default function EnergyOverview() {
           {/* Row 3: Alerts */}
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
             {enr.delayCount > 0 && (
-              <div style={{ fontSize: '8px', color: 'rgba(243,112,86,0.7)' }}>
+              <div style={{ fontSize: '8px', color: 'var(--text-dim)' }}>
                 ⚠ {enr.delayCount} en retard
               </div>
             )}
