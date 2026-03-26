@@ -67,16 +67,21 @@ const NAV_ICONS = {
     </svg>
   ),
   capex: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      {/* 3 stacked coins */}
-      <ellipse cx="8" cy="18" rx="5" ry="2"/>
-      <path d="M3 18v-3c0 1.1 2.24 2 5 2s5-.9 5-2v3"/>
-      <ellipse cx="8" cy="15" rx="5" ry="2"/>
-      <path d="M3 15v-3c0 1.1 2.24 2 5 2s5-.9 5-2v3"/>
-      <ellipse cx="8" cy="12" rx="5" ry="2"/>
-      {/* Growth arrow */}
-      <path d="M16 16l4-8" strokeWidth="2"/>
-      <path d="M17 8h3v3" strokeWidth="2"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Safe body */}
+      <rect x="2" y="8" width="20" height="15" rx="2"/>
+      {/* Open door (hinged left, swung open) */}
+      <path d="M2 8v15" strokeWidth="2.2"/>
+      <rect x="-6" y="8" width="10" height="15" rx="1.5" strokeWidth="1.4"/>
+      {/* Handle on door */}
+      <circle cx="-1" cy="15.5" r="1.2"/>
+      {/* Lock dial on safe */}
+      <circle cx="12" cy="16" r="3"/>
+      <circle cx="12" cy="16" r="0.8" fill="currentColor" stroke="none"/>
+      <line x1="12" y1="13" x2="12" y2="14"/>
+      <line x1="12" y1="18" x2="12" y2="19"/>
+      <line x1="9" y1="16" x2="10" y2="16"/>
+      <line x1="14" y1="16" x2="15" y2="16"/>
     </svg>
   ),
   csi: (
