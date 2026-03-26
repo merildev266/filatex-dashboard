@@ -42,11 +42,21 @@ function PropertiesLogo() {
   return <img src={src} alt="Properties" style={{height:LOGO_H,width:'auto',maxWidth:'100%'}} draggable={false} />
 }
 
-/* ── CAPEX card SVG (no official logo — text with theme color) ── */
+/* ── CAPEX card SVG — stacked coins with growth arrow ── */
 function CapexLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
-      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="38" fontWeight="400" fontStyle="italic">CAPEX</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {/* 3 stacked coins */}
+      <ellipse cx="35" cy="42" rx="18" ry="6"/>
+      <path d="M17 42v-8c0 3.3 8 6 18 6s18-2.7 18-6v8"/>
+      <ellipse cx="35" cy="34" rx="18" ry="6"/>
+      <path d="M17 34v-8c0 3.3 8 6 18 6s18-2.7 18-6v8"/>
+      <ellipse cx="35" cy="26" rx="18" ry="6"/>
+      {/* Growth arrow */}
+      <path d="M68 38l18-24" strokeWidth="2.5"/>
+      <path d="M78 14h8v8" strokeWidth="2.5"/>
+      {/* CAPEX text */}
+      <text fill="var(--text)" stroke="none" x="90" y="48" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="10" fontWeight="600" fontStyle="italic" opacity="0.5">CAPEX</text>
     </svg>
   )
 }

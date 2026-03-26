@@ -68,11 +68,15 @@ const NAV_ICONS = {
   ),
   capex: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="16" width="4" height="6" rx="0.5"/>
-      <rect x="8" y="11" width="4" height="11" rx="0.5"/>
-      <rect x="14" y="6" width="4" height="16" rx="0.5"/>
-      <path d="M20 2l2 2-2 2" strokeWidth="1.5"/>
-      <path d="M22 4h-4v5" strokeWidth="1.5"/>
+      {/* 3 stacked coins */}
+      <ellipse cx="8" cy="18" rx="5" ry="2"/>
+      <path d="M3 18v-3c0 1.1 2.24 2 5 2s5-.9 5-2v3"/>
+      <ellipse cx="8" cy="15" rx="5" ry="2"/>
+      <path d="M3 15v-3c0 1.1 2.24 2 5 2s5-.9 5-2v3"/>
+      <ellipse cx="8" cy="12" rx="5" ry="2"/>
+      {/* Growth arrow */}
+      <path d="M16 16l4-8" strokeWidth="2"/>
+      <path d="M17 8h3v3" strokeWidth="2"/>
     </svg>
   ),
   csi: (
