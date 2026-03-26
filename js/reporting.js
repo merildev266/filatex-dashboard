@@ -1988,11 +1988,6 @@ function buildPropsSiteFilterHtml(sub) {
   return html;
 }
 
-function togglePropsDelayFilter() {
-  _propsDelayFilter = !_propsDelayFilter;
-  renderPropsTable(_currentPropsSub, _rptPropsSiteFilter);
-}
-
 function switchPropsSiteFilter(sub, site) {
   _rptPropsSiteFilter = site;
   _propsDelayFilter = false;
@@ -2008,12 +2003,7 @@ function switchPropsSiteFilter(sub, site) {
   renderPropsTable(sub, site);
 }
 
-function openPropsDirectSubWithDelay(sub) {
-  // Open sub-detail with delay filter pre-activated
-  openPropsDirectSub(sub);
-  _propsDelayFilter = true;
-  renderPropsTable(sub, 'all');
-}
+
 
 function openPropsDirectSub(sub) {
   // Direct from reporting home to props sub-detail (no intermediate sub-cards)

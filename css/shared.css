@@ -81,10 +81,6 @@ body::-webkit-scrollbar{display:none;}
 .delta-up{background:rgba(0,171,99,0.15);color:var(--energy);}
 .delta-down{background:rgba(255,80,80,0.12);color:var(--red);}
 .delta-flat{background:rgba(255,255,255,0.06);color:var(--text-muted);}
-.delta-inv-up{background:rgba(255,80,80,0.12);color:var(--red);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;}
-.delta-inv-down{background:rgba(0,171,99,0.15);color:var(--energy);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;}
-.delta-inv-flat{background:rgba(255,255,255,0.06);color:var(--text-muted);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;}
-.inv-good{color:var(--energy)!important;} .inv-warn{color:var(--orange)!important;} .inv-bad{color:var(--red)!important;}
 
 /* == SITES GRID == */
 /* == ALARM LIGHT ANIMATION == */

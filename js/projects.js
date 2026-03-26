@@ -957,51 +957,6 @@ document.addEventListener('click', function() {
   });
 });
 
-function openDiegoDetail(phase) {
-  const d = diegoData[phase] || diegoData.const;
-  const badge = document.getElementById('diego-phase-badge-inline');
-  badge.textContent = d.badge;
-  badge.style.background = d.badgeColor + '22';
-  badge.style.color = d.badgeColor;
-  badge.style.border = `1px solid ${d.badgeColor}44`;
-
-  document.getElementById('dg-kpi-budget').innerHTML = `
-    <div class="ckpi-label">Budget total</div>
-    <div class="ckpi-val">${d.investInit}</div>
-    <div class="ckpi-sub">Investissement initial</div>`;
-
-  document.getElementById('dg-kpi-tri').innerHTML = `
-    <div class="ckpi-label">TRI</div>
-    <div class="ckpi-val" style="color:#00ab63;">${d.tri}</div>
-    <div class="ckpi-sub-row">
-      <span class="ckpi-tag-init">Initial</span>
-      ${d.triRevised ? `<span class="ckpi-delta down">Révisé ${d.triRevised}</span>` : ''}
-    </div>`;
-
-  document.getElementById('dg-kpi-debut').innerHTML = `
-    <div class="ckpi-label">Date de début</div>
-    <div class="ckpi-val" style="font-size:18px;">${d.dateDebInit}</div>
-    <div class="ckpi-sub">Réel : ${d.dateDebReel}</div>`;
-
-  document.getElementById('dg-kpi-fin').innerHTML = `
-    <div class="ckpi-label">Date de fin</div>
-    <div class="ckpi-val" style="font-size:18px;">${d.dateFinInit}</div>
-    <div class="ckpi-sub">Prévisionnelle : ${d.dateFinReel}</div>`;
-
-  document.getElementById('dg-kpi-avance').innerHTML = `
-    <div class="ckpi-label">Avancement global</div>
-    <div class="ckpi-val" style="color:#FDB823;">68%</div>
-    <div class="ckpi-progress-wrap">
-      <div class="ckpi-progress-track"><div class="ckpi-progress-bar" style="width:68%;background:#FDB823;"></div></div>
-    </div>`;
-
-  renderDiegoGantt();
-
-  document.getElementById('panel-diego-detail').style.transform = 'translateX(0)';
-  document.getElementById('panel-diego-detail').scrollTop = 0;
-  document.body.style.overflow = 'hidden';
-}
-
 function closeDiegoDetail() {
   document.getElementById('panel-diego-detail').style.transform = 'translateX(100%)';
   document.body.style.overflow = '';
