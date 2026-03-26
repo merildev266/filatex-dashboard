@@ -519,7 +519,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
                       onClick={() => toggleSection(sec.id)}
                       className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
                         isActive || allSelected
-                          ? 'bg-[var(--inner-card)] border-[var(--card-border)] text-[var(--text)]'
+                          ? 'admin-section-active'
                           : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text)]'
                       }`}
                     >
@@ -537,7 +537,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
                               onClick={() => toggleSection(child.id)}
                               className={`px-2 py-0.5 rounded text-[10px] font-medium border transition-colors cursor-pointer ${
                                 childActive
-                                  ? 'bg-[var(--card)] border-[var(--card-border)] text-[var(--text)]'
+                                  ? 'admin-section-active'
                                   : 'border-transparent text-[var(--text-dim)] hover:text-[var(--text-muted)]'
                               }`}
                             >
