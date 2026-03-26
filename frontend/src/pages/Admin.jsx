@@ -5,7 +5,6 @@ import { useAuth } from '../hooks/useAuth'
 const TABS = [
   { id: 'users', label: 'Utilisateurs' },
   { id: 'history', label: 'Historique' },
-  { id: 'locked', label: 'Verrouilles' },
 ]
 
 const ROLES = [
@@ -28,6 +27,7 @@ export default function Admin() {
   const [error, setError] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editUser, setEditUser] = useState(null)
+  const [lockedPopup, setLockedPopup] = useState(null)
 
   const isPmo = user?.role === 'pmo'
 
@@ -63,7 +63,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (!isPmo) return
-    if (tab === 'users' || tab === 'locked') fetchUsers()
+    if (tab === 'users') fetchUsers()
     if (tab === 'history') fetchHistory()
   }, [tab, isPmo, fetchUsers, fetchHistory])
 
@@ -98,8 +98,6 @@ export default function Admin() {
     )
   }
 
-  const lockedUsers = users.filter(u => u.locked)
-
   return (
     <div className="p-4 pb-28 max-w-5xl mx-auto">
       {/* Header */}
@@ -130,11 +128,6 @@ export default function Admin() {
               }`}
           >
             {t.label}
-            {t.id === 'locked' && lockedUsers.length > 0 && (
-              <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#E05C5C] text-white text-xs">
-                {lockedUsers.length}
-              </span>
-            )}
           </button>
         ))}
       </div>
@@ -170,7 +163,7 @@ export default function Admin() {
                   <th className="text-left p-3 text-[var(--text-muted)] font-medium">Nom</th>
                   <th className="text-left p-3 text-[var(--text-muted)] font-medium">Role</th>
                   <th className="text-left p-3 text-[var(--text-muted)] font-medium">Sections</th>
-                  <th className="text-center p-3 text-[var(--text-muted)] font-medium">Actif</th>
+                  <th className="text-center p-3 text-[var(--text-muted)] font-medium">Statut</th>
                   <th className="text-center p-3 text-[var(--text-muted)] font-medium">Actions</th>
                 </tr>
               </thead>
@@ -192,7 +185,21 @@ export default function Admin() {
                       {u.sections?.includes('*') ? 'Toutes' : u.sections?.join(', ')}
                     </td>
                     <td className="p-3 text-center">
-                      <span className={`inline-block w-2.5 h-2.5 rounded-full ${u.active ? 'bg-[#00ab63]' : 'bg-[#E05C5C]'}`} />
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span className={`inline-block w-2.5 h-2.5 rounded-full ${u.active ? 'bg-[#00ab63]' : 'bg-[#E05C5C]'}`} />
+                        {u.locked && (
+                          <button
+                            onClick={() => setLockedPopup(u)}
+                            title="Compte verrouille — cliquer pour details"
+                            className="cursor-pointer hover:scale-110 transition-transform"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#E05C5C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
+                              <rect x="3" y="11" width="18" height="11" rx="2"/>
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     </td>
                     <td className="p-3 text-center">
                       <div className="flex items-center justify-center gap-2">
@@ -261,40 +268,62 @@ export default function Admin() {
         </div>
       )}
 
-      {/* Locked tab */}
-      {tab === 'locked' && !loading && (
-        <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-[var(--card)] border-b border-[var(--card-border)]">
-                <th className="text-left p-3 text-[var(--text-muted)] font-medium">Utilisateur</th>
-                <th className="text-left p-3 text-[var(--text-muted)] font-medium">Nom</th>
-                <th className="text-left p-3 text-[var(--text-muted)] font-medium">Tentatives</th>
-                <th className="text-center p-3 text-[var(--text-muted)] font-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lockedUsers.map(u => (
-                <tr key={u.id} className="border-b border-[var(--card-border)] hover:bg-[var(--card)]">
-                  <td className="p-3 text-[var(--text)]">{u.username}</td>
-                  <td className="p-3 text-[var(--text)]">{u.display_name}</td>
-                  <td className="p-3 text-[#E05C5C]">{u.failed_attempts}</td>
-                  <td className="p-3 text-center">
-                    <button
-                      onClick={() => handleUnlock(u.id)}
-                      className="px-3 py-1.5 rounded-lg bg-[#00ab6322] text-[#00ab63] text-xs
-                                 font-medium hover:bg-[#00ab6333] transition-colors cursor-pointer"
-                    >
-                      Deverrouiller
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {lockedUsers.length === 0 && (
-                <tr><td colSpan={4} className="p-6 text-center text-[var(--text-muted)]">Aucun compte verrouille</td></tr>
-              )}
-            </tbody>
-          </table>
+      {/* Locked account popup */}
+      {lockedPopup && (
+        <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60" onClick={() => setLockedPopup(null)}>
+          <div
+            className="w-[90%] max-w-sm bg-[var(--dark)] border border-[var(--card-border)] rounded-2xl p-6"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Lock icon */}
+            <div className="flex justify-center mb-4">
+              <div className="w-14 h-14 rounded-full bg-[#E05C5C18] border border-[#E05C5C33] flex items-center justify-center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#E05C5C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:28,height:28}}>
+                  <rect x="3" y="11" width="18" height="11" rx="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+            </div>
+
+            <h3 className="text-center text-lg font-semibold text-[var(--text)] mb-2">
+              Compte verrouille
+            </h3>
+
+            <div className="space-y-2 mb-5">
+              <div className="flex justify-between py-2 px-3 rounded-lg bg-[var(--card)]">
+                <span className="text-sm text-[var(--text-muted)]">Utilisateur</span>
+                <span className="text-sm font-medium text-[var(--text)]">{lockedPopup.display_name}</span>
+              </div>
+              <div className="flex justify-between py-2 px-3 rounded-lg bg-[var(--card)]">
+                <span className="text-sm text-[var(--text-muted)]">Raison</span>
+                <span className="text-sm font-medium text-[#E05C5C]">{lockedPopup.failed_attempts} tentatives echouees</span>
+              </div>
+              <div className="flex justify-between py-2 px-3 rounded-lg bg-[var(--card)]">
+                <span className="text-sm text-[var(--text-muted)]">Seuil</span>
+                <span className="text-sm text-[var(--text)]">5 echecs consecutifs</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setLockedPopup(null)}
+                className="flex-1 py-2.5 rounded-xl bg-[var(--card)] border border-[var(--card-border)]
+                           text-[var(--text-muted)] text-sm hover:text-[var(--text)] transition-colors cursor-pointer"
+              >
+                Fermer
+              </button>
+              <button
+                onClick={async () => {
+                  await handleUnlock(lockedPopup.id)
+                  setLockedPopup(null)
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-[#00ab6322] border border-[#00ab6344]
+                           text-[#00ab63] text-sm font-medium hover:bg-[#00ab6333] transition-colors cursor-pointer"
+              >
+                Deverrouiller
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
