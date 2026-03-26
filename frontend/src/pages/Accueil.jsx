@@ -42,37 +42,20 @@ function PropertiesLogo() {
   return <img src={src} alt="Properties" style={{height:LOGO_H,width:'auto',maxWidth:'100%'}} draggable={false} />
 }
 
-/* ── CAPEX card SVG — stacked coins with growth arrow ── */
+/* ── CAPEX card SVG (no official logo — text with theme color) ── */
 function CapexLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      {/* 3 stacked coins */}
-      <ellipse cx="35" cy="42" rx="18" ry="6"/>
-      <path d="M17 42v-8c0 3.3 8 6 18 6s18-2.7 18-6v8"/>
-      <ellipse cx="35" cy="34" rx="18" ry="6"/>
-      <path d="M17 34v-8c0 3.3 8 6 18 6s18-2.7 18-6v8"/>
-      <ellipse cx="35" cy="26" rx="18" ry="6"/>
-      {/* Growth arrow */}
-      <path d="M68 38l18-24" strokeWidth="2.5"/>
-      <path d="M78 14h8v8" strokeWidth="2.5"/>
-      {/* CAPEX text */}
-      <text fill="var(--text)" stroke="none" x="90" y="48" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="10" fontWeight="600" fontStyle="italic" opacity="0.5">CAPEX</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
+      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="38" fontWeight="400" fontStyle="italic">CAPEX</text>
     </svg>
   )
 }
 
-/* ── CSI card SVG — gavel (strategic decision) ── */
+/* ── CSI card SVG ── */
 function CsiLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      {/* Gavel head */}
-      <rect x="42" y="4" width="28" height="14" rx="3" transform="rotate(35 56 11)"/>
-      {/* Handle */}
-      <line x1="52" y1="22" x2="32" y2="44"/>
-      {/* Sound block */}
-      <rect x="20" y="45" width="80" height="6" rx="2"/>
-      {/* CSI text */}
-      <text fill="var(--text)" stroke="none" x="85" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="16" fontWeight="600" fontStyle="italic" opacity="0.6">CSI</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55">
+      <text fill="var(--text)" x="60" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="38" fontWeight="400" fontStyle="italic">CSI</text>
     </svg>
   )
 }
