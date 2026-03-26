@@ -70,7 +70,7 @@ html::-webkit-scrollbar { display: none; }
   --dark3: #dceef7;
   --surface: #e4f4fd;
   --surface2: #edf6fc;
-  --card: rgba(255,255,255,0.45);
+  --card: rgba(228,244,253,0.6);
   --card-border: rgba(58,57,92,0.08);
   --border: rgba(58,57,92,0.08);
   --text: #3A395C;
@@ -79,7 +79,7 @@ html::-webkit-scrollbar { display: none; }
   --text-dim: rgba(58,57,92,0.75);
   --banner-bg: rgba(228,244,253,0.85);
   --banner-border: rgba(58,57,92,0.06);
-  --kpi-bg: rgba(255,255,255,0.35);
+  --kpi-bg: rgba(228,244,253,0.6);
   --kpi-border: rgba(58,57,92,0.08);
   --sidebar-bg: rgba(228,244,253,0.95);
   --backdrop-bg: rgba(58,57,92,0.25);
