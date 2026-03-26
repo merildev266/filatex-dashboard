@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import GroupeFilatexLogo from '../components/GroupeFilatexLogo'
 import { useTheme } from '../context/ThemeContext'
 import { useThemedLogo } from '../hooks/useThemedLogo'
+import { useAuth } from '../hooks/useAuth'
 
 /* ── Scrolling motif SVG pattern ── */
 function MotifSvg() {
@@ -122,6 +123,7 @@ function ThemeToggle() {
 export default function Accueil() {
   const navigate = useNavigate()
   const { theme } = useTheme()
+  const { user, logout } = useAuth()
 
   // Lock scroll on accueil
   useEffect(() => {
@@ -148,6 +150,41 @@ export default function Accueil() {
 
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
+
+        {/* ── TOP RIGHT: Admin + Logout ── */}
+        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10,display:'flex',gap:'8px',alignItems:'center'}}>
+          {user?.role === 'pmo' && (
+            <button
+              onClick={() => navigate('/admin')}
+              style={{
+                background:'rgba(58,57,92,0.15)',border:'1px solid var(--card-border)',
+                borderRadius:'50%',width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',
+                cursor:'pointer',color:'var(--text-muted)',transition:'all 0.2s'
+              }}
+              title="Administration"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+          )}
+          <button
+            onClick={logout}
+            style={{
+              background:'rgba(224,92,92,0.1)',border:'1px solid rgba(224,92,92,0.2)',
+              borderRadius:'50%',width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',
+              cursor:'pointer',color:'#E05C5C',transition:'all 0.2s'
+            }}
+            title="Déconnexion"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
+        </div>
 
         {/* ── THEME TOGGLE — bottom right ── */}
         <div style={{position:'absolute',bottom:'16px',right:'16px',zIndex:10}}>
