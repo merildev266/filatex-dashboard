@@ -13,7 +13,7 @@ const NAV_ITEMS = [
 ]
 
 const POLE_COLORS = {
-  home: 'rgba(255,255,255,0.7)',
+  home: 'var(--text)',
   energy: '#00ab63',
   investments: '#f37056',
   properties: '#FDB823',
@@ -23,7 +23,7 @@ const POLE_COLORS = {
 }
 
 const POLE_COLORS_RGB = {
-  home: '255,255,255',
+  home: '58,57,92',
   energy: '0,171,99',
   investments: '243,112,86',
   properties: '253,184,35',
