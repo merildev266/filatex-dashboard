@@ -187,7 +187,7 @@ export default function EnrDetail() {
             ['Jours', fd.days, ''],
           ].map(([label, value, unit], ki) => (
             <div key={label} style={{
-              background: `rgba(${rgb},0.06)`, border: `1px solid rgba(${rgb},0.12)`,
+              background: 'var(--card)', border: '1px solid var(--card-border)',
               borderRadius: 14, padding: '16px 10px', textAlign: 'center',
             }}>
               <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>{label}</div>
@@ -212,7 +212,7 @@ export default function EnrDetail() {
           }
           const maxDayProd = Math.max(...monthData.dailyProd)
           return (
-            <div style={{ background: `rgba(${rgb},0.05)`, border: `1px solid rgba(${rgb},0.12)`, borderRadius: 16, padding: '18px 16px', marginBottom: 28 }}>
+            <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '18px 16px', marginBottom: 28 }}>
               {/* Daily sparkline */}
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 1, height: 80, marginBottom: 14 }}>
                 {monthData.dailyProd.map((dv, di) => {
@@ -263,7 +263,7 @@ export default function EnrDetail() {
                 const monthName = ENR_MONTHS[monthNum] || m.month
                 const maxDayProd = Math.max(...(m.dailyProd.length ? m.dailyProd : [0]))
                 return (
-                  <div key={m.month} style={{ background: `rgba(${rgb},0.05)`, border: `1px solid rgba(${rgb},0.12)`, borderRadius: 16, padding: '18px 16px' }}>
+                  <div key={m.month} style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '18px 16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                       <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-secondary)' }}>{monthName}</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color: col }}>{(m.totalProdKwh / 1000).toFixed(0)} <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--text-dim)' }}>MWh</span></div>
@@ -313,7 +313,7 @@ export default function EnrDetail() {
 
       {/* Global KPIs (3 cards) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 36 }}>
-        <div style={{ background: 'rgba(0,171,99,0.07)', border: '1px solid rgba(0,171,99,0.2)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 8 }}>Production totale</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
             {(totalProdKwh / 1000).toFixed(1)}
@@ -321,7 +321,7 @@ export default function EnrDetail() {
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>{filterLabel} · {sites.length} centrales</div>
         </div>
-        <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 8 }}>Moy. journalière</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
             {(totalAvgDaily / 1000).toFixed(1)}
@@ -329,7 +329,7 @@ export default function EnrDetail() {
           </div>
           <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 6 }}>{totalCapMw.toFixed(1)} MWc installés</div>
         </div>
-        <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 18, padding: '24px 16px', textAlign: 'center' }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 8 }}>Part EnR dans le mix</div>
           <div style={{ fontSize: 42, fontWeight: 800, color: '#00ab63', lineHeight: 1 }}>
             —<span style={{ fontSize: 16, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 2 }}>%</span>
@@ -351,12 +351,12 @@ export default function EnrDetail() {
               key={s.code || si}
               onClick={() => setSelectedSite(si)}
               style={{
-                background: `rgba(${rgb},0.05)`, border: `1px solid rgba(${rgb},0.18)`,
+                background: 'var(--card)', border: '1px solid var(--card-border)',
                 borderRadius: 20, padding: '24px 20px', cursor: 'pointer', transition: 'all 0.3s',
                 position: 'relative', overflow: 'hidden',
               }}
               onMouseEnter={e => { e.currentTarget.style.background = `rgba(${rgb},0.1)`; e.currentTarget.style.borderColor = `rgba(${rgb},0.35)`; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = `rgba(${rgb},0.05)`; e.currentTarget.style.borderColor = `rgba(${rgb},0.18)`; e.currentTarget.style.transform = 'translateY(0)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'translateY(0)' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)' }}>☀️ {s.name}</div>

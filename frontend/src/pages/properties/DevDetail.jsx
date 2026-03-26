@@ -228,7 +228,7 @@ function DelayPopup({ task, project, position, onClose }) {
               {comments.map((c, i) => (
                 <div key={i} style={{
                   padding: '7px 10px', marginBottom: 4, borderRadius: 6,
-                  background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.08)',
+                  background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)',
                   fontSize: 10, lineHeight: 1.4
                 }}>
                   <span style={{ fontWeight: 700, color: 'var(--text-dim)', marginRight: 6 }}>{c.week}</span>
@@ -283,13 +283,13 @@ function GanttChart({ project, onTaskAlert }) {
   const NAME_W = 170
 
   return (
-    <div style={{ background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.18)', borderRadius: 20, position: 'relative' }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 20, position: 'relative' }}>
       <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'var(--text-dim)', padding: '16px 24px 0' }}>
         Planning &middot; Gantt
       </div>
 
       {/* Timeline header */}
-      <div style={{ display: 'flex', padding: '12px 24px 0 24px', background: 'rgba(66,106,179,0.06)' }}>
+      <div style={{ display: 'flex', padding: '12px 24px 0 24px', background: 'var(--subtle-bg)' }}>
         <div style={{ flex: `0 0 ${NAME_W}px` }} />
         <div style={{ display: 'flex', flex: 1, position: 'relative', height: 28 }}>
           {years.map((y, i) => (
@@ -348,7 +348,7 @@ function GanttChart({ project, onTaskAlert }) {
                   fontSize: 10, fontWeight: isDelayed ? 700 : 500,
                   color: isDelayed ? 'var(--text)' : 'var(--text-muted)',
                   paddingRight: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                  background: 'rgba(66,106,179,0.06)'
+                  background: 'var(--subtle-bg)'
                 }}>
                   {t.name}
                 </div>
@@ -515,7 +515,7 @@ function ProjectDetail({ project, onBack }) {
       {project.comment && (
         <div style={{
           padding: '10px 14px', borderRadius: 8,
-          background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.1)',
+          background: 'var(--card)', border: '1px solid var(--card-border)',
           fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: 24
         }}>
           <b style={{ color: 'var(--text-secondary)' }}>Notes :</b> {project.comment}
@@ -590,7 +590,7 @@ export default function DevDetail() {
       {delayed.length > 0 && (
         <div style={{
           marginBottom: 16, padding: '10px 16px', borderRadius: 10,
-          background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.15)',
+          background: 'var(--card)', border: '1px solid var(--card-border)',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-dim)' }}>&#9888; Projets en retard :</span>
@@ -620,13 +620,13 @@ export default function DevDetail() {
               key={p.id}
               onClick={() => setSelectedProjectIdx(idx)}
               style={{
-                background: 'rgba(66,106,179,0.04)',
-                border: '1px solid rgba(66,106,179,0.12)',
+                background: 'var(--card)',
+                border: '1px solid var(--card-border)',
                 borderRadius: 12, padding: 16, cursor: 'pointer',
                 transition: 'border-color 0.2s, transform 0.15s'
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(66,106,179,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(66,106,179,0.12)'; e.currentTarget.style.transform = 'none' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'none' }}
             >
               {/* Name + status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>

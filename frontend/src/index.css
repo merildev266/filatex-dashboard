@@ -657,7 +657,7 @@ body::-webkit-scrollbar { display: none; }
 /* Energy page specific overrides */
 .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 100px;display:flex;flex-direction:column;justify-content:flex-start;}
 .page-energy-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
-.capex-section-card{background:var(--filatex-bg);border:1px solid var(--filatex-border);border-radius:clamp(12px,1.5vw,22px);padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);transition:all 0.3s;cursor:pointer;}
+.capex-section-card{background:var(--card);border:1px solid var(--card-border);border-radius:clamp(12px,1.5vw,22px);padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);transition:all 0.3s;cursor:pointer;}
 
 /* Energy page card sizing */
 .page-energy-wrap .e-card .e-sec{padding:clamp(4px,0.5vw,8px) 6px;}
@@ -682,7 +682,7 @@ body::-webkit-scrollbar { display: none; }
 
 /* == S1 CONSOLIDATED KPI CARDS (from original shared.css) == */
 .detail-s1-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(120px,100%),1fr));gap:clamp(6px,1vw,10px);margin-bottom:clamp(6px,1vw,10px);}
-.s1-card{background:var(--dark2);border:1px solid var(--border);border-radius:clamp(10px,1.3vw,16px);padding:clamp(12px,1.8vw,20px) clamp(10px,1.6vw,22px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.s1-card{background:var(--card);border:1px solid var(--card-border);border-radius:clamp(10px,1.3vw,16px);padding:clamp(12px,1.8vw,20px) clamp(10px,1.6vw,22px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .s1-card-label{font-size:clamp(7px,0.8vw,9px);text-transform:uppercase;letter-spacing:0.25em;color:var(--text-dim);margin-bottom:clamp(6px,0.9vw,10px);}
 .s1-card-value{font-size:clamp(22px,3.2vw,38px);font-weight:700;color:var(--text);line-height:1;letter-spacing:-1px;}
 .s1-card-unit{font-size:clamp(10px,1.2vw,15px);font-weight:400;color:var(--text-muted);margin-left:4px;}
@@ -752,7 +752,7 @@ body::-webkit-scrollbar { display: none; }
 }
 .gd-arret-banner{
   display:flex;align-items:center;gap:16px;
-  background:rgba(224,92,92,0.06);border:1px solid rgba(224,92,92,0.15);
+  background:var(--card);border:1px solid var(--card-border);
   border-radius:14px;padding:14px 18px;margin-bottom:16px;
 }
 .gd-arret-days{
@@ -770,7 +770,7 @@ body::-webkit-scrollbar { display: none; }
 
 /* Chart card */
 .gd-chart-card{
-  background:rgba(138,146,171,0.06);border:1px solid rgba(138,146,171,0.12);
+  background:var(--card);border:1px solid var(--card-border);
   border-radius:clamp(10px,1.3vw,16px);padding:clamp(10px,1.4vw,16px);
   margin-bottom:14px;
 }
@@ -826,7 +826,7 @@ body::-webkit-scrollbar { display: none; }
 
 /* ── ENR Projects (enrp-*) ── */
 .enrp-consolidated{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
-.enrp-kbox{background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:14px;padding:16px 14px;text-align:center;transition:border-color 0.25s;}
+.enrp-kbox{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px 14px;text-align:center;transition:border-color 0.25s;}
 .enrp-kbox:hover{border-color:rgba(0,171,99,0.3);}
 .enrp-kbox .kv{font-size:26px;font-weight:800;line-height:1.1;}
 .enrp-kbox .kl{font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-top:4px;display:block;}
@@ -851,7 +851,7 @@ body::-webkit-scrollbar { display: none; }
 
 .enrp-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 
-.enrp-card{background:rgba(0,171,99,0.04);border:1px solid rgba(0,171,99,0.12);border-radius:18px;padding:18px;cursor:pointer;transition:all 0.3s;}
+.enrp-card{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:18px;cursor:pointer;transition:all 0.3s;}
 .enrp-card:hover{border-color:rgba(0,171,99,0.35);background:rgba(0,171,99,0.08);transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,171,99,0.12);}
 
 .enrp-card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
@@ -956,7 +956,7 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ══ CAPEX PAGE STYLES ══ */
-.capex-kpi-card{background:rgba(94,76,159,0.06);border:1px solid rgba(94,76,159,0.15);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;}
+.capex-kpi-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;}
 .capex-section-label{font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;}
 .ckpi-label{font-size:9px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-muted);}
 .ckpi-val{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;}

@@ -482,13 +482,13 @@ function ProjectDetailPanel({ project, onClose }) {
 
       {/* === BLOCAGES & ACTIONS === */}
       {p.blocages && (
-        <div style={{ background: 'rgba(224,92,92,0.06)', border: '1px solid rgba(224,92,92,0.15)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Blocages</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.blocages}</div>
         </div>
       )}
       {p.actionsS && (
-        <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Actions</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.actionsS}</div>
         </div>

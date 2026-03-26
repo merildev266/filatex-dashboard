@@ -116,13 +116,13 @@ export default function SavDetail() {
               key={i}
               onClick={() => setSelectedProject(p)}
               style={{
-                background: 'rgba(90,175,175,0.04)',
-                border: '1px solid rgba(90,175,175,0.12)',
+                background: 'var(--card)',
+                border: '1px solid var(--card-border)',
                 borderRadius: 12, padding: 16, cursor: 'pointer',
                 transition: 'border-color 0.2s, transform 0.15s'
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(90,175,175,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(90,175,175,0.12)'; e.currentTarget.style.transform = 'none' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'none' }}
             >
               {/* Name + badges */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
@@ -220,7 +220,7 @@ export default function SavDetail() {
 
             <div style={{
               padding: '10px 14px', borderRadius: 8,
-              background: 'rgba(90,175,175,0.06)', border: '1px solid rgba(90,175,175,0.12)',
+              background: 'var(--card)', border: '1px solid var(--card-border)',
               marginBottom: 12
             }}>
               <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
@@ -230,7 +230,7 @@ export default function SavDetail() {
             {selectedProject.latest_comment && (
               <div style={{
                 padding: '10px 14px', borderRadius: 8,
-                background: 'rgba(90,175,175,0.04)', border: '1px solid rgba(90,175,175,0.1)'
+                background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)'
               }}>
                 <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})

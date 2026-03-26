@@ -95,7 +95,7 @@ function CategorySection({ cat }) {
       {open && (
         <div className="com-obj-detail open">
           <div className="table-wrap" style={{
-            background: `rgba(${rgb},0.02)`,
+            background: 'var(--subtle-bg)',
             borderColor: `rgba(${rgb},0.12)`,
             marginTop: 12,
             border: `1px solid rgba(${rgb},0.12)`,

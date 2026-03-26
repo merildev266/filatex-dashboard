@@ -533,9 +533,9 @@ function GeneratorDetailPanel({
   const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko)
 
   // Card border/label/bg colors
-  const bc = isContra ? 'rgba(160,90,255,0.15)' : isKO ? 'rgba(224,92,92,0.15)' : 'rgba(138,146,171,0.18)'
+  const bc = 'var(--card-border)'
   const lc = isContra ? 'rgba(160,90,255,0.65)' : isKO ? 'rgba(224,92,92,0.65)' : 'rgba(138,146,171,0.65)'
-  const bg = isContra ? 'rgba(160,90,255,0.06)' : isKO ? 'rgba(224,92,92,0.06)' : 'rgba(138,146,171,0.06)'
+  const bg = 'var(--card)'
 
   // ── Section 1 — Heures de marche (filter-aware, matches original thresholds) ──
   let s1_hVal, s1_hUnit = 'h', s1_sbSub, s1_hColor, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel

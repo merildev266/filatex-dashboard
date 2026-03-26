@@ -82,7 +82,7 @@ export default function TvxDetail() {
       {kpis.delayed > 0 && (
         <div style={{
           marginBottom: 16, padding: '10px 16px', borderRadius: 10,
-          background: 'rgba(224,92,92,0.08)', border: '1px solid rgba(224,92,92,0.15)',
+          background: 'var(--card)', border: '1px solid var(--card-border)',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: RED }}>&#9888; {kpis.delayed} projet{kpis.delayed > 1 ? 's' : ''} en retard</span>
@@ -122,13 +122,13 @@ export default function TvxDetail() {
               key={i}
               onClick={() => setSelectedProject(p)}
               style={{
-                background: 'rgba(253,184,35,0.04)',
-                border: '1px solid rgba(253,184,35,0.12)',
+                background: 'var(--card)',
+                border: '1px solid var(--card-border)',
                 borderRadius: 12, padding: 16, cursor: 'pointer',
                 transition: 'border-color 0.2s, transform 0.15s'
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(253,184,35,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(253,184,35,0.12)'; e.currentTarget.style.transform = 'none' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'none' }}
             >
               {/* Name + status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -215,7 +215,7 @@ export default function TvxDetail() {
 
             <div style={{
               padding: '10px 14px', borderRadius: 8,
-              background: 'rgba(253,184,35,0.06)', border: '1px solid rgba(253,184,35,0.12)',
+              background: 'var(--card)', border: '1px solid var(--card-border)',
               marginBottom: 12
             }}>
               <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
@@ -225,7 +225,7 @@ export default function TvxDetail() {
             {selectedProject.latest_comment && (
               <div style={{
                 padding: '10px 14px', borderRadius: 8,
-                background: 'rgba(253,184,35,0.04)', border: '1px solid rgba(253,184,35,0.1)'
+                background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)'
               }}>
                 <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})

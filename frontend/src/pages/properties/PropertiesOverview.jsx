@@ -65,7 +65,7 @@ function SectionCard({ title, subtitle, accent, kpis, onClick }) {
         }}
         onMouseLeave={e => {
           e.currentTarget.style.borderColor = rgba(accent, 0.2)
-          e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
+          e.currentTarget.style.background = ''
           e.currentTarget.style.boxShadow = 'none'
         }}
       >

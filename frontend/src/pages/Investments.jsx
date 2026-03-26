@@ -294,7 +294,7 @@ function GridView({ type, onBack, onSelectProject, onSwitchType }) {
           { lbl: 'Decaisse', val: kpis.pct, unit: "Taux d'execution" },
           { lbl: 'Montant decaisse', val: kpis.decaisse + ' M$', unit: 'Realise' },
         ].map((k, i) => (
-          <div key={i} className="s1-card" style={{ background: `rgba(${ACCENT_RGB},0.04)`, borderColor: `rgba(${ACCENT_RGB},0.18)` }}>
+          <div key={i} className="s1-card">
             <div className="s1-card-label" style={{ color: `rgba(${ACCENT_RGB},0.5)` }}>{k.lbl}</div>
             <div className="s1-card-value" style={{ color: 'var(--text)' }}>{k.val}</div>
             <div className="s1-card-unit-line" style={{ color: 'var(--text-dim)' }}>{k.unit}</div>
