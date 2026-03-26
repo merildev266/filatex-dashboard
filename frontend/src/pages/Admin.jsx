@@ -13,8 +13,24 @@ const ROLES = [
   { value: 'manager', label: 'Manager' },
 ]
 
-const SECTION_OPTIONS = [
-  '*', 'energy', 'properties', 'capex', 'investments', 'reporting', 'csi',
+const SECTIONS = [
+  { id: '*', label: 'Toutes', parent: null },
+  { id: 'energy', label: 'Energy', parent: null },
+  { id: 'energy.hfo', label: 'HFO', parent: 'energy' },
+  { id: 'energy.enr', label: 'EnR', parent: 'energy' },
+  { id: 'properties', label: 'Properties', parent: null },
+  { id: 'capex', label: 'CAPEX', parent: null },
+  { id: 'capex.hfo', label: 'HFO', parent: 'capex' },
+  { id: 'capex.enr', label: 'EnR', parent: 'capex' },
+  { id: 'capex.properties', label: 'Properties', parent: 'capex' },
+  { id: 'capex.investments', label: 'Investments', parent: 'capex' },
+  { id: 'investments', label: 'Investments', parent: null },
+  { id: 'reporting', label: 'Reporting', parent: null },
+  { id: 'reporting.hfo', label: 'HFO (+ LFO)', parent: 'reporting' },
+  { id: 'reporting.enr', label: 'EnR', parent: 'reporting' },
+  { id: 'reporting.properties', label: 'Properties', parent: 'reporting' },
+  { id: 'reporting.investments', label: 'Investments', parent: 'reporting' },
+  { id: 'csi', label: 'CSI', parent: null },
 ]
 
 export default function Admin() {
@@ -363,7 +379,26 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
     setForm(f => {
       const has = f.sections.includes(sec)
       if (sec === '*') return { ...f, sections: has ? [] : ['*'] }
-      let next = has ? f.sections.filter(s => s !== sec) : [...f.sections.filter(s => s !== '*'), sec]
+
+      let next = has
+        ? f.sections.filter(s => s !== sec)
+        : [...f.sections.filter(s => s !== '*'), sec]
+
+      // If toggling a parent ON, also add all its children
+      const children = SECTIONS.filter(s => s.parent === sec).map(s => s.id)
+      if (!has && children.length > 0) {
+        children.forEach(c => { if (!next.includes(c)) next.push(c) })
+      }
+      // If toggling a parent OFF, also remove all its children
+      if (has && children.length > 0) {
+        next = next.filter(s => !children.includes(s))
+      }
+      // If toggling a child OFF, remove parent too
+      const sectionDef = SECTIONS.find(s => s.id === sec)
+      if (has && sectionDef?.parent) {
+        next = next.filter(s => s !== sectionDef.parent)
+      }
+
       return { ...f, sections: next }
     })
   }
@@ -469,22 +504,52 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
 
           {/* Sections */}
           <div>
-            <label className="block text-xs text-[var(--text-muted)] mb-1">Sections</label>
-            <div className="flex flex-wrap gap-2">
-              {SECTION_OPTIONS.map(sec => (
-                <button
-                  key={sec}
-                  type="button"
-                  onClick={() => toggleSection(sec)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
-                    form.sections.includes(sec)
-                      ? 'bg-[var(--inner-card)] border-[var(--card-border)] text-[var(--text)]'
-                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text)]'
-                  }`}
-                >
-                  {sec === '*' ? 'Toutes' : sec}
-                </button>
-              ))}
+            <label className="block text-xs text-[var(--text-muted)] mb-2">Sections</label>
+            <div className="space-y-1">
+              {SECTIONS.filter(s => !s.parent).map(sec => {
+                const children = SECTIONS.filter(s => s.parent === sec.id)
+                const isAll = sec.id === '*'
+                const isActive = form.sections.includes(sec.id)
+                const allSelected = form.sections.includes('*')
+                return (
+                  <div key={sec.id}>
+                    {/* Parent section */}
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(sec.id)}
+                      className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
+                        isActive || allSelected
+                          ? 'bg-[var(--inner-card)] border-[var(--card-border)] text-[var(--text)]'
+                          : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text)]'
+                      }`}
+                    >
+                      {sec.label}
+                    </button>
+                    {/* Children — show if parent is selected or any child is selected */}
+                    {children.length > 0 && !allSelected && (isActive || children.some(c => form.sections.includes(c.id))) && (
+                      <div className="ml-4 mt-1 mb-1 flex flex-wrap gap-1.5">
+                        {children.map(child => {
+                          const childActive = form.sections.includes(child.id) || allSelected
+                          return (
+                            <button
+                              key={child.id}
+                              type="button"
+                              onClick={() => toggleSection(child.id)}
+                              className={`px-2 py-0.5 rounded text-[10px] font-medium border transition-colors cursor-pointer ${
+                                childActive
+                                  ? 'bg-[var(--card)] border-[var(--card-border)] text-[var(--text)]'
+                                  : 'border-transparent text-[var(--text-dim)] hover:text-[var(--text-muted)]'
+                              }`}
+                            >
+                              {child.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
