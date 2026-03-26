@@ -183,7 +183,7 @@ export default function SavDetail() {
           />
           <div style={{
             position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-            background: 'var(--dark)', border: '1px solid rgba(90,175,175,0.2)',
+            background: 'var(--card)', border: '1px solid var(--card-border)',
             borderRadius: 16, padding: 24, maxWidth: 500, width: '90%',
             maxHeight: '80vh', overflowY: 'auto', zIndex: 100
           }}>

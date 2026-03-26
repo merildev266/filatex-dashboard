@@ -3,7 +3,7 @@ const CLR = '#5e4c9f'
 function KpiCard({ label, value, sub, color }) {
   return (
     <div className="text-center p-5 rounded-2xl"
-      style={{ background: 'var(--inner-card)', border: `1px solid rgba(94,76,159,0.15)` }}>
+      style={{ background: 'var(--card)', border: `1px solid var(--card-border)` }}>
       <div className="text-[9px] font-bold tracking-[0.3em] uppercase mb-2"
         style={{ color: 'var(--text-dim)' }}>{label}</div>
       <div className="text-[28px] font-extrabold" style={{ color: color || 'var(--text)' }}>{value}</div>

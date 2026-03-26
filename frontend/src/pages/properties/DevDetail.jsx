@@ -180,7 +180,7 @@ function DelayPopup({ task, project, position, onClose }) {
       background: 'var(--overlay-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <div ref={popupRef} style={{
-        background: 'var(--dark2)', border: '1px solid rgba(255,64,96,0.25)',
+        background: 'var(--card)', border: '1px solid var(--card-border)',
         borderRadius: 16, padding: 0, maxWidth: 440, width: '90%',
         boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,64,96,0.08)',
         overflow: 'hidden'

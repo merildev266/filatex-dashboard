@@ -373,7 +373,7 @@ function ComSection() {
             <div
               className="flex items-center justify-between mb-3 px-3 py-2 rounded-lg"
               style={{
-                background: `rgba(${cat.color === '#FDB823' ? '253,184,35' : cat.color === '#00ab63' ? '0,171,99' : '90,175,175'},0.06)`,
+                background: 'var(--card)',
                 borderLeft: `3px solid ${cat.color}`,
               }}
             >
@@ -390,9 +390,9 @@ function ComSection() {
                     key={i}
                     className="rounded-xl p-3"
                     style={{
-                      background: `rgba(${cat.color === '#FDB823' ? '253,184,35' : cat.color === '#00ab63' ? '0,171,99' : '90,175,175'},0.04)`,
-                      border: `1px solid rgba(${cat.color === '#FDB823' ? '253,184,35' : cat.color === '#00ab63' ? '0,171,99' : '90,175,175'},0.12)`,
-                      borderLeft: `3px solid ${lastH ? cat.color : 'rgba(255,255,255,0.08)'}`,
+                      background: 'var(--card)',
+                      border: '1px solid var(--card-border)',
+                      borderLeft: `3px solid ${lastH ? cat.color : 'var(--card-border)'}`,
                     }}
                   >
                     <div className="flex items-center gap-2 mb-2">
