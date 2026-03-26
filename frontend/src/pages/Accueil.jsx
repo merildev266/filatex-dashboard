@@ -162,13 +162,13 @@ export default function Accueil() {
 
           {/* ── VALUES ── */}
           <div className="home-values" style={{display:'flex',alignItems:'center',gap:0,animation:'fadeIn 0.9s 0.1s ease both'}}>
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(200,200,220,0.28)'}}>Excellence</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Excellence</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(200,200,220,0.28)'}}>Innovation</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Innovation</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(200,200,220,0.28)'}}>Engagement</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Engagement</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(200,200,220,0.28)'}}>Respect</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text-dim)'}}>Respect</span>
           </div>
         </header>
 
@@ -198,7 +198,7 @@ export default function Accueil() {
 
       {/* ══ FOOTER ══ */}
       <div id="home-footer" style={{position:'fixed',bottom:'10px',left:'50%',transform:'translateX(-50%)',zIndex:2,pointerEvents:'none',textAlign:'center',whiteSpace:'nowrap',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
-        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik','DM Sans',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(200,200,220,0.08)',fontWeight:500}}>Made by PMO with <span style={{fontSize:'7px',color:'rgba(255,107,138,0.12)'}}>&#9829;</span></span>
+        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik','DM Sans',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--text-dim)', opacity: 0.3,fontWeight:500}}>Made by PMO with <span style={{fontSize:'7px',color:'rgba(255,107,138,0.12)'}}>&#9829;</span></span>
         <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik','DM Sans',sans-serif",color:'var(--text-dim)',letterSpacing:'0.14em',fontStyle:'italic'}}>Ceci n'est pas un Dashboard.</span>
       </div>
     </>
