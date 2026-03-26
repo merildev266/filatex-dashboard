@@ -351,7 +351,7 @@ export default function Investments() {
   if (selectedProject) {
     const allOfType = selectedProject.type === 'externe' ? extProjects : intProjects
     return (
-      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
         <SectionHeader name="Investments" color={ACCENT} onBack={() => setSelectedProject(null)} />
         <div className="inv-page-inner">
           <InvDetail
@@ -368,7 +368,7 @@ export default function Investments() {
   // Grid view (level 2)
   if (activeType) {
     return (
-      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
         <SectionHeader name="Investments" color={ACCENT} onBack={() => setActiveType(null)} />
         <div className="inv-page-inner">
           <GridView
@@ -384,7 +384,7 @@ export default function Investments() {
 
   // Landing: two columns Externe / Interne
   return (
-    <div style={{ background: '#000000', minHeight: '100dvh' }}>
+    <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
       <SectionHeader name="Investments" color={ACCENT} />
       <div className="inv-page-inner">
         <div className="e-wrap inv-wrap">

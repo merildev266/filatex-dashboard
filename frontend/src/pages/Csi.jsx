@@ -4,7 +4,7 @@ const ACCENT = '#0096c7'
 
 export default function Csi() {
   return (
-    <div style={{ background: '#000000', minHeight: '100dvh' }}>
+    <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
       <SectionHeader name="CSI" color={ACCENT} />
 
       {/* Placeholder content */}

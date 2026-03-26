@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { FilterProvider } from './context/FilterContext'
+import { ThemeProvider } from './context/ThemeContext'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
@@ -84,6 +85,7 @@ function App() {
   return (
     <BrowserRouter basename="/filatex-dashboard">
       <ScrollToTop />
+      <ThemeProvider>
       <AuthProvider>
         <FilterProvider>
           <Suspense fallback={<Loading />}>
@@ -124,6 +126,7 @@ function App() {
           </Suspense>
         </FilterProvider>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

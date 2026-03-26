@@ -8,14 +8,44 @@
 html { scrollbar-width: none; }
 html::-webkit-scrollbar { display: none; }
 
-:root {
+/* ── Theme toggle button ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--card, rgba(12,12,20,0.85));
+  border: 1px solid var(--card-border, rgba(58,57,92,0.2));
+  color: var(--text-muted, #c7c6c4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.theme-toggle:hover { color: var(--props); transform: scale(1.1); }
+.theme-toggle:active { transform: scale(0.9); }
+
+/* ── Dark mode (default) ── */
+:root, [data-theme="dark"] {
+  --motif-stroke: #1a1d35;
   --dark: #000000;
   --dark2: #000000;
   --dark3: #1a1d35;
+  --surface: #0a0a0a;
+  --surface2: #111118;
+  --card: rgba(12,12,20,0.85);
+  --card-border: rgba(58,57,92,0.20);
   --border: rgba(58,57,92,0.20);
   --text: #ffffff;
+  --text-secondary: #c7c6c4;
   --text-muted: #c7c6c4;
   --text-dim: #aec1cd;
+  --banner-bg: rgba(0,0,0,0.92);
+  --banner-border: rgba(255,255,255,0.08);
+  --kpi-bg: rgba(20,20,35,0.7);
+  --kpi-border: rgba(58,57,92,0.25);
+  --sidebar-bg: rgba(8,11,24,0.97);
+  --backdrop-bg: rgba(0,0,0,0.5);
   --energy: #00ab63;
   --energy-dim: rgba(0,171,99,0.15);
   --invest: #f37056;
@@ -30,6 +60,43 @@ html::-webkit-scrollbar { display: none; }
   --filatex: #3A395C;
   --filatex-bg: rgba(58,57,92,0.10);
   --filatex-border: rgba(58,57,92,0.22);
+}
+
+/* ── Light mode (Filatex brand) ── */
+[data-theme="light"] {
+  --motif-stroke: #aec1cd;
+  --dark: #e4f4fd;
+  --dark2: #f0f7fb;
+  --dark3: #dceef7;
+  --surface: #e4f4fd;
+  --surface2: #edf6fc;
+  --card: #ffffff;
+  --card-border: #c7c6c4;
+  --border: rgba(58,57,92,0.12);
+  --text: #3A395C;
+  --text-secondary: #545272;
+  --text-muted: #8a92ab;
+  --text-dim: #8a92ab;
+  --banner-bg: rgba(255,255,255,0.95);
+  --banner-border: rgba(58,57,92,0.12);
+  --kpi-bg: #ffffff;
+  --kpi-border: rgba(58,57,92,0.12);
+  --sidebar-bg: rgba(255,255,255,0.97);
+  --backdrop-bg: rgba(58,57,92,0.3);
+  --energy: #00ab63;
+  --energy-dim: rgba(0,171,99,0.10);
+  --invest: #f37056;
+  --props: #FDB823;
+  --capex: #5e4c9f;
+  --csi: #0096c7;
+  --teal: #5aafaf;
+  --orange: #f37056;
+  --danger: #E05C5C;
+  --red: #ff5050;
+  --dev-blue: #426ab3;
+  --filatex: #3A395C;
+  --filatex-bg: rgba(58,57,92,0.06);
+  --filatex-border: rgba(58,57,92,0.15);
 }
 
 body {
@@ -71,10 +138,10 @@ body::-webkit-scrollbar { display: none; }
   align-items: center;
   gap: 4px;
   height: 58px;
-  background: rgba(0,0,0,0.92);
+  background: var(--banner-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--banner-border);
   border-radius: 16px;
   padding: 0 10px;
   transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
@@ -98,11 +165,11 @@ body::-webkit-scrollbar { display: none; }
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.92);
-    border: 1.5px solid rgba(255,255,255,0.15);
+    background: var(--banner-bg);
+    border: 1.5px solid var(--banner-border);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    color: var(--fab-color, rgba(255,255,255,0.7));
+    color: var(--fab-color, var(--text-muted));
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -140,8 +207,8 @@ body::-webkit-scrollbar { display: none; }
     bottom: 0;
     width: 72px;
     z-index: 955;
-    background: rgba(0,0,0,0.95);
-    border-left: 1px solid rgba(255,255,255,0.06);
+    background: var(--sidebar-bg);
+    border-left: 1px solid var(--banner-border);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     justify-content: center;
@@ -488,9 +555,9 @@ body::-webkit-scrollbar { display: none; }
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.92);
-    border: 1.5px solid rgba(255,255,255,0.15);
-    color: #00ab63;
+    background: var(--banner-bg);
+    border: 1.5px solid var(--banner-border);
+    color: var(--energy);
     align-items: center;
     justify-content: center;
     cursor: pointer;

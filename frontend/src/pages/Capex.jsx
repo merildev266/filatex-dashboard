@@ -278,7 +278,7 @@ export default function Capex() {
   if (selectedProject && activeCategory) {
     const catData = capexData[activeCategory]
     return (
-      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
         <SectionHeader name="CAPEX" color={ACCENT} onBack={() => setSelectedProject(null)} />
         <ProjectDetail
           project={selectedProject}
@@ -293,7 +293,7 @@ export default function Capex() {
   // Category drill-down view
   if (activeCategory) {
     return (
-      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
         <SectionHeader name="CAPEX" color={ACCENT} onBack={() => setActiveCategory(null)} />
         <CategoryView
           poleKey={activeCategory}
@@ -306,7 +306,7 @@ export default function Capex() {
 
   // Landing page
   return (
-    <div style={{ background: '#000000', minHeight: '100dvh' }}>
+    <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
     <SectionHeader name="CAPEX" color={ACCENT} />
     <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
 

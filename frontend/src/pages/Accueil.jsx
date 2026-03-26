@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GroupeFilatexLogo from '../components/GroupeFilatexLogo'
+import { useTheme } from '../context/ThemeContext'
 
 /* ── Scrolling motif SVG pattern ── */
 function MotifSvg() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 604.26 202.36" preserveAspectRatio="none" className="motif-svg" style={{width:'50%',height:'100%',flexShrink:0,display:'block'}}>
-      <defs><style>{`.motif-cls{fill:none;stroke:#1a1d35;stroke-miterlimit:10;stroke-width:.6px;}@media(max-width:768px){.motif-cls{stroke-width:1.8px;stroke:#1e2140;}}`}</style></defs>
+      <defs><style>{`.motif-cls{fill:none;stroke:var(--motif-stroke,#1a1d35);stroke-miterlimit:10;stroke-width:.6px;}@media(max-width:768px){.motif-cls{stroke-width:1.8px;}}`}</style></defs>
       <g>
         <path className="motif-cls" d="M50.23,201.96h14.43l3.4-57.77c1.68-28.54,1.68-57.49,0-86.03L64.66.4h-14.43l3.45,58.61c1.65,27.98,1.65,56.35,0,84.33l-3.45,58.61Z"/>
         <path className="motif-cls" d="M38.97,143.35c-1.65-27.98-1.65-56.35,0-84.33L42.43.4h-14.43l-3.4,57.77c-1.68,28.54-1.68,57.49,0,86.03l3.4,57.77h14.43l-3.45-58.61Z"/>
@@ -182,8 +183,40 @@ const SECTIONS = [
 ]
 
 
+/* ── Theme toggle — sun/moon ── */
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
+  return (
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle"
+      aria-label={isDark ? 'Mode clair' : 'Mode sombre'}
+    >
+      {isDark ? (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{width:20,height:20}}>
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{width:20,height:20}}>
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      )}
+    </button>
+  )
+}
+
 export default function Accueil() {
   const navigate = useNavigate()
+  const { theme } = useTheme()
 
   // Lock scroll on accueil
   useEffect(() => {
@@ -198,17 +231,7 @@ export default function Accueil() {
   return (
     <>
       {/* ══ GLOBAL BACKGROUND ══ */}
-      <div style={{position:'fixed',inset:0,overflow:'hidden',pointerEvents:'none',zIndex:0}}>
-        <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#000000"/>
-              <stop offset="100%" stopColor="#000000"/>
-            </linearGradient>
-          </defs>
-          <rect width="1400" height="900" fill="url(#bgGrad)"/>
-        </svg>
-      </div>
+      <div style={{position:'fixed',inset:0,overflow:'hidden',pointerEvents:'none',zIndex:0,background: theme === 'dark' ? '#000000' : '#e4f4fd',transition:'background 0.4s ease'}} />
 
       {/* ══ MOTIF DEFILANT ══ */}
       <div id="home-motif" style={{position:'fixed',left:0,right:0,top:0,bottom:0,pointerEvents:'none',zIndex:0,opacity:0.65,lineHeight:0,overflow:'hidden'}}>
@@ -220,6 +243,11 @@ export default function Accueil() {
 
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
+
+        {/* ── THEME TOGGLE ── */}
+        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10}}>
+          <ThemeToggle />
+        </div>
 
         {/* ── HEADER ── */}
         <header className="home-header" style={{position:'absolute',top:'48px',left:0,right:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px',padding:'0 24px',boxSizing:'border-box',animation:'fadeIn 0.8s ease both'}}>
