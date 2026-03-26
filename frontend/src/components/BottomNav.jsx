@@ -77,13 +77,12 @@ const NAV_ICONS = {
   ),
   csi: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="2.5"/>
-      <path d="M12 10.5v2"/>
-      <path d="M8 16l4-3.5 4 3.5"/>
-      <path d="M4 20l4-4"/>
-      <path d="M20 20l-4-4"/>
-      <path d="M4 20h16"/>
-      <path d="M2 3l5 4L12 4l5 3 5-4" strokeWidth="1.5"/>
+      {/* Gavel head */}
+      <rect x="9" y="2" width="10" height="5" rx="1.2" transform="rotate(35 14 4.5)"/>
+      {/* Handle */}
+      <line x1="11" y1="9" x2="5" y2="18"/>
+      {/* Sound block */}
+      <rect x="2" y="19" width="20" height="3" rx="1"/>
     </svg>
   ),
   reporting: (
