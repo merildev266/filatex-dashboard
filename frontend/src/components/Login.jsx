@@ -37,13 +37,13 @@ export default function Login() {
           placeholder="Mot de passe"
           autoFocus
           className="w-full bg-[rgba(58,57,92,0.18)] border border-[rgba(58,57,92,0.35)] rounded-xl
-                     px-4 py-3 text-white text-base text-center outline-none
+                     px-4 py-3 text-[var(--text)] text-base text-center outline-none
                      focus:border-[rgba(58,57,92,0.6)] transition-colors mb-4"
         />
         <button
           type="submit"
           className="w-full bg-[rgba(58,57,92,0.25)] border border-[rgba(58,57,92,0.35)] rounded-xl
-                     px-4 py-3 text-white text-sm font-semibold uppercase tracking-wider
+                     px-4 py-3 text-[var(--text)] text-sm font-semibold uppercase tracking-wider
                      hover:bg-[rgba(58,57,92,0.4)] transition-colors cursor-pointer"
         >
           Acceder

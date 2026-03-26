@@ -23,7 +23,7 @@ export default function SlidePanel({ isOpen, onClose, title, children }) {
                        flex items-center gap-3 px-5 py-4 border-b border-[var(--border)]">
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-white text-lg
+            className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg
                        bg-transparent border-none cursor-pointer"
           >
             ←

@@ -431,10 +431,10 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
             {/* Stacked bar */}
             <div style={{ display: 'flex', height: 28, borderRadius: 8, overflow: 'hidden', marginBottom: 18 }}>
-              <div style={{ flex: Math.max(pDev, 0.5), background: 'rgba(90,175,175,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff' }}>
+              <div style={{ flex: Math.max(pDev, 0.5), background: 'rgba(90,175,175,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text)' }}>
                 {pDev > 8 ? 'D\u00e9v.' : ''}
               </div>
-              <div style={{ flex: Math.max(pPv, 0.5), background: 'rgba(0,171,99,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff' }}>
+              <div style={{ flex: Math.max(pPv, 0.5), background: 'rgba(0,171,99,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text)' }}>
                 {pPv > 8 ? 'PV / EPC' : ''}
               </div>
               <div style={{ flex: Math.max(pOth, 0.5), background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text-muted)' }}>

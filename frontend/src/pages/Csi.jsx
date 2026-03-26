@@ -12,7 +12,7 @@ export default function Csi() {
         <div className="text-5xl font-bold mb-4" style={{ color: ACCENT }}>
           CSI
         </div>
-        <p className="text-white/40 text-lg">
+        <p className="text-[var(--text-muted)] text-lg">
           Coming Soon
         </p>
       </div>

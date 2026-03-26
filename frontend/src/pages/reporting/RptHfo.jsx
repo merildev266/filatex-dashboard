@@ -99,7 +99,7 @@ export default function RptHfo() {
             className={`px-3 py-1 rounded-lg text-[10px] font-bold border cursor-pointer transition-all
               ${view === v
                 ? 'bg-[rgba(0,171,99,0.15)] border-[rgba(0,171,99,0.4)] text-[var(--text)]'
-                : 'bg-transparent border-[rgba(255,255,255,0.08)] text-[rgba(255,255,255,0.4)] hover:text-[rgba(255,255,255,0.6)]'
+                : 'bg-transparent border-[rgba(255,255,255,0.08)] text-[var(--text-muted)] hover:text-[var(--text)]'
               }`}
           >
             {v === 'overhauls' ? 'Overhauls' : v === 'projets' ? 'Projets' : 'Info'}

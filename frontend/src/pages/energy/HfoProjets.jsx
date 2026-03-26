@@ -83,7 +83,7 @@ export default function HfoProjets() {
       </div>
 
       {/* Project list */}
-      <div className="text-[10px] font-bold tracking-widest uppercase text-[rgba(138,146,171,0.6)] border-b border-[rgba(138,146,171,0.15)] pb-2 mb-3">
+      <div className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-muted)] border-b border-[rgba(138,146,171,0.15)] pb-2 mb-3">
         {filter ? (filter.type === 'cat' ? `Overhauls — ${filtered.length} projets` : `${filter.key.charAt(0)}${filter.key.slice(1).toLowerCase()} — ${filtered.length} projets`) : `Tous les projets — ${filtered.length}`}
       </div>
       <div className="space-y-2">
