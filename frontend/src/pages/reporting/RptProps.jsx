@@ -166,11 +166,11 @@ function PropsTable({ sub }) {
                   return (
                     <div key={ei} className="mb-2 p-2 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)]">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[13px] font-semibold text-white">{et.etape}</span>
+                        <span className="text-[13px] font-semibold text-[var(--text)]">{et.etape}</span>
                         <TimingBadge timing={et.timing_var} />
                       </div>
                       {lastH && (
-                        <div className="text-xs text-white mb-1">
+                        <div className="text-xs text-[var(--text)] mb-1">
                           <span className="text-[#5aafaf] font-semibold">{lastH.week}</span>
                           {' \u2014 '}
                           {lastH.comment?.length > 120 ? lastH.comment.substring(0, 120) + '...' : lastH.comment}
@@ -190,7 +190,7 @@ function PropsTable({ sub }) {
                                 <div key={hi} className="py-1 border-b border-[rgba(255,255,255,0.04)] text-[11px]">
                                   <span className="text-[#5aafaf] font-semibold">{h.week}</span>
                                   {' '}
-                                  <span className="text-white">{h.comment}</span>
+                                  <span className="text-[var(--text)]">{h.comment}</span>
                                 </div>
                               ))}
                             </div>
@@ -408,10 +408,10 @@ function ComSection() {
                       <div className="text-[11px] mb-1">
                         <span className="text-[#5aafaf] font-semibold">{lastH.week}</span>
                         {lastH.phase && <> {'\u00b7'} <span style={{ color: cat.color }} className="font-semibold">{lastH.phase}</span></>}
-                        {lastH.comment && <div className="text-[rgba(255,255,255,0.55)] mt-1 leading-snug">{lastH.comment}</div>}
+                        {lastH.comment && <div className="text-[var(--text-muted)] mt-1 leading-snug">{lastH.comment}</div>}
                       </div>
                     ) : (
-                      <div className="text-[11px] text-[rgba(255,255,255,0.15)] italic">Aucun suivi</div>
+                      <div className="text-[11px] text-[var(--text-dim)] italic">Aucun suivi</div>
                     )}
                   </div>
                 )

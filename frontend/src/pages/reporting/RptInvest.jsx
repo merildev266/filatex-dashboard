@@ -85,7 +85,7 @@ export default function RptInvest() {
 
               return (
                 <tr key={p.id} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
-                  <td className="px-3 py-2 font-semibold text-white">{p.nom}</td>
+                  <td className="px-3 py-2 font-semibold text-[var(--text)]">{p.nom}</td>
                   <td className="px-3 py-2">
                     <span
                       className="text-[10px] font-bold px-2 py-0.5 rounded border"

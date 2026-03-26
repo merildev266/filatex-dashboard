@@ -113,7 +113,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
           ].map((k, i) => (
             <div key={i} className="cpj-block">
               <div className="cpj-block-label">{k.label}</div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: k.color || 'rgba(255,255,255,0.9)' }}>{k.value}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: k.color || 'var(--text)' }}>{k.value}</div>
             </div>
           ))}
         </div>

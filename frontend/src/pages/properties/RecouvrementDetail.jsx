@@ -6,7 +6,7 @@ function KpiCard({ label, value, sub, color }) {
       style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(94,76,159,0.15)` }}>
       <div className="text-[9px] font-bold tracking-[0.3em] uppercase mb-2"
         style={{ color: 'var(--text-dim)' }}>{label}</div>
-      <div className="text-[28px] font-extrabold" style={{ color: color || '#fff' }}>{value}</div>
+      <div className="text-[28px] font-extrabold" style={{ color: color || 'var(--text)' }}>{value}</div>
       <div className="text-[10px] mt-1" style={{ color: 'var(--text-dim)' }}>{sub}</div>
     </div>
   )

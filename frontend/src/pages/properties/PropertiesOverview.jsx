@@ -34,7 +34,7 @@ function KpiCell({ label, value, color, borderRight, borderBottom, accentColor }
       <div className="text-[clamp(6px,0.55vw,9px)] font-bold tracking-[0.15em] uppercase"
         style={{ color: 'var(--text-muted)' }}>{label}</div>
       <div className="text-[clamp(14px,1.5vw,24px)] font-extrabold"
-        style={{ color: color || '#fff' }}>{value}</div>
+        style={{ color: color || 'var(--text)' }}>{value}</div>
     </div>
   )
 }
@@ -45,7 +45,7 @@ function SectionCard({ title, subtitle, accent, kpis, onClick }) {
     <div className="p-col flex flex-col items-center">
       <div className="text-[clamp(16px,2vw,28px)] font-extrabold tracking-tight leading-none mb-1 text-center"
         style={{ color: accent }}>{title}</div>
-      <div className="text-[clamp(6px,0.5vw,9px)] tracking-[0.2em] uppercase opacity-40 text-white mb-[clamp(8px,1vw,16px)]">
+      <div className="text-[clamp(6px,0.5vw,9px)] tracking-[0.2em] uppercase opacity-40 text-[var(--text)] mb-[clamp(8px,1vw,16px)]">
         {subtitle}
       </div>
       <div

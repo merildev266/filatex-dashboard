@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
 
 const PHASE_LABELS = { termine: 'Termin\u00e9', construction: 'En construction', developpement: 'D\u00e9veloppement', planifie: 'Planifi\u00e9' }
-const PHASE_COLORS = { termine: '#00ab63', construction: '#FDB823', developpement: '#5aafaf', planifie: 'rgba(255,255,255,0.35)' }
+const PHASE_COLORS = { termine: '#00ab63', construction: '#FDB823', developpement: '#5aafaf', planifie: 'var(--text-dim)' }
 const PHASE_RGBS = { termine: '0,171,99', construction: '253,184,35', developpement: '90,175,175', planifie: '255,255,255' }
 
 /* -- Phase classifier -- */
@@ -88,7 +88,7 @@ export default function EnrProjets() {
         <div className="enrp-kbox"><div className="kv" style={{ color: '#00ab63' }}>{fMw.toFixed(1)}</div><span className="kl">MWc Pipeline</span></div>
         <div className="enrp-kbox"><div className="kv" style={{ color: '#FDB823' }}>{fCapex.toFixed(1)}M$</div><span className="kl">CAPEX Total</span></div>
         <div className="enrp-kbox"><div className="kv" style={{ color: '#5aafaf' }}>{fBess || 0}</div><span className="kl">MWh BESS</span><div className="ks">{fProd > 0 ? Math.round(fProd / 1000) + ' MWh/j est.' : ''}</div></div>
-        <div className="enrp-kbox"><div className="kv" style={{ color: projsWithDelay.length > 0 ? '#ff5050' : 'rgba(255,255,255,0.3)' }}>{projsWithDelay.length}</div><span className="kl">En retard</span><div className="ks">{avgDelay > 0 ? 'moy. ' + avgDelay + 'j' : ''}</div></div>
+        <div className="enrp-kbox"><div className="kv" style={{ color: projsWithDelay.length > 0 ? '#ff5050' : 'var(--text-dim)' }}>{projsWithDelay.length}</div><span className="kl">En retard</span><div className="ks">{avgDelay > 0 ? 'moy. ' + avgDelay + 'j' : ''}</div></div>
         <div className="enrp-kbox"><div className="kv" style={{ color: '#00ab63' }}>{grouped.termine.length}</div><span className="kl">Termin&eacute;s</span><div className="ks">{grouped.construction.length} en constr.</div></div>
       </div>
 
@@ -98,7 +98,7 @@ export default function EnrProjets() {
           { key: 'termine', label: 'Termin\u00e9', dotColor: '#00ab63', labelColor: 'rgba(0,171,99,0.7)', countColor: '#00ab63' },
           { key: 'construction', label: 'Construction', dotColor: '#FDB823', labelColor: 'rgba(253,184,35,0.7)', countColor: '#FDB823' },
           { key: 'developpement', label: 'D\u00e9veloppement', dotColor: '#5aafaf', labelColor: 'rgba(90,175,175,0.7)', countColor: '#5aafaf' },
-          { key: 'planifie', label: 'Planifi\u00e9', dotColor: 'rgba(255,255,255,0.25)', labelColor: 'rgba(255,255,255,0.35)', countColor: 'rgba(255,255,255,0.4)' },
+          { key: 'planifie', label: 'Planifi\u00e9', dotColor: 'var(--text-dim)', labelColor: 'var(--text-dim)', countColor: 'var(--text-muted)' },
         ].map(f => (
           <div
             key={f.key}
@@ -177,7 +177,7 @@ function EnrProjectCard({ project, onClick }) {
       <div className="enrp-card-kpis">
         <div className="enrp-ck"><div className="v" style={{ color: '#00ab63' }}>{p.pvMw || 0}</div><div className="l">MWc</div></div>
         <div className="enrp-ck"><div className="v" style={{ color: '#FDB823' }}>{fmtM(p.capexM)}</div><div className="l">CAPEX</div></div>
-        <div className="enrp-ck"><div className="v" style={{ color: p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.25)' }}>{p.tri ? p.tri + '%' : '\u2014'}</div><div className="l">TRI</div></div>
+        <div className="enrp-ck"><div className="v" style={{ color: p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'var(--text-dim)' }}>{p.tri ? p.tri + '%' : '\u2014'}</div><div className="l">TRI</div></div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
         <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
@@ -295,7 +295,7 @@ function ProjectDetailPanel({ project, onClose }) {
         {/* TRI */}
         <div style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>TRI</div>
-          <div style={valStyle(p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.3)')}>
+          <div style={valStyle(p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'var(--text-dim)')}>
             {p.tri != null ? p.tri + '%' : '\u2014'}
           </div>
           <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>
@@ -359,7 +359,7 @@ function ProjectDetailPanel({ project, onClose }) {
             <div className="enrp-evm-grid-5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 20 }}>
               <div style={cardStyle}>
                 <div style={labelStyle}>BAC</div>
-                <div style={valStyle('rgba(255,255,255,0.85)')}>{fmtK(cc.bac)}</div>
+                <div style={valStyle('var(--text)')}>{fmtK(cc.bac)}</div>
               </div>
               <div style={cardStyle}>
                 <div style={labelStyle}>Forecast</div>
@@ -384,7 +384,7 @@ function ProjectDetailPanel({ project, onClose }) {
               {/* SPI */}
               <div style={cardStyle}>
                 <div style={labelStyle}>SPI</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: cc.spi != null && cc.spi >= 1 ? '#00ab63' : cc.spi != null && cc.spi >= 0.9 ? '#FDB823' : cc.spi != null ? '#ff5050' : 'rgba(255,255,255,0.2)' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: cc.spi != null && cc.spi >= 1 ? '#00ab63' : cc.spi != null && cc.spi >= 0.9 ? '#FDB823' : cc.spi != null ? '#ff5050' : 'var(--text-dim)' }}>
                   {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}
                 </div>
                 {cc.spi != null && (
@@ -396,7 +396,7 @@ function ProjectDetailPanel({ project, onClose }) {
               {/* CPI */}
               <div style={cardStyle}>
                 <div style={labelStyle}>CPI</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: cc.cpi != null && cc.cpi >= 1 ? '#00ab63' : cc.cpi != null ? '#ff5050' : 'rgba(255,255,255,0.2)' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: cc.cpi != null && cc.cpi >= 1 ? '#00ab63' : cc.cpi != null ? '#ff5050' : 'var(--text-dim)' }}>
                   {cc.cpi != null ? (cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)) : '\u2014'}
                 </div>
               </div>

@@ -121,7 +121,7 @@ export default function EnrDetail() {
             padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
             border: 'none', transition: 'all 0.2s',
             background: filterState.filter === f.key ? 'rgba(0,171,99,0.3)' : 'transparent',
-            color: filterState.filter === f.key ? '#00ab63' : 'rgba(255,255,255,0.4)',
+            color: filterState.filter === f.key ? '#00ab63' : 'var(--text-muted)',
           }}
         >{f.label}</button>
       ))}
@@ -191,7 +191,7 @@ export default function EnrDetail() {
               borderRadius: 14, padding: '16px 10px', textAlign: 'center',
             }}>
               <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>{label}</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: ki < 3 ? col : 'rgba(255,255,255,0.85)', lineHeight: 1 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: ki < 3 ? col : 'var(--text)', lineHeight: 1 }}>
                 {value}
                 {unit && <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 3 }}>{unit}</span>}
               </div>

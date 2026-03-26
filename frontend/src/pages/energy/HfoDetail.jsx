@@ -274,7 +274,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       <div className="flex items-center gap-3 mb-4">
         <button
           onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
+          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
         >
           &#8592;
         </button>
@@ -819,7 +819,7 @@ function GeneratorDetailPanel({
       <div className="flex items-center gap-3 mb-1">
         <button
           onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
+          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
         >
           &#8592;
         </button>

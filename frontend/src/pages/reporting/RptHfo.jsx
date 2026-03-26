@@ -162,7 +162,7 @@ export default function RptHfo() {
               return (
                 <tr key={i} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
                   <td className="px-3 py-2 whitespace-nowrap text-[#5aafaf] font-semibold">{p.site}</td>
-                  <td className="px-3 py-2 font-semibold text-white max-w-[200px]">{p.projet}</td>
+                  <td className="px-3 py-2 font-semibold text-[var(--text)] max-w-[200px]">{p.projet}</td>
                   {isOverhaul && <td className="px-3 py-2 text-[#FDB823] font-semibold">{p.moteur || '\u2014'}</td>}
                   <td className="px-3 py-2"><StatusBadge status={p.status} /></td>
                   <td className="px-3 py-2 font-semibold" style={{ color: ecartColor }}>

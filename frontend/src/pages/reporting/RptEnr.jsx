@@ -120,7 +120,7 @@ export default function RptEnr() {
 
               return (
                 <tr key={p.id} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
-                  <td className="px-3 py-2 font-semibold whitespace-nowrap text-white">{p.projet}</td>
+                  <td className="px-3 py-2 font-semibold whitespace-nowrap text-[var(--text)]">{p.projet}</td>
                   <td className="px-3 py-2 text-right whitespace-nowrap">{p.puissance || 0}</td>
                   <td className="px-3 py-2"><PhaseBadge phase={p.phase} /></td>
                   <td className="px-3 py-2">
