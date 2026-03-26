@@ -198,7 +198,7 @@ export default function EnergyOverview() {
 
       {/* ═══ COLONNE GAUCHE - HFO ═══ */}
       <div className="e-col">
-        <div className="e-col-title" style={{ color: 'rgba(138,146,171,0.8)' }}>HFO</div>
+        <div className="e-col-title" style={{ color: 'var(--text-dim)' }}>HFO</div>
 
         {/* HFO Production card */}
         <div
@@ -296,7 +296,7 @@ export default function EnergyOverview() {
         </div>
 
         {/* HFO Projets */}
-        <div className="e-col-title e-col-title-proj" style={{ color: 'rgba(138,146,171,0.8)' }}>Projets</div>
+        <div className="e-col-title e-col-title-proj" style={{ color: 'var(--text-dim)' }}>Projets</div>
         <div
           className="capex-section-card e-card e-card-mini"
           onClick={() => navigate('/energy/hfo-projets')}
@@ -306,7 +306,7 @@ export default function EnergyOverview() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)' }}>{hfo.projectCount}</div>
-              <div style={{ fontSize: '7px', color: 'rgba(138,146,171,0.5)', textTransform: 'uppercase' }}>projets</div>
+              <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>projets</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(138,146,171,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>

@@ -25,19 +25,21 @@ function MotifSvg() {
 }
 
 /* ── Themed card logos — use official SVGs from OneDrive ── */
+const LOGO_H = 50 // uniform height — matches Investments
+
 function EnergyLogo() {
   const src = useThemedLogo('energy')
-  return <img src={src} alt="Energy" style={{width:'100%',maxWidth:220,height:'auto'}} draggable={false} />
+  return <img src={src} alt="Energy" style={{height:LOGO_H,width:'auto',maxWidth:'100%'}} draggable={false} />
 }
 
 function InvestmentsLogo() {
   const src = useThemedLogo('investments')
-  return <img src={src} alt="Investments" style={{width:'100%',maxWidth:260,height:'auto'}} draggable={false} />
+  return <img src={src} alt="Investments" style={{height:LOGO_H,width:'auto',maxWidth:'100%'}} draggable={false} />
 }
 
 function PropertiesLogo() {
   const src = useThemedLogo('properties')
-  return <img src={src} alt="Properties" style={{width:'100%',maxWidth:240,height:'auto'}} draggable={false} />
+  return <img src={src} alt="Properties" style={{height:LOGO_H,width:'auto',maxWidth:'100%'}} draggable={false} />
 }
 
 /* ── CAPEX card SVG (no official logo — text with theme color) ── */
