@@ -1,7 +1,8 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { capexData } from '../data/capex_data'
 import SectionHeader from '../components/SectionHeader'
+import { hexToRgb, parseDollar } from '../utils/helpers'
 
 const ACCENT = '#5e4c9f'
 const ACCENT_RGB = '94,76,159'
@@ -53,15 +54,6 @@ const POLES = [
   },
 ]
 
-/** Parse a dollar string like "3 764 713 $" or "804 k$" or "3.8 M$" into a number in M$ */
-function parseDollar(s) {
-  if (!s || s === '\u2014') return 0
-  const cleaned = s.replace(/[^\d.,kKmM$-]/g, '').replace(',', '.')
-  const num = parseFloat(cleaned.replace(/[kKmM$]/g, '')) || 0
-  if (/M/i.test(s)) return num
-  if (/k/i.test(s)) return num / 1000
-  return num / 1_000_000
-}
 
 function fmtM(val) {
   if (val === 0) return '\u2014'
@@ -78,13 +70,6 @@ function StatusBadge({ status, color }) {
       {label}
     </span>
   )
-}
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `${r},${g},${b}`
 }
 
 /* ========== PROJECT DETAIL VIEW ========== */

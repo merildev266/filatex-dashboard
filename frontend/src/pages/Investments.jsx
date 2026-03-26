@@ -1,20 +1,11 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { invProjects } from '../data/investments_data'
 import SectionHeader from '../components/SectionHeader'
+import { parseDollar as parseAmount } from '../utils/helpers'
 
 const ACCENT = '#f37056'
 const ACCENT_RGB = '243,112,86'
 const TEAL = '#4ecdc4'
-
-/** Parse invest strings like "5.6 M$", "150 k$" into numbers in M$ */
-function parseAmount(s) {
-  if (!s || s === '\u2014') return 0
-  const cleaned = s.replace(/[^\d.,kKmM$-]/g, '').replace(',', '.')
-  const num = parseFloat(cleaned.replace(/[kKmM$]/g, '')) || 0
-  if (/M/i.test(s)) return num
-  if (/k/i.test(s)) return num / 1000
-  return num / 1_000_000
-}
 
 function calcCapexKpis(type) {
   const filtered = invProjects.filter(p => p.type === type)
