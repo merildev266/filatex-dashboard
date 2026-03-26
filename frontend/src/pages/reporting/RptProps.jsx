@@ -8,10 +8,10 @@ import { comReport_venteProjet, comReport_venteTerrain, comReport_location } fro
 
 function TimingBadge({ timing }) {
   if (!timing) return <span className="text-[var(--text-dim)]">{'\u2014'}</span>
-  if (timing === 'On Time') return <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[rgba(0,171,99,0.15)] text-[#00ab63] border border-[rgba(0,171,99,0.3)]">On Time</span>
+  if (timing === 'On Time') return <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[rgba(0,171,99,0.15)] text-[var(--text)] border border-[rgba(0,171,99,0.3)]">On Time</span>
   if (timing.indexOf('Delay') >= 0) {
     const isLong = timing.indexOf('>=30') >= 0
-    return <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${isLong ? 'bg-[rgba(224,92,92,0.15)] text-[#E05C5C] border-[rgba(224,92,92,0.3)]' : 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'}`}>{timing}</span>
+    return <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${isLong ? 'bg-[rgba(224,92,92,0.15)] text-[var(--text)] border-[rgba(224,92,92,0.3)]' : 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'}`}>{timing}</span>
   }
   return <span className="text-[10px] text-[var(--text-dim)]">{timing}</span>
 }
@@ -102,7 +102,7 @@ function PropsTable({ sub }) {
             onClick={() => setSiteFilter('all')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${siteFilter === 'all'
-                ? 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'
+                ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
                 : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
           >
             Tous
@@ -113,7 +113,7 @@ function PropsTable({ sub }) {
               onClick={() => setSiteFilter(p.name)}
               className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
                 ${siteFilter === p.name
-                  ? 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'
+                  ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
                   : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
             >
               {p.name}
@@ -149,11 +149,11 @@ function PropsTable({ sub }) {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <span style={{ color: delayedP > 0 ? '#E05C5C' : '#00ab63', fontSize: 14 }}>{'\u25CF'}</span>
-                    <span className="font-bold text-[#FDB823] text-sm">{proj.name}</span>
+                    <span className="font-bold text-[var(--text)] text-sm">{proj.name}</span>
                   </div>
                   <span className="text-[10px] text-[var(--text-dim)]">
                     {proj.etapes.length} {'\u00e9tape'}{proj.etapes.length > 1 ? 's' : ''}
-                    {delayedP > 0 && <> {'\u2022'} <span className="text-[#E05C5C]">{delayedP} retard</span></>}
+                    {delayedP > 0 && <> {'\u2022'} <span className="text-[var(--text)]">{delayedP} retard</span></>}
                   </span>
                 </div>
 
@@ -171,7 +171,7 @@ function PropsTable({ sub }) {
                       </div>
                       {lastH && (
                         <div className="text-xs text-[var(--text)] mb-1">
-                          <span className="text-[#5aafaf] font-semibold">{lastH.week}</span>
+                          <span className="text-[var(--text-dim)] font-semibold">{lastH.week}</span>
                           {' \u2014 '}
                           {lastH.comment?.length > 120 ? lastH.comment.substring(0, 120) + '...' : lastH.comment}
                         </div>
@@ -180,7 +180,7 @@ function PropsTable({ sub }) {
                         <>
                           <button
                             onClick={() => toggleProject(histKey)}
-                            className="text-[#FDB823] text-[9px] font-semibold bg-transparent border border-[rgba(253,184,35,0.2)] rounded px-2 py-0.5 cursor-pointer mt-1"
+                            className="text-[var(--text-dim)] text-[9px] font-semibold bg-transparent border border-[rgba(253,184,35,0.2)] rounded px-2 py-0.5 cursor-pointer mt-1"
                           >
                             {showHist ? '\u25BC Masquer' : `\u25B6 Historique (${et.history.length})`}
                           </button>
@@ -188,7 +188,7 @@ function PropsTable({ sub }) {
                             <div className="mt-2 p-2 bg-[rgba(0,0,0,0.2)] rounded-lg max-h-[200px] overflow-y-auto">
                               {[...et.history].reverse().map((h, hi) => (
                                 <div key={hi} className="py-1 border-b border-[rgba(255,255,255,0.04)] text-[11px]">
-                                  <span className="text-[#5aafaf] font-semibold">{h.week}</span>
+                                  <span className="text-[var(--text-dim)] font-semibold">{h.week}</span>
                                   {' '}
                                   <span className="text-[var(--text)]">{h.comment}</span>
                                 </div>
@@ -218,7 +218,7 @@ function PropsTable({ sub }) {
             onClick={() => setSiteFilter('all')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${siteFilter === 'all'
-                ? 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'
+                ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
                 : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
           >
             Tous
@@ -229,7 +229,7 @@ function PropsTable({ sub }) {
               onClick={() => setSiteFilter(s)}
               className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
                 ${siteFilter === s
-                  ? 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'
+                  ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
                   : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
             >
               {s}
@@ -276,13 +276,13 @@ function PropsTable({ sub }) {
                   >
                     <td
                       colSpan={7}
-                      className="px-3 py-2 font-bold text-[#FDB823] text-xs"
+                      className="px-3 py-2 font-bold text-[var(--text)] text-xs"
                     >
                       <span className="mr-1.5">{'\u25BE'}</span>
                       {statusIcon} {proj.name}
                       <span className="text-[var(--text-muted)] font-normal text-[11px] ml-2">
                         ({proj.etapes.length} {'\u00e9tapes'}
-                        {delayedP > 0 && <> {'\u2022'} <span className="text-[#E05C5C]">{delayedP} en retard</span></>})
+                        {delayedP > 0 && <> {'\u2022'} <span className="text-[var(--text)]">{delayedP} en retard</span></>})
                       </span>
                     </td>
                   </tr>
@@ -346,7 +346,7 @@ function ComSection() {
             onClick={() => setComFilter(t.key)}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${comFilter === t.key
-                ? 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'
+                ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
                 : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
           >
             {t.label}
@@ -360,7 +360,7 @@ function ComSection() {
         if (cat.data.length === 0) {
           return (
             <div key={cat.key} className="mb-8">
-              <div className="text-sm font-bold mb-3" style={{ color: cat.color }}>
+              <div className="text-sm font-bold mb-3" style={{ color: 'var(--text)' }}>
                 {cat.title} {'\u2014'} 0 items
               </div>
               <div className="text-[11px] text-[var(--text-dim)] italic">Aucun suivi disponible</div>
@@ -377,7 +377,7 @@ function ComSection() {
                 borderLeft: `3px solid ${cat.color}`,
               }}
             >
-              <span className="text-sm font-bold" style={{ color: cat.color }}>
+              <span className="text-sm font-bold" style={{ color: 'var(--text)' }}>
                 {cat.title} {'\u2014'} {cat.data.length} items
               </span>
             </div>
@@ -397,7 +397,7 @@ function ComSection() {
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span style={{ color: cat.color, fontSize: 13 }}>{'\u25CF'}</span>
-                      <span className="font-bold text-sm" style={{ color: cat.color }}>{item.name}</span>
+                      <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>{item.name}</span>
                       {lastH?.avancement && (
                         <span className="ml-auto text-[10px] font-bold text-[#00ab63] bg-[rgba(0,171,99,0.1)] px-2 py-0.5 rounded">
                           {lastH.avancement}
@@ -406,8 +406,8 @@ function ComSection() {
                     </div>
                     {lastH ? (
                       <div className="text-[11px] mb-1">
-                        <span className="text-[#5aafaf] font-semibold">{lastH.week}</span>
-                        {lastH.phase && <> {'\u00b7'} <span style={{ color: cat.color }} className="font-semibold">{lastH.phase}</span></>}
+                        <span className="text-[var(--text-dim)] font-semibold">{lastH.week}</span>
+                        {lastH.phase && <> {'\u00b7'} <span style={{ color: 'var(--text-dim)' }} className="font-semibold">{lastH.phase}</span></>}
                         {lastH.comment && <div className="text-[var(--text-muted)] mt-1 leading-snug">{lastH.comment}</div>}
                       </div>
                     ) : (
@@ -439,7 +439,7 @@ export default function RptProps() {
             onClick={() => setActiveSub(t.key)}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold border cursor-pointer transition-all
               ${activeSub === t.key
-                ? 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]'
+                ? 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]'
                 : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
           >
             {t.label}

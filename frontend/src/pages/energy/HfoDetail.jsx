@@ -525,9 +525,9 @@ function GeneratorDetailPanel({
 
   // Status mapping — matches original exactly
   const statMap = {
-    ok:    { label: 'En marche',    bg: 'rgba(0,171,99,0.12)',    color: '#00ab63' },
-    warn:  { label: 'Maintenance',  bg: 'rgba(245,166,35,0.12)',  color: '#FDB823' },
-    ko:    { label: 'Hors service', bg: 'rgba(224,92,92,0.12)',   color: '#e05c5c' },
+    ok:    { label: 'En marche',    bg: 'rgba(0,171,99,0.12)',    color: 'var(--text)' },
+    warn:  { label: 'Maintenance',  bg: 'rgba(245,166,35,0.12)',  color: 'var(--text)' },
+    ko:    { label: 'Hors service', bg: 'rgba(224,92,92,0.12)',   color: 'var(--text)' },
     check: { label: 'A verifier — Donnees contradictoires', bg: 'rgba(160,90,255,0.12)', color: '#7b5fbf' },
   }
   const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko)

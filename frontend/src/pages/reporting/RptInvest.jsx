@@ -46,7 +46,7 @@ export default function RptInvest() {
               onClick={() => setFilter(t.key)}
               className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
                 ${filter === t.key
-                  ? 'bg-[rgba(243,112,86,0.15)] text-[#f37056] border-[rgba(243,112,86,0.3)]'
+                  ? 'bg-[rgba(243,112,86,0.15)] text-[var(--text)] border-[rgba(243,112,86,0.3)]'
                   : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
             >
               {t.label}
@@ -81,7 +81,7 @@ export default function RptInvest() {
             {sorted.map(p => {
               const capex = p.capex || {}
               const pctColor = (capex.pct || 0) >= 80 ? '#00ab63' : (capex.pct || 0) >= 40 ? '#FDB823' : '#E05C5C'
-              const typeColor = p.type === 'externe' ? '#5aafaf' : '#FDB823'
+              const typeColor = p.type === 'externe' ? 'var(--text-dim)' : 'var(--text-dim)'
 
               return (
                 <tr key={p.id} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">

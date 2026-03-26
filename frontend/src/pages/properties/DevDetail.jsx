@@ -231,7 +231,7 @@ function DelayPopup({ task, project, position, onClose }) {
                   background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.08)',
                   fontSize: 10, lineHeight: 1.4
                 }}>
-                  <span style={{ fontWeight: 700, color: TEAL, marginRight: 6 }}>{c.week}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-dim)', marginRight: 6 }}>{c.week}</span>
                   <span style={{ color: 'var(--text-muted)' }}>{c.comment}</span>
                 </div>
               ))}
@@ -325,7 +325,7 @@ function GanttChart({ project, onTaskAlert }) {
             }}>
               <div style={{
                 position: 'absolute', top: -4, left: -18,
-                fontSize: 7, fontWeight: 700, color: AZUR, opacity: 0.8, whiteSpace: 'nowrap'
+                fontSize: 7, fontWeight: 700, color: 'var(--text-dim)', opacity: 0.8, whiteSpace: 'nowrap'
               }}>Auj.</div>
             </div>
           )}
@@ -593,7 +593,7 @@ export default function DevDetail() {
           background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.15)',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: RED }}>&#9888; Projets en retard :</span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-dim)' }}>&#9888; Projets en retard :</span>
           {delayed.map((p, i) => (
             <span key={i} style={{
               fontSize: 10, color: RED,

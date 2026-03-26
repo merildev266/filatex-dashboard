@@ -86,7 +86,7 @@ export default function FilterBar({ current, onChange }) {
                 className={`mob-nav-item visible ${active ? 'active' : ''}`}
                 style={{
                   '--delay': `${i * 35}ms`,
-                  '--item-color': active ? '#00ab63' : 'rgba(255,255,255,0.4)',
+                  '--item-color': active ? 'var(--text)' : 'rgba(255,255,255,0.4)',
                   '--item-rgb': '0,171,99',
                 }}
               >

@@ -100,7 +100,7 @@ export default function HfoProjets() {
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-[9px] font-bold tracking-wider uppercase" style={{ color: sCol }}>
+                <div className="text-[9px] font-bold tracking-wider uppercase" style={{ color: 'var(--text-dim)' }}>
                   {sLabel}
                 </div>
                 {p.dayToGo != null && p.dayToGo > 0 && (

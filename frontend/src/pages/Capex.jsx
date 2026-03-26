@@ -72,7 +72,7 @@ function fmtM(val) {
 function StatusBadge({ status, color }) {
   const label = { 'on-track': 'En cours', delayed: 'Retard', 'over-budget': 'Depassement' }[status] || status
   const bg = status === 'delayed' ? 'rgba(224,92,92,0.15)' : `rgba(${hexToRgb(color)},0.12)`
-  const fg = status === 'delayed' ? '#E05C5C' : color
+  const fg = 'var(--text)'
   return (
     <span className="cpj-status" style={{ background: bg, color: fg }}>
       {label}
@@ -175,7 +175,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
       {/* Title */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
-        <span style={{ fontSize: 18, fontWeight: 800, color }}>{catData.title}</span>
+        <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>{catData.title}</span>
       </div>
 
       {/* KPI row */}
@@ -383,7 +383,7 @@ export default function Capex() {
             <div className="csec-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="csec-dot" style={{ background: pole.dot, boxShadow: `0 0 10px ${pole.dotShadow}` }} />
-                <span className="csec-title" style={{ color: pole.titleColor }}>{pole.label}</span>
+                <span className="csec-title" style={{ color: 'var(--text)' }}>{pole.label}</span>
                 <span className="csec-badge">{pole.projets} projets</span>
               </div>
               <span className="csec-arrow">&rarr;</span>

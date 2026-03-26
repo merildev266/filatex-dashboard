@@ -6,9 +6,9 @@ const PHASE_ORDER = { Construction: 0, Developpement: 1, Planifie: 2, Termine: 3
 
 function PhaseBadge({ phase }) {
   const map = {
-    Termine: 'bg-[rgba(0,171,99,0.15)] text-[#00ab63] border-[rgba(0,171,99,0.3)]',
-    Construction: 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]',
-    Developpement: 'bg-[rgba(66,106,179,0.15)] text-[#426ab3] border-[rgba(66,106,179,0.3)]',
+    Termine: 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]',
+    Construction: 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]',
+    Developpement: 'bg-[rgba(66,106,179,0.15)] text-[var(--text)] border-[rgba(66,106,179,0.3)]',
     Planifie: 'bg-[rgba(255,255,255,0.06)] text-[var(--text-dim)] border-[rgba(255,255,255,0.1)]',
   }
   const cls = map[phase] || map.Planifie
@@ -75,7 +75,7 @@ export default function RptEnr() {
             value={selectedWeek}
             onChange={e => setSelectedWeek(e.target.value)}
             className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.15)]
-                       rounded-lg text-[#00ab63] text-xs font-semibold px-3 py-1.5
+                       rounded-lg text-[var(--text)] text-xs font-semibold px-3 py-1.5
                        cursor-pointer outline-none"
           >
             {weekKeys.map(k => (

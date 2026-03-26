@@ -44,7 +44,7 @@ function SectionCard({ title, subtitle, accent, kpis, onClick }) {
   return (
     <div className="p-col flex flex-col items-center">
       <div className="text-[clamp(16px,2vw,28px)] font-extrabold tracking-tight leading-none mb-1 text-center"
-        style={{ color: accent }}>{title}</div>
+        style={{ color: 'var(--text)' }}>{title}</div>
       <div className="text-[clamp(6px,0.5vw,9px)] tracking-[0.2em] uppercase opacity-40 text-[var(--text)] mb-[clamp(8px,1vw,16px)]">
         {subtitle}
       </div>

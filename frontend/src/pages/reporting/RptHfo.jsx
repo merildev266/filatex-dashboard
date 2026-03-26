@@ -4,10 +4,10 @@ import KpiItem from '../../components/KpiItem'
 
 function StatusBadge({ status }) {
   const map = {
-    en_cours: { bg: 'rgba(0,171,99,0.15)', color: '#00ab63', label: 'En cours' },
-    urgent: { bg: 'rgba(224,92,92,0.15)', color: '#E05C5C', label: 'Urgent' },
+    en_cours: { bg: 'rgba(0,171,99,0.15)', color: 'var(--text)', label: 'En cours' },
+    urgent: { bg: 'rgba(224,92,92,0.15)', color: 'var(--text)', label: 'Urgent' },
     indefini: { bg: 'rgba(255,255,255,0.06)', color: 'var(--text-dim)', label: 'Indefini' },
-    termine: { bg: 'rgba(90,175,175,0.15)', color: '#5aafaf', label: 'Termine' },
+    termine: { bg: 'rgba(90,175,175,0.15)', color: 'var(--text)', label: 'Termine' },
   }
   const s = map[status] || map.indefini
   return (
@@ -28,18 +28,18 @@ function HfoSubCards({ onSelect }) {
         onClick={() => onSelect('overhauls')}
         className="bg-[rgba(255,255,255,0.03)] border border-[rgba(0,171,99,0.15)] rounded-xl p-6 text-center cursor-pointer hover:bg-[rgba(0,171,99,0.05)] transition-all"
       >
-        <div className="text-base font-bold text-[#00ab63] mb-1">Overhauls</div>
+        <div className="text-base font-bold text-[var(--text)] mb-1">Overhauls</div>
         <div className="text-[11px] text-[var(--text-muted)]">Maintenance moteurs</div>
       </div>
       <div
         onClick={() => onSelect('projets')}
         className="bg-[rgba(255,255,255,0.03)] border border-[rgba(0,171,99,0.15)] rounded-xl p-6 text-center cursor-pointer hover:bg-[rgba(0,171,99,0.05)] transition-all"
       >
-        <div className="text-base font-bold text-[#00ab63] mb-1">Projet annexe</div>
+        <div className="text-base font-bold text-[var(--text)] mb-1">Projet annexe</div>
         <div className="text-[11px] text-[var(--text-muted)]">Projets complementaires</div>
       </div>
       <div className="bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] rounded-xl p-6 text-center opacity-40">
-        <div className="text-base font-bold text-[#00ab63] mb-1">Informations site</div>
+        <div className="text-base font-bold text-[var(--text)] mb-1">Informations site</div>
         <div className="text-[11px] text-[var(--text-dim)]">Bientot disponible</div>
       </div>
     </div>
@@ -98,7 +98,7 @@ export default function RptHfo() {
             onClick={() => { setView(v); setSiteFilter('all') }}
             className={`px-3 py-1 rounded-lg text-[10px] font-bold border cursor-pointer transition-all
               ${view === v
-                ? 'bg-[rgba(0,171,99,0.15)] border-[rgba(0,171,99,0.4)] text-[#00ab63]'
+                ? 'bg-[rgba(0,171,99,0.15)] border-[rgba(0,171,99,0.4)] text-[var(--text)]'
                 : 'bg-transparent border-[rgba(255,255,255,0.08)] text-[rgba(255,255,255,0.4)] hover:text-[rgba(255,255,255,0.6)]'
               }`}
           >
@@ -113,7 +113,7 @@ export default function RptHfo() {
           onClick={() => setSiteFilter('all')}
           className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
             ${siteFilter === 'all'
-              ? 'bg-[rgba(0,171,99,0.15)] text-[#00ab63] border-[rgba(0,171,99,0.3)]'
+              ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
               : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
         >
           Tous
@@ -124,7 +124,7 @@ export default function RptHfo() {
             onClick={() => setSiteFilter(s)}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${siteFilter === s
-                ? 'bg-[rgba(0,171,99,0.15)] text-[#00ab63] border-[rgba(0,171,99,0.3)]'
+                ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
                 : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
           >
             {s}
@@ -161,9 +161,9 @@ export default function RptHfo() {
               const ecartColor = (p.ecartJours || 0) > 90 ? '#E05C5C' : (p.ecartJours || 0) > 30 ? '#FDB823' : '#00ab63'
               return (
                 <tr key={i} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
-                  <td className="px-3 py-2 whitespace-nowrap text-[#5aafaf] font-semibold">{p.site}</td>
+                  <td className="px-3 py-2 whitespace-nowrap text-[var(--text)] font-semibold">{p.site}</td>
                   <td className="px-3 py-2 font-semibold text-[var(--text)] max-w-[200px]">{p.projet}</td>
-                  {isOverhaul && <td className="px-3 py-2 text-[#FDB823] font-semibold">{p.moteur || '\u2014'}</td>}
+                  {isOverhaul && <td className="px-3 py-2 text-[var(--text)] font-semibold">{p.moteur || '\u2014'}</td>}
                   <td className="px-3 py-2"><StatusBadge status={p.status} /></td>
                   <td className="px-3 py-2 font-semibold" style={{ color: ecartColor }}>
                     {p.ecartJours != null ? `${p.ecartJours}j` : '\u2014'}

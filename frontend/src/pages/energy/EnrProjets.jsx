@@ -80,7 +80,7 @@ export default function EnrProjets() {
   return (
     <div>
       {/* Title */}
-      <div style={{ fontSize: 20, fontWeight: 800, color: '#00ab63', marginBottom: 24 }}>Projets EnR</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 24 }}>Projets EnR</div>
 
       {/* KPI Consolidated (6 boxes) */}
       <div className="enrp-consolidated">
@@ -95,9 +95,9 @@ export default function EnrProjets() {
       {/* Phase filters */}
       <div className="enrp-filters">
         {[
-          { key: 'termine', label: 'Termin\u00e9', dotColor: '#00ab63', labelColor: 'rgba(0,171,99,0.7)', countColor: '#00ab63' },
-          { key: 'construction', label: 'Construction', dotColor: '#FDB823', labelColor: 'rgba(253,184,35,0.7)', countColor: '#FDB823' },
-          { key: 'developpement', label: 'D\u00e9veloppement', dotColor: '#5aafaf', labelColor: 'rgba(90,175,175,0.7)', countColor: '#5aafaf' },
+          { key: 'termine', label: 'Termin\u00e9', dotColor: '#00ab63', labelColor: 'var(--text-dim)', countColor: '#00ab63' },
+          { key: 'construction', label: 'Construction', dotColor: '#FDB823', labelColor: 'var(--text-dim)', countColor: '#FDB823' },
+          { key: 'developpement', label: 'D\u00e9veloppement', dotColor: '#5aafaf', labelColor: 'var(--text-dim)', countColor: '#5aafaf' },
           { key: 'planifie', label: 'Planifi\u00e9', dotColor: 'var(--text-dim)', labelColor: 'var(--text-dim)', countColor: 'var(--text-muted)' },
         ].map(f => (
           <div
@@ -134,7 +134,7 @@ export default function EnrProjets() {
           <div key={phase} className="enrp-phase-section">
             <div className="enrp-phase-hdr">
               <div className="dot" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
-              <span className="lbl" style={{ color }}>{PHASE_LABELS[phase]}</span>
+              <span className="lbl" style={{ color: 'var(--text)' }}>{PHASE_LABELS[phase]}</span>
               <span className="cnt" style={{ color, background: `rgba(${rgb},0.12)` }}>{list.length}</span>
               <div className="line" style={{ background: `rgba(${rgb},0.15)` }} />
             </div>
@@ -172,7 +172,7 @@ function EnrProjectCard({ project, onClick }) {
             {p.loc || ''}{p.lead ? ' · ' + p.lead : ''}{p.epciste && p.epciste !== 'TBC' ? ' · ' + p.epciste : ''}
           </div>
         </div>
-        <span className="enrp-card-badge" style={{ color, background: `rgba(${rgb},0.12)` }}>{PHASE_LABELS[phase]}</span>
+        <span className="enrp-card-badge" style={{ color: 'var(--text)', background: `rgba(${rgb},0.12)` }}>{PHASE_LABELS[phase]}</span>
       </div>
       <div className="enrp-card-kpis">
         <div className="enrp-ck"><div className="v" style={{ color: '#00ab63' }}>{p.pvMw || 0}</div><div className="l">MWc</div></div>
@@ -265,7 +265,7 @@ function ProjectDetailPanel({ project, onClose }) {
 
       {/* === HEADER === */}
       <div style={{ textAlign: 'center', borderBottom: `1px solid rgba(${rgb},0.15)`, paddingBottom: 24, marginBottom: 36 }}>
-        <div style={{ fontSize: 24, fontWeight: 800, color }}>
+        <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)' }}>
           {typeIcon(p.type)} {p.name}
         </div>
         <div style={{ fontSize: 12, color: `rgba(${rgb},0.5)`, marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -275,7 +275,7 @@ function ProjectDetailPanel({ project, onClose }) {
           {p.chef && <><span>&middot;</span><span>{p.chef}</span></>}
           <span>&middot;</span>
           <span style={{
-            background: `rgba(${rgb},0.15)`, color, border: `1px solid rgba(${rgb},0.3)`,
+            background: `rgba(${rgb},0.15)`, color: 'var(--text)', border: `1px solid rgba(${rgb},0.3)`,
             borderRadius: 6, padding: '2px 10px', fontWeight: 700, fontSize: 10,
           }}>
             {PHASE_LABELS[phase]}
@@ -483,13 +483,13 @@ function ProjectDetailPanel({ project, onClose }) {
       {/* === BLOCAGES & ACTIONS === */}
       {p.blocages && (
         <div style={{ background: 'rgba(224,92,92,0.06)', border: '1px solid rgba(224,92,92,0.15)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#E05C5C', marginBottom: 6 }}>Blocages</div>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Blocages</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.blocages}</div>
         </div>
       )}
       {p.actionsS && (
         <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 6 }}>Actions</div>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Actions</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.actionsS}</div>
         </div>
       )}

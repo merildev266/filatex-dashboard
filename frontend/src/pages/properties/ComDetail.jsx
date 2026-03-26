@@ -65,7 +65,7 @@ function CategorySection({ cat }) {
         onClick={() => setOpen(!open)}
       >
         <div className="com-obj-card-header">
-          <div className="com-obj-card-title" style={{ color: cat.color }}>{cat.title}</div>
+          <div className="com-obj-card-title" style={{ color: 'var(--text)' }}>{cat.title}</div>
           <div className="com-obj-card-kpis">
             <div className="com-obj-kpi">
               <div className="com-obj-kpi-val" style={{ color: cat.color }}>{fmtEur(cat.total)}</div>
@@ -170,7 +170,7 @@ function CategorySection({ cat }) {
 
                 {/* TOTAL row */}
                 <tr style={{ borderTop: `2px solid rgba(${rgb},0.2)`, fontWeight: 800 }}>
-                  <td style={{ padding: '10px 12px', fontSize: 11, textAlign: 'left', color: cat.color }}>TOTAL</td>
+                  <td style={{ padding: '10px 12px', fontSize: 11, textAlign: 'left', color: 'var(--text)' }}>TOTAL</td>
                   <td style={{ padding: '10px 8px', fontSize: 11, textAlign: 'center', color: cat.color }}>{fmtEur(cat.total)}</td>
                   {[1, 2, 3, 4].map(qi => {
                     const tObj = sumF(cat.data, 't' + qi)

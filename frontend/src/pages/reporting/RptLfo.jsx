@@ -95,7 +95,7 @@ export default function RptLfo() {
             onClick={() => setFilter(t.key)}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
               ${filter === t.key
-                ? 'bg-[rgba(0,171,99,0.15)] text-[#00ab63] border-[rgba(0,171,99,0.3)]'
+                ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
                 : 'bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border-[rgba(255,255,255,0.1)]'}`}
           >
             {t.label}
@@ -144,7 +144,7 @@ export default function RptLfo() {
                   <td className="px-2 py-2 whitespace-nowrap">{m.type}</td>
                   <td className="px-2 py-2 text-right font-semibold">{m.puissance}</td>
                   <td className="px-2 py-2 whitespace-nowrap text-[var(--text-muted)]">{m.depart}</td>
-                  <td className="px-2 py-2 whitespace-nowrap font-semibold text-[#5aafaf]">{m.affectation}</td>
+                  <td className="px-2 py-2 whitespace-nowrap font-semibold text-[var(--text)]">{m.affectation}</td>
                   {filter === 'all' && (
                     <td className="px-2 py-2">
                       <span className="text-[10px] px-2 py-0.5 rounded bg-[rgba(255,255,255,0.06)] text-[var(--text-muted)]">

@@ -324,7 +324,7 @@ export default function EnergyOverview() {
 
       {/* ═══ COLONNE DROITE - EnR ═══ */}
       <div className="e-col">
-        <div className="e-col-title" style={{ color: '#00ab63' }}>EnR</div>
+        <div className="e-col-title" style={{ color: 'var(--text)' }}>EnR</div>
 
         {/* EnR Production card */}
         <div
@@ -411,7 +411,7 @@ export default function EnergyOverview() {
         </div>
 
         {/* EnR Projets */}
-        <div className="e-col-title e-col-title-proj" style={{ color: '#00ab63' }}>Projets</div>
+        <div className="e-col-title e-col-title-proj" style={{ color: 'var(--text)' }}>Projets</div>
         <div
           className="capex-section-card e-card e-enr e-card-mini"
           onClick={() => navigate('/energy/enr-projets')}

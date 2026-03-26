@@ -121,7 +121,7 @@ export default function EnrDetail() {
             padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
             border: 'none', transition: 'all 0.2s',
             background: filterState.filter === f.key ? 'rgba(0,171,99,0.3)' : 'transparent',
-            color: filterState.filter === f.key ? '#00ab63' : 'var(--text-muted)',
+            color: filterState.filter === f.key ? 'var(--text)' : 'var(--text-muted)',
           }}
         >{f.label}</button>
       ))}
@@ -305,7 +305,7 @@ export default function EnrDetail() {
     <div>
       {/* Title */}
       <div style={{ textAlign: 'center', borderBottom: '1px solid rgba(0,171,99,0.15)', paddingBottom: 20, marginBottom: 36 }}>
-        <div style={{ fontSize: 28, fontWeight: 800, color: '#00ab63' }}>Production EnR</div>
+        <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)' }}>Production EnR</div>
         <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
           Détail par site · Données réelles de production
         </div>

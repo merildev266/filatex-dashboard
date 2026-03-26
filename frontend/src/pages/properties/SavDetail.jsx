@@ -134,11 +134,11 @@ export default function SavDetail() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                   <span style={{
-                    fontSize: 9, fontWeight: 700, color: timingColor,
+                    fontSize: 9, fontWeight: 700, color: 'var(--text)',
                     background: timingColor + '15', padding: '2px 6px', borderRadius: 4
                   }}>{getTimingLabel(p.timing_var)}</span>
                   <span style={{
-                    fontSize: 9, fontWeight: 600, color: getStatusColor(p.status),
+                    fontSize: 9, fontWeight: 600, color: 'var(--text)',
                     background: getStatusColor(p.status) + '15', padding: '2px 6px', borderRadius: 4
                   }}>{p.status || 'N/A'}</span>
                 </div>
@@ -164,7 +164,7 @@ export default function SavDetail() {
                 <div style={{
                   marginTop: 8, fontSize: 9, fontWeight: 700,
                   display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                  background: `${TEAL}15`, color: TEAL
+                  background: `${TEAL}15`, color: 'var(--text)'
                 }}>
                   Decision management requise
                 </div>
@@ -188,7 +188,7 @@ export default function SavDetail() {
             maxHeight: '80vh', overflowY: 'auto', zIndex: 100
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <span style={{ fontSize: 16, fontWeight: 800, color: TEAL }}>{selectedProject.site}</span>
+              <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{selectedProject.site}</span>
               <button onClick={() => setSelectedProject(null)} style={{
                 background: 'transparent', border: 'none', color: 'var(--text-muted)',
                 fontSize: 18, cursor: 'pointer'
