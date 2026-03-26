@@ -85,13 +85,25 @@ const NAV_ICONS = {
     </svg>
   ),
   csi: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      {/* Gavel head */}
-      <rect x="9" y="2" width="10" height="5" rx="1.2" transform="rotate(35 14 4.5)"/>
-      {/* Handle */}
-      <line x1="11" y1="9" x2="5" y2="18"/>
-      {/* Sound block */}
-      <rect x="2" y="19" width="20" height="3" rx="1"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Central pillar */}
+      <line x1="12" y1="2" x2="12" y2="19"/>
+      {/* Top beam (tilted slightly) */}
+      <line x1="3" y1="5.5" x2="21" y2="4.5"/>
+      {/* Left pan chains */}
+      <line x1="5" y1="5.3" x2="3" y2="10"/>
+      <line x1="5" y1="5.3" x2="7" y2="10"/>
+      {/* Left pan (bowl) */}
+      <path d="M2 10q3 4 6 0"/>
+      {/* Right pan chains */}
+      <line x1="19" y1="4.7" x2="17" y2="12"/>
+      <line x1="19" y1="4.7" x2="21" y2="12"/>
+      {/* Right pan (bowl, lower = heavier) */}
+      <path d="M16 12q3 4 6 0"/>
+      {/* Base */}
+      <line x1="7" y1="19" x2="17" y2="19"/>
+      {/* Fulcrum triangle */}
+      <path d="M10 19l2-3 2 3"/>
     </svg>
   ),
   reporting: (
