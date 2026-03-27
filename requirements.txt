@@ -1,3 +1,6 @@
 pandas
 openpyxl
 flask
+flask-bcrypt
+PyJWT
+pytest

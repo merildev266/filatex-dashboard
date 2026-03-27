@@ -293,7 +293,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       <div className="flex items-center gap-3 mb-4">
         <button
           onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
+          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
         >
           &#8592;
         </button>
@@ -544,17 +544,17 @@ function GeneratorDetailPanel({
 
   // Status mapping — matches original exactly
   const statMap = {
-    ok:    { label: 'En marche',    bg: 'rgba(0,171,99,0.12)',    color: '#00ab63' },
-    warn:  { label: 'Maintenance',  bg: 'rgba(245,166,35,0.12)',  color: '#FDB823' },
-    ko:    { label: 'Hors service', bg: 'rgba(224,92,92,0.12)',   color: '#e05c5c' },
-    check: { label: 'A verifier — Donnees contradictoires', bg: 'rgba(160,90,255,0.12)', color: '#7b5fbf' },
+    ok:    { label: 'En marche',    bg: 'rgba(0,171,99,0.12)',    color: 'var(--text)' },
+    warn:  { label: 'Maintenance',  bg: 'rgba(245,166,35,0.12)',  color: 'var(--text)' },
+    ko:    { label: 'Hors service', bg: 'rgba(224,92,92,0.12)',   color: 'var(--text)' },
+    check: { label: 'A verifier — Donnees contradictoires', bg: 'rgba(160,90,255,0.12)', color: 'var(--text)' },
   }
   const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko)
 
   // Card border/label/bg colors
-  const bc = isContra ? 'rgba(160,90,255,0.15)' : isKO ? 'rgba(224,92,92,0.15)' : 'rgba(138,146,171,0.18)'
+  const bc = 'var(--card-border)'
   const lc = isContra ? 'rgba(160,90,255,0.65)' : isKO ? 'rgba(224,92,92,0.65)' : 'rgba(138,146,171,0.65)'
-  const bg = isContra ? 'rgba(160,90,255,0.06)' : isKO ? 'rgba(224,92,92,0.06)' : 'rgba(138,146,171,0.06)'
+  const bg = 'var(--card)'
 
   // ── Section 1 — Heures de marche (filter-aware, matches original thresholds) ──
   let s1_hVal, s1_hUnit = 'h', s1_sbSub, s1_hColor, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel
@@ -838,7 +838,7 @@ function GeneratorDetailPanel({
       <div className="flex items-center gap-3 mb-1">
         <button
           onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-white text-lg bg-transparent border-none cursor-pointer"
+          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
         >
           &#8592;
         </button>
@@ -901,7 +901,7 @@ function GeneratorDetailPanel({
         <div className="gd-arret-banner">
           <div className="gd-arret-days">
             {g.jourArret || '—'}
-            <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 4, color: 'rgba(224,92,92,0.6)' }}>j</span>
+            <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 4, color: 'var(--text-dim)' }}>j</span>
           </div>
           <div>
             <div className="gd-arret-label">Arret en cours</div>
@@ -911,14 +911,14 @@ function GeneratorDetailPanel({
             <div className="gd-arret-reason">{g.maint}</div>
           </div>
           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(224,92,92,0.5)', marginBottom: 4 }}>
+            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>
               Arret force
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#e05c5c' }}>
               {parseFloat(g.arretForce || 0).toFixed(1)}
-              <span style={{ fontSize: 11, fontWeight: 400, color: 'rgba(224,92,92,0.5)', marginLeft: 3 }}>h</span>
+              <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 3 }}>h</span>
             </div>
-            <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 6 }}>
+            <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 6 }}>
               Arret planifie : {parseFloat(g.arretPlanifie || 0).toFixed(1)} h
             </div>
           </div>

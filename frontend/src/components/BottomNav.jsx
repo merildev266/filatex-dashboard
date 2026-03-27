@@ -1,34 +1,35 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 
 const NAV_ITEMS = [
-  { pole: 'home', path: '/', label: 'Accueil' },
-  { pole: 'energy', path: '/energy', label: 'Energy' },
-  { pole: 'investments', path: '/investments', label: 'Invest.' },
-  { pole: 'properties', path: '/properties', label: 'Properties' },
-  { pole: 'capex', path: '/capex', label: 'CAPEX' },
-  { pole: 'csi', path: '/csi', label: 'CSI' },
-  { pole: 'reporting', path: '/reporting', label: 'Reporting' },
+  { pole: 'home', path: '/', label: 'Accueil', section: null },
+  { pole: 'energy', path: '/energy', label: 'Energy', section: 'energy' },
+  { pole: 'investments', path: '/investments', label: 'Invest.', section: 'investments' },
+  { pole: 'properties', path: '/properties', label: 'Properties', section: 'properties' },
+  { pole: 'capex', path: '/capex', label: 'CAPEX', section: 'capex' },
+  { pole: 'csi', path: '/csi', label: 'CSI', section: 'csi' },
+  { pole: 'reporting', path: '/reporting', label: 'Reporting', section: 'reporting' },
 ]
 
 const POLE_COLORS = {
-  home: 'rgba(255,255,255,0.7)',
+  home: 'var(--text)',
   energy: '#00ab63',
   investments: '#f37056',
   properties: '#FDB823',
   capex: '#5e4c9f',
   csi: '#0096c7',
-  reporting: '#5aafaf',
+  reporting: '#426ab3',
 }
 
 const POLE_COLORS_RGB = {
-  home: '255,255,255',
+  home: '58,57,92',
   energy: '0,171,99',
   investments: '243,112,86',
   properties: '253,184,35',
   capex: '94,76,159',
   csi: '0,150,199',
-  reporting: '90,175,175',
+  reporting: '66,106,179',
 }
 
 /* ── SVG icons ── */
@@ -67,23 +68,43 @@ const NAV_ICONS = {
     </svg>
   ),
   capex: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="16" width="4" height="6" rx="0.5"/>
-      <rect x="8" y="11" width="4" height="11" rx="0.5"/>
-      <rect x="14" y="6" width="4" height="16" rx="0.5"/>
-      <path d="M20 2l2 2-2 2" strokeWidth="1.5"/>
-      <path d="M22 4h-4v5" strokeWidth="1.5"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Safe body */}
+      <rect x="2" y="8" width="20" height="15" rx="2"/>
+      {/* Open door (hinged left, swung open) */}
+      <path d="M2 8v15" strokeWidth="2.2"/>
+      <rect x="-6" y="8" width="10" height="15" rx="1.5" strokeWidth="1.4"/>
+      {/* Handle on door */}
+      <circle cx="-1" cy="15.5" r="1.2"/>
+      {/* Lock dial on safe */}
+      <circle cx="12" cy="16" r="3"/>
+      <circle cx="12" cy="16" r="0.8" fill="currentColor" stroke="none"/>
+      <line x1="12" y1="13" x2="12" y2="14"/>
+      <line x1="12" y1="18" x2="12" y2="19"/>
+      <line x1="9" y1="16" x2="10" y2="16"/>
+      <line x1="14" y1="16" x2="15" y2="16"/>
     </svg>
   ),
   csi: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="2.5"/>
-      <path d="M12 10.5v2"/>
-      <path d="M8 16l4-3.5 4 3.5"/>
-      <path d="M4 20l4-4"/>
-      <path d="M20 20l-4-4"/>
-      <path d="M4 20h16"/>
-      <path d="M2 3l5 4L12 4l5 3 5-4" strokeWidth="1.5"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Central pillar */}
+      <line x1="12" y1="2" x2="12" y2="19"/>
+      {/* Top beam (tilted slightly) */}
+      <line x1="3" y1="5.5" x2="21" y2="4.5"/>
+      {/* Left pan chains */}
+      <line x1="5" y1="5.3" x2="3" y2="10"/>
+      <line x1="5" y1="5.3" x2="7" y2="10"/>
+      {/* Left pan (bowl) */}
+      <path d="M2 10q3 4 6 0"/>
+      {/* Right pan chains */}
+      <line x1="19" y1="4.7" x2="17" y2="12"/>
+      <line x1="19" y1="4.7" x2="21" y2="12"/>
+      {/* Right pan (bowl, lower = heavier) */}
+      <path d="M16 12q3 4 6 0"/>
+      {/* Base */}
+      <line x1="7" y1="19" x2="17" y2="19"/>
+      {/* Fulcrum triangle */}
+      <path d="M10 19l2-3 2 3"/>
     </svg>
   ),
   reporting: (
@@ -100,13 +121,17 @@ const NAV_ICONS = {
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { hasAccess } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [barVisible, setBarVisible] = useState(true)
   const lastScrollY = useRef(0)
 
   const isHome = location.pathname === '/'
 
-  const activePole = NAV_ITEMS.find(
+  // Filter nav items by user permissions
+  const visibleItems = NAV_ITEMS.filter(item => !item.section || hasAccess(item.section))
+
+  const activePole = visibleItems.find(
     (item) => item.path !== '/' && location.pathname.startsWith(item.path)
   )?.pole || 'home'
 
@@ -154,7 +179,7 @@ export default function BottomNav() {
           opacity: barVisible ? 1 : 0,
         }}
       >
-        {NAV_ITEMS.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = activePole === item.pole
           const color = POLE_COLORS[item.pole]
           const rgb = POLE_COLORS_RGB[item.pole]

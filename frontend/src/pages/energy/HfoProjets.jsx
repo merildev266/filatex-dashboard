@@ -38,8 +38,8 @@ export default function HfoProjets() {
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         {[
-          { value: hfp.total, label: 'Total', color: 'rgba(255,255,255,0.9)' },
-          { value: hfp.overhauls, label: 'Overhauls', color: 'rgba(255,255,255,0.9)' },
+          { value: hfp.total, label: 'Total', color: 'var(--text)' },
+          { value: hfp.overhauls, label: 'Overhauls', color: 'var(--text)' },
           { value: hfp.enCours, label: 'En cours', color: '#FDB823' },
           { value: hfp.termine, label: 'Terminés', color: '#00ab63' },
           { value: hfp.urgents, label: 'Urgents', color: '#f37056' },
@@ -58,16 +58,16 @@ export default function HfoProjets() {
           className={`rounded-xl p-3 text-center cursor-pointer transition-all border
             ${!filter ? 'border-[#00ab63] bg-[rgba(0,171,99,0.08)]' : 'border-[rgba(138,146,171,0.15)] bg-[rgba(138,146,171,0.05)] hover:border-[rgba(138,146,171,0.5)]'}`}
         >
-          <div className="text-[10px] font-bold text-white/70 mb-1">Tous</div>
-          <div className="text-xl font-extrabold text-white/90">{hfp.total}</div>
+          <div className="text-[10px] font-bold text-[var(--text-muted)] mb-1">Tous</div>
+          <div className="text-xl font-extrabold text-[var(--text)]">{hfp.total}</div>
         </button>
         <button
           onClick={() => setFilter(filter?.key === 'OVERHAUL' ? null : { type: 'cat', key: 'OVERHAUL' })}
           className={`rounded-xl p-3 text-center cursor-pointer transition-all border
             ${filter?.key === 'OVERHAUL' ? 'border-[#00ab63] bg-[rgba(0,171,99,0.08)]' : 'border-[rgba(138,146,171,0.15)] bg-[rgba(138,146,171,0.05)] hover:border-[rgba(138,146,171,0.5)]'}`}
         >
-          <div className="text-[10px] font-bold text-white/70 mb-1">Overhauls</div>
-          <div className="text-xl font-extrabold text-white/90">{hfp.overhauls}</div>
+          <div className="text-[10px] font-bold text-[var(--text-muted)] mb-1">Overhauls</div>
+          <div className="text-xl font-extrabold text-[var(--text)]">{hfp.overhauls}</div>
         </button>
         {hfp.sites.map(s => (
           <button
@@ -76,14 +76,14 @@ export default function HfoProjets() {
             className={`rounded-xl p-3 text-center cursor-pointer transition-all border
               ${filter?.key === s ? 'border-[#00ab63] bg-[rgba(0,171,99,0.08)]' : 'border-[rgba(138,146,171,0.15)] bg-[rgba(138,146,171,0.05)] hover:border-[rgba(138,146,171,0.5)]'}`}
           >
-            <div className="text-[10px] font-bold text-white/70 mb-1">{s.charAt(0) + s.slice(1).toLowerCase()}</div>
-            <div className="text-xl font-extrabold text-white/90">{hfp.bySite[s]?.total || 0}</div>
+            <div className="text-[10px] font-bold text-[var(--text-muted)] mb-1">{s.charAt(0) + s.slice(1).toLowerCase()}</div>
+            <div className="text-xl font-extrabold text-[var(--text)]">{hfp.bySite[s]?.total || 0}</div>
           </button>
         ))}
       </div>
 
       {/* Project list */}
-      <div className="text-[10px] font-bold tracking-widest uppercase text-[rgba(138,146,171,0.6)] border-b border-[rgba(138,146,171,0.15)] pb-2 mb-3">
+      <div className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-muted)] border-b border-[rgba(138,146,171,0.15)] pb-2 mb-3">
         {filter ? (filter.type === 'cat' ? `Overhauls — ${filtered.length} projets` : `${filter.key.charAt(0)}${filter.key.slice(1).toLowerCase()} — ${filtered.length} projets`) : `Tous les projets — ${filtered.length}`}
       </div>
       <div className="space-y-2">
@@ -94,22 +94,22 @@ export default function HfoProjets() {
           return (
             <div key={i} className="glass-card p-3.5 flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-bold text-white/85 truncate">{p.projet}</div>
-                <div className="text-[9px] text-white/35 mt-0.5">
+                <div className="text-xs font-bold text-[var(--text)] truncate">{p.projet}</div>
+                <div className="text-[9px] text-[var(--text-dim)] mt-0.5">
                   {cLabel}{p.moteur ? ` · ${p.moteur}` : ''}{p.resp ? ` · ${p.resp}` : ''}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-[9px] font-bold tracking-wider uppercase" style={{ color: sCol }}>
+                <div className="text-[9px] font-bold tracking-wider uppercase" style={{ color: 'var(--text-dim)' }}>
                   {sLabel}
                 </div>
                 {p.dayToGo != null && p.dayToGo > 0 && (
-                  <div className="text-sm font-extrabold text-white/70 mt-0.5">
-                    {p.dayToGo} <span className="text-[9px] font-normal text-white/30">jours</span>
+                  <div className="text-sm font-extrabold text-[var(--text-muted)] mt-0.5">
+                    {p.dayToGo} <span className="text-[9px] font-normal text-[var(--text-dim)]">jours</span>
                   </div>
                 )}
                 {p.dlRevu && (
-                  <div className="text-[8px] text-white/25 mt-0.5">DL: {formatDateFR(p.dlRevu)}</div>
+                  <div className="text-[8px] text-[var(--text-dim)] mt-0.5">DL: {formatDateFR(p.dlRevu)}</div>
                 )}
               </div>
             </div>

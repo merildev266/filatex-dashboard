@@ -89,7 +89,7 @@ function SummaryColumn({ title, kpis, onClick }) {
             </div>
             <div className="e-kpi-center">
               <div className="e-pct" style={{ color: TEAL }}>{kpis.pct}</div>
-              <div className="e-pct-arrow" style={{ color: 'rgba(78,205,196,0.5)' }}>decaisse</div>
+              <div className="e-pct-arrow" style={{ color: 'var(--text-dim)' }}>decaisse</div>
             </div>
             <div className="e-kpi-right">
               <div className="e-big">{kpis.decaisse} <span className="e-big-unit">M$</span></div>
@@ -124,8 +124,8 @@ function SummaryColumn({ title, kpis, onClick }) {
             </div>
             <div className="e-kpi-center"><div className="e-kpi-sep" /></div>
             <div className="e-kpi-right">
-              <div className="e-mid" style={{ color: 'rgba(253,184,35,0.8)' }}>
-                {kpis.reste} <span className="e-mid-unit" style={{ color: 'rgba(253,184,35,0.5)' }}>M$</span>
+              <div className="e-mid" style={{ color: 'var(--text-secondary)' }}>
+                {kpis.reste} <span className="e-mid-unit" style={{ color: 'var(--text-dim)' }}>M$</span>
               </div>
               <div className="e-arret-sub2">reste a decaisser</div>
             </div>
@@ -143,7 +143,7 @@ function InvProjectCard({ project, onClick }) {
   const decaisseVal = hasCx ? project.capex.etat : '\u2014'
   const execVal = hasCx ? project.capex.pct + '%' : '\u2014'
   const pctWidth = hasCx ? project.capex.pct : 0
-  const statusColor = project.status === 'En cours' ? TEAL : (project.status === 'Termine' ? '#a8d98a' : 'rgba(255,255,255,0.4)')
+  const statusColor = project.status === 'En cours' ? TEAL : (project.status === 'Termine' ? '#a8d98a' : 'var(--text-muted)')
 
   return (
     <div
@@ -154,22 +154,22 @@ function InvProjectCard({ project, onClick }) {
       onMouseLeave={e => { e.currentTarget.style.borderColor = `rgba(${ACCENT_RGB},0.2)`; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: 'clamp(14px,1.2vw,18px)', fontWeight: 800, color: 'rgba(255,255,255,0.9)' }}>{project.nom}</div>
+        <div style={{ fontSize: 'clamp(14px,1.2vw,18px)', fontWeight: 800, color: 'var(--text)' }}>{project.nom}</div>
         <div style={{ fontSize: 9, fontWeight: 700, color: statusColor, border: '1px solid', borderRadius: 4, padding: '2px 6px' }}>{project.status}</div>
       </div>
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>S{project.week} &middot; {project.resp}</div>
+      <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4 }}>S{project.week} &middot; {project.resp}</div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
         <div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Invest</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Invest</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: ACCENT }}>{investVal}</div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Decaisse</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Decaisse</div>
           <div style={{ fontSize: 16, fontWeight: 800 }}>{decaisseVal}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Execution</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Execution</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: TEAL }}>{execVal}</div>
         </div>
       </div>
@@ -206,15 +206,15 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
         {/* Header row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Responsable</div>
+            <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Responsable</div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>{project.resp}</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Statut</div>
+            <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Statut</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: statusColor }}>{project.status}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Derniere MAJ</div>
+            <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Derniere MAJ</div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>Semaine {project.week}</div>
           </div>
         </div>
@@ -222,18 +222,18 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
         {/* CAPEX data */}
         {hasCx && (
           <div style={{ borderTop: `1px solid rgba(${ACCENT_RGB},0.1)`, paddingTop: 12 }}>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Donnees CAPEX</div>
+            <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Donnees CAPEX</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>Investissement</div>
+                <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Investissement</div>
                 <div style={{ fontSize: 22, fontWeight: 800, color: ACCENT }}>{project.capex.invest}</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>Decaisse</div>
+                <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Decaisse</div>
                 <div style={{ fontSize: 22, fontWeight: 800 }}>{project.capex.etat}</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>Execution</div>
+                <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Execution</div>
                 <div style={{ fontSize: 22, fontWeight: 800, color: TEAL }}>{project.capex.pct}%</div>
               </div>
             </div>
@@ -244,7 +244,7 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
         )}
 
         {!hasCx && (
-          <div style={{ borderTop: `1px solid rgba(${ACCENT_RGB},0.1)`, paddingTop: 16, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
+          <div style={{ borderTop: `1px solid rgba(${ACCENT_RGB},0.1)`, paddingTop: 16, textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>
             Pas de donnees CAPEX disponibles
           </div>
         )}
@@ -285,10 +285,10 @@ function GridView({ type, onBack, onSelectProject, onSwitchType }) {
           { lbl: 'Decaisse', val: kpis.pct, unit: "Taux d'execution" },
           { lbl: 'Montant decaisse', val: kpis.decaisse + ' M$', unit: 'Realise' },
         ].map((k, i) => (
-          <div key={i} className="s1-card" style={{ background: `rgba(${ACCENT_RGB},0.04)`, borderColor: `rgba(${ACCENT_RGB},0.18)` }}>
+          <div key={i} className="s1-card">
             <div className="s1-card-label" style={{ color: `rgba(${ACCENT_RGB},0.5)` }}>{k.lbl}</div>
-            <div className="s1-card-value" style={{ color: 'rgba(255,255,255,0.9)' }}>{k.val}</div>
-            <div className="s1-card-unit-line" style={{ color: 'rgba(255,255,255,0.35)' }}>{k.unit}</div>
+            <div className="s1-card-value" style={{ color: 'var(--text)' }}>{k.val}</div>
+            <div className="s1-card-unit-line" style={{ color: 'var(--text-dim)' }}>{k.unit}</div>
           </div>
         ))}
       </div>
@@ -342,7 +342,7 @@ export default function Investments() {
   if (selectedProject) {
     const allOfType = selectedProject.type === 'externe' ? extProjects : intProjects
     return (
-      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
         <SectionHeader name="Investments" color={ACCENT} onBack={() => setSelectedProject(null)} />
         <div className="inv-page-inner">
           <InvDetail
@@ -359,7 +359,7 @@ export default function Investments() {
   // Grid view (level 2)
   if (activeType) {
     return (
-      <div style={{ background: '#000000', minHeight: '100dvh' }}>
+      <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
         <SectionHeader name="Investments" color={ACCENT} onBack={() => setActiveType(null)} />
         <div className="inv-page-inner">
           <GridView
@@ -375,7 +375,7 @@ export default function Investments() {
 
   // Landing: two columns Externe / Interne
   return (
-    <div style={{ background: '#000000', minHeight: '100dvh' }}>
+    <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
       <SectionHeader name="Investments" color={ACCENT} />
       <div className="inv-page-inner">
         <div className="e-wrap inv-wrap">

@@ -70,7 +70,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
         <div className="flex items-center justify-center gap-2 h-[26px]">
           {isRecon
             ? <NeonDot status="ko" size={8} />
-            : <span className="inline-block rounded-full w-2 h-2" style={{ background: 'rgba(255,255,255,0.15)' }} />
+            : <span className="inline-block rounded-full w-2 h-2" style={{ background: 'var(--border)' }} />
           }
           <span className="text-xs font-bold tracking-wider uppercase">{s.name}</span>
         </div>
@@ -125,7 +125,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
               <div className="text-[13px] font-extrabold" style={{ color: puissColor }}>{puissPct}%</div>
             </div>
             <div className="text-center flex-1">
-              <div className="text-xl font-extrabold leading-none text-white/30">
+              <div className="text-xl font-extrabold leading-none text-[var(--text-muted)]">
                 {parseFloat(s.contrat).toFixed(1)}
                 <span className="text-[9px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
               </div>
@@ -151,7 +151,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
               <div className="text-[14px] font-extrabold" style={{ color: prodColor }}>{prodPctStr}</div>
             </div>
             <div className="text-center flex-1">
-              <div className="text-[13px] font-bold leading-none text-white/35">
+              <div className="text-[13px] font-bold leading-none text-[var(--text-muted)]">
                 {prodPrev > 0 ? Math.round(prodPrev).toLocaleString() : '—'}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">{prodPrev > 0 ? 'MWh' : ''}</span>
               </div>
@@ -184,7 +184,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">jours autonomie</div>
             {fs.latestHfoStock != null && (
-              <div className="text-[7px] text-white/20 mt-0.5">{Math.round(fs.latestHfoStock).toLocaleString()} L</div>
+              <div className="text-[7px] text-[var(--text-muted)] mt-0.5">{Math.round(fs.latestHfoStock).toLocaleString()} L</div>
             )}
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
@@ -214,7 +214,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             <div className="text-[7px] font-semibold mt-0.5 opacity-80 min-h-[10px]" style={{ color: sfocColor }}>
               {sfocVal !== null ? (sfocVal <= 250 ? `−${(250 - sfocVal).toFixed(1)} vs limite` : `+${(sfocVal - 250).toFixed(1)} vs limite`) : ''}
             </div>
-            <div className="text-[7px] text-white/20 mt-0.5">limite 250</div>
+            <div className="text-[7px] text-[var(--text-muted)] mt-0.5">limite 250</div>
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center min-h-[60px] flex flex-col justify-center" style={{ background: bgKpi }}>
             <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SLOC</div>
@@ -225,7 +225,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             <div className="text-[7px] font-semibold mt-0.5 opacity-80 min-h-[10px]" style={{ color: slocColor }}>
               {slocVal !== null ? (slocVal <= 1.0 ? `−${(1.0 - slocVal).toFixed(1)} vs limite` : `+${(slocVal - 1.0).toFixed(1)} vs limite`) : ''}
             </div>
-            <div className="text-[7px] text-white/20 mt-0.5">limite 1.00</div>
+            <div className="text-[7px] text-[var(--text-muted)] mt-0.5">limite 1.00</div>
           </div>
         </div>
       </div>

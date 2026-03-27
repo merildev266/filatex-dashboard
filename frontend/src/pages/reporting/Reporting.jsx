@@ -4,7 +4,7 @@ export default function Reporting() {
   return (
     <SectionLayout
       name="Reporting"
-      color="#5aafaf"
+      color="#426ab3"
       basePath="/reporting"
     />
   )

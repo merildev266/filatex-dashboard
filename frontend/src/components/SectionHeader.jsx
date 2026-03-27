@@ -10,7 +10,7 @@ export default function SectionHeader({ name, color, onBack }) {
   const label = onBack ? name : 'Accueil'
 
   return (
-    <div className="sticky top-0 z-50" style={{ background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(12px)' }}>
+    <div className="sticky top-0 z-50" style={{ background: 'var(--banner-bg)', backdropFilter: 'blur(12px)' }}>
       <div className="flex items-center px-4 py-3" style={{ position: 'relative' }}>
       <div className="nav-back">
         <button

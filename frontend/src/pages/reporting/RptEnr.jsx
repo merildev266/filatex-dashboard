@@ -6,10 +6,10 @@ const PHASE_ORDER = { Construction: 0, Developpement: 1, Planifie: 2, Termine: 3
 
 function PhaseBadge({ phase }) {
   const map = {
-    Termine: 'bg-[rgba(0,171,99,0.15)] text-[#00ab63] border-[rgba(0,171,99,0.3)]',
-    Construction: 'bg-[rgba(253,184,35,0.15)] text-[#FDB823] border-[rgba(253,184,35,0.3)]',
-    Developpement: 'bg-[rgba(66,106,179,0.15)] text-[#426ab3] border-[rgba(66,106,179,0.3)]',
-    Planifie: 'bg-[rgba(255,255,255,0.06)] text-[var(--text-dim)] border-[rgba(255,255,255,0.1)]',
+    Termine: 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]',
+    Construction: 'bg-[rgba(253,184,35,0.15)] text-[var(--text)] border-[rgba(253,184,35,0.3)]',
+    Developpement: 'bg-[rgba(66,106,179,0.15)] text-[var(--text)] border-[rgba(66,106,179,0.3)]',
+    Planifie: 'bg-[var(--badge-dim-bg)] text-[var(--text-dim)] border-[var(--inner-card-border)]',
   }
   const cls = map[phase] || map.Planifie
   return (
@@ -74,8 +74,8 @@ export default function RptEnr() {
           <select
             value={selectedWeek}
             onChange={e => setSelectedWeek(e.target.value)}
-            className="bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.15)]
-                       rounded-lg text-[#00ab63] text-xs font-semibold px-3 py-1.5
+            className="bg-[var(--badge-dim-bg)] border border-[var(--card-border)]
+                       rounded-lg text-[var(--text)] text-xs font-semibold px-3 py-1.5
                        cursor-pointer outline-none"
           >
             {weekKeys.map(k => (
@@ -88,7 +88,7 @@ export default function RptEnr() {
       )}
 
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[rgba(255,255,255,0.02)] rounded-xl">
+      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
         <KpiItem value={total} label="Total Projets" color="#5aafaf" />
         <KpiItem value={totalMw.toFixed(1)} label="MWc Pipeline" color="#00ab63" />
         <KpiItem value={termine} label="Termines" color="#00ab63" />
@@ -101,7 +101,7 @@ export default function RptEnr() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[rgba(255,255,255,0.1)]">
+            <tr className="border-b border-[var(--inner-card-border)]">
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Projet</th>
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold text-right">MWc</th>
               <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Phase</th>
@@ -119,13 +119,13 @@ export default function RptEnr() {
               const glissText = p.glissement > 0 ? `+${p.glissement}j` : p.glissement === 0 ? '0j' : `${p.glissement}j`
 
               return (
-                <tr key={p.id} className="border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)]">
-                  <td className="px-3 py-2 font-semibold whitespace-nowrap text-white">{p.projet}</td>
+                <tr key={p.id} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
+                  <td className="px-3 py-2 font-semibold whitespace-nowrap text-[var(--text)]">{p.projet}</td>
                   <td className="px-3 py-2 text-right whitespace-nowrap">{p.puissance || 0}</td>
                   <td className="px-3 py-2"><PhaseBadge phase={p.phase} /></td>
                   <td className="px-3 py-2">
                     <span className="font-semibold" style={{ color: progColor }}>{p.avancement || 0}%</span>
-                    <div className="w-full h-1.5 bg-[rgba(255,255,255,0.06)] rounded-full mt-1">
+                    <div className="w-full h-1.5 bg-[var(--badge-dim-bg)] rounded-full mt-1">
                       <div
                         className="h-full rounded-full transition-all"
                         style={{ width: `${p.avancement || 0}%`, background: progColor }}

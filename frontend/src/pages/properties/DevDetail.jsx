@@ -177,10 +177,10 @@ function DelayPopup({ task, project, position, onClose }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 200,
-      background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+      background: 'var(--overlay-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <div ref={popupRef} style={{
-        background: '#12101f', border: '1px solid rgba(255,64,96,0.25)',
+        background: 'var(--card)', border: '1px solid var(--card-border)',
         borderRadius: 16, padding: 0, maxWidth: 440, width: '90%',
         boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,64,96,0.08)',
         overflow: 'hidden'
@@ -191,8 +191,8 @@ function DelayPopup({ task, project, position, onClose }) {
           background: 'rgba(255,64,96,0.06)', borderBottom: '1px solid rgba(255,64,96,0.12)'
         }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{task.name}</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{project.name}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{task.name}</div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>{project.name}</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{
@@ -200,7 +200,7 @@ function DelayPopup({ task, project, position, onClose }) {
               background: 'rgba(255,32,64,0.12)', padding: '3px 8px', borderRadius: 6
             }}>+{task.g}j ({delayWeeks} sem)</span>
             <button onClick={onClose} style={{
-              background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)',
+              background: 'transparent', border: 'none', color: 'var(--text-muted)',
               fontSize: 16, cursor: 'pointer', padding: '2px 6px'
             }}>&#10005;</button>
           </div>
@@ -210,9 +210,9 @@ function DelayPopup({ task, project, position, onClose }) {
         <div style={{ padding: '12px 18px' }}>
           <div style={{
             fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'rgba(255,100,100,0.6)', marginBottom: 6
+            color: 'var(--text-dim)', marginBottom: 6
           }}>Cause</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             {project.comment || "Cause en cours d'analyse"}
           </div>
         </div>
@@ -222,17 +222,17 @@ function DelayPopup({ task, project, position, onClose }) {
           <div style={{ padding: '0 18px 14px' }}>
             <div style={{
               fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
-              color: 'rgba(90,175,175,0.6)', marginBottom: 8
+              color: 'var(--text-dim)', marginBottom: 8
             }}>Historique hebdomadaire</div>
             <div style={{ maxHeight: 180, overflowY: 'auto' }}>
               {comments.map((c, i) => (
                 <div key={i} style={{
                   padding: '7px 10px', marginBottom: 4, borderRadius: 6,
-                  background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.08)',
+                  background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)',
                   fontSize: 10, lineHeight: 1.4
                 }}>
-                  <span style={{ fontWeight: 700, color: TEAL, marginRight: 6 }}>{c.week}</span>
-                  <span style={{ color: 'rgba(255,255,255,0.55)' }}>{c.comment}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-dim)', marginRight: 6 }}>{c.week}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>{c.comment}</span>
                 </div>
               ))}
             </div>
@@ -241,13 +241,13 @@ function DelayPopup({ task, project, position, onClose }) {
 
         {/* Resolution */}
         <div style={{
-          padding: '10px 18px 14px', borderTop: '1px solid rgba(255,255,255,0.04)'
+          padding: '10px 18px 14px', borderTop: '1px solid var(--separator-light)'
         }}>
           <div style={{
             fontSize: 8, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'rgba(0,171,99,0.6)', marginBottom: 6
+            color: 'var(--text-dim)', marginBottom: 6
           }}>Suivi</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
             Suivi en cours — voir notes projet
           </div>
         </div>
@@ -283,20 +283,20 @@ function GanttChart({ project, onTaskAlert }) {
   const NAME_W = 170
 
   return (
-    <div style={{ background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.18)', borderRadius: 20, position: 'relative' }}>
-      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'rgba(66,106,179,0.5)', padding: '16px 24px 0' }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 20, position: 'relative' }}>
+      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'var(--text-dim)', padding: '16px 24px 0' }}>
         Planning &middot; Gantt
       </div>
 
       {/* Timeline header */}
-      <div style={{ display: 'flex', padding: '12px 24px 0 24px', background: 'rgba(66,106,179,0.06)' }}>
+      <div style={{ display: 'flex', padding: '12px 24px 0 24px', background: 'var(--subtle-bg)' }}>
         <div style={{ flex: `0 0 ${NAME_W}px` }} />
         <div style={{ display: 'flex', flex: 1, position: 'relative', height: 28 }}>
           {years.map((y, i) => (
             <div key={i} style={{
               position: 'absolute', left: `${y.left}%`, width: `${y.width}%`, height: '100%',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.25)',
+              fontSize: 10, fontWeight: 700, color: 'var(--text-dim)',
               borderLeft: '1px solid rgba(255,255,255,0.05)'
             }}>
               {y.label}
@@ -312,7 +312,7 @@ function GanttChart({ project, onTaskAlert }) {
           {years.map((y, i) => (
             <div key={i} style={{
               position: 'absolute', left: `${y.left}%`, top: 0, bottom: 60,
-              width: 1, background: 'rgba(255,255,255,0.04)', zIndex: 1, pointerEvents: 'none',
+              width: 1, background: 'var(--separator-light)', zIndex: 1, pointerEvents: 'none',
               marginLeft: NAME_W
             }} />
           ))}
@@ -325,7 +325,7 @@ function GanttChart({ project, onTaskAlert }) {
             }}>
               <div style={{
                 position: 'absolute', top: -4, left: -18,
-                fontSize: 7, fontWeight: 700, color: AZUR, opacity: 0.8, whiteSpace: 'nowrap'
+                fontSize: 7, fontWeight: 700, color: 'var(--text-dim)', opacity: 0.8, whiteSpace: 'nowrap'
               }}>Auj.</div>
             </div>
           )}
@@ -346,9 +346,9 @@ function GanttChart({ project, onTaskAlert }) {
                 <div style={{
                   width: NAME_W, flexShrink: 0,
                   fontSize: 10, fontWeight: isDelayed ? 700 : 500,
-                  color: isDelayed ? 'rgba(255,135,88,0.9)' : 'rgba(255,255,255,0.5)',
+                  color: isDelayed ? 'var(--text)' : 'var(--text-muted)',
                   paddingRight: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                  background: 'rgba(66,106,179,0.06)'
+                  background: 'var(--subtle-bg)'
                 }}>
                   {t.name}
                 </div>
@@ -385,20 +385,20 @@ function GanttChart({ project, onTaskAlert }) {
                         <div style={{ height: '100%', width: '100%', background: 'rgba(220,50,50,0.55)', borderRadius: '0 3px 3px 0' }} />
                         <div style={{
                           position: 'absolute', right: 3, top: '50%', transform: 'translateY(-50%)',
-                          fontSize: 7, fontWeight: 700, color: 'rgba(255,180,180,0.9)'
+                          fontSize: 7, fontWeight: 700, color: 'var(--text)'
                         }}>&#9888;</div>
                       </div>
                       {/* Percentage label */}
                       {pctVal > 0 && (
                         <div style={{
                           position: 'absolute', left: `${leftPct + widthPct + 0.5}%`, top: 3,
-                          fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,0.5)'
+                          fontSize: 8, fontWeight: 800, color: 'var(--text-muted)'
                         }}>{pctVal}%</div>
                       )}
                       {/* Delay badge */}
                       <div style={{
                         position: 'absolute', left: `${leftPct + widthPct + (pctVal > 0 ? 4 : 0.5)}%`, top: 3,
-                        fontSize: 8, fontWeight: 800, color: 'rgba(255,135,88,0.9)',
+                        fontSize: 8, fontWeight: 800, color: 'var(--text)',
                         textShadow: '0 0 6px rgba(255,135,88,0.5)'
                       }}>+{t.g}j</div>
                     </>
@@ -416,7 +416,7 @@ function GanttChart({ project, onTaskAlert }) {
                       {pctVal > 0 && (
                         <div style={{
                           position: 'absolute', left: `${leftPct + widthPct + 0.5}%`, top: 3,
-                          fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,0.5)'
+                          fontSize: 8, fontWeight: 800, color: 'var(--text-muted)'
                         }}>{pctVal}%</div>
                       )}
                     </>
@@ -437,7 +437,7 @@ function GanttChart({ project, onTaskAlert }) {
           {/* Legend */}
           <div style={{
             display: 'flex', gap: 16, marginTop: 16, paddingTop: 14,
-            borderTop: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap'
+            borderTop: '1px solid var(--separator)', flexWrap: 'wrap'
           }}>
             {[
               { bg: 'rgba(0,171,99,0.6)', label: 'Termine' },
@@ -450,16 +450,16 @@ function GanttChart({ project, onTaskAlert }) {
                   width: 12, height: 8, borderRadius: 3, background: item.bg,
                   ...(item.border ? { borderLeft: '2px solid rgba(255,64,96,0.5)' } : {})
                 }} />
-                <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.35)' }}>{item.label}</span>
+                <span style={{ fontSize: 8, color: 'var(--text-dim)' }}>{item.label}</span>
               </div>
             ))}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ fontSize: 11, filter: 'drop-shadow(0 0 3px rgba(255,64,96,0.4))' }}>&#9888;</span>
-              <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.35)' }}>Cliquer pour details retard</span>
+              <span style={{ fontSize: 8, color: 'var(--text-dim)' }}>Cliquer pour details retard</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 2, height: 10, background: AZUR, opacity: 0.5 }} />
-              <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.35)' }}>Aujourd'hui</span>
+              <span style={{ fontSize: 8, color: 'var(--text-dim)' }}>Aujourd'hui</span>
             </div>
           </div>
         </div>
@@ -478,7 +478,7 @@ function ProjectDetail({ project, onBack }) {
   return (
     <div>
       {/* Title */}
-      <div style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 20 }}>
+      <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 20 }}>
         {project.name}
       </div>
 
@@ -515,10 +515,10 @@ function ProjectDetail({ project, onBack }) {
       {project.comment && (
         <div style={{
           padding: '10px 14px', borderRadius: 8,
-          background: 'rgba(66,106,179,0.06)', border: '1px solid rgba(66,106,179,0.1)',
-          fontSize: 11, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4, marginBottom: 24
+          background: 'var(--card)', border: '1px solid var(--card-border)',
+          fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: 24
         }}>
-          <b style={{ color: 'rgba(255,255,255,0.8)' }}>Notes :</b> {project.comment}
+          <b style={{ color: 'var(--text-secondary)' }}>Notes :</b> {project.comment}
         </div>
       )}
 
@@ -590,10 +590,10 @@ export default function DevDetail() {
       {delayed.length > 0 && (
         <div style={{
           marginBottom: 16, padding: '10px 16px', borderRadius: 10,
-          background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.15)',
+          background: 'var(--card)', border: '1px solid var(--card-border)',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: RED }}>&#9888; Projets en retard :</span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-dim)' }}>&#9888; Projets en retard :</span>
           {delayed.map((p, i) => (
             <span key={i} style={{
               fontSize: 10, color: RED,
@@ -620,17 +620,17 @@ export default function DevDetail() {
               key={p.id}
               onClick={() => setSelectedProjectIdx(idx)}
               style={{
-                background: 'rgba(66,106,179,0.04)',
-                border: '1px solid rgba(66,106,179,0.12)',
+                background: 'var(--card)',
+                border: '1px solid var(--card-border)',
                 borderRadius: 12, padding: 16, cursor: 'pointer',
                 transition: 'border-color 0.2s, transform 0.15s'
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(66,106,179,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(66,106,179,0.12)'; e.currentTarget.style.transform = 'none' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'none' }}
             >
               {/* Name + status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{p.name}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{p.name}</div>
                 <span style={{
                   fontSize: 9, fontWeight: 700, color: statusColor,
                   background: statusColor + '15', padding: '3px 8px', borderRadius: 6
@@ -639,7 +639,7 @@ export default function DevDetail() {
 
               {/* Progress */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
-                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>Avancement</span>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Avancement</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: AZUR }}>{p.pct}%</span>
               </div>
               <div style={{ height: 5, background: 'rgba(66,106,179,0.1)', borderRadius: 3, overflow: 'hidden' }}>
@@ -666,7 +666,7 @@ export default function DevDetail() {
                 })}
               </div>
 
-              <div style={{ marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>{phaseStr}</div>
+              <div style={{ marginTop: 8, fontSize: 10, color: 'var(--text-muted)' }}>{phaseStr}</div>
             </div>
           )
         })}

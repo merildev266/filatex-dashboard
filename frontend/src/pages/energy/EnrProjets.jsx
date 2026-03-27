@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
 
 const PHASE_LABELS = { termine: 'Termin\u00e9', construction: 'En construction', developpement: 'D\u00e9veloppement', planifie: 'Planifi\u00e9' }
-const PHASE_COLORS = { termine: '#00ab63', construction: '#FDB823', developpement: '#5aafaf', planifie: 'rgba(255,255,255,0.35)' }
+const PHASE_COLORS = { termine: '#00ab63', construction: '#FDB823', developpement: '#5aafaf', planifie: 'var(--text-dim)' }
 const PHASE_RGBS = { termine: '0,171,99', construction: '253,184,35', developpement: '90,175,175', planifie: '255,255,255' }
 
 /* -- Phase classifier -- */
@@ -80,7 +80,7 @@ export default function EnrProjets() {
   return (
     <div>
       {/* Title */}
-      <div style={{ fontSize: 20, fontWeight: 800, color: '#00ab63', marginBottom: 24 }}>Projets EnR</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 24 }}>Projets EnR</div>
 
       {/* KPI Consolidated (6 boxes) */}
       <div className="enrp-consolidated">
@@ -88,17 +88,17 @@ export default function EnrProjets() {
         <div className="enrp-kbox"><div className="kv" style={{ color: '#00ab63' }}>{fMw.toFixed(1)}</div><span className="kl">MWc Pipeline</span></div>
         <div className="enrp-kbox"><div className="kv" style={{ color: '#FDB823' }}>{fCapex.toFixed(1)}M$</div><span className="kl">CAPEX Total</span></div>
         <div className="enrp-kbox"><div className="kv" style={{ color: '#5aafaf' }}>{fBess || 0}</div><span className="kl">MWh BESS</span><div className="ks">{fProd > 0 ? Math.round(fProd / 1000) + ' MWh/j est.' : ''}</div></div>
-        <div className="enrp-kbox"><div className="kv" style={{ color: projsWithDelay.length > 0 ? '#ff5050' : 'rgba(255,255,255,0.3)' }}>{projsWithDelay.length}</div><span className="kl">En retard</span><div className="ks">{avgDelay > 0 ? 'moy. ' + avgDelay + 'j' : ''}</div></div>
+        <div className="enrp-kbox"><div className="kv" style={{ color: projsWithDelay.length > 0 ? '#ff5050' : 'var(--text-dim)' }}>{projsWithDelay.length}</div><span className="kl">En retard</span><div className="ks">{avgDelay > 0 ? 'moy. ' + avgDelay + 'j' : ''}</div></div>
         <div className="enrp-kbox"><div className="kv" style={{ color: '#00ab63' }}>{grouped.termine.length}</div><span className="kl">Termin&eacute;s</span><div className="ks">{grouped.construction.length} en constr.</div></div>
       </div>
 
       {/* Phase filters */}
       <div className="enrp-filters">
         {[
-          { key: 'termine', label: 'Termin\u00e9', dotColor: '#00ab63', labelColor: 'rgba(0,171,99,0.7)', countColor: '#00ab63' },
-          { key: 'construction', label: 'Construction', dotColor: '#FDB823', labelColor: 'rgba(253,184,35,0.7)', countColor: '#FDB823' },
-          { key: 'developpement', label: 'D\u00e9veloppement', dotColor: '#5aafaf', labelColor: 'rgba(90,175,175,0.7)', countColor: '#5aafaf' },
-          { key: 'planifie', label: 'Planifi\u00e9', dotColor: 'rgba(255,255,255,0.25)', labelColor: 'rgba(255,255,255,0.35)', countColor: 'rgba(255,255,255,0.4)' },
+          { key: 'termine', label: 'Termin\u00e9', dotColor: '#00ab63', labelColor: 'var(--text-dim)', countColor: '#00ab63' },
+          { key: 'construction', label: 'Construction', dotColor: '#FDB823', labelColor: 'var(--text-dim)', countColor: '#FDB823' },
+          { key: 'developpement', label: 'D\u00e9veloppement', dotColor: '#5aafaf', labelColor: 'var(--text-dim)', countColor: '#5aafaf' },
+          { key: 'planifie', label: 'Planifi\u00e9', dotColor: 'var(--text-dim)', labelColor: 'var(--text-dim)', countColor: 'var(--text-muted)' },
         ].map(f => (
           <div
             key={f.key}
@@ -134,7 +134,7 @@ export default function EnrProjets() {
           <div key={phase} className="enrp-phase-section">
             <div className="enrp-phase-hdr">
               <div className="dot" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
-              <span className="lbl" style={{ color }}>{PHASE_LABELS[phase]}</span>
+              <span className="lbl" style={{ color: 'var(--text)' }}>{PHASE_LABELS[phase]}</span>
               <span className="cnt" style={{ color, background: `rgba(${rgb},0.12)` }}>{list.length}</span>
               <div className="line" style={{ background: `rgba(${rgb},0.15)` }} />
             </div>
@@ -172,26 +172,26 @@ function EnrProjectCard({ project, onClick }) {
             {p.loc || ''}{p.lead ? ' · ' + p.lead : ''}{p.epciste && p.epciste !== 'TBC' ? ' · ' + p.epciste : ''}
           </div>
         </div>
-        <span className="enrp-card-badge" style={{ color, background: `rgba(${rgb},0.12)` }}>{PHASE_LABELS[phase]}</span>
+        <span className="enrp-card-badge" style={{ color: 'var(--text)', background: `rgba(${rgb},0.12)` }}>{PHASE_LABELS[phase]}</span>
       </div>
       <div className="enrp-card-kpis">
         <div className="enrp-ck"><div className="v" style={{ color: '#00ab63' }}>{p.pvMw || 0}</div><div className="l">MWc</div></div>
         <div className="enrp-ck"><div className="v" style={{ color: '#FDB823' }}>{fmtM(p.capexM)}</div><div className="l">CAPEX</div></div>
-        <div className="enrp-ck"><div className="v" style={{ color: p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.25)' }}>{p.tri ? p.tri + '%' : '\u2014'}</div><div className="l">TRI</div></div>
+        <div className="enrp-ck"><div className="v" style={{ color: p.tri && p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'var(--text-dim)' }}>{p.tri ? p.tri + '%' : '\u2014'}</div><div className="l">TRI</div></div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
-        <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
-          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Engineering</div>
+        <div style={{ padding: '6px 8px', background: 'var(--mini-card)', borderRadius: 8 }}>
+          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Engineering</div>
           <div className="enrp-bar"><div className="enrp-bar-fill" style={{ width: `${engPct}%`, background: color }} /></div>
           <div style={{ fontSize: 12, fontWeight: 800, color }}>{p.engPct != null ? engPct + '%' : '\u2014'}</div>
         </div>
-        <div style={{ padding: '6px 8px', background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
-          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Construction</div>
+        <div style={{ padding: '6px 8px', background: 'var(--mini-card)', borderRadius: 8 }}>
+          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Construction</div>
           <div className="enrp-bar"><div className="enrp-bar-fill" style={{ width: `${constProg}%`, background: '#4a9eff' }} /></div>
           <div style={{ fontSize: 12, fontWeight: 800, color: '#4a9eff' }}>{constProg}%</div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: 10, color: 'var(--text-muted)' }}>
         <span>{fmtDate(p.constStart)} {'\u2192'} {fmtDate(p.constEnd)}</span>
         {avReel != null && <span style={{ marginLeft: 'auto', fontWeight: 700, color }}>R\u00e9el: {avReel}%</span>}
         {p.cc && p.cc.spi != null && (
@@ -234,13 +234,13 @@ function ProjectDetailPanel({ project, onClose }) {
   const pOth = total > 0 ? (other / total) * 100 : 0
 
   const cardStyle = {
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--inner-card)',
+    border: '1px solid var(--inner-card-border)',
     borderRadius: 14,
     padding: 16,
     textAlign: 'center',
   }
-  const labelStyle = { fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 6 }
+  const labelStyle = { fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }
   const valStyle = (c) => ({ fontSize: 20, fontWeight: 800, color: c })
 
   return (
@@ -265,7 +265,7 @@ function ProjectDetailPanel({ project, onClose }) {
 
       {/* === HEADER === */}
       <div style={{ textAlign: 'center', borderBottom: `1px solid rgba(${rgb},0.15)`, paddingBottom: 24, marginBottom: 36 }}>
-        <div style={{ fontSize: 24, fontWeight: 800, color }}>
+        <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)' }}>
           {typeIcon(p.type)} {p.name}
         </div>
         <div style={{ fontSize: 12, color: `rgba(${rgb},0.5)`, marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -275,7 +275,7 @@ function ProjectDetailPanel({ project, onClose }) {
           {p.chef && <><span>&middot;</span><span>{p.chef}</span></>}
           <span>&middot;</span>
           <span style={{
-            background: `rgba(${rgb},0.15)`, color, border: `1px solid rgba(${rgb},0.3)`,
+            background: `rgba(${rgb},0.15)`, color: 'var(--text)', border: `1px solid rgba(${rgb},0.3)`,
             borderRadius: 6, padding: '2px 10px', fontWeight: 700, fontSize: 10,
           }}>
             {PHASE_LABELS[phase]}
@@ -289,16 +289,16 @@ function ProjectDetailPanel({ project, onClose }) {
         <div className="enr-kpi-card" style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>CAPEX Total</div>
           <div style={valStyle(color)}>{fmtM(p.capexM)}</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>D\u00e9v. {fmtK(p.costDev)}</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>PV {fmtK(p.costPv)}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>D\u00e9v. {fmtK(p.costDev)}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>PV {fmtK(p.costPv)}</div>
         </div>
         {/* TRI */}
         <div style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>TRI</div>
-          <div style={valStyle(p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'rgba(255,255,255,0.3)')}>
+          <div style={valStyle(p.tri >= 10 ? '#00ab63' : p.tri ? '#f37056' : 'var(--text-dim)')}>
             {p.tri != null ? p.tri + '%' : '\u2014'}
           </div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>
             {p.tri >= 10 ? 'Rentable' : p.tri ? 'Faible' : 'À déterminer'}
           </div>
         </div>
@@ -309,12 +309,12 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ height: 5, background: `rgba(${rgb},0.12)`, borderRadius: 3, overflow: 'hidden', margin: '6px 0' }}>
             <div style={{ height: '100%', width: `${engPct}%`, background: color, borderRadius: 3 }} />
           </div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{fmtDate(p.engStart)} {'\u2192'} {fmtDate(p.engEnd)}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{fmtDate(p.engStart)} {'\u2192'} {fmtDate(p.engEnd)}</div>
         </div>
         {/* Construction */}
         <div style={cardStyle}>
           <div style={{ ...labelStyle, color: `rgba(${rgb},0.6)` }}>Construction</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, marginTop: 6 }}>
+          <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8, marginTop: 6 }}>
             <div>D\u00e9but: <span style={{ color, fontWeight: 700 }}>{fmtDate(p.constStart)}</span></div>
             <div>COD: <span style={{ color, fontWeight: 700 }}>{fmtDate(p.constEnd)}</span></div>
           </div>
@@ -328,10 +328,10 @@ function ProjectDetailPanel({ project, onClose }) {
               <div style={{ height: 5, background: `rgba(${rgb},0.12)`, borderRadius: 3, overflow: 'hidden', margin: '6px 0' }}>
                 <div style={{ height: '100%', width: `${avReel}%`, background: color, borderRadius: 3 }} />
               </div>
-              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>SPI: {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>SPI: {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}</div>
             </>
           ) : (
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)', marginTop: 10 }}>Donn\u00e9es \u00e0 venir</div>
+            <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>Donn\u00e9es \u00e0 venir</div>
           )}
         </div>
         {/* Performance */}
@@ -340,10 +340,10 @@ function ProjectDetailPanel({ project, onClose }) {
           {cc.perf && !String(cc.perf).startsWith('#') ? (
             <>
               <div style={{ fontSize: 11, fontWeight: 600, color: String(cc.perf).includes('temps') ? '#00ab63' : '#f37056', marginTop: 8, lineHeight: 1.5 }}>{cc.perf}</div>
-              {cc.cpi != null && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>CPI: {cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)}</div>}
+              {cc.cpi != null && <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>CPI: {cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)}</div>}
             </>
           ) : (
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)', marginTop: 10 }}>{'\u2014'}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>{'\u2014'}</div>
           )}
         </div>
       </div>
@@ -354,12 +354,12 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: `rgba(${rgb},0.5)`, marginBottom: 18 }}>
             Earned Value Management (EVM)
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
+          <div style={{ background: 'var(--subtle-bg)', border: '1px solid var(--subtle-border)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
             {/* Row 1: 5 EVM cards */}
             <div className="enrp-evm-grid-5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 20 }}>
               <div style={cardStyle}>
                 <div style={labelStyle}>BAC</div>
-                <div style={valStyle('rgba(255,255,255,0.85)')}>{fmtK(cc.bac)}</div>
+                <div style={valStyle('var(--text)')}>{fmtK(cc.bac)}</div>
               </div>
               <div style={cardStyle}>
                 <div style={labelStyle}>Forecast</div>
@@ -384,11 +384,11 @@ function ProjectDetailPanel({ project, onClose }) {
               {/* SPI */}
               <div style={cardStyle}>
                 <div style={labelStyle}>SPI</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: cc.spi != null && cc.spi >= 1 ? '#00ab63' : cc.spi != null && cc.spi >= 0.9 ? '#FDB823' : cc.spi != null ? '#ff5050' : 'rgba(255,255,255,0.2)' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: cc.spi != null && cc.spi >= 1 ? '#00ab63' : cc.spi != null && cc.spi >= 0.9 ? '#FDB823' : cc.spi != null ? '#ff5050' : 'var(--text-dim)' }}>
                   {cc.spi != null ? Number(cc.spi).toFixed(2) : '\u2014'}
                 </div>
                 {cc.spi != null && (
-                  <div style={{ height: 5, background: 'rgba(255,255,255,0.07)', borderRadius: 3, overflow: 'hidden', marginTop: 8 }}>
+                  <div style={{ height: 5, background: 'var(--progress-track)', borderRadius: 3, overflow: 'hidden', marginTop: 8 }}>
                     <div style={{ height: '100%', width: `${Math.min(cc.spi * 100, 100)}%`, background: cc.spi >= 1 ? '#00ab63' : '#f37056', borderRadius: 3 }} />
                   </div>
                 )}
@@ -396,7 +396,7 @@ function ProjectDetailPanel({ project, onClose }) {
               {/* CPI */}
               <div style={cardStyle}>
                 <div style={labelStyle}>CPI</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: cc.cpi != null && cc.cpi >= 1 ? '#00ab63' : cc.cpi != null ? '#ff5050' : 'rgba(255,255,255,0.2)' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: cc.cpi != null && cc.cpi >= 1 ? '#00ab63' : cc.cpi != null ? '#ff5050' : 'var(--text-dim)' }}>
                   {cc.cpi != null ? (cc.cpi > 10 ? '>10' : Number(cc.cpi).toFixed(2)) : '\u2014'}
                 </div>
               </div>
@@ -413,7 +413,7 @@ function ProjectDetailPanel({ project, onClose }) {
                 <div style={{ fontSize: 18, fontWeight: 800, color: cc.forecast <= cc.bac ? '#00ab63' : '#ff5050' }}>
                   {fmtK(cc.forecast - cc.bac)}
                 </div>
-                <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 4 }}>
+                <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 4 }}>
                   {cc.forecast <= cc.bac ? 'Sous budget' : 'D\u00e9passement'}
                 </div>
               </div>
@@ -428,35 +428,35 @@ function ProjectDetailPanel({ project, onClose }) {
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: `rgba(${rgb},0.5)`, marginBottom: 18 }}>
             R\u00e9partition Budget
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
+          <div style={{ background: 'var(--subtle-bg)', border: '1px solid var(--subtle-border)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
             {/* Stacked bar */}
             <div style={{ display: 'flex', height: 28, borderRadius: 8, overflow: 'hidden', marginBottom: 18 }}>
-              <div style={{ flex: Math.max(pDev, 0.5), background: 'rgba(90,175,175,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff' }}>
+              <div style={{ flex: Math.max(pDev, 0.5), background: 'rgba(90,175,175,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text)' }}>
                 {pDev > 8 ? 'D\u00e9v.' : ''}
               </div>
-              <div style={{ flex: Math.max(pPv, 0.5), background: 'rgba(0,171,99,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff' }}>
+              <div style={{ flex: Math.max(pPv, 0.5), background: 'rgba(0,171,99,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text)' }}>
                 {pPv > 8 ? 'PV / EPC' : ''}
               </div>
-              <div style={{ flex: Math.max(pOth, 0.5), background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>
+              <div style={{ flex: Math.max(pOth, 0.5), background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: 'var(--text-muted)' }}>
                 {pOth > 8 ? 'Autres' : ''}
               </div>
             </div>
             {/* Legend */}
             <div className="enrp-legend-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(90,175,175,0.6)', marginBottom: 4 }}>D\u00e9veloppement</div>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>D\u00e9veloppement</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#5aafaf' }}>{fmtK(dev)}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{pDev.toFixed(1)}%</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pDev.toFixed(1)}%</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,171,99,0.6)', marginBottom: 4 }}>PV / EPC</div>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>PV / EPC</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#00ab63' }}>{fmtK(pv)}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{pPv.toFixed(1)}%</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pPv.toFixed(1)}%</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Autres</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: 'rgba(255,255,255,0.5)' }}>{fmtK(other)}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{pOth.toFixed(1)}%</div>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>Autres</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-muted)' }}>{fmtK(other)}</div>
+                <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>{pOth.toFixed(1)}%</div>
               </div>
             </div>
           </div>
@@ -467,14 +467,14 @@ function ProjectDetailPanel({ project, onClose }) {
       <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: `rgba(${rgb},0.5)`, marginBottom: 18 }}>
         Commentaire DG
       </div>
-      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
+      <div style={{ background: 'var(--subtle-bg)', border: '1px solid var(--subtle-border)', borderRadius: 20, padding: 24, marginBottom: 32 }}>
         <textarea
           defaultValue={p.commentairesDG || p.comment || ''}
           placeholder="Ajouter un commentaire..."
           style={{
-            width: '100%', minHeight: 80, background: 'rgba(0,0,0,0.2)',
-            border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12,
-            color: 'rgba(255,255,255,0.7)', padding: 16, fontSize: 12,
+            width: '100%', minHeight: 80, background: 'var(--mini-card)',
+            border: '1px solid var(--inner-card-border)', borderRadius: 12,
+            color: 'var(--text-secondary)', padding: 16, fontSize: 12,
             resize: 'vertical', outline: 'none', fontFamily: 'inherit',
           }}
         />
@@ -482,15 +482,15 @@ function ProjectDetailPanel({ project, onClose }) {
 
       {/* === BLOCAGES & ACTIONS === */}
       {p.blocages && (
-        <div style={{ background: 'rgba(224,92,92,0.06)', border: '1px solid rgba(224,92,92,0.15)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#E05C5C', marginBottom: 6 }}>Blocages</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{p.blocages}</div>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Blocages</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.blocages}</div>
         </div>
       )}
       {p.actionsS && (
-        <div style={{ background: 'rgba(0,171,99,0.04)', border: '1px solid rgba(0,171,99,0.12)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
-          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 6 }}>Actions</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{p.actionsS}</div>
+        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Actions</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.actionsS}</div>
         </div>
       )}
     </div>

@@ -6,8 +6,12 @@ Supports DG comment writing back to Excel files.
 import os, re, openpyxl
 from flask import Flask, jsonify, request, send_from_directory
 from data_loader import build_tamatave_data
+import auth
+from functools import wraps
 
 app = Flask(__name__, static_folder=".", static_url_path="")
+auth.init_db()
+auth.seed_pmo()
 
 BASE_ENR = os.path.join(
     os.path.expanduser("~"),
@@ -21,6 +25,28 @@ BASE_INV = os.path.join(
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "03_ Investments", "Reporting"
 )
+
+
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+        payload = auth.decode_token(token)
+        if payload is None:
+            return jsonify({"error": "Non autorise"}), 401
+        request.user = payload
+        return f(*args, **kwargs)
+    return decorated
+
+
+def require_pmo(f):
+    @wraps(f)
+    @require_auth
+    def decorated(*args, **kwargs):
+        if request.user.get("role") != "pmo":
+            return jsonify({"error": "Acces reserve au PMO"}), 403
+        return f(*args, **kwargs)
+    return decorated
 
 
 def _find_latest_sheet(wb):
@@ -74,6 +100,7 @@ def api_tamatave():
 
 
 @app.route("/api/comment/enr", methods=["POST"])
+@require_auth
 def save_enr_comment():
     """Save a DG comment and/or response for an EnR project into the weekly Excel file."""
     data = request.get_json()
@@ -130,6 +157,7 @@ def save_enr_comment():
 
 
 @app.route("/api/comment/investments", methods=["POST"])
+@require_auth
 def save_inv_comment():
     """Save a DG comment and/or response for an Investments project into the weekly Excel file."""
     data = request.get_json()
@@ -197,6 +225,111 @@ def serve_react(path):
     if os.path.exists(os.path.join(".", path)):
         return send_from_directory(".", path)
     return send_from_directory(dist_dir, "index.html")
+
+
+# --- Auth endpoints ---
+
+@app.route("/api/auth/login", methods=["POST"])
+def api_login():
+    data = request.get_json()
+    if not data or not data.get("username") or not data.get("password"):
+        return jsonify({"success": False, "error": "Username et mot de passe requis"}), 400
+    result = auth.authenticate(
+        data["username"],
+        data["password"],
+        request.headers.get("User-Agent", ""),
+        request.remote_addr or ""
+    )
+    if result["success"]:
+        return jsonify(result)
+    return jsonify(result), 401
+
+
+@app.route("/api/auth/me")
+@require_auth
+def api_me():
+    return jsonify(request.user)
+
+
+# --- Admin endpoints (PMO only) ---
+
+@app.route("/api/admin/users")
+@require_pmo
+def admin_list_users():
+    users = auth.get_all_users()
+    for u in users:
+        u.pop("password_hash", None)
+    return jsonify(users)
+
+
+@app.route("/api/admin/users", methods=["POST"])
+@require_pmo
+def admin_create_user():
+    data = request.get_json()
+    required = ["username", "password", "display_name", "role", "sections"]
+    if not data or not all(data.get(k) for k in required):
+        return jsonify({"error": "Champs requis: " + ", ".join(required)}), 400
+    try:
+        user_id = auth.create_user(
+            data["username"], data["password"], data["display_name"],
+            data["role"], data["sections"]
+        )
+        return jsonify({"id": user_id}), 201
+    except auth.AuthError as e:
+        return jsonify({"error": str(e)}), 409
+
+
+@app.route("/api/admin/users/<int:user_id>", methods=["PUT"])
+@require_pmo
+def admin_update_user(user_id):
+    data = request.get_json()
+    auth.update_user(
+        user_id,
+        display_name=data.get("display_name"),
+        role=data.get("role"),
+        sections=data.get("sections"),
+        active=data.get("active")
+    )
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
+@require_pmo
+def admin_delete_user(user_id):
+    auth.delete_user(user_id)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/users/<int:user_id>/reset-password", methods=["PUT"])
+@require_pmo
+def admin_reset_password(user_id):
+    data = request.get_json()
+    if not data or not data.get("password"):
+        return jsonify({"error": "Nouveau mot de passe requis"}), 400
+    auth.reset_password(user_id, data["password"])
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/users/<int:user_id>/unlock", methods=["PUT"])
+@require_pmo
+def admin_unlock_user(user_id):
+    auth.unlock_user(user_id)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/users/<int:user_id>/toggle-active", methods=["PUT"])
+@require_pmo
+def admin_toggle_active(user_id):
+    auth.toggle_active(user_id)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/admin/login-history")
+@require_pmo
+def admin_login_history():
+    username = request.args.get("username")
+    limit = int(request.args.get("limit", 100))
+    return jsonify(auth.get_login_history(username=username, limit=limit))
 
 
 if __name__ == "__main__":
