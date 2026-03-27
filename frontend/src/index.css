@@ -637,8 +637,10 @@ body::-webkit-scrollbar { display: none; }
 
 /* Mobile sub-options — centered grid left of sidebar, same style as nav */
 .filter-sub-mobile {
-  position: fixed;
-  right: 80px;
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3x4 for months */
   gap: 6px;

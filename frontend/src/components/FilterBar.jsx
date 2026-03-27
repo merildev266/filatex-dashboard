@@ -162,7 +162,7 @@ export default function FilterBar({ current, onChange }) {
           {FILTER_OPTIONS.map((opt, i) => {
             const active = current === opt.key
             return (
-              <div key={opt.key}>
+              <div key={opt.key} style={{ position: 'relative' }}>
                 <button
                   onClick={() => handleSelect(opt.key)}
                   className={`mob-nav-item visible ${active ? 'active' : ''}`}
@@ -173,16 +173,18 @@ export default function FilterBar({ current, onChange }) {
                   }}
                 >
                   <div className="mob-nav-icon">{opt.icon}</div>
-                  <span className="mob-nav-label">
-                    {opt.full}
-                    {active && opt.key !== 'J-1' && (
-                      <span style={{ marginLeft: 6, fontSize: 11, opacity: 0.7 }}>{getSubLabel(opt.key)}</span>
-                    )}
-                  </span>
+                  <span className="mob-nav-label">{opt.full}</span>
+                  {/* Sub-value below the label */}
+                  {active && opt.key !== 'J-1' && (
+                    <span style={{ fontSize: 10, opacity: 0.7, color: '#00ab63', marginTop: -2 }}>{getSubLabel(opt.key)}</span>
+                  )}
                 </button>
-                {/* Mobile sub-options — grid layout */}
+                {/* Mobile sub-options — grid, positioned relative to this item */}
                 {subOpen === opt.key && opt.key !== 'J-1' && (
-                  <div className={`filter-sub-mobile ${opt.key === 'Q' ? 'sub-quarters' : opt.key === 'A' ? 'sub-years' : ''}`}>
+                  <div
+                    className={`filter-sub-mobile ${opt.key === 'Q' ? 'sub-quarters' : opt.key === 'A' ? 'sub-years' : ''}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {renderSubDropdown(opt.key)}
                   </div>
                 )}
