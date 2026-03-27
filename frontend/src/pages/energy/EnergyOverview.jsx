@@ -21,14 +21,54 @@ const STATIC_SITES = {
 
 const ALL_SITES = { ...LIVE_SITES, ...STATIC_SITES }
 const SITE_ORDER = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe', 'fihaonana']
+const LIVE_IDS = ['tamatave', 'diego', 'majunga', 'tulear']
 
 const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
 
-function getKpiForSite(site, filter) {
+/** Get the last day (1-based) where ALL 4 live sites have data */
+function getLastDayAllSites() {
+  let minDay = 31
+  LIVE_IDS.forEach(id => {
+    const site = LIVE_SITES[id]
+    if (!site?.latestDate) return
+    const d = new Date(site.latestDate)
+    const day = d.getDate()
+    if (day < minDay) minDay = day
+  })
+  return minDay
+}
+
+/** Get KPI for a given filter + selected period */
+function getKpiForSite(site, filter, selectedMonthIndex, selectedQuarter, selectedYear) {
   if (!site || !site.kpi) return {}
-  const map = { 'J-1': '24h', 'M': 'month', 'Q': 'quarter', 'A': 'year' }
-  const key = map[filter] || 'month'
-  return site.kpi[key] || site.kpi['month'] || {}
+  if (filter === 'J-1') return site.kpi['24h'] || {}
+  if (filter === 'A') return site.kpi['year'] || {}
+  if (filter === 'M') {
+    // Use month_N (1-based) for the selected month
+    const monthKey = `month_${selectedMonthIndex + 1}`
+    return site.kpi[monthKey] || site.kpi['month'] || {}
+  }
+  if (filter === 'Q') {
+    // Aggregate months in the quarter
+    const startM = (selectedQuarter - 1) * 3 // 0-based
+    let prod = 0, prodObj = 0, heures = 0, sfocW = 0, slocW = 0
+    for (let m = startM; m < startM + 3; m++) {
+      const mk = `month_${m + 1}`
+      const k = site.kpi[mk] || {}
+      prod += k.prod || 0
+      prodObj += k.prodObj || 0
+      heures += k.heures || 0
+      if (k.sfoc && k.prod) sfocW += k.sfoc * k.prod
+      if (k.sloc && k.prod) slocW += k.sloc * k.prod
+    }
+    return {
+      prod, prodObj, heures,
+      dispo: prod > 0 ? (prod / prodObj * 100) : 0,
+      sfoc: prod > 0 ? sfocW / prod : 0,
+      sloc: prod > 0 ? slocW / prod : 0,
+    }
+  }
+  return site.kpi['month'] || {}
 }
 
 function getPhase(p) {
@@ -49,7 +89,24 @@ function getPhase(p) {
 
 export default function EnergyOverview() {
   const navigate = useNavigate()
-  const { currentFilter } = useFilters()
+  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+
+  // Last day with data for all 4 sites (for J-1 display)
+  const lastDayAll = useMemo(() => getLastDayAllSites(), [])
+
+  // Date display
+  const dateLabel = useMemo(() => {
+    const now = new Date()
+    if (currentFilter === 'J-1') {
+      // Show the actual last day with data for all sites
+      const d = new Date(now.getFullYear(), now.getMonth(), lastDayAll)
+      return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })
+    }
+    if (currentFilter === 'M') return MOIS_FR[selectedMonthIndex] + ' ' + selectedYear
+    if (currentFilter === 'Q') return 'Q' + selectedQuarter + ' ' + selectedYear
+    if (currentFilter === 'A') return String(selectedYear)
+    return ''
+  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, lastDayAll])
 
   // HFO aggregates
   const hfo = useMemo(() => {
@@ -68,7 +125,7 @@ export default function EnergyOverview() {
           if (g.statut !== 'ok') { totalArret++; arretMW += g.mw || 0 }
         })
       }
-      const k = getKpiForSite(s, currentFilter)
+      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
       totalProd += k.prod || 0
       totalProdObj += k.prodObj || 0
       if (k.sfoc && k.prod) sfocWeighted += k.sfoc * k.prod
@@ -82,18 +139,16 @@ export default function EnergyOverview() {
 
     // Lost MWh estimate
     const lostPerDay = Math.round(arretMW * 24)
-    const now = new Date()
-    const dayOfMonth = now.getDate()
-    const monthIdx = now.getMonth()
-    const daysElapsed = currentFilter === 'A' ? dayOfMonth + monthIdx * 30
+    const dayOfMonth = new Date().getDate()
+    const daysElapsed = currentFilter === 'A' ? dayOfMonth + selectedMonthIndex * 30
       : currentFilter === 'Q' ? dayOfMonth + 91
       : dayOfMonth
     const lostToDate = lostPerDay * daysElapsed
 
     // Period label
-    const periodLabel = currentFilter === 'A' ? String(now.getFullYear())
-      : currentFilter === 'Q' ? 'Q' + (Math.floor(monthIdx / 3) + 1)
-      : MOIS_FR[monthIdx]
+    const periodLabel = currentFilter === 'A' ? String(selectedYear)
+      : currentFilter === 'Q' ? 'Q' + selectedQuarter
+      : MOIS_FR[selectedMonthIndex]
 
     return {
       totalMW, totalContrat, pctContrat,
@@ -104,7 +159,7 @@ export default function EnergyOverview() {
       enCours: HFO_PROJECTS?.enCours || 0,
       projectCount: HFO_PROJECTS?.total || 0,
     }
-  }, [currentFilter])
+  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
 
   // ENR aggregates
   const enr = useMemo(() => {
@@ -195,6 +250,9 @@ export default function EnergyOverview() {
 
   return (
     <div className="e-wrap page-energy-wrap">
+
+      {/* ═══ DATE BANNER ═══ */}
+      <div className="e-date-banner">{dateLabel}</div>
 
       {/* ═══ COLONNE GAUCHE - HFO ═══ */}
       <div className="e-col">
