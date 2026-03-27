@@ -635,23 +635,29 @@ body::-webkit-scrollbar { display: none; }
   cursor: not-allowed;
 }
 
-/* Mobile sub-options — slide left from sidebar */
+/* Mobile sub-options — centered grid left of sidebar, same style as nav */
 .filter-sub-mobile {
   position: fixed;
-  right: 76px; /* sidebar width (72px) + 4px gap */
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  background: rgba(0,0,0,0.95);
-  border: 1px solid rgba(0,171,99,0.25);
-  border-radius: 12px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  right: 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3x4 for months */
+  gap: 6px;
+  padding: 10px;
+  background: rgba(8,11,24,0.97);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   z-index: 960;
-  max-height: 60vh;
-  overflow-y: auto;
   animation: slideInLeft 0.2s ease-out;
+}
+/* Quarters: 2x2 grid */
+.filter-sub-mobile.sub-quarters {
+  grid-template-columns: repeat(2, 1fr);
+}
+/* Years: single column */
+.filter-sub-mobile.sub-years {
+  grid-template-columns: repeat(2, 1fr);
 }
 @keyframes slideInLeft {
   from { opacity: 0; transform: translateX(10px); }
@@ -659,19 +665,20 @@ body::-webkit-scrollbar { display: none; }
 }
 .filter-sub-mobile .filter-sub-item {
   font-size: 13px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(0,171,99,0.1);
-  background: rgba(0,171,99,0.04);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
   color: var(--text-muted);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
+  text-align: center;
 }
 .filter-sub-mobile .filter-sub-item:hover:not(.disabled) {
-  background: rgba(0,171,99,0.15);
-  border-color: rgba(0,171,99,0.4);
+  background: rgba(0,171,99,0.12);
+  border-color: rgba(0,171,99,0.35);
   color: #00ab63;
 }
 .filter-sub-mobile .filter-sub-item.active {

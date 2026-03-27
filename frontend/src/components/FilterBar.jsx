@@ -168,7 +168,7 @@ export default function FilterBar({ current, onChange }) {
                   className={`mob-nav-item visible ${active ? 'active' : ''}`}
                   style={{
                     '--delay': `${i * 35}ms`,
-                    '--item-color': active ? 'var(--text)' : 'rgba(255,255,255,0.4)',
+                    '--item-color': active ? '#00ab63' : 'var(--text-muted)',
                     '--item-rgb': '0,171,99',
                   }}
                 >
@@ -180,9 +180,9 @@ export default function FilterBar({ current, onChange }) {
                     )}
                   </span>
                 </button>
-                {/* Mobile sub-options */}
+                {/* Mobile sub-options — grid layout */}
                 {subOpen === opt.key && opt.key !== 'J-1' && (
-                  <div className="filter-sub-mobile">
+                  <div className={`filter-sub-mobile ${opt.key === 'Q' ? 'sub-quarters' : opt.key === 'A' ? 'sub-years' : ''}`}>
                     {renderSubDropdown(opt.key)}
                   </div>
                 )}
