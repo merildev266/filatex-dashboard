@@ -249,11 +249,11 @@ export default function EnergyOverview() {
   const arretColor = hfo.totalArret === 0 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
 
   return (
-    <div className="e-wrap page-energy-wrap">
-
-      {/* ═══ DATE BANNER ═══ */}
+    <div>
+      {/* ═══ DATE BANNER — above the 2-column layout ═══ */}
       <div className="e-date-banner">{dateLabel}</div>
 
+      <div className="e-wrap page-energy-wrap">
       {/* ═══ COLONNE GAUCHE - HFO ═══ */}
       <div className="e-col">
         <div className="e-col-title" style={{ color: 'var(--text-dim)' }}>HFO</div>
@@ -525,6 +525,7 @@ export default function EnergyOverview() {
         </div>
       </div>
 
+    </div>
     </div>
   )
 }
