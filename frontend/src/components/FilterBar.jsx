@@ -102,7 +102,7 @@ export default function FilterBar({ current, onChange }) {
         <button
           key={i}
           className={`filter-sub-item ${i === selectedMonthIndex ? 'active' : ''} ${i > maxMonth ? 'disabled' : ''}`}
-          onClick={() => i <= maxMonth && handleSubSelect('M', i)}
+          onClick={(e) => { e.stopPropagation(); if (i <= maxMonth) handleSubSelect('M', i) }}
           disabled={i > maxMonth}
         >
           {m}
@@ -116,7 +116,7 @@ export default function FilterBar({ current, onChange }) {
         <button
           key={q}
           className={`filter-sub-item ${q === selectedQuarter ? 'active' : ''} ${q > maxQ ? 'disabled' : ''}`}
-          onClick={() => q <= maxQ && handleSubSelect('Q', q)}
+          onClick={(e) => { e.stopPropagation(); if (q <= maxQ) handleSubSelect('Q', q) }}
           disabled={q > maxQ}
         >
           Q{q}
@@ -128,7 +128,7 @@ export default function FilterBar({ current, onChange }) {
         <button
           key={y}
           className={`filter-sub-item ${y === selectedYear ? 'active' : ''}`}
-          onClick={() => handleSubSelect('A', y)}
+          onClick={(e) => { e.stopPropagation(); handleSubSelect('A', y) }}
         >
           {y}
         </button>
