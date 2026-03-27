@@ -4,3 +4,4 @@ flask
 flask-bcrypt
 PyJWT
 pytest
+gunicorn
