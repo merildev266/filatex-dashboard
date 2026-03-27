@@ -665,7 +665,7 @@ body::-webkit-scrollbar { display: none; }
 
 /* Energy page specific overrides */
 .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 100px;display:flex;flex-direction:column;justify-content:flex-start;}
-.page-energy-wrap{gap:clamp(40px,8vw,120px);width:70%;margin:0 auto;}
+.page-energy-wrap{gap:clamp(24px,4vw,60px);width:min(90%,1400px);margin:0 auto;}
 .capex-section-card{background:var(--card);border:1px solid var(--card-border);border-radius:clamp(12px,1.5vw,22px);padding:clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px);transition:all 0.3s;cursor:pointer;}
 
 /* Energy page card sizing */
@@ -684,8 +684,8 @@ body::-webkit-scrollbar { display: none; }
 .e-card.e-enr .e-sec-label{color:var(--text-muted);}
 
 /* Energy mobile */
-@media (max-width:768px) {
-  .page-energy-wrap{width:100% !important;gap:20px !important;}
+@media (max-width:640px) {
+  .page-energy-wrap{width:100% !important;gap:20px !important;flex-direction:column;}
   .e-wrap{flex-direction:column;}
 }
 
