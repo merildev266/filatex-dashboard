@@ -320,10 +320,6 @@ function getEnrProdUnit() {
   return 'MWh';
 }
 
-function formatEnrProd(kwh) {
-  return (kwh / 1000).toFixed(1);
-}
-
 function refreshEnrView() {
   // Re-render whichever ENR view is currently open
   var panel = document.getElementById('panel-enr-production');
@@ -1691,15 +1687,8 @@ if (typeof MAJUNGA_LIVE !== 'undefined') mergeLiveData(siteData.majunga, MAJUNGA
 if (typeof TULEAR_LIVE !== 'undefined') mergeLiveData(siteData.tulear, TULEAR_LIVE);
 
 // ══ HELPERS ══
-// ══ HELPERS ══
 function delta(a,b){const d=a-b,p=((d/Math.abs(b))*100).toFixed(1),s=d>0?'+':'',c=d>0?'delta-up':d<0?'delta-down':'delta-flat';return `<span class="kpi-delta ${c}">${s}${p}%</span>`;}
-function deltaInvRaw(a,b,u){const d=parseFloat((a-b).toFixed(1)),s=d>0?'+':'',c=d>0?'delta-inv-up':d<0?'delta-inv-down':'delta-inv-flat';return `<span class="${c}">${s}${d} ${u}</span>`;}
-function sfocClass(v){return v<=205?'inv-good':v<=215?'inv-warn':'inv-bad';}
-function sfocPct(v){return Math.min(100,Math.max(0,((v-180)/50)*100));}
-function slocClass(v){return v<=0.75?'inv-good':v<=0.90?'inv-warn':'inv-bad';}
-function slocPct(v){return Math.min(100,Math.max(0,((v-0.4)/0.8)*100));}
 
-// ══ MONTH PICKER HELPERS ══
 // ══ MONTH PICKER HELPERS ══
 function getDataMonth() {
   // Get the latest data month (1-based) from any active site
