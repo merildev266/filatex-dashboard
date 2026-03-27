@@ -635,11 +635,12 @@ body::-webkit-scrollbar { display: none; }
   cursor: not-allowed;
 }
 
-/* Mobile sub-options — centered grid left of sidebar, same style as nav */
+/* Mobile sub-options — fixed, centered vertically, left of sidebar */
 .filter-sub-mobile {
-  position: absolute;
-  right: calc(100% + 8px);
-  top: 0;
+  position: fixed;
+  right: 84px; /* sidebar 72px + 12px gap */
+  top: 50%;
+  transform: translateY(-50%);
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3x4 for months */
   gap: 6px;
@@ -650,6 +651,8 @@ body::-webkit-scrollbar { display: none; }
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   z-index: 960;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 /* Quarters: 2x2 grid */
 .filter-sub-mobile.sub-quarters {
