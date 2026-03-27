@@ -583,6 +583,70 @@ body::-webkit-scrollbar { display: none; }
 }
 .filter-item.active .filter-item-label { color: var(--energy); }
 
+/* ── Filter sub-dropdown (month/quarter/year picker) ── */
+.filter-sub-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 6px;
+  background: #0d1117;
+  border: 1px solid rgba(0,171,99,0.25);
+  border-radius: 10px;
+  padding: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  z-index: 100;
+  min-width: 160px;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  animation: filterSubIn 0.15s ease-out;
+}
+@keyframes filterSubIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.filter-sub-item {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.6);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.filter-sub-item:hover:not(.disabled) {
+  background: rgba(0,171,99,0.1);
+  border-color: rgba(0,171,99,0.3);
+  color: #00ab63;
+}
+.filter-sub-item.active {
+  background: rgba(0,171,99,0.2);
+  border-color: rgba(0,171,99,0.5);
+  color: #00ab63;
+  font-weight: 700;
+}
+.filter-sub-item.disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* Mobile sub-options inside sidebar */
+.filter-sub-mobile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 12px 8px 42px;
+}
+.filter-sub-mobile .filter-sub-item {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
 /* Mobile elements hidden on desktop */
 .filter-time-fab { display: none; }
 
@@ -642,6 +706,17 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ══ ENERGY SECTION ══ */
+/* Date banner */
+.e-date-banner {
+  width: 100%;
+  text-align: center;
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(0,171,99,0.6);
+  text-transform: capitalize;
+  margin-bottom: 8px;
+}
 .e-wrap{display:flex;gap:clamp(10px,1.5vw,20px);padding:0;align-items:stretch;}
 .e-col{flex:1;display:flex;flex-direction:column;gap:clamp(8px,0.8vw,12px);min-width:0;}
 .e-col-title{font-size:clamp(14px,1.5vw,20px);font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:0;}

@@ -4,6 +4,7 @@ import {
   comData_venteFonciere, comData_venteFonciereTotal,
   comData_location, comData_locationTotal
 } from '../../data/commercial_objectives'
+import { hexToRgb } from '../../utils/helpers'
 
 const VERT = '#00ab63'
 const YELLOW = '#FDB823'
@@ -35,13 +36,6 @@ function pct(realise, objectif) {
   const p = Math.round(realise / objectif * 100)
   const col = p >= 80 ? VERT : p >= 40 ? YELLOW : RED
   return <span style={{ color: col, fontWeight: 700 }}>{p} %</span>
-}
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `${r},${g},${b}`
 }
 
 /* ═══ Category section: header card + collapsible detail table ═══ */
