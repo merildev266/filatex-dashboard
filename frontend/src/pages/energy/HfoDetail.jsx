@@ -631,7 +631,7 @@ function GeneratorDetailPanel({
   let chartData, chartLabels, chartTitle, chartUnit
   if (f === '24h') {
     chartData = g.hourlyLoad || Array(24).fill(0)
-    chartLabels = chartData.map((_, i) => ((i + 7) % 24) + 'h')
+    chartLabels = chartData.map((_, i) => i + 'h')
     chartTitle = 'Charge horaire — J-1'
     chartUnit = 'kW'
   } else if (f === 'month') {
