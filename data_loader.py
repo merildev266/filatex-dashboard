@@ -1625,7 +1625,7 @@ def build_site_data(site_key):
         # If HFO column is liters (Majunga), convert to kgs first
         hfo_kgs = hfo * HFO_DENSITY if hfo_is_liters else hfo
         sfoc = round(hfo_kgs * 1000 / net_kwh, 1) if net_kwh > 0 else None
-        sloc = round(lube / net_kwh * 1000, 2) if net_kwh > 0 else None
+        sloc = round(lube * OIL_DENSITY / net_kwh * 1000, 2) if net_kwh > 0 else None
         dispo = round(run / (num_eng * 24 * num_days) * 100, 1) if num_days > 0 else 0
         return prod, run, sfoc, sloc, dispo
 
