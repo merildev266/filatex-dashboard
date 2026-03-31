@@ -11,16 +11,3 @@ export function useThemedLogo(name) {
   return `${BASE}/${theme}/${name}.svg`
 }
 
-/**
- * Returns both logo paths for cases where you need both.
- */
-export function useThemedLogos() {
-  const { theme } = useTheme()
-  const folder = `${BASE}/${theme}`
-  return {
-    filatex: `${folder}/filatex.svg`,
-    energy: `${folder}/energy.svg`,
-    investments: `${folder}/investments.svg`,
-    properties: `${folder}/properties.svg`,
-  }
-}

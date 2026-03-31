@@ -96,11 +96,9 @@ def _find_latest_sheet(wb):
 
 @app.route("/")
 def index():
-    """Serve React build if available, otherwise legacy index.html."""
+    """Serve React build."""
     dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
-    if os.path.exists(os.path.join(dist_dir, "index.html")):
-        return send_from_directory(dist_dir, "index.html")
-    return send_from_directory(".", "index.html")
+    return send_from_directory(dist_dir, "index.html")
 
 
 @app.route("/api/tamatave")
@@ -231,11 +229,6 @@ def serve_react(path):
     dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
     if os.path.exists(os.path.join(dist_dir, path)):
         return send_from_directory(dist_dir, path)
-    if os.path.exists(os.path.join(dist_dir, "index.html")):
-        return send_from_directory(dist_dir, "index.html")
-    # Fallback to legacy static files
-    if os.path.exists(os.path.join(".", path)):
-        return send_from_directory(".", path)
     return send_from_directory(dist_dir, "index.html")
 
 

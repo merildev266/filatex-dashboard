@@ -3,9 +3,7 @@ import { useFilters } from '../../hooks/useFilters'
 import HfoSite from './HfoSite'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
-import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, HFO_CAT_LABELS, formatDateFR } from '../../utils/projects'
-
-const MONTH_SHORT = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec']
+import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, formatDateFR, MONTH_SHORT } from '../../utils/projects'
 
 function mapFilter(f) {
   return { 'J-1': '24h', 'M': 'month', 'Q': 'quarter', 'A': 'year' }[f] || 'month'
