@@ -14,7 +14,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 209974645.0,
     "planMars": 69991548.33,
     "planAvril": 69991548.33,
-    "planMai": 69991548.33
+    "planMai": 69991548.33,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CG0004",
@@ -30,7 +34,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 136070625.99,
     "planMars": 0,
     "planAvril": 136070625.99,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-03-04",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CG0010",
@@ -46,7 +54,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 16849461.64,
     "planMars": 16849461.64,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CG0011",
@@ -62,7 +74,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 12869609.15,
     "planMars": 0,
     "planAvril": 12869609.15,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "code": "CG0012",
@@ -78,7 +94,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 6678000.0,
     "planMars": 6678000.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CG0014",
@@ -94,7 +114,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 4600000.0,
     "planMars": 4600000.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CG0015",
@@ -110,7 +134,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 62738400.0,
     "planMars": 62738400.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CG0016",
@@ -126,7 +154,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 42944796.67,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 42944796.67
+    "planMai": 42944796.67,
+    "dateFacture": "2025-07-07",
+    "dateFactureRecente": "2026-03-04",
+    "echeance": "2025-07-07",
+    "retardJours": 214
   },
   {
     "code": "CG0017",
@@ -142,7 +174,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 235936443.28,
     "planMars": 235936443.28,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-07-07",
+    "dateFactureRecente": "2026-03-04",
+    "echeance": "2025-07-07",
+    "retardJours": 214
   },
   {
     "code": "CE0001",
@@ -158,7 +194,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 349968417.71,
     "planMars": 116656139.24,
     "planAvril": 116656139.24,
-    "planMai": 116656139.24
+    "planMai": 116656139.24,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0006",
@@ -174,7 +214,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0007",
@@ -190,7 +234,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-05-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-05-05",
+    "retardJours": 277
   },
   {
     "code": "CL0008",
@@ -206,7 +254,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 430472603.36,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 430472603.36
+    "planMai": 430472603.36,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-02-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0013",
@@ -222,7 +274,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0014",
@@ -238,7 +294,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0027",
@@ -254,7 +314,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 370408216.99,
     "planMars": 370408216.99,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-05-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-05-05",
+    "retardJours": 277
   },
   {
     "code": "CL0028",
@@ -270,7 +334,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 34340154.72,
     "planMars": 29118124.74,
     "planAvril": 0,
-    "planMai": 5222029.98
+    "planMai": 5222029.98,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0029",
@@ -286,7 +354,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0031",
@@ -302,7 +374,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0043",
@@ -318,7 +394,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "code": "CL0044",
@@ -334,7 +414,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-11-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-11-05",
+    "retardJours": 93
   },
   {
     "code": "CL0050",
@@ -350,7 +434,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0051",
@@ -366,7 +454,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0052",
@@ -382,7 +474,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "code": "CL0061",
@@ -398,7 +494,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0064",
@@ -414,7 +514,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "code": "CL0066",
@@ -430,7 +534,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 686400.0,
     "planMars": 686400.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0067",
@@ -446,7 +554,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 5000000.0,
     "planMars": 5000000.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0070",
@@ -462,7 +574,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 7632943.8,
     "planMars": 7632943.8,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-02-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "code": "CL0074",
@@ -478,7 +594,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-10-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-10-05",
+    "retardJours": 124
   },
   {
     "code": "CL0075",
@@ -494,7 +614,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 0.0,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "code": "CL0076",
@@ -510,7 +634,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 20591928.0,
     "planMars": 20591928.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "code": "CL0077",
@@ -526,7 +654,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 803744327.95,
     "planMars": 0,
     "planAvril": 401872163.97,
-    "planMai": 401872163.97
+    "planMai": 401872163.97,
+    "dateFacture": "2025-09-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-09-05",
+    "retardJours": 154
   },
   {
     "code": "CL0078",
@@ -542,7 +674,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 147120381.99,
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 147120381.99
+    "planMai": 147120381.99,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-05",
+    "retardJours": 397
   },
   {
     "code": "CL0079",
@@ -558,7 +694,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 443183302.38,
     "planMars": 147727767.46,
     "planAvril": 147727767.46,
-    "planMai": 147727767.46
+    "planMai": 147727767.46,
+    "dateFacture": "2025-04-08",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-05-05",
+    "retardJours": 277
   },
   {
     "code": "CL0080",
@@ -574,7 +714,11 @@ export const FLX_CLIENTS = [
     "resteACollecter": 13953411.16,
     "planMars": 0,
     "planAvril": 13953411.16,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-11-18",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-11-18",
+    "retardJours": 80
   }
 ]
 
@@ -594,7 +738,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "AFG BANK MADAGASCAR",
@@ -611,7 +759,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 432803228.03,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2023-08-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "ALI TOUSSI",
@@ -628,7 +780,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 18754300.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-07-27",
+    "dateFactureRecente": "2021-07-27",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "ANDILANA MADAGASCAR SARL",
@@ -645,7 +801,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2020-01-01",
+    "dateFactureRecente": "2020-06-08",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "ANDRIANTIANA NOURIA",
@@ -662,7 +822,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 126632.19,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "Association KANTOKO",
@@ -679,7 +843,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 19821734.1,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-07-01",
+    "dateFactureRecente": "2026-02-01",
+    "echeance": "2025-07-01",
+    "retardJours": 220
   },
   {
     "client": "BACE/PRECIPAM-UE",
@@ -696,7 +864,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-07-09",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-07-09",
+    "retardJours": 212
   },
   {
     "client": "BANQUE BOA MADAGASCAR",
@@ -713,7 +885,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 20503781.2,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2022-02-23",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "BELKAHLA NAOUFEL",
@@ -730,7 +906,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 6261780.27,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": null,
+    "dateFactureRecente": null,
+    "echeance": null,
+    "retardJours": null
   },
   {
     "client": "Christian ANDRIATSITOHAINA",
@@ -747,7 +927,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 5000000.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2022-06-09",
+    "dateFactureRecente": "2022-06-09",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "CODE TALENT",
@@ -764,7 +948,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-01-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "client": "DAMDJEE JAMIL",
@@ -781,7 +969,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 157504500.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-10-28",
+    "dateFactureRecente": "2026-03-28",
+    "echeance": "2025-10-28",
+    "retardJours": 101
   },
   {
     "client": "DAMOTTE ERIC",
@@ -798,7 +990,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 7457648.27,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2020-01-01",
+    "dateFactureRecente": "2020-09-10",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "DIRECTION GENERALE DES FINANCES ET DES AFFAIRES GENERALES",
@@ -815,7 +1011,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2021-10-22",
+    "dateFactureRecente": "2022-09-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "DJAFFAR RIAZ",
@@ -832,7 +1032,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY",
     "planMars": 0,
     "planAvril": 98234489.31,
-    "planMai": 196468978.62
+    "planMai": 196468978.62,
+    "dateFacture": "2025-10-28",
+    "dateFactureRecente": "2026-01-28",
+    "echeance": "2025-10-28",
+    "retardJours": 101
   },
   {
     "client": "DOMINIQUE ANDREAS",
@@ -849,7 +1053,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 3960431.09,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": null,
+    "dateFactureRecente": null,
+    "echeance": null,
+    "retardJours": null
   },
   {
     "client": "DONGNAM",
@@ -866,7 +1074,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-05",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "client": "ECO ENERGY SARLU",
@@ -883,7 +1095,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "ENAT",
@@ -900,7 +1116,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 13834452.07,
     "planAvril": 0,
-    "planMai": 116840459.84
+    "planMai": 116840459.84,
+    "dateFacture": "2025-05-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-05-01",
+    "retardJours": 281
   },
   {
     "client": "ENELEC",
@@ -917,7 +1137,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 306711501.69,
-    "planMai": 306711501.69
+    "planMai": 306711501.69,
+    "dateFacture": "2021-02-25",
+    "dateFactureRecente": "2026-03-04",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "ENTIC IMMO",
@@ -934,7 +1158,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-31",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2026-01-31",
+    "retardJours": 6
   },
   {
     "client": "FAYD HERBE DE MAUDAVE Fabienne Wendy",
@@ -951,7 +1179,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-28",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2026-02-28",
+    "retardJours": null
   },
   {
     "client": "FENO JEAN PIERRE",
@@ -968,7 +1200,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 10268.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "FILATEX",
@@ -985,7 +1221,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 68454155.23,
     "planAvril": 68454155.23,
-    "planMai": 205362465.69
+    "planMai": 205362465.69,
+    "dateFacture": "2026-02-28",
+    "dateFactureRecente": "2026-06-30",
+    "echeance": "2026-02-28",
+    "retardJours": null
   },
   {
     "client": "FILATEX SERVICES",
@@ -1002,7 +1242,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 42082908.69,
     "planAvril": 42082908.69,
-    "planMai": 106766906.5
+    "planMai": 106766906.5,
+    "dateFacture": "2025-05-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-05-01",
+    "retardJours": 281
   },
   {
     "client": "Frederic GRENIER",
@@ -1019,7 +1263,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2023-10-01",
+    "dateFactureRecente": "2023-10-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "GO SAAS",
@@ -1036,7 +1284,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "GUY RANDRIANASOLO",
@@ -1053,7 +1305,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 42822.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "HAMANGA SARL",
@@ -1070,7 +1326,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 105526743.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2023-06-12",
+    "dateFactureRecente": "2023-06-12",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "HASSANALY CHAHICK",
@@ -1087,7 +1347,11 @@ export const TCM_CLIENTS = [
     "projet": "TERRAIN AMAYA",
     "planMars": 80213866.92,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2026-02-28",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2026-02-28",
+    "retardJours": null
   },
   {
     "client": "HASSANALY NADIR",
@@ -1104,7 +1368,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY - EDEN 8",
     "planMars": 160871937.32,
     "planAvril": 160871937.32,
-    "planMai": 160871937.32
+    "planMai": 160871937.32,
+    "dateFacture": "2025-05-31",
+    "dateFactureRecente": "2026-06-30",
+    "echeance": "2025-05-31",
+    "retardJours": 251
   },
   {
     "client": "HOUSSENALY MOURDJEE Minaze",
@@ -1121,7 +1389,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-02",
+    "dateFactureRecente": "2026-01-02",
+    "echeance": "2026-01-15",
+    "retardJours": 22
   },
   {
     "client": "INAYATALY MOHAMED NASSIR",
@@ -1138,7 +1410,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 108946242.43,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2020-07-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "IRCHAD PIERALY",
@@ -1155,7 +1431,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 13749078.88,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "JAOTINA SEVARANJANJARA",
@@ -1172,7 +1452,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 297142.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "JARDIN DE TANA",
@@ -1189,7 +1473,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 120960000.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-04-29",
+    "dateFactureRecente": "2025-04-29",
+    "echeance": "2025-04-29",
+    "retardJours": 283
   },
   {
     "client": "JOCKER GRAPHICS",
@@ -1206,7 +1494,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "Joël Andrianomearisoa",
@@ -1223,7 +1515,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 14788843.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-11-04",
+    "dateFactureRecente": "2021-11-04",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "JULES ETIENNE Roland",
@@ -1240,7 +1536,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2025-05-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-05-01",
+    "retardJours": 281
   },
   {
     "client": "KASSIM LAKHOUBAY",
@@ -1257,7 +1557,11 @@ export const TCM_CLIENTS = [
     "projet": "EDEN 8",
     "planMars": 55032133.33,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2026-02-28",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2026-02-28",
+    "retardJours": null
   },
   {
     "client": "KOURDJEE FIDAHOUSSEN BADOURALY",
@@ -1274,7 +1578,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 4779115.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-03-08",
+    "dateFactureRecente": "2021-07-16",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "LE GRAND ORIENT",
@@ -1291,7 +1599,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 4874524.08,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-12-01",
+    "dateFactureRecente": "2021-12-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "LEONG BTP SARL",
@@ -1308,7 +1620,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 31702148.5,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-05-25",
+    "dateFactureRecente": "2025-03-06",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "LIDERA GREEN POWER",
@@ -1325,7 +1641,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 162884397.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-06-01",
+    "dateFactureRecente": "2022-01-03",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "MADA TULEAR GREEN POWER",
@@ -1342,7 +1662,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 55109716.63,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-07-07",
+    "dateFactureRecente": "2026-03-04",
+    "echeance": "2025-07-07",
+    "retardJours": 214
   },
   {
     "client": "MADAGREEN",
@@ -1359,7 +1683,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "MAMOD NAZIR VASRAM",
@@ -1376,7 +1704,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 12630.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "MOHAMED TAKY DANIS",
@@ -1393,7 +1725,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 398018.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "MOUSTAPHA RADJAN",
@@ -1410,7 +1746,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 471591.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "MUFFAZAL NOURBHAY",
@@ -1427,7 +1767,11 @@ export const TCM_CLIENTS = [
     "projet": "EDEN 8",
     "planMars": 40000000.0,
     "planAvril": 40000000.0,
-    "planMai": 150000000.0
+    "planMai": 150000000.0,
+    "dateFacture": "2023-01-28",
+    "dateFactureRecente": "2025-12-28",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "NANA SAYOUBA",
@@ -1444,7 +1788,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 36209458.12,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-08-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-08-01",
+    "retardJours": 189
   },
   {
     "client": "NAZARALY MOMED",
@@ -1461,7 +1809,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 9310496.25,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2020-07-01",
+    "dateFactureRecente": "2022-06-10",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "NILESH KUMAR BHAGVANDAS",
@@ -1478,7 +1830,11 @@ export const TCM_CLIENTS = [
     "projet": "TERRAIN AMAYA",
     "planMars": 40913815.94,
     "planAvril": 40913815.94,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2025-12-28",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2025-12-28",
+    "retardJours": 40
   },
   {
     "client": "ORANGE MADAGASCAR",
@@ -1495,7 +1851,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 16669800.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-10-09",
+    "dateFactureRecente": "2025-10-09",
+    "echeance": "2025-04-01",
+    "retardJours": 311
   },
   {
     "client": "ORIGINAL CONFECTION",
@@ -1512,7 +1872,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 75869700.21,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-10-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-10-05",
+    "retardJours": 124
   },
   {
     "client": "PADDY GROUP MADAGASCAR",
@@ -1529,7 +1893,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 201122573.37,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-04-02",
+    "dateFactureRecente": "2025-11-30",
+    "echeance": "2025-04-02",
+    "retardJours": 310
   },
   {
     "client": "Patrick RAJOELINA",
@@ -1546,7 +1914,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2023-10-01",
+    "dateFactureRecente": "2023-10-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "PAUL BOYE INDUSTRIES",
@@ -1563,7 +1935,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "PINOU CHERALY",
@@ -1580,7 +1956,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY",
     "planMars": 191203714.18,
     "planAvril": 191203714.18,
-    "planMai": 191203714.18
+    "planMai": 191203714.18,
+    "dateFacture": "2025-07-30",
+    "dateFactureRecente": "2026-05-30",
+    "echeance": "2025-07-30",
+    "retardJours": 191
   },
   {
     "client": "PLG CONFECTION",
@@ -1597,7 +1977,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 30145151.29,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-12-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2025-12-05",
+    "retardJours": 63
   },
   {
     "client": "RABETSAROANA Vololona",
@@ -1614,7 +1998,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY",
     "planMars": 50000000.0,
     "planAvril": 50000000.0,
-    "planMai": 1488645303.2
+    "planMai": 1488645303.2,
+    "dateFacture": "2024-08-28",
+    "dateFactureRecente": "2025-12-28",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "RASOANANTENAINA MARIA",
@@ -1631,7 +2019,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2025-08-01",
+    "dateFactureRecente": "2026-02-01",
+    "echeance": "2025-08-01",
+    "retardJours": 189
   },
   {
     "client": "RAVINALA COMPANY",
@@ -1648,7 +2040,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "ROBIMANANA Rivomanantsoa Orlando",
@@ -1665,7 +2061,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 8555005.58,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "client": "RVL Consulting",
@@ -1682,7 +2082,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 4878357.73,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "client": "SABIR SIVJEE",
@@ -1699,7 +2103,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 870300.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "SADROUDINE RICHAD",
@@ -1716,7 +2124,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 7566034.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "SAGEMCOM ENERGY & TELECOM SAS",
@@ -1733,7 +2145,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "SALAMANCA INVESTMENTS",
@@ -1750,7 +2166,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 86955050.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2022-07-08",
+    "dateFactureRecente": "2022-07-08",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "SHOWROOM",
@@ -1767,7 +2187,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 2649232.05,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2024-09-09",
+    "dateFactureRecente": "2024-09-09",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "SITMA",
@@ -1784,7 +2208,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 26362823.4,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "client": "Société ENINEMNE",
@@ -1801,7 +2229,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 37022713.38,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "Société IVORY SARL",
@@ -1818,7 +2250,11 @@ export const TCM_CLIENTS = [
     "projet": "TERRAIN AMAYA",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 708422760.12
+    "planMai": 708422760.12,
+    "dateFacture": "2025-01-28",
+    "dateFactureRecente": "2025-12-28",
+    "echeance": "2025-01-28",
+    "retardJours": 374
   },
   {
     "client": "SOCIETE LUXOR",
@@ -1835,7 +2271,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 306776.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2022-04-15",
+    "dateFactureRecente": "2022-04-15",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
@@ -1852,7 +2292,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 106485551.57
+    "planMai": 106485551.57,
+    "dateFacture": "2022-01-01",
+    "dateFactureRecente": "2026-03-04",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "Société OMNIVEST",
@@ -1869,7 +2313,11 @@ export const TCM_CLIENTS = [
     "projet": "TERRAIN AMAYA MALAGA AVENIR",
     "planMars": 214236108.0,
     "planAvril": 0,
-    "planMai": 0.0
+    "planMai": 0.0,
+    "dateFacture": "2026-01-31",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2026-01-31",
+    "retardJours": 6
   },
   {
     "client": "SOCIETE SCIV",
@@ -1886,7 +2334,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY - TAMARINDO Immeuble - TAMARINDO Terrain - CASA DEL LAGO",
     "planMars": 532638149.21,
     "planAvril": 531328551.5,
-    "planMai": 531328551.5
+    "planMai": 531328551.5,
+    "dateFacture": "2026-01-31",
+    "dateFactureRecente": "2026-03-28",
+    "echeance": "2026-01-31",
+    "retardJours": 6
   },
   {
     "client": "Société SIC",
@@ -1903,7 +2355,11 @@ export const TCM_CLIENTS = [
     "projet": "EDEN 8",
     "planMars": 0,
     "planAvril": 0.0,
-    "planMai": 621720577.68
+    "planMai": 621720577.68,
+    "dateFacture": "2025-01-28",
+    "dateFactureRecente": "2026-05-28",
+    "echeance": "2025-01-28",
+    "retardJours": 374
   },
   {
     "client": "SOCOMA Sté Commerciale MANDROSO",
@@ -1920,7 +2376,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 540000.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-03-07",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "SONIA MADA TEXTILE",
@@ -1937,7 +2397,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-02-05",
+    "retardJours": 1
   },
   {
     "client": "TANG SIOU MI Jade Amanda",
@@ -1954,7 +2418,11 @@ export const TCM_CLIENTS = [
     "projet": "EDEN 8",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-02-28",
+    "dateFactureRecente": "2026-02-28",
+    "echeance": "2026-02-28",
+    "retardJours": null
   },
   {
     "client": "TCM",
@@ -1971,7 +2439,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 109757793.56
+    "planMai": 109757793.56,
+    "dateFacture": "2024-12-01",
+    "dateFactureRecente": "2025-05-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "TOWERCO OF AFRICA",
@@ -1988,7 +2460,11 @@ export const TCM_CLIENTS = [
     "projet": "Loyer",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2026-01-01",
+    "dateFactureRecente": "2026-03-01",
+    "echeance": "2026-01-05",
+    "retardJours": 32
   },
   {
     "client": "VASSANTRAI Babou",
@@ -2005,7 +2481,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 11240173.17,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2023-06-12",
+    "dateFactureRecente": "2023-06-12",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "VELDJEE NAVAGE",
@@ -2022,7 +2502,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 94630.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "VELDJEE NAZIR",
@@ -2039,7 +2523,11 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 171818.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-01-01",
+    "dateFactureRecente": "2025-01-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "VESTOP MADAGASCAR",
@@ -2056,7 +2544,11 @@ export const TCM_CLIENTS = [
     "projet": "NoteDébit",
     "planMars": 52354800.0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-05-26",
+    "dateFactureRecente": "2021-06-01",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   },
   {
     "client": "YAKATALY ALIHOUSSEN",
@@ -2073,7 +2565,11 @@ export const TCM_CLIENTS = [
     "projet": "TERRAIN AMAYA",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 2769589624.0
+    "planMai": 2769589624.0,
+    "dateFacture": "2025-01-28",
+    "dateFactureRecente": "2025-12-28",
+    "echeance": "2025-01-28",
+    "retardJours": 374
   },
   {
     "client": "YATRICK OUKABAY",
@@ -2090,7 +2586,11 @@ export const TCM_CLIENTS = [
     "projet": "TRANO GASY",
     "planMars": 0,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2025-12-28",
+    "dateFactureRecente": "2026-03-31",
+    "echeance": "2025-12-28",
+    "retardJours": 40
   },
   {
     "client": "ZAKIR KAKAL",
@@ -2107,6 +2607,10 @@ export const TCM_CLIENTS = [
     "projet": "Ch_Copropriétés",
     "planMars": 11212395.24,
     "planAvril": 0,
-    "planMai": 0
+    "planMai": 0,
+    "dateFacture": "2021-08-02",
+    "dateFactureRecente": "2022-04-15",
+    "echeance": "2025-01-01",
+    "retardJours": 401
   }
 ]

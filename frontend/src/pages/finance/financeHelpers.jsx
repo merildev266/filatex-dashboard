@@ -26,7 +26,13 @@ export function aggregate(clients) {
     montant2025 += c.montant2025 || 0
     montant2026 += c.montant2026 || 0
   })
-  return { totalCreances, encaissements, standby, contentieux, resteACollecter, planMars, planAvril, planMai, montant2025, montant2026, count: clients.length }
+  // Average delay in days (only clients with retard > 0)
+  const retards = clients.map(c => c.retardJours).filter(r => r && r > 0)
+  const avgRetard = retards.length > 0 ? Math.round(retards.reduce((a, b) => a + b, 0) / retards.length) : 0
+  const maxRetard = retards.length > 0 ? Math.max(...retards) : 0
+  const countRetard = retards.length
+
+  return { totalCreances, encaissements, standby, contentieux, resteACollecter, planMars, planAvril, planMai, montant2025, montant2026, count: clients.length, avgRetard, maxRetard, countRetard }
 }
 
 // Compact s1-card style KPI cards (static, no filter)

@@ -38,6 +38,7 @@ export default function FinanceEntity() {
         { label: 'Encaissé', value: fmtMga(aggAll.encaissements), color: '#00ab63' },
         { label: 'Contentieux', value: fmtMga(aggAll.standby + aggAll.contentieux), color: '#e05c5c' },
         { label: 'Reste à collecter', value: fmtMga(aggAll.resteACollecter), color: '#f39c12' },
+        { label: 'Retard moyen', value: `${aggAll.avgRetard}j`, color: aggAll.avgRetard > 180 ? '#e05c5c' : aggAll.avgRetard > 90 ? '#f37056' : '#f39c12', unit: `${aggAll.countRetard} clients · max ${aggAll.maxRetard}j` },
       ]} />
       <KpiCards items={[
         { label: 'Plan Mars', value: fmtMga(aggAll.planMars), color: COLOR },

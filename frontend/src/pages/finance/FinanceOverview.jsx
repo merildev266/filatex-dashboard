@@ -23,6 +23,7 @@ export default function FinanceOverview() {
         { label: 'Encaissé', value: fmtMga(all.encaissements), color: '#00ab63' },
         { label: 'Contentieux', value: fmtMga(all.standby + all.contentieux), color: '#e05c5c' },
         { label: 'Reste à collecter', value: fmtMga(all.resteACollecter), color: '#f39c12' },
+        { label: 'Retard moyen', value: `${all.avgRetard}j`, color: all.avgRetard > 180 ? '#e05c5c' : all.avgRetard > 90 ? '#f37056' : '#f39c12', unit: `${all.countRetard} clients · max ${all.maxRetard}j` },
       ]} />
 
       {/* Entity cards + Nature cards below each */}

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
@@ -57,6 +57,28 @@ function ClientCard({ client, isFlx }) {
             </div>
           </div>
           {isFlx && c.code && <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>{c.code}</div>}
+          {/* Date facturation + retard */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
+            {c.dateFacture && (
+              <span style={{ fontSize: 8, color: 'var(--text-muted)' }}>
+                Fact. {new Date(c.dateFacture).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </span>
+            )}
+            {c.echeance && (
+              <span style={{ fontSize: 8, color: 'var(--text-muted)' }}>
+                Éch. {new Date(c.echeance).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </span>
+            )}
+            {c.retardJours > 0 && (
+              <span style={{
+                fontSize: 7, padding: '1px 6px', borderRadius: 4, fontWeight: 700,
+                background: c.retardJours > 180 ? 'rgba(224,92,92,0.2)' : c.retardJours > 90 ? 'rgba(243,112,86,0.15)' : 'rgba(243,156,18,0.15)',
+                color: c.retardJours > 180 ? '#e05c5c' : c.retardJours > 90 ? '#f37056' : '#f39c12',
+              }}>
+                {c.retardJours}j retard
+              </span>
+            )}
+          </div>
         </div>
         <svg viewBox="0 0 20 20" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
           <polyline points="5 8 10 13 15 8" />
@@ -324,6 +346,11 @@ export default function FinanceClientList() {
           { label: 'Reste à collecter', value: fmtMga(agg.resteACollecter), color: '#f39c12', filterKey: 'reste', count: countReste },
         ]}
       />
+      <KpiCards items={[
+        { label: 'Retard moyen', value: `${agg.avgRetard}j`, color: agg.avgRetard > 180 ? '#e05c5c' : agg.avgRetard > 90 ? '#f37056' : '#f39c12' },
+        { label: 'Retard max', value: `${agg.maxRetard}j`, color: '#e05c5c' },
+        { label: 'En retard', value: `${agg.countRetard}`, color: '#f37056', unit: `sur ${clients.length} clients` },
+      ]} />
 
       {/* Nature filter cards */}
       {isFlx
