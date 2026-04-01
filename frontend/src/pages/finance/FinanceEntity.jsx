@@ -60,19 +60,17 @@ export default function FinanceEntity() {
               {cat.label}
             </div>
             <ClientCount count={cat.count} />
-            <div className="grid grid-cols-3 gap-1.5 w-full mt-2">
-              <div className="s1-card" style={{ padding: '10px 6px' }}>
-                <div className="s1-card-label">Créances</div>
-                <div className="s1-card-value" style={{ color: COLOR, fontSize: 'clamp(14px, 2vw, 20px)' }}>{fmtMga(cat.agg.totalCreances)}</div>
-              </div>
-              <div className="s1-card" style={{ padding: '10px 6px' }}>
-                <div className="s1-card-label">Encaissé</div>
-                <div className="s1-card-value" style={{ color: '#00ab63', fontSize: 'clamp(14px, 2vw, 20px)' }}>{fmtMga(cat.agg.encaissements)}</div>
-              </div>
-              <div className="s1-card" style={{ padding: '10px 6px' }}>
-                <div className="s1-card-label">Reste</div>
-                <div className="s1-card-value" style={{ color: '#f39c12', fontSize: 'clamp(14px, 2vw, 20px)' }}>{fmtMga(cat.agg.resteACollecter)}</div>
-              </div>
+            <div className="grid grid-cols-3 gap-1 w-full mt-2">
+              {[
+                { label: 'Créances', value: fmtMga(cat.agg.totalCreances), color: COLOR },
+                { label: 'Encaissé', value: fmtMga(cat.agg.encaissements), color: '#00ab63' },
+                { label: 'Reste', value: fmtMga(cat.agg.resteACollecter), color: '#f39c12' },
+              ].map((k, i) => (
+                <div key={i} className="s1-card" style={{ padding: '7px 4px' }}>
+                  <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.55vw, 7px)', marginBottom: 2 }}>{k.label}</div>
+                  <div className="s1-card-value" style={{ color: k.color, fontSize: 'clamp(12px, 1.6vw, 17px)' }}>{k.value}</div>
+                </div>
+              ))}
             </div>
           </div>
         ))}

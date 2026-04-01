@@ -29,15 +29,15 @@ export function aggregate(clients) {
   return { totalCreances, encaissements, standby, contentieux, resteACollecter, planMars, planAvril, planMai, montant2025, montant2026, count: clients.length }
 }
 
-// s1-card style KPI cards (like HFO)
+// Compact s1-card style KPI cards
 export function KpiCards({ items }) {
   return (
-    <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-4" style={{ width: '100%', maxWidth: 800 }}>
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
       {items.map((kpi, i) => (
-        <div className="s1-card" key={i}>
-          <div className="s1-card-label">{kpi.label}</div>
-          <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)' }}>{kpi.value}</div>
-          {kpi.unit && <div className="s1-card-unit-line">{kpi.unit}</div>}
+        <div className="s1-card" key={i} style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{kpi.label}</div>
+          <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)', fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{kpi.value}</div>
+          {kpi.unit && <div className="s1-card-unit-line" style={{ fontSize: 'clamp(8px, 0.9vw, 11px)' }}>{kpi.unit}</div>}
         </div>
       ))}
     </div>
