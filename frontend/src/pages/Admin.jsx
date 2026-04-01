@@ -44,11 +44,6 @@ export default function Admin() {
   const { user, authFetch, isAdmin, isSuperAdmin } = useAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('users')
-  const DEMO_USERS = [
-    { id: 0, username: 'pmo', display_name: 'PMO Admin', first_name: '', last_name: '', email: '', role: 'super_admin', sections: ['*'], active: true, locked: false, failed_attempts: 0, pin_set: true },
-    { id: 901, username: 'jean.rakoto', display_name: 'Jean Rakoto', first_name: 'Jean', last_name: 'Rakoto', email: 'j.rakoto@filatex.mg', role: 'utilisateur', sections: ['energy', 'energy.hfo', 'energy.enr', 'reporting', 'reporting.hfo', 'reporting.enr'], active: true, locked: false, failed_attempts: 0, pin_set: true },
-    { id: 902, username: 'marie.rabe', display_name: 'Marie Rabe', first_name: 'Marie', last_name: 'Rabe', email: 'm.rabe@filatex.mg', role: 'utilisateur', sections: ['properties', 'investments', 'capex', 'capex.properties', 'capex.investments'], active: true, locked: true, failed_attempts: 5, pin_set: true },
-  ]
   const [users, setUsers] = useState([])
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
@@ -69,7 +64,8 @@ export default function Admin() {
       const data = await res.json()
       setUsers(data)
     } catch (err) {
-      setUsers(DEMO_USERS)
+      setError('Impossible de charger les utilisateurs')
+      setUsers([])
     } finally {
       setLoading(false)
     }
@@ -84,11 +80,8 @@ export default function Admin() {
       const data = await res.json()
       setHistory(data)
     } catch (err) {
-      setHistory([
-        { username: 'pmo', timestamp: new Date().toISOString(), success: true, ip_address: '192.168.1.10' },
-        { username: 'jean.rakoto', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true, ip_address: '192.168.1.25' },
-        { username: 'marie.rabe', timestamp: new Date(Date.now() - 7200000).toISOString(), success: false, ip_address: '192.168.1.42' },
-      ])
+      setError('Impossible de charger l\'historique')
+      setHistory([])
     } finally {
       setLoading(false)
     }

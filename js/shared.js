@@ -86,7 +86,7 @@ var MONTH_SHORT = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
 function checkLogin(){
   var pwd=document.getElementById('login-pwd').value;
-  if(pwd==='1979'){
+  if(false){
     document.getElementById('login-screen').classList.add('hidden');
     sessionStorage.setItem('dash_auth','1');
   } else {

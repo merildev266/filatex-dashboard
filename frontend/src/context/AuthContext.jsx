@@ -7,21 +7,13 @@ const TOKEN_KEY = 'dash_token'
 const AUTH_KEY = 'dash_auth'
 const USER_KEY = 'dash_user'
 
-const FALLBACK_USER = {
-  username: 'pmo',
-  display_name: 'PMO',
-  role: 'super_admin',
-  sections: ['*'],
-}
-
 function loadInitialState() {
   const authFlag = sessionStorage.getItem(AUTH_KEY) === '1'
   const savedUser = sessionStorage.getItem(USER_KEY)
   const token = sessionStorage.getItem(TOKEN_KEY)
 
-  if (authFlag) {
-    const user = savedUser ? JSON.parse(savedUser) : FALLBACK_USER
-    return { isAuthenticated: true, user, token }
+  if (authFlag && savedUser) {
+    return { isAuthenticated: true, user: JSON.parse(savedUser), token }
   }
   return { isAuthenticated: false, user: null, token: null }
 }
@@ -49,14 +41,7 @@ export function AuthProvider({ children }) {
       // API responded but login failed (wrong creds, locked, etc.)
       return { success: false, error: data.error || 'Identifiants incorrects' }
     } catch (_networkErr) {
-      // 2. API unreachable — fallback to simple password
-      if (pin === '1979') {
-        sessionStorage.setItem(AUTH_KEY, '1')
-        sessionStorage.setItem(USER_KEY, JSON.stringify(FALLBACK_USER))
-        setState({ isAuthenticated: true, user: FALLBACK_USER, token: null })
-        return { success: true, must_set_pin: false }
-      }
-      return { success: false, error: 'Code PIN incorrect' }
+      return { success: false, error: 'Serveur inaccessible' }
     }
   }, [])
 
