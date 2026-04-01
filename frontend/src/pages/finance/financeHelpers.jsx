@@ -260,7 +260,7 @@ export function NatureDonut({ entity, clients, linkTo }) {
           }
         }}
       >
-        <PieSvg segments={segments} total={total} size={80} />
+        <PieSvg segments={segments} total={total} size={200} />
       </div>
       {/* Legend */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
