@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
 import { COLOR, fmtMga, aggregate, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, ClientCount } from './financeHelpers.jsx'
 
@@ -212,27 +212,33 @@ function SortControls({ active, onChange }) {
 
 export default function FinanceClientList() {
   const { entity, category } = useParams()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
   const [kpiFilter, setKpiFilter] = useState(null)
   const [yearFilter, setYearFilter] = useState('all')
   const [natureFilter, setNatureFilter] = useState(null)
   const [sortMode, setSortMode] = useState('montant-desc')
+  const lastKey = useRef('')
 
-  // Reset filters on navigation + read ?nature= from URL (camembert click)
+  // Reset filters on navigation + read ?nature= from camembert
   useEffect(() => {
-    setKpiFilter(null)
-    setYearFilter('all')
-    setSortMode('montant-desc')
-    // Check for nature param from camembert navigation
-    const natureParam = searchParams.get('nature')
-    if (natureParam && NATURE_FILTERS[natureParam]) {
-      setNatureFilter(natureParam)
-      searchParams.delete('nature')
-      setSearchParams(searchParams, { replace: true })
-    } else {
-      setNatureFilter(null)
+    // Only run when the route actually changes (not after URL cleanup)
+    const routeKey = `${entity}/${category}`
+    const params = new URLSearchParams(location.search)
+    const natureParam = params.get('nature')
+
+    if (routeKey !== lastKey.current || natureParam) {
+      lastKey.current = routeKey
+      setKpiFilter(null)
+      setYearFilter('all')
+      setSortMode('montant-desc')
+      if (natureParam && NATURE_FILTERS[natureParam]) {
+        setNatureFilter(natureParam)
+        window.history.replaceState(null, '', location.pathname)
+      } else {
+        setNatureFilter(null)
+      }
     }
-  }, [entity, category])
+  }, [entity, category, location.search])
 
   const cfg = ENTITY_CFG[entity]
   if (!cfg) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Entité inconnue</div>

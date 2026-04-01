@@ -254,13 +254,13 @@ export function NatureDonut({ entity, clients, linkTo }) {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 14, width: '100%', justifyContent: 'center' }}>
-      {/* Donut */}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
+      {/* Pie chart — centré */}
       <div
-        style={{ flexShrink: 0, position: 'relative' }}
+        style={{ flexShrink: 0 }}
         onClick={(e) => {
-          const el = e.target.closest('circle[data-filter]')
-          if (el && linkTo) {
+          const el = e.target.closest('path[data-filter]')
+          if (el) {
             const seg = segments.find(s => s.filterKey === el.dataset.filter)
             if (seg) handleClick(seg)
           }
@@ -268,22 +268,25 @@ export function NatureDonut({ entity, clients, linkTo }) {
       >
         <PieSvg segments={segments} total={total} size={200} />
       </div>
-      {/* Legend */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      {/* Légende — en dessous, centrée */}
+      <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
         {segments.map((seg, i) => {
           const pct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0
           return (
             <div
               key={i}
               onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: linkTo ? 'pointer' : 'default' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 5, cursor: linkTo ? 'pointer' : 'default' }}
             >
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: seg.color, flexShrink: 0 }} />
-              <span style={{ fontSize: 9, color: 'var(--text-muted)' }}>
-                {seg.label}
-              </span>
-              <span style={{ fontSize: 10, fontWeight: 700, color: seg.color }}>{fmtMga(seg.value)}</span>
-              <span style={{ fontSize: 8, color: 'var(--text-muted)', opacity: 0.6 }}>{pct}%</span>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: seg.color, flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text)' }}>{seg.label}</span>
+                <span style={{ fontSize: 9 }}>
+                  <span style={{ fontWeight: 700, color: seg.color }}>{fmtMga(seg.value)}</span>
+                  <span style={{ color: 'var(--text-muted)', marginLeft: 4 }}>{pct}%</span>
+                  <span style={{ color: 'var(--text-muted)', opacity: 0.5, marginLeft: 3 }}>({seg.count})</span>
+                </span>
+              </div>
             </div>
           )
         })}

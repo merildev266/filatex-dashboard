@@ -45,7 +45,6 @@ export default function FinanceEntity() {
         { label: 'Plan Mai', value: fmtMga(aggAll.planMai), color: COLOR },
         { label: 'Montant 2025', value: fmtMga(aggAll.montant2025) },
       ]} />
-      <NatureDonut entity={entity} clients={cfg.data} linkTo={`/finance/${entity}`} />
 
       {/* Groupe / Hors Groupe cards + camembert sous chaque */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>
