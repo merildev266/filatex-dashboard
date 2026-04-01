@@ -29,7 +29,7 @@ export function aggregate(clients) {
   return { totalCreances, encaissements, standby, contentieux, resteACollecter, planMars, planAvril, planMai, montant2025, montant2026, count: clients.length }
 }
 
-// Compact s1-card style KPI cards
+// Compact s1-card style KPI cards (static, no filter)
 export function KpiCards({ items }) {
   return (
     <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
@@ -40,6 +40,40 @@ export function KpiCards({ items }) {
           {kpi.unit && <div className="s1-card-unit-line" style={{ fontSize: 'clamp(8px, 0.9vw, 11px)' }}>{kpi.unit}</div>}
         </div>
       ))}
+    </div>
+  )
+}
+
+// Clickable KPI filter cards
+export function KpiFilterCards({ items, active, onSelect }) {
+  return (
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
+      {items.map((kpi, i) => {
+        const isActive = active === kpi.filterKey
+        return (
+          <div
+            className="s1-card"
+            key={i}
+            onClick={(e) => { e.stopPropagation(); onSelect(isActive ? null : kpi.filterKey) }}
+            style={{
+              padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
+              cursor: 'pointer',
+              transition: 'all 0.25s ease',
+              borderColor: isActive ? (kpi.color || COLOR) : undefined,
+              boxShadow: isActive ? `0 0 20px ${kpi.color || COLOR}33, inset 0 0 12px ${kpi.color || COLOR}11` : undefined,
+              background: isActive ? `${kpi.color || COLOR}0A` : undefined,
+              transform: isActive ? 'scale(1.03)' : undefined,
+              opacity: active && !isActive ? 0.45 : 1,
+            }}
+          >
+            <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{kpi.label}</div>
+            <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)', fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{kpi.value}</div>
+            {kpi.count !== undefined && (
+              <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{kpi.count} client{kpi.count > 1 ? 's' : ''}</div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

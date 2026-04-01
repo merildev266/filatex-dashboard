@@ -1,11 +1,26 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiFilterCards, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
   'tcm': { label: 'TCM', data: TCM_CLIENTS },
+}
+
+// KPI filter definitions
+const FILTERS = {
+  all:         () => true,
+  encaisse:    (c) => (c.encaissements || 0) > 0,
+  contentieux: (c) => (c.standby || 0) > 0 || (c.contentieux || 0) > 0,
+  reste:       (c) => (c.resteACollecter || 0) > 0,
+}
+
+// Year filter: keep clients that have amounts in that year
+const YEAR_FILTERS = {
+  all:  () => true,
+  2025: (c) => (c.montant2025 || 0) > 0,
+  2026: (c) => (c.montant2026 || 0) > 0,
 }
 
 function DetailRow({ label, value, color }) {
@@ -38,7 +53,7 @@ function ClientCard({ client, isFlx }) {
         </svg>
       </div>
 
-      {/* Mini KPI cards inside client card */}
+      {/* Mini KPI cards */}
       <div className="grid grid-cols-3 gap-1.5 w-full">
         <div className="s1-card" style={{ padding: '8px 4px' }}>
           <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Créances</div>
@@ -100,8 +115,72 @@ function ClientCard({ client, isFlx }) {
   )
 }
 
+/* ── Tab bar Groupe / Hors Groupe ── */
+function CategoryTabs({ entity, active }) {
+  const navigate = useNavigate()
+  const tabs = [
+    { key: 'groupe', label: 'Groupe', path: `/finance/${entity}/groupe` },
+    { key: 'hors-groupe', label: 'Hors Groupe', path: `/finance/${entity}/hors-groupe` },
+  ]
+  return (
+    <div style={{ display: 'flex', gap: 0, borderRadius: 10, overflow: 'hidden', border: `1px solid ${COLOR}33` }}>
+      {tabs.map(tab => {
+        const isActive = active === tab.key
+        return (
+          <button
+            key={tab.key}
+            onClick={() => navigate(tab.path)}
+            style={{
+              padding: '7px 20px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+              cursor: 'pointer', border: 'none', transition: 'all 0.2s',
+              background: isActive ? COLOR : 'transparent',
+              color: isActive ? '#fff' : 'var(--text-muted)',
+            }}
+          >
+            {tab.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ── Year filter pills ── */
+function YearFilter({ active, onChange, counts }) {
+  const options = [
+    { key: 'all', label: 'Tous', count: counts.all },
+    { key: '2025', label: '2025', count: counts['2025'] },
+    { key: '2026', label: '2026', count: counts['2026'] },
+  ]
+  return (
+    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+      <span style={{ fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginRight: 4 }}>Année</span>
+      {options.map(opt => {
+        const isActive = active === opt.key
+        return (
+          <button
+            key={opt.key}
+            onClick={() => onChange(isActive && opt.key !== 'all' ? 'all' : opt.key)}
+            style={{
+              padding: '4px 12px', fontSize: 9, fontWeight: 600, letterSpacing: '0.06em',
+              borderRadius: 8, cursor: 'pointer', transition: 'all 0.2s',
+              border: `1px solid ${isActive ? COLOR : 'var(--card-border)'}`,
+              background: isActive ? `${COLOR}18` : 'transparent',
+              color: isActive ? COLOR : 'var(--text-muted)',
+            }}
+          >
+            {opt.label} <span style={{ fontSize: 8, opacity: 0.7 }}>({opt.count})</span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function FinanceClientList() {
   const { entity, category } = useParams()
+  const [kpiFilter, setKpiFilter] = useState(null)
+  const [yearFilter, setYearFilter] = useState('all')
   const cfg = ENTITY_CFG[entity]
   if (!cfg) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Entité inconnue</div>
 
@@ -111,30 +190,80 @@ export default function FinanceClientList() {
   const agg = aggregate(clients)
   const categoryLabel = isGroupe ? 'Client Groupe' : 'Client Hors Groupe'
 
-  const sorted = [...clients].sort((a, b) => (b.totalCreances || 0) - (a.totalCreances || 0))
+  // Count clients per KPI filter
+  const countEncaisse = clients.filter(FILTERS.encaisse).length
+  const countContentieux = clients.filter(FILTERS.contentieux).length
+  const countReste = clients.filter(FILTERS.reste).length
+
+  // Count clients per year
+  const yearCounts = {
+    all: clients.length,
+    2025: clients.filter(YEAR_FILTERS[2025]).length,
+    2026: clients.filter(YEAR_FILTERS[2026]).length,
+  }
+
+  // Apply both filters
+  const filtered = useMemo(() => {
+    const kpiFn = kpiFilter ? (FILTERS[kpiFilter] || FILTERS.all) : FILTERS.all
+    const yearFn = YEAR_FILTERS[yearFilter] || YEAR_FILTERS.all
+    return [...clients.filter(c => kpiFn(c) && yearFn(c))].sort((a, b) => (b.totalCreances || 0) - (a.totalCreances || 0))
+  }, [clients, kpiFilter, yearFilter])
+
+  const hasActiveFilter = (kpiFilter && kpiFilter !== 'all') || yearFilter !== 'all'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 24 }}>
-      {/* Header KPI */}
-      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, paddingTop: 20 }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 9, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
           {cfg.label} — {categoryLabel}
         </div>
         <ClientCount count={clients.length} />
       </div>
-      <KpiCards items={[
-        { label: 'Total Créances', value: fmtMga(agg.totalCreances), color: COLOR },
-        { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63' },
-        { label: 'Contentieux', value: fmtMga(agg.standby + agg.contentieux), color: '#e05c5c' },
-        { label: 'Reste à collecter', value: fmtMga(agg.resteACollecter), color: '#f39c12' },
-      ]} />
+
+      {/* Tab bar Groupe / Hors Groupe */}
+      <CategoryTabs entity={entity} active={category} />
+
+      {/* KPI filter cards */}
+      <KpiFilterCards
+        active={kpiFilter}
+        onSelect={setKpiFilter}
+        items={[
+          { label: 'Total Créances', value: fmtMga(agg.totalCreances), color: COLOR, filterKey: 'all', count: clients.length },
+          { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63', filterKey: 'encaisse', count: countEncaisse },
+          { label: 'Contentieux', value: fmtMga(agg.standby + agg.contentieux), color: '#e05c5c', filterKey: 'contentieux', count: countContentieux },
+          { label: 'Reste à collecter', value: fmtMga(agg.resteACollecter), color: '#f39c12', filterKey: 'reste', count: countReste },
+        ]}
+      />
+
+      {/* Year filter */}
+      <YearFilter active={yearFilter} onChange={setYearFilter} counts={yearCounts} />
+
+      {/* Active filter indicator */}
+      {hasActiveFilter && (
+        <div style={{ fontSize: 10, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span>{filtered.length} client{filtered.length > 1 ? 's' : ''} affiché{filtered.length > 1 ? 's' : ''}</span>
+          <button
+            onClick={() => { setKpiFilter(null); setYearFilter('all') }}
+            style={{ background: 'none', border: `1px solid ${COLOR}44`, borderRadius: 6, padding: '2px 8px', color: COLOR, fontSize: 9, cursor: 'pointer', fontWeight: 600, letterSpacing: '0.05em' }}
+          >
+            Réinitialiser
+          </button>
+        </div>
+      )}
 
       {/* Client cards — 3 per row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
-        {sorted.map((client, i) => (
+        {filtered.map((client, i) => (
           <ClientCard key={client.code || client.client || i} client={client} isFlx={isFlx} />
         ))}
       </div>
+
+      {filtered.length === 0 && (
+        <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+          Aucun client pour ce filtre
+        </div>
+      )}
     </div>
   )
 }
