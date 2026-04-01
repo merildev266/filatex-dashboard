@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
 import { COLOR, fmtMga, aggregate, KpiFilterCards, ClientCount } from './financeHelpers.jsx'
@@ -181,6 +181,13 @@ export default function FinanceClientList() {
   const { entity, category } = useParams()
   const [kpiFilter, setKpiFilter] = useState(null)
   const [yearFilter, setYearFilter] = useState('all')
+
+  // Reset filters on navigation (Groupe ↔ Hors Groupe or entity change)
+  useEffect(() => {
+    setKpiFilter(null)
+    setYearFilter('all')
+  }, [entity, category])
+
   const cfg = ENTITY_CFG[entity]
   if (!cfg) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Entité inconnue</div>
 
