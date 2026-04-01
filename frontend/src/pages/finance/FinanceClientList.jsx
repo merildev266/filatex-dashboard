@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
 import { COLOR, fmtMga, aggregate, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, ClientCount } from './financeHelpers.jsx'
 
@@ -212,10 +212,22 @@ function SortControls({ active, onChange }) {
 
 export default function FinanceClientList() {
   const { entity, category } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [kpiFilter, setKpiFilter] = useState(null)
   const [yearFilter, setYearFilter] = useState('all')
   const [natureFilter, setNatureFilter] = useState(null)
   const [sortMode, setSortMode] = useState('montant-desc')
+
+  // Init nature filter from URL ?nature= param (from gruyère click)
+  useEffect(() => {
+    const natureParam = searchParams.get('nature')
+    if (natureParam && NATURE_FILTERS[natureParam]) {
+      setNatureFilter(natureParam)
+      // Clean up URL
+      searchParams.delete('nature')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [])
 
   // Reset filters on navigation
   useEffect(() => {

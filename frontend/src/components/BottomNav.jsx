@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { pole: 'capex', path: '/capex', label: 'CAPEX', section: 'capex' },
   { pole: 'csi', path: '/csi', label: 'CSI', section: 'csi' },
   { pole: 'reporting', path: '/reporting', label: 'Reporting', section: 'reporting' },
+  { pole: 'finance', path: '/finance', label: 'Finance', section: 'finance' },
 ]
 
 const POLE_COLORS = {
@@ -20,6 +21,7 @@ const POLE_COLORS = {
   capex: '#5e4c9f',
   csi: '#0096c7',
   reporting: '#426ab3',
+  finance: '#1abc9c',
 }
 
 const POLE_COLORS_RGB = {
@@ -30,6 +32,7 @@ const POLE_COLORS_RGB = {
   capex: '94,76,159',
   csi: '0,150,199',
   reporting: '66,106,179',
+  finance: '26,188,156',
 }
 
 /* ── SVG icons ── */
@@ -114,6 +117,12 @@ const NAV_ICONS = {
       <line x1="16" y1="13" x2="8" y2="13"/>
       <line x1="16" y1="17" x2="8" y2="17"/>
       <polyline points="10 9 9 9 8 9"/>
+    </svg>
+  ),
+  finance: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/>
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
     </svg>
   ),
 }

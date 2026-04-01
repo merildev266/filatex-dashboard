@@ -177,6 +177,81 @@ export const NATURE_FILTERS = {
   'flx-caution': (c) => getFlxNature(c) === 'caution',
 }
 
+// Gruyère — compact proportional bar showing nature breakdown
+// linkTo: if provided, clicking a segment navigates to that base path with ?nature=filterKey
+import { useNavigate } from 'react-router-dom'
+
+export function NatureGruyere({ entity, clients, linkTo }) {
+  const navigate = useNavigate()
+  const total = clients.reduce((s, c) => s + (c.totalCreances || 0), 0)
+  if (!total) return null
+
+  let segments
+  if (entity === 'filatex-sa') {
+    const loyer = clients.filter(c => getFlxNature(c) === 'loyer')
+    const penalite = clients.filter(c => getFlxNature(c) === 'penalite')
+    const caution = clients.filter(c => getFlxNature(c) === 'caution')
+    segments = [
+      { filterKey: 'flx-loyer', label: 'Loyer', value: aggregate(loyer).totalCreances, count: loyer.length, color: '#3498db' },
+      { filterKey: 'flx-penalite', label: 'Pénalité', value: aggregate(penalite).totalCreances, count: penalite.length, color: '#e67e22' },
+      { filterKey: 'flx-caution', label: 'Caution', value: aggregate(caution).totalCreances, count: caution.length, color: '#9b59b6' },
+    ]
+  } else {
+    const noteDebit = clients.filter(c => isTcmNoteDebit(c))
+    const loyerVente = clients.filter(c => !isTcmNoteDebit(c))
+    segments = [
+      { filterKey: 'tcm-loyervente', label: 'Loyer + Vente', value: aggregate(loyerVente).totalCreances, count: loyerVente.length, color: '#3498db' },
+      { filterKey: 'tcm-notedebit', label: 'Note de Débit', value: aggregate(noteDebit).totalCreances, count: noteDebit.length, color: '#e67e22' },
+    ]
+  }
+
+  const handleClick = (seg) => {
+    if (linkTo) {
+      // Navigate to hors-groupe (biggest list) with nature filter pre-set
+      navigate(`${linkTo}/hors-groupe?nature=${seg.filterKey}`)
+    }
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      {/* Proportional bar */}
+      <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 10, width: '100%', background: 'var(--card-border)' }}>
+        {segments.map((seg, i) => {
+          const pct = total > 0 ? (seg.value / total) * 100 : 0
+          if (pct === 0) return null
+          return (
+            <div
+              key={i}
+              onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
+              style={{
+                width: `${pct}%`, background: seg.color, transition: 'width 0.4s ease',
+                cursor: linkTo ? 'pointer' : 'default',
+              }}
+              title={`${seg.label}: ${fmtMga(seg.value)}`}
+            />
+          )
+        })}
+      </div>
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 6, flexWrap: 'wrap' }}>
+        {segments.map((seg, i) => (
+          <div
+            key={i}
+            onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
+            style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: linkTo ? 'pointer' : 'default' }}
+          >
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
+            <span style={{ fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+              {seg.label} <span style={{ fontWeight: 700, color: seg.color }}>{fmtMga(seg.value)}</span>
+              <span style={{ opacity: 0.6 }}> ({seg.count})</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // Client count badge
 export function ClientCount({ count, label }) {
   return (

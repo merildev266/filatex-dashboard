@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, FlxNatureKpiCards, TcmNatureKpiCards, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureGruyere, ClientCount } from './financeHelpers.jsx'
 
 export default function FinanceOverview() {
   const navigate = useNavigate()
@@ -63,9 +63,8 @@ export default function FinanceOverview() {
                   ))}
                 </div>
               </div>
-              {/* Nature cards below */}
-              {entity.key === 'filatex-sa' && <FlxNatureKpiCards clients={entity.data} />}
-              {entity.key === 'tcm' && <TcmNatureKpiCards clients={entity.data} />}
+              {/* Nature gruyère below */}
+              <NatureGruyere entity={entity.key} clients={entity.data} linkTo={entity.path} />
             </div>
           )
         })}
