@@ -129,7 +129,7 @@ export default function Accueil() {
   return (
     <>
       {/* ══ GLOBAL BACKGROUND ══ */}
-      <div style={{position:'fixed',inset:0,overflow:'hidden',pointerEvents:'none',zIndex:0,background: theme === 'dark' ? '#000000' : '#e4f4fd',transition:'background 0.4s ease'}} />
+      <div style={{position:'fixed',inset:0,overflow:'hidden',pointerEvents:'none',zIndex:-1,background: theme === 'dark' ? '#000000' : '#e4f4fd',transition:'background 0.4s ease'}} />
 
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>

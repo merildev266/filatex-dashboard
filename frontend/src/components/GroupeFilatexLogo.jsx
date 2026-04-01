@@ -8,7 +8,7 @@ export default function GroupeFilatexLogo({ className = 'logo-groupe', style }) 
       src={src}
       alt="Groupe Filatex"
       className={className}
-      style={{ height: 40, ...style }}
+      style={{ height: 120, ...style }}
       draggable={false}
     />
   )
