@@ -3,4 +3,6 @@ openpyxl
 flask
 flask-bcrypt
 PyJWT
+waitress
+python-dotenv
 pytest

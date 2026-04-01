@@ -9,6 +9,9 @@ import jwt
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.db")
 
 JWT_SECRET = os.environ.get("JWT_SECRET", "filatex-dashboard-secret-change-me")
+if JWT_SECRET == "filatex-dashboard-secret-change-me":
+    import warnings
+    warnings.warn("JWT_SECRET non defini ! Utilisez une variable d'environnement en production.", stacklevel=2)
 JWT_EXPIRATION_HOURS = 8
 
 
