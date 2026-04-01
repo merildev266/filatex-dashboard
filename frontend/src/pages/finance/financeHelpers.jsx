@@ -82,65 +82,99 @@ export function KpiFilterCards({ items, active, onSelect }) {
 // TCM: Note de Débit vs Loyer+Vente (based on souche field)
 // FLX: Loyer vs Pénalité vs Caution (based on observations)
 
-function isTcmNoteDebit(c) {
+// Nature classifiers (exported for filter use)
+export function isTcmNoteDebit(c) {
   const s = (c.souche || '').toLowerCase()
   return s.includes('notede') || s.includes('notedé')
 }
 
-function getFlxNature(c) {
+export function getFlxNature(c) {
   const obs = (c.observations || '').toUpperCase()
   if (obs.includes('NOTE DE DEBIT')) return 'penalite'
   if (obs.includes('FONCIER')) return 'caution'
   return 'loyer'
 }
 
-// TCM Nature KPI — 2 cards: Note de Débit | Loyer+Vente
-export function TcmNatureKpiCards({ clients }) {
+// Nature filter card renderer (shared between FLX and TCM)
+function NatureFilterCard({ it, isActive, hasFilter, onClick }) {
+  return (
+    <div
+      className="s1-card"
+      onClick={onClick}
+      style={{
+        padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
+        borderLeft: `3px solid ${it.color}`,
+        cursor: 'pointer',
+        transition: 'all 0.25s ease',
+        borderColor: isActive ? it.color : undefined,
+        boxShadow: isActive ? `0 0 20px ${it.color}33, inset 0 0 12px ${it.color}11` : undefined,
+        background: isActive ? `${it.color}0A` : undefined,
+        transform: isActive ? 'scale(1.03)' : undefined,
+        opacity: hasFilter && !isActive ? 0.45 : 1,
+      }}
+    >
+      <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{it.label}</div>
+      <div className="s1-card-value" style={{ color: it.color, fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{fmtMga(it.total)}</div>
+      <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{it.count} client{it.count > 1 ? 's' : ''}</div>
+    </div>
+  )
+}
+
+// TCM Nature KPI — 2 cards: Note de Débit | Loyer+Vente (filterable)
+export function TcmNatureKpiCards({ clients, active, onSelect }) {
   const noteDebit = clients.filter(c => isTcmNoteDebit(c))
   const loyerVente = clients.filter(c => !isTcmNoteDebit(c))
-  const aggND = aggregate(noteDebit)
-  const aggLV = aggregate(loyerVente)
   const items = [
-    { label: 'Note de Débit', total: aggND.totalCreances, count: noteDebit.length, color: '#e67e22' },
-    { label: 'Loyer + Vente', total: aggLV.totalCreances, count: loyerVente.length, color: '#3498db' },
+    { key: 'tcm-notedebit', label: 'Note de Débit', total: aggregate(noteDebit).totalCreances, count: noteDebit.length, color: '#e67e22' },
+    { key: 'tcm-loyervente', label: 'Loyer + Vente', total: aggregate(loyerVente).totalCreances, count: loyerVente.length, color: '#3498db' },
   ]
+  const isFilterable = !!onSelect
   return (
     <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-      {items.map((it, i) => (
-        <div key={i} className="s1-card" style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)', borderLeft: `3px solid ${it.color}` }}>
-          <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{it.label}</div>
-          <div className="s1-card-value" style={{ color: it.color, fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{fmtMga(it.total)}</div>
-          <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{it.count} client{it.count > 1 ? 's' : ''}</div>
-        </div>
+      {items.map((it) => (
+        <NatureFilterCard
+          key={it.key} it={it}
+          isActive={active === it.key}
+          hasFilter={!!active}
+          onClick={isFilterable ? () => onSelect(active === it.key ? null : it.key) : undefined}
+        />
       ))}
     </div>
   )
 }
 
-// FLX Nature KPI — 3 cards: Loyer | Pénalité | Caution
-export function FlxNatureKpiCards({ clients }) {
+// FLX Nature KPI — 3 cards: Loyer | Pénalité | Caution (filterable)
+export function FlxNatureKpiCards({ clients, active, onSelect }) {
   const loyer = clients.filter(c => getFlxNature(c) === 'loyer')
   const penalite = clients.filter(c => getFlxNature(c) === 'penalite')
   const caution = clients.filter(c => getFlxNature(c) === 'caution')
-  const aggL = aggregate(loyer)
-  const aggP = aggregate(penalite)
-  const aggC = aggregate(caution)
   const items = [
-    { label: 'Loyer', total: aggL.totalCreances, count: loyer.length, color: '#3498db' },
-    { label: 'Pénalité', total: aggP.totalCreances, count: penalite.length, color: '#e67e22' },
-    { label: 'Caution', total: aggC.totalCreances, count: caution.length, color: '#9b59b6' },
+    { key: 'flx-loyer', label: 'Loyer', total: aggregate(loyer).totalCreances, count: loyer.length, color: '#3498db' },
+    { key: 'flx-penalite', label: 'Pénalité', total: aggregate(penalite).totalCreances, count: penalite.length, color: '#e67e22' },
+    { key: 'flx-caution', label: 'Caution', total: aggregate(caution).totalCreances, count: caution.length, color: '#9b59b6' },
   ]
+  const isFilterable = !!onSelect
   return (
     <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(3, 1fr)' }}>
-      {items.map((it, i) => (
-        <div key={i} className="s1-card" style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)', borderLeft: `3px solid ${it.color}` }}>
-          <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{it.label}</div>
-          <div className="s1-card-value" style={{ color: it.color, fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{fmtMga(it.total)}</div>
-          <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{it.count} client{it.count > 1 ? 's' : ''}</div>
-        </div>
+      {items.map((it) => (
+        <NatureFilterCard
+          key={it.key} it={it}
+          isActive={active === it.key}
+          hasFilter={!!active}
+          onClick={isFilterable ? () => onSelect(active === it.key ? null : it.key) : undefined}
+        />
       ))}
     </div>
   )
+}
+
+// Nature filter predicates (used in FinanceClientList)
+export const NATURE_FILTERS = {
+  'tcm-notedebit': (c) => isTcmNoteDebit(c),
+  'tcm-loyervente': (c) => !isTcmNoteDebit(c),
+  'flx-loyer': (c) => getFlxNature(c) === 'loyer',
+  'flx-penalite': (c) => getFlxNature(c) === 'penalite',
+  'flx-caution': (c) => getFlxNature(c) === 'caution',
 }
 
 // Client count badge

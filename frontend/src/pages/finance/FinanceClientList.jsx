@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
@@ -214,12 +214,14 @@ export default function FinanceClientList() {
   const { entity, category } = useParams()
   const [kpiFilter, setKpiFilter] = useState(null)
   const [yearFilter, setYearFilter] = useState('all')
-  const [sortMode, setSortMode] = useState('montant-desc') // montant-desc, montant-asc, date-asc, date-desc
+  const [natureFilter, setNatureFilter] = useState(null)
+  const [sortMode, setSortMode] = useState('montant-desc')
 
-  // Reset filters on navigation (Groupe ↔ Hors Groupe or entity change)
+  // Reset filters on navigation
   useEffect(() => {
     setKpiFilter(null)
     setYearFilter('all')
+    setNatureFilter(null)
     setSortMode('montant-desc')
   }, [entity, category])
 
@@ -263,14 +265,15 @@ export default function FinanceClientList() {
     return 0
   }
 
-  // Apply filters + sort
+  // Apply all filters + sort
   const filtered = useMemo(() => {
     const kpiFn = kpiFilter ? (FILTERS[kpiFilter] || FILTERS.all) : FILTERS.all
     const yearFn = YEAR_FILTERS[yearFilter] || YEAR_FILTERS.all
-    return [...clients.filter(c => kpiFn(c) && yearFn(c))].sort(sortFn)
-  }, [clients, kpiFilter, yearFilter, sortMode])
+    const natureFn = natureFilter ? (NATURE_FILTERS[natureFilter] || (() => true)) : () => true
+    return [...clients.filter(c => kpiFn(c) && yearFn(c) && natureFn(c))].sort(sortFn)
+  }, [clients, kpiFilter, yearFilter, natureFilter, sortMode])
 
-  const hasActiveFilter = (kpiFilter && kpiFilter !== 'all') || yearFilter !== 'all'
+  const hasActiveFilter = (kpiFilter && kpiFilter !== 'all') || yearFilter !== 'all' || !!natureFilter
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, paddingTop: 20 }}>
@@ -297,8 +300,11 @@ export default function FinanceClientList() {
         ]}
       />
 
-      {/* Nature cards */}
-      {isFlx ? <FlxNatureKpiCards clients={clients} /> : <TcmNatureKpiCards clients={clients} />}
+      {/* Nature filter cards */}
+      {isFlx
+        ? <FlxNatureKpiCards clients={clients} active={natureFilter} onSelect={setNatureFilter} />
+        : <TcmNatureKpiCards clients={clients} active={natureFilter} onSelect={setNatureFilter} />
+      }
 
       {/* Year filter + Sort controls */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
@@ -312,7 +318,7 @@ export default function FinanceClientList() {
         <div style={{ fontSize: 10, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <span>{filtered.length} client{filtered.length > 1 ? 's' : ''} affiché{filtered.length > 1 ? 's' : ''}</span>
           <button
-            onClick={() => { setKpiFilter(null); setYearFilter('all'); setSortMode('montant-desc') }}
+            onClick={() => { setKpiFilter(null); setYearFilter('all'); setNatureFilter(null); setSortMode('montant-desc') }}
             style={{ background: 'none', border: `1px solid ${COLOR}44`, borderRadius: 6, padding: '2px 8px', color: COLOR, fontSize: 9, cursor: 'pointer', fontWeight: 600, letterSpacing: '0.05em' }}
           >
             Réinitialiser

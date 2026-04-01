@@ -2,14 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
 import { COLOR, fmtMga, aggregate, KpiCards, FlxNatureKpiCards, TcmNatureKpiCards, ClientCount } from './financeHelpers.jsx'
 
-const ENTITIES = [
-  { key: 'filatex-sa', label: 'Filatex SA', data: FLX_CLIENTS, path: '/finance/filatex-sa' },
-  { key: 'tcm', label: 'TCM', data: TCM_CLIENTS, path: '/finance/tcm' },
-]
-
 export default function FinanceOverview() {
   const navigate = useNavigate()
   const all = aggregate([...FLX_CLIENTS, ...TCM_CLIENTS])
+
+  const entities = [
+    { key: 'filatex-sa', label: 'Filatex SA', data: FLX_CLIENTS, path: '/finance/filatex-sa' },
+    { key: 'tcm', label: 'TCM', data: TCM_CLIENTS, path: '/finance/tcm' },
+  ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 28 }}>
@@ -24,47 +24,48 @@ export default function FinanceOverview() {
         { label: 'Contentieux', value: fmtMga(all.standby + all.contentieux), color: '#e05c5c' },
         { label: 'Reste à collecter', value: fmtMga(all.resteACollecter), color: '#f39c12' },
       ]} />
-      <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-        <div><div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'center', marginBottom: 6 }}>Filatex SA — Nature</div><FlxNatureKpiCards clients={FLX_CLIENTS} /></div>
-        <div><div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'center', marginBottom: 6 }}>TCM — Nature</div><TcmNatureKpiCards clients={TCM_CLIENTS} /></div>
-      </div>
 
-      {/* Entity cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 320px))', gap: 20, justifyContent: 'center', width: '100%', maxWidth: 720 }}>
-        {ENTITIES.map((entity) => {
+      {/* Entity cards + Nature cards below each */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>
+        {entities.map((entity) => {
           const agg = aggregate(entity.data)
           const grpCount = entity.data.filter(c => c.groupe).length
           const horsCount = entity.data.filter(c => !c.groupe).length
           return (
-            <div
-              key={entity.key}
-              className="card card-finance"
-              onClick={() => navigate(entity.path)}
-              style={{ cursor: 'pointer', padding: '28px 20px' }}
-            >
-              <div className="card-accent" />
-              <div className="card-logo-wrap" style={{ marginBottom: 6 }}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 45">
-                  <text fill="var(--text)" x="110" y="32" textAnchor="middle"
-                    fontFamily="'Larken','Playfair Display',serif"
-                    fontSize={entity.key === 'tcm' ? '34' : '26'} fontWeight="400" fontStyle="italic">
-                    {entity.label}
-                  </text>
-                </svg>
+            <div key={entity.key} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {/* Entity card */}
+              <div
+                className="card card-finance"
+                onClick={() => navigate(entity.path)}
+                style={{ cursor: 'pointer', padding: '28px 20px' }}
+              >
+                <div className="card-accent" />
+                <div className="card-logo-wrap" style={{ marginBottom: 6 }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 45">
+                    <text fill="var(--text)" x="110" y="32" textAnchor="middle"
+                      fontFamily="'Larken','Playfair Display',serif"
+                      fontSize={entity.key === 'tcm' ? '34' : '26'} fontWeight="400" fontStyle="italic">
+                      {entity.label}
+                    </text>
+                  </svg>
+                </div>
+                <ClientCount count={agg.count} label={`clients (${grpCount} groupe · ${horsCount} hors groupe)`} />
+                <div className="grid grid-cols-3 gap-1 w-full mt-2">
+                  {[
+                    { label: 'Créances', value: fmtMga(agg.totalCreances), color: COLOR },
+                    { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63' },
+                    { label: 'Reste', value: fmtMga(agg.resteACollecter), color: '#f39c12' },
+                  ].map((k, i) => (
+                    <div key={i} className="s1-card" style={{ padding: '7px 4px' }}>
+                      <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.55vw, 7px)', marginBottom: 2 }}>{k.label}</div>
+                      <div className="s1-card-value" style={{ color: k.color, fontSize: 'clamp(12px, 1.6vw, 17px)' }}>{k.value}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <ClientCount count={agg.count} label={`clients (${grpCount} groupe · ${horsCount} hors groupe)`} />
-              <div className="grid grid-cols-3 gap-1 w-full mt-2">
-                {[
-                  { label: 'Créances', value: fmtMga(agg.totalCreances), color: COLOR },
-                  { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63' },
-                  { label: 'Reste', value: fmtMga(agg.resteACollecter), color: '#f39c12' },
-                ].map((k, i) => (
-                  <div key={i} className="s1-card" style={{ padding: '7px 4px' }}>
-                    <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.55vw, 7px)', marginBottom: 2 }}>{k.label}</div>
-                    <div className="s1-card-value" style={{ color: k.color, fontSize: 'clamp(12px, 1.6vw, 17px)' }}>{k.value}</div>
-                  </div>
-                ))}
-              </div>
+              {/* Nature cards below */}
+              {entity.key === 'filatex-sa' && <FlxNatureKpiCards clients={entity.data} />}
+              {entity.key === 'tcm' && <TcmNatureKpiCards clients={entity.data} />}
             </div>
           )
         })}
