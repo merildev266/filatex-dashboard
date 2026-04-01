@@ -44,8 +44,18 @@ function ClientCard({ client, isFlx }) {
     >
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{c.client}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{c.client}</span>
+            <div style={{ display: 'flex', gap: 3 }}>
+              {(c.montant2025 || 0) > 0 && (
+                <span style={{ fontSize: 7, padding: '1px 5px', borderRadius: 4, background: 'rgba(52,152,219,0.15)', color: '#3498db', fontWeight: 700, letterSpacing: '0.02em' }}>2025</span>
+              )}
+              {(c.montant2026 || 0) > 0 && (
+                <span style={{ fontSize: 7, padding: '1px 5px', borderRadius: 4, background: 'rgba(26,188,156,0.15)', color: COLOR, fontWeight: 700, letterSpacing: '0.02em' }}>2026</span>
+              )}
+            </div>
+          </div>
           {isFlx && c.code && <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>{c.code}</div>}
         </div>
         <svg viewBox="0 0 20 20" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
