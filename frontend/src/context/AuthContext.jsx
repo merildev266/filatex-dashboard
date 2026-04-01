@@ -2,7 +2,7 @@ import { createContext, useState, useCallback, useMemo } from 'react'
 
 export const AuthContext = createContext(null)
 
-const API_BASE = `${window.location.protocol}//${window.location.host}`
+const API_BASE = 'http://localhost:5000'
 const TOKEN_KEY = 'dash_token'
 const AUTH_KEY = 'dash_auth'
 const USER_KEY = 'dash_user'
