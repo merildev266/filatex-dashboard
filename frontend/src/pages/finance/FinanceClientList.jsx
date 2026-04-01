@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiRow } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
@@ -33,17 +33,26 @@ function ClientCard({ client, isFlx }) {
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{c.client}</div>
           {isFlx && c.code && <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>{c.code}</div>}
         </div>
-        <svg viewBox="0 0 20 20" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ width: 16, height: 16, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+        <svg viewBox="0 0 20 20" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
           <polyline points="5 8 10 13 15 8" />
         </svg>
       </div>
 
-      {/* KPIs summary */}
-      <KpiRow items={[
-        { label: 'Créances', value: fmtMga(c.totalCreances) },
-        { label: 'Encaissé', value: fmtMga(c.encaissements), color: '#00ab63' },
-        { label: 'Reste', value: fmtMga(c.resteACollecter), color: '#f39c12' },
-      ]} />
+      {/* Mini KPI cards inside client card */}
+      <div className="grid grid-cols-3 gap-1.5 w-full">
+        <div className="s1-card" style={{ padding: '8px 4px' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Créances</div>
+          <div className="s1-card-value" style={{ color: COLOR, fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{fmtMga(c.totalCreances)}</div>
+        </div>
+        <div className="s1-card" style={{ padding: '8px 4px' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Encaissé</div>
+          <div className="s1-card-value" style={{ color: '#00ab63', fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{fmtMga(c.encaissements)}</div>
+        </div>
+        <div className="s1-card" style={{ padding: '8px 4px' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Reste</div>
+          <div className="s1-card-value" style={{ color: '#f39c12', fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{fmtMga(c.resteACollecter)}</div>
+        </div>
+      </div>
 
       {/* Status badge */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
@@ -102,27 +111,26 @@ export default function FinanceClientList() {
   const agg = aggregate(clients)
   const categoryLabel = isGroupe ? 'Client Groupe' : 'Client Hors Groupe'
 
-  // Sort by totalCreances descending
   const sorted = [...clients].sort((a, b) => (b.totalCreances || 0) - (a.totalCreances || 0))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 24 }}>
       {/* Header KPI */}
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 4 }}>
+      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+        <div style={{ fontSize: 9, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
           {cfg.label} — {categoryLabel}
         </div>
-        <div style={{ fontSize: 9, color: 'var(--text-muted)', marginBottom: 8 }}>{clients.length} client{clients.length > 1 ? 's' : ''}</div>
-        <KpiRow items={[
-          { label: 'Total Créances', value: fmtMga(agg.totalCreances) },
-          { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63' },
-          { label: 'Contentieux', value: fmtMga(agg.standby + agg.contentieux), color: '#e05c5c' },
-          { label: 'Reste', value: fmtMga(agg.resteACollecter), color: '#f39c12' },
-        ]} />
+        <ClientCount count={clients.length} />
       </div>
+      <KpiCards items={[
+        { label: 'Total Créances', value: fmtMga(agg.totalCreances), color: COLOR },
+        { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63' },
+        { label: 'Contentieux', value: fmtMga(agg.standby + agg.contentieux), color: '#e05c5c' },
+        { label: 'Reste à collecter', value: fmtMga(agg.resteACollecter), color: '#f39c12' },
+      ]} />
 
-      {/* Client cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 360px))', gap: 14, justifyContent: 'center', width: '100%', maxWidth: 800, paddingBottom: 40 }}>
+      {/* Client cards — 3 per row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
         {sorted.map((client, i) => (
           <ClientCard key={client.code || client.client || i} client={client} isFlx={isFlx} />
         ))}

@@ -29,16 +29,27 @@ export function aggregate(clients) {
   return { totalCreances, encaissements, standby, contentieux, resteACollecter, planMars, planAvril, planMai, montant2025, montant2026, count: clients.length }
 }
 
-// Reusable KPI bar for finance
-export function KpiRow({ items }) {
+// s1-card style KPI cards (like HFO)
+export function KpiCards({ items }) {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginTop: 12 }}>
+    <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-4" style={{ width: '100%', maxWidth: 800 }}>
       {items.map((kpi, i) => (
-        <div key={i} style={{ textAlign: 'center', minWidth: 80 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: kpi.color || COLOR }}>{kpi.value}</div>
-          <div style={{ fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', marginTop: 2 }}>{kpi.label}</div>
+        <div className="s1-card" key={i}>
+          <div className="s1-card-label">{kpi.label}</div>
+          <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)' }}>{kpi.value}</div>
+          {kpi.unit && <div className="s1-card-unit-line">{kpi.unit}</div>}
         </div>
       ))}
+    </div>
+  )
+}
+
+// Client count badge
+export function ClientCount({ count, label }) {
+  return (
+    <div style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
+      <span style={{ fontWeight: 700, color: COLOR, fontSize: 14 }}>{count}</span>{' '}
+      <span style={{ textTransform: 'uppercase', letterSpacing: '0.15em', fontSize: 9 }}>{label || (count > 1 ? 'clients' : 'client')}</span>
     </div>
   )
 }
