@@ -244,7 +244,13 @@ export function NatureDonut({ entity, clients, linkTo }) {
   const segments = buildSegments(entity, clients)
 
   const handleClick = (seg) => {
-    if (linkTo) navigate(`${linkTo}/hors-groupe?nature=${seg.filterKey}`)
+    if (linkTo) {
+      // If linkTo already includes a category (groupe/hors-groupe), use it directly
+      const target = linkTo.includes('/groupe') || linkTo.includes('/hors-groupe')
+        ? `${linkTo}?nature=${seg.filterKey}`
+        : `${linkTo}/hors-groupe?nature=${seg.filterKey}`
+      navigate(target)
+    }
   }
 
   return (
