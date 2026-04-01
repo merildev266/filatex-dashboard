@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, FlxNatureKpiCards, TcmNatureKpiCards, ClientCount } from './financeHelpers.jsx'
 
 const ENTITIES = [
   { key: 'filatex-sa', label: 'Filatex SA', data: FLX_CLIENTS, path: '/finance/filatex-sa' },
@@ -24,6 +24,10 @@ export default function FinanceOverview() {
         { label: 'Contentieux', value: fmtMga(all.standby + all.contentieux), color: '#e05c5c' },
         { label: 'Reste à collecter', value: fmtMga(all.resteACollecter), color: '#f39c12' },
       ]} />
+      <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(2, 1fr)' }}>
+        <div><div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'center', marginBottom: 6 }}>Filatex SA — Nature</div><FlxNatureKpiCards clients={FLX_CLIENTS} /></div>
+        <div><div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: 'center', marginBottom: 6 }}>TCM — Nature</div><TcmNatureKpiCards clients={TCM_CLIENTS} /></div>
+      </div>
 
       {/* Entity cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 320px))', gap: 20, justifyContent: 'center', width: '100%', maxWidth: 720 }}>

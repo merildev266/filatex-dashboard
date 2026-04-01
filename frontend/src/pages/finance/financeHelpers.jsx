@@ -78,6 +78,71 @@ export function KpiFilterCards({ items, active, onSelect }) {
   )
 }
 
+// ── Nature classification ──
+// TCM: Note de Débit vs Loyer+Vente (based on souche field)
+// FLX: Loyer vs Pénalité vs Caution (based on observations)
+
+function isTcmNoteDebit(c) {
+  const s = (c.souche || '').toLowerCase()
+  return s.includes('notede') || s.includes('notedé')
+}
+
+function getFlxNature(c) {
+  const obs = (c.observations || '').toUpperCase()
+  if (obs.includes('NOTE DE DEBIT')) return 'penalite'
+  if (obs.includes('FONCIER')) return 'caution'
+  return 'loyer'
+}
+
+// TCM Nature KPI — 2 cards: Note de Débit | Loyer+Vente
+export function TcmNatureKpiCards({ clients }) {
+  const noteDebit = clients.filter(c => isTcmNoteDebit(c))
+  const loyerVente = clients.filter(c => !isTcmNoteDebit(c))
+  const aggND = aggregate(noteDebit)
+  const aggLV = aggregate(loyerVente)
+  const items = [
+    { label: 'Note de Débit', total: aggND.totalCreances, count: noteDebit.length, color: '#e67e22' },
+    { label: 'Loyer + Vente', total: aggLV.totalCreances, count: loyerVente.length, color: '#3498db' },
+  ]
+  return (
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(2, 1fr)' }}>
+      {items.map((it, i) => (
+        <div key={i} className="s1-card" style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)', borderLeft: `3px solid ${it.color}` }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{it.label}</div>
+          <div className="s1-card-value" style={{ color: it.color, fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{fmtMga(it.total)}</div>
+          <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{it.count} client{it.count > 1 ? 's' : ''}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// FLX Nature KPI — 3 cards: Loyer | Pénalité | Caution
+export function FlxNatureKpiCards({ clients }) {
+  const loyer = clients.filter(c => getFlxNature(c) === 'loyer')
+  const penalite = clients.filter(c => getFlxNature(c) === 'penalite')
+  const caution = clients.filter(c => getFlxNature(c) === 'caution')
+  const aggL = aggregate(loyer)
+  const aggP = aggregate(penalite)
+  const aggC = aggregate(caution)
+  const items = [
+    { label: 'Loyer', total: aggL.totalCreances, count: loyer.length, color: '#3498db' },
+    { label: 'Pénalité', total: aggP.totalCreances, count: penalite.length, color: '#e67e22' },
+    { label: 'Caution', total: aggC.totalCreances, count: caution.length, color: '#9b59b6' },
+  ]
+  return (
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(3, 1fr)' }}>
+      {items.map((it, i) => (
+        <div key={i} className="s1-card" style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)', borderLeft: `3px solid ${it.color}` }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{it.label}</div>
+          <div className="s1-card-value" style={{ color: it.color, fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{fmtMga(it.total)}</div>
+          <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{it.count} client{it.count > 1 ? 's' : ''}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // Client count badge
 export function ClientCount({ count, label }) {
   return (

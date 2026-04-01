@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiFilterCards, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
@@ -177,15 +177,50 @@ function YearFilter({ active, onChange, counts }) {
   )
 }
 
+/* ── Sort controls ── */
+function SortControls({ active, onChange }) {
+  const options = [
+    { key: 'montant-desc', label: 'Montant ↓' },
+    { key: 'montant-asc', label: 'Montant ↑' },
+    { key: 'date-desc', label: 'Date ↓' },
+    { key: 'date-asc', label: 'Date ↑' },
+  ]
+  return (
+    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      <span style={{ fontSize: 8, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginRight: 4 }}>Tri</span>
+      {options.map(opt => {
+        const isActive = active === opt.key
+        return (
+          <button
+            key={opt.key}
+            onClick={() => onChange(opt.key)}
+            style={{
+              padding: '4px 10px', fontSize: 9, fontWeight: 600,
+              borderRadius: 8, cursor: 'pointer', transition: 'all 0.2s',
+              border: `1px solid ${isActive ? COLOR : 'var(--card-border)'}`,
+              background: isActive ? `${COLOR}18` : 'transparent',
+              color: isActive ? COLOR : 'var(--text-muted)',
+            }}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function FinanceClientList() {
   const { entity, category } = useParams()
   const [kpiFilter, setKpiFilter] = useState(null)
   const [yearFilter, setYearFilter] = useState('all')
+  const [sortMode, setSortMode] = useState('montant-desc') // montant-desc, montant-asc, date-asc, date-desc
 
   // Reset filters on navigation (Groupe ↔ Hors Groupe or entity change)
   useEffect(() => {
     setKpiFilter(null)
     setYearFilter('all')
+    setSortMode('montant-desc')
   }, [entity, category])
 
   const cfg = ENTITY_CFG[entity]
@@ -209,12 +244,31 @@ export default function FinanceClientList() {
     2026: clients.filter(YEAR_FILTERS[2026]).length,
   }
 
-  // Apply both filters
+  // Sort function
+  const sortFn = (a, b) => {
+    if (sortMode === 'montant-desc') return (b.totalCreances || 0) - (a.totalCreances || 0)
+    if (sortMode === 'montant-asc') return (a.totalCreances || 0) - (b.totalCreances || 0)
+    // Date sort: clients with only 2025 are "older", clients with 2026 are "newer"
+    // Use presence of 2026 amounts as proxy for recency
+    if (sortMode === 'date-asc') {
+      const aYear = (a.montant2026 || 0) > 0 ? 2026 : 2025
+      const bYear = (b.montant2026 || 0) > 0 ? 2026 : 2025
+      return aYear !== bYear ? aYear - bYear : (b.totalCreances || 0) - (a.totalCreances || 0)
+    }
+    if (sortMode === 'date-desc') {
+      const aYear = (a.montant2026 || 0) > 0 ? 2026 : 2025
+      const bYear = (b.montant2026 || 0) > 0 ? 2026 : 2025
+      return aYear !== bYear ? bYear - aYear : (b.totalCreances || 0) - (a.totalCreances || 0)
+    }
+    return 0
+  }
+
+  // Apply filters + sort
   const filtered = useMemo(() => {
     const kpiFn = kpiFilter ? (FILTERS[kpiFilter] || FILTERS.all) : FILTERS.all
     const yearFn = YEAR_FILTERS[yearFilter] || YEAR_FILTERS.all
-    return [...clients.filter(c => kpiFn(c) && yearFn(c))].sort((a, b) => (b.totalCreances || 0) - (a.totalCreances || 0))
-  }, [clients, kpiFilter, yearFilter])
+    return [...clients.filter(c => kpiFn(c) && yearFn(c))].sort(sortFn)
+  }, [clients, kpiFilter, yearFilter, sortMode])
 
   const hasActiveFilter = (kpiFilter && kpiFilter !== 'all') || yearFilter !== 'all'
 
@@ -243,15 +297,22 @@ export default function FinanceClientList() {
         ]}
       />
 
-      {/* Year filter */}
-      <YearFilter active={yearFilter} onChange={setYearFilter} counts={yearCounts} />
+      {/* Nature cards */}
+      {isFlx ? <FlxNatureKpiCards clients={clients} /> : <TcmNatureKpiCards clients={clients} />}
+
+      {/* Year filter + Sort controls */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
+        <YearFilter active={yearFilter} onChange={setYearFilter} counts={yearCounts} />
+        <div style={{ width: 1, height: 20, background: 'var(--card-border)' }} />
+        <SortControls active={sortMode} onChange={setSortMode} />
+      </div>
 
       {/* Active filter indicator */}
       {hasActiveFilter && (
         <div style={{ fontSize: 10, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <span>{filtered.length} client{filtered.length > 1 ? 's' : ''} affiché{filtered.length > 1 ? 's' : ''}</span>
           <button
-            onClick={() => { setKpiFilter(null); setYearFilter('all') }}
+            onClick={() => { setKpiFilter(null); setYearFilter('all'); setSortMode('montant-desc') }}
             style={{ background: 'none', border: `1px solid ${COLOR}44`, borderRadius: 6, padding: '2px 8px', color: COLOR, fontSize: 9, cursor: 'pointer', fontWeight: 600, letterSpacing: '0.05em' }}
           >
             Réinitialiser
