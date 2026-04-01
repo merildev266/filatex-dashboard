@@ -5,24 +5,11 @@ import { useTheme } from '../context/ThemeContext'
 import { useThemedLogo } from '../hooks/useThemedLogo'
 import { useAuth } from '../hooks/useAuth'
 
-/* ── Scrolling motif SVG pattern ── */
-function MotifSvg() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 604.26 202.36" preserveAspectRatio="none" className="motif-svg" style={{width:'50%',height:'100%',flexShrink:0,display:'block'}}>
-      <defs><style>{`.motif-cls{fill:none;stroke:var(--motif-stroke,#1a1d35);stroke-miterlimit:10;stroke-width:.6px;}@media(max-width:768px){.motif-cls{stroke-width:1.8px;}}`}</style></defs>
-      <g>
-        <path className="motif-cls" d="M50.23,201.96h14.43l3.4-57.77c1.68-28.54,1.68-57.49,0-86.03L64.66.4h-14.43l3.45,58.61c1.65,27.98,1.65,56.35,0,84.33l-3.45,58.61Z"/>
-        <path className="motif-cls" d="M38.97,143.35c-1.65-27.98-1.65-56.35,0-84.33L42.43.4h-14.43l-3.4,57.77c-1.68,28.54-1.68,57.49,0,86.03l3.4,57.77h14.43l-3.45-58.61Z"/>
-        <path className="motif-cls" d="M468.38,54.94c-2.33,6.93-4.11,14.03-5.36,21.21-.36-2.21-.76-4.43-1.21-6.63L447.52.4h-34.33l15.7,75.93c3.41,16.49,3.41,33.21,0,49.7l-15.7,75.93h34.33l14.29-69.12c.46-2.21.85-4.42,1.21-6.63,1.25,7.18,3.03,14.28,5.36,21.21l18.35,54.55h90.94l19.25-57.23c9.45-28.08,9.45-59.02,0-87.1L577.67.4h-90.94l-18.35,54.55ZM532.2.78l23.76,70.62c6.46,19.2,6.46,40.35,0,59.54l-23.76,70.62-22.85-67.94c-7.04-20.93-7.04-43.98,0-64.91L532.2.78Z"/>
-        <rect className="motif-cls" x=".25" y=".4" width="4.8" height="201.56"/>
-        <path className="motif-cls" d="M299.8,201.96h24.39l9.73-54.4c5.51-30.78,5.51-61.99,0-92.76L324.19.4h-24.39l10.49,58.63c5.01,27.97,5.01,56.33,0,84.3l-10.49,58.63Z"/>
-        <path className="motif-cls" d="M385.14,126.03c-3.41-16.49-3.41-33.21,0-49.7L400.83.4h-34.33l-14.29,69.12c-4.34,21.01-4.34,42.31,0,63.31l14.29,69.12h34.33l-15.7-75.93Z"/>
-        <path className="motif-cls" d="M105.1,152.92c-4.66-34.33-4.66-69.15,0-103.48L111.75.4h-19.38l-6.3,46.46c-4.89,36.05-4.89,72.6,0,108.65l6.3,46.46h19.38l-6.65-49.04Z"/>
-        <path className="motif-cls" d="M189.19,201.96h19.38l6.3-46.46c4.89-36.05,4.89-72.6,0-108.65L208.58.4h-19.38l6.65,49.04c4.66,34.33,4.66,69.15,0,103.48l-6.65,49.04Z"/>
-        <path className="motif-cls" d="M260.44,143.33c-5.01-27.97-5.01-56.33,0-84.3L270.93.4h-24.39l-9.73,54.4c-5.51,30.78-5.51,61.99,0,92.76l9.73,54.4h24.39l-10.49-58.63Z"/>
-      </g>
-    </svg>
-  )
+/* ── Scrolling motif — themed SVG from public/logos ── */
+const MOTIF_BASE = import.meta.env.BASE_URL + 'logos'
+function MotifImg({ theme }) {
+  const src = theme === 'dark' ? `${MOTIF_BASE}/motif-dark.svg` : `${MOTIF_BASE}/motif-light.svg`
+  return <img src={src} alt="" style={{width:'50%',height:'100%',flexShrink:0,display:'block',objectFit:'cover'}} draggable={false} />
 }
 
 /* ── Themed card logos — use official SVGs from OneDrive ── */
@@ -154,8 +141,8 @@ export default function Accueil() {
       {/* ══ MOTIF DEFILANT ══ */}
       <div id="home-motif" style={{position:'fixed',left:0,right:0,top:0,bottom:0,pointerEvents:'none',zIndex:0,opacity:0.65,lineHeight:0,overflow:'hidden'}}>
         <div style={{display:'flex',width:'200%',height:'100%',animation:'scrollMotif 40s linear infinite'}}>
-          <MotifSvg />
-          <MotifSvg />
+          <MotifImg theme={theme} />
+          <MotifImg theme={theme} />
         </div>
       </div>
 
