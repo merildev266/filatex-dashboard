@@ -33,6 +33,9 @@ const RptLfo = lazy(() => import('./pages/reporting/RptLfo'))
 const RptProps = lazy(() => import('./pages/reporting/RptProps'))
 const RptInvest = lazy(() => import('./pages/reporting/RptInvest'))
 const Csi = lazy(() => import('./pages/Csi'))
+const Finance = lazy(() => import('./pages/finance/Finance'))
+const FinanceOverview = lazy(() => import('./pages/finance/FinanceOverview'))
+const FinanceCreance = lazy(() => import('./pages/finance/FinanceCreance'))
 const Admin = lazy(() => import('./pages/Admin'))
 
 // Prefetch all chunks after login so navigation is instant
@@ -61,6 +64,9 @@ export function prefetchAllPages() {
     () => import('./pages/reporting/RptProps'),
     () => import('./pages/reporting/RptInvest'),
     () => import('./pages/Csi'),
+    () => import('./pages/finance/Finance'),
+    () => import('./pages/finance/FinanceOverview'),
+    () => import('./pages/finance/FinanceCreance'),
     () => import('./pages/Admin'),
     // Data files too
     () => import('./data/site_data'),
@@ -122,6 +128,10 @@ function App() {
                   <Route path="investments" element={<RptInvest />} />
                 </Route>
                 <Route path="csi" element={<Csi />} />
+                <Route path="finance" element={<Finance />}>
+                  <Route index element={<FinanceOverview />} />
+                  <Route path=":entity/creance" element={<FinanceCreance />} />
+                </Route>
                 <Route path="admin" element={<Admin />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>

@@ -39,12 +39,24 @@ def require_auth(f):
     return decorated
 
 
-def require_pmo(f):
+def require_admin(f):
+    """Require admin or super_admin role."""
     @wraps(f)
     @require_auth
     def decorated(*args, **kwargs):
-        if request.user.get("role") != "pmo":
-            return jsonify({"error": "Acces reserve au PMO"}), 403
+        if request.user.get("role") not in ("super_admin", "admin"):
+            return jsonify({"error": "Acces reserve aux administrateurs"}), 403
+        return f(*args, **kwargs)
+    return decorated
+
+
+def require_super_admin(f):
+    """Require super_admin role only."""
+    @wraps(f)
+    @require_auth
+    def decorated(*args, **kwargs):
+        if request.user.get("role") != "super_admin":
+            return jsonify({"error": "Acces reserve au super administrateur"}), 403
         return f(*args, **kwargs)
     return decorated
 
@@ -232,11 +244,14 @@ def serve_react(path):
 @app.route("/api/auth/login", methods=["POST"])
 def api_login():
     data = request.get_json()
-    if not data or not data.get("username") or not data.get("password"):
-        return jsonify({"success": False, "error": "Username et mot de passe requis"}), 400
+    username = data.get("username", "").strip() if data else ""
+    pin = data.get("pin", "").strip() if data else ""
+    if not username:
+        return jsonify({"success": False, "error": "Identifiant requis"}), 400
+    # Allow login without PIN for users who haven't set one yet
     result = auth.authenticate(
-        data["username"],
-        data["password"],
+        username,
+        pin,
         request.headers.get("User-Agent", ""),
         request.remote_addr or ""
     )
@@ -245,34 +260,85 @@ def api_login():
     return jsonify(result), 401
 
 
+@app.route("/api/auth/set-pin", methods=["POST"])
+@require_auth
+def api_set_pin():
+    """Set PIN on first login or change PIN."""
+    data = request.get_json()
+    pin = data.get("pin", "").strip() if data else ""
+    pin_confirm = data.get("pin_confirm", "").strip() if data else ""
+    if pin != pin_confirm:
+        return jsonify({"error": "Les codes PIN ne correspondent pas"}), 400
+    try:
+        auth.validate_pin(pin)
+    except auth.AuthError as e:
+        return jsonify({"error": str(e)}), 400
+    auth.set_pin(request.user["username"], pin)
+    # Return fresh token with updated user data
+    user = auth.get_user_by_username(request.user["username"])
+    token = auth._generate_token(user)
+    return jsonify({
+        "ok": True,
+        "token": token,
+        "user": {
+            "username": user["username"],
+            "display_name": user["display_name"],
+            "role": user["role"],
+            "sections": user["sections"],
+        }
+    })
+
+
 @app.route("/api/auth/me")
 @require_auth
 def api_me():
     return jsonify(request.user)
 
 
-# --- Admin endpoints (PMO only) ---
+# --- Admin endpoints ---
+
+def _check_hierarchy(actor_role, target_id):
+    """Check that actor can manage target. Returns (ok, error_response)."""
+    target = auth.get_user_by_id(target_id)
+    if not target:
+        return False, (jsonify({"error": "Utilisateur introuvable"}), 404)
+    if not auth.can_manage(actor_role, target["role"]):
+        return False, (jsonify({"error": "Vous ne pouvez pas modifier un utilisateur de rang superieur ou egal"}), 403)
+    return True, None
+
 
 @app.route("/api/admin/users")
-@require_pmo
+@require_admin
 def admin_list_users():
+    actor_role = request.user.get("role")
     users = auth.get_all_users()
     for u in users:
         u.pop("password_hash", None)
+    # Admins only see utilisateurs; super_admin sees everyone
+    if actor_role == "admin":
+        users = [u for u in users if u["role"] == "utilisateur"]
     return jsonify(users)
 
 
 @app.route("/api/admin/users", methods=["POST"])
-@require_pmo
+@require_admin
 def admin_create_user():
     data = request.get_json()
-    required = ["username", "password", "display_name", "role", "sections"]
+    required = ["first_name", "last_name", "display_name", "role", "sections"]
     if not data or not all(data.get(k) for k in required):
         return jsonify({"error": "Champs requis: " + ", ".join(required)}), 400
+    actor_role = request.user.get("role")
+    new_role = data["role"]
+    # Admin can only create utilisateurs
+    if actor_role == "admin" and new_role != "utilisateur":
+        return jsonify({"error": "Vous ne pouvez creer que des utilisateurs"}), 403
+    # Only super_admin can create admin
+    if new_role == "super_admin":
+        return jsonify({"error": "Impossible de creer un super administrateur"}), 403
     try:
         user_id = auth.create_user(
-            data["username"], data["password"], data["display_name"],
-            data["role"], data["sections"]
+            data["first_name"], data["last_name"], data.get("email", ""),
+            data["display_name"], data["role"], data["sections"]
         )
         return jsonify({"id": user_id}), 201
     except auth.AuthError as e:
@@ -280,52 +346,76 @@ def admin_create_user():
 
 
 @app.route("/api/admin/users/<int:user_id>", methods=["PUT"])
-@require_pmo
+@require_admin
 def admin_update_user(user_id):
+    actor_role = request.user.get("role")
+    ok, err = _check_hierarchy(actor_role, user_id)
+    if not ok:
+        return err
     data = request.get_json()
+    # Prevent admin from promoting to admin or super_admin
+    new_role = data.get("role")
+    if actor_role == "admin" and new_role and new_role != "utilisateur":
+        return jsonify({"error": "Vous ne pouvez attribuer que le role utilisateur"}), 403
     auth.update_user(
         user_id,
         display_name=data.get("display_name"),
         role=data.get("role"),
         sections=data.get("sections"),
-        active=data.get("active")
+        active=data.get("active"),
+        first_name=data.get("first_name"),
+        last_name=data.get("last_name"),
+        email=data.get("email"),
     )
     return jsonify({"ok": True})
 
 
 @app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
-@require_pmo
+@require_admin
 def admin_delete_user(user_id):
+    actor_role = request.user.get("role")
+    ok, err = _check_hierarchy(actor_role, user_id)
+    if not ok:
+        return err
     auth.delete_user(user_id)
     return jsonify({"ok": True})
 
 
-@app.route("/api/admin/users/<int:user_id>/reset-password", methods=["PUT"])
-@require_pmo
-def admin_reset_password(user_id):
-    data = request.get_json()
-    if not data or not data.get("password"):
-        return jsonify({"error": "Nouveau mot de passe requis"}), 400
-    auth.reset_password(user_id, data["password"])
+@app.route("/api/admin/users/<int:user_id>/reset-pin", methods=["PUT"])
+@require_admin
+def admin_reset_pin(user_id):
+    actor_role = request.user.get("role")
+    ok, err = _check_hierarchy(actor_role, user_id)
+    if not ok:
+        return err
+    auth.reset_pin(user_id)
     return jsonify({"ok": True})
 
 
 @app.route("/api/admin/users/<int:user_id>/unlock", methods=["PUT"])
-@require_pmo
+@require_admin
 def admin_unlock_user(user_id):
+    actor_role = request.user.get("role")
+    ok, err = _check_hierarchy(actor_role, user_id)
+    if not ok:
+        return err
     auth.unlock_user(user_id)
     return jsonify({"ok": True})
 
 
 @app.route("/api/admin/users/<int:user_id>/toggle-active", methods=["PUT"])
-@require_pmo
+@require_admin
 def admin_toggle_active(user_id):
+    actor_role = request.user.get("role")
+    ok, err = _check_hierarchy(actor_role, user_id)
+    if not ok:
+        return err
     auth.toggle_active(user_id)
     return jsonify({"ok": True})
 
 
 @app.route("/api/admin/login-history")
-@require_pmo
+@require_admin
 def admin_login_history():
     username = request.args.get("username")
     limit = int(request.args.get("limit", 100))

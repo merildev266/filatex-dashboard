@@ -7,9 +7,10 @@ const TABS = [
   { id: 'history', label: 'Historique' },
 ]
 
-const ROLES = [
-  { value: 'pmo', label: 'Admin' },
-  { value: 'manager', label: 'Utilisateur' },
+const ALL_ROLES = [
+  { value: 'super_admin', label: 'Super Admin' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'utilisateur', label: 'Utilisateur' },
 ]
 
 const SECTIONS = [
@@ -32,14 +33,21 @@ const SECTIONS = [
   { id: 'csi', label: 'CSI', parent: null },
 ]
 
+const ROLE_LABELS = { super_admin: 'Super Admin', admin: 'Admin', utilisateur: 'Utilisateur' }
+const ROLE_COLORS = {
+  super_admin: 'bg-[#9f4c4c33] text-[#fa8b8b]',
+  admin: 'bg-[#5e4c9f33] text-[#a78bfa]',
+  utilisateur: 'bg-[#426ab322] text-[#7ba4e0]',
+}
+
 export default function Admin() {
-  const { user, authFetch } = useAuth()
+  const { user, authFetch, isAdmin, isSuperAdmin } = useAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('users')
   const DEMO_USERS = [
-    { id: 0, username: 'pmo', display_name: 'PMO Admin', role: 'pmo', sections: ['*'], active: true, locked: false, failed_attempts: 0 },
-    { id: 901, username: 'j.rakoto', display_name: 'Jean Rakoto', role: 'manager', sections: ['energy', 'energy.hfo', 'energy.enr', 'reporting', 'reporting.hfo', 'reporting.enr'], active: true, locked: false, failed_attempts: 0 },
-    { id: 902, username: 'm.rabe', display_name: 'Marie Rabe', role: 'manager', sections: ['properties', 'investments', 'capex', 'capex.properties', 'capex.investments'], active: true, locked: true, failed_attempts: 5 },
+    { id: 0, username: 'pmo', display_name: 'PMO Admin', first_name: '', last_name: '', email: '', role: 'super_admin', sections: ['*'], active: true, locked: false, failed_attempts: 0, pin_set: true },
+    { id: 901, username: 'jean.rakoto', display_name: 'Jean Rakoto', first_name: 'Jean', last_name: 'Rakoto', email: 'j.rakoto@filatex.mg', role: 'utilisateur', sections: ['energy', 'energy.hfo', 'energy.enr', 'reporting', 'reporting.hfo', 'reporting.enr'], active: true, locked: false, failed_attempts: 0, pin_set: true },
+    { id: 902, username: 'marie.rabe', display_name: 'Marie Rabe', first_name: 'Marie', last_name: 'Rabe', email: 'm.rabe@filatex.mg', role: 'utilisateur', sections: ['properties', 'investments', 'capex', 'capex.properties', 'capex.investments'], active: true, locked: true, failed_attempts: 5, pin_set: true },
   ]
   const [users, setUsers] = useState([])
   const [history, setHistory] = useState([])
@@ -49,7 +57,8 @@ export default function Admin() {
   const [editUser, setEditUser] = useState(null)
   const [lockedPopup, setLockedPopup] = useState(null)
 
-  const isPmo = user?.role === 'pmo'
+  const canAdmin = isAdmin()
+  const canSuperAdmin = isSuperAdmin()
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
@@ -60,7 +69,6 @@ export default function Admin() {
       const data = await res.json()
       setUsers(data)
     } catch (err) {
-      // Fallback: show demo users when no server
       setUsers(DEMO_USERS)
     } finally {
       setLoading(false)
@@ -71,18 +79,15 @@ export default function Admin() {
     setLoading(true)
     setError('')
     try {
-      const res = await authFetch('/api/admin/history')
+      const res = await authFetch('/api/admin/login-history')
       if (!res.ok) throw new Error('Erreur serveur')
       const data = await res.json()
       setHistory(data)
     } catch (err) {
-      // Fallback: demo history
       setHistory([
         { username: 'pmo', timestamp: new Date().toISOString(), success: true, ip_address: '192.168.1.10' },
-        { username: 'j.rakoto', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true, ip_address: '192.168.1.25' },
-        { username: 'm.rabe', timestamp: new Date(Date.now() - 7200000).toISOString(), success: false, ip_address: '192.168.1.42' },
-        { username: 'm.rabe', timestamp: new Date(Date.now() - 7000000).toISOString(), success: false, ip_address: '192.168.1.42' },
-        { username: 'm.rabe', timestamp: new Date(Date.now() - 6800000).toISOString(), success: false, ip_address: '192.168.1.42' },
+        { username: 'jean.rakoto', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true, ip_address: '192.168.1.25' },
+        { username: 'marie.rabe', timestamp: new Date(Date.now() - 7200000).toISOString(), success: false, ip_address: '192.168.1.42' },
       ])
     } finally {
       setLoading(false)
@@ -90,44 +95,42 @@ export default function Admin() {
   }, [authFetch])
 
   useEffect(() => {
-    if (!isPmo) return
+    if (!canAdmin) return
     if (tab === 'users') fetchUsers()
     if (tab === 'history') fetchHistory()
-  }, [tab, isPmo, fetchUsers, fetchHistory])
+  }, [tab, canAdmin, fetchUsers, fetchHistory])
 
   const handleToggleActive = async (userId) => {
     try {
-      const u = users.find(u => u.id === userId)
-      await authFetch(`/api/admin/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ active: !u.active }),
-      })
+      await authFetch(`/api/admin/users/${userId}/toggle-active`, { method: 'PUT' })
       fetchUsers()
     } catch {
-      // Fallback: toggle locally
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, active: !u.active } : u))
     }
   }
 
   const handleUnlock = async (userId) => {
     try {
-      await authFetch(`/api/admin/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ locked: false }),
-      })
+      await authFetch(`/api/admin/users/${userId}/unlock`, { method: 'PUT' })
       fetchUsers()
     } catch {
-      // Fallback: unlock locally
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, locked: false, failed_attempts: 0 } : u))
     }
   }
 
-  if (!isPmo) {
+  const handleResetPin = async (userId) => {
+    try {
+      await authFetch(`/api/admin/users/${userId}/reset-pin`, { method: 'PUT' })
+      fetchUsers()
+    } catch {
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, pin_set: false } : u))
+    }
+  }
+
+  if (!canAdmin) {
     return (
       <div className="p-6 text-center text-[var(--text-muted)]">
-        Acces reserve au PMO.
+        Acces reserve aux administrateurs.
       </div>
     )
   }
@@ -193,10 +196,12 @@ export default function Admin() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[var(--card)] border-b border-[var(--card-border)]">
-                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Utilisateur</th>
+                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Identifiant</th>
                   <th className="text-left p-3 text-[var(--text-muted)] font-medium">Nom</th>
+                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Email</th>
                   <th className="text-left p-3 text-[var(--text-muted)] font-medium">Role</th>
                   <th className="text-left p-3 text-[var(--text-muted)] font-medium">Sections</th>
+                  <th className="text-center p-3 text-[var(--text-muted)] font-medium">PIN</th>
                   <th className="text-center p-3 text-[var(--text-muted)] font-medium">Statut</th>
                   <th className="text-center p-3 text-[var(--text-muted)] font-medium">Actions</th>
                 </tr>
@@ -204,18 +209,23 @@ export default function Admin() {
               <tbody>
                 {users.map(u => (
                   <tr key={u.id} className="border-b border-[var(--card-border)] hover:bg-[var(--card)]">
-                    <td className="p-3 text-[var(--text)]">{u.username}</td>
+                    <td className="p-3 text-[var(--text)] font-mono text-xs">{u.username}</td>
                     <td className="p-3 text-[var(--text)]">{u.display_name}</td>
+                    <td className="p-3 text-[var(--text-muted)] text-xs">{u.email || '-'}</td>
                     <td className="p-3">
-                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        u.role === 'pmo' ? 'bg-[#5e4c9f33] text-[#a78bfa]' :
-                        'bg-[#426ab322] text-[#7ba4e0]'
-                      }`}>
-                        {u.role === 'pmo' ? 'Admin' : 'Utilisateur'}
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${ROLE_COLORS[u.role] || ROLE_COLORS.utilisateur}`}>
+                        {ROLE_LABELS[u.role] || u.role}
                       </span>
                     </td>
                     <td className="p-3 text-[var(--text-muted)] text-xs">
                       {u.sections?.includes('*') ? 'Toutes' : u.sections?.join(', ')}
+                    </td>
+                    <td className="p-3 text-center">
+                      {u.pin_set ? (
+                        <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#00ab6322] text-[#00ab63]">Defini</span>
+                      ) : (
+                        <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-[#f5a62322] text-[#f5a623]">En attente</span>
+                      )}
                     </td>
                     <td className="p-3 text-center">
                       <div className="flex items-center justify-center gap-1.5">
@@ -235,7 +245,8 @@ export default function Admin() {
                       </div>
                     </td>
                     <td className="p-3 text-center">
-                      <div className="flex items-center justify-center gap-3">
+                      <div className="flex items-center justify-center gap-2">
+                        {/* Edit */}
                         <button
                           onClick={() => { setEditUser(u); setShowModal(true) }}
                           className="p-1.5 rounded-lg bg-[var(--card)] border border-[var(--card-border)]
@@ -247,7 +258,21 @@ export default function Admin() {
                             <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                           </svg>
                         </button>
-                        {/* Switch toggle */}
+                        {/* Reset PIN */}
+                        {u.pin_set && (
+                          <button
+                            onClick={() => handleResetPin(u.id)}
+                            className="p-1.5 rounded-lg bg-[var(--card)] border border-[var(--card-border)]
+                                       text-[var(--text-muted)] hover:text-[#f5a623] transition-colors cursor-pointer"
+                            title="Reinitialiser le PIN"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:14,height:14}}>
+                              <path d="M1 4v6h6"/>
+                              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                            </svg>
+                          </button>
+                        )}
+                        {/* Toggle active */}
                         <button
                           onClick={() => handleToggleActive(u.id)}
                           className="relative w-10 h-5 rounded-full cursor-pointer transition-colors"
@@ -313,7 +338,6 @@ export default function Admin() {
             className="w-[90%] max-w-sm bg-[var(--dark)] border border-[var(--card-border)] rounded-2xl p-6"
             onClick={e => e.stopPropagation()}
           >
-            {/* Lock icon */}
             <div className="flex justify-center mb-4">
               <div className="w-14 h-14 rounded-full bg-[#E05C5C18] border border-[#E05C5C33] flex items-center justify-center">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#E05C5C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:28,height:28}}>
@@ -370,15 +394,15 @@ export default function Admin() {
         <UserModal
           user={editUser}
           authFetch={authFetch}
+          actorRole={user?.role}
           onClose={() => { setShowModal(false); setEditUser(null) }}
           onSaved={(savedUser) => {
             setShowModal(false); setEditUser(null)
             if (savedUser) {
-              // Fallback: update locally
               setUsers(prev => {
                 const exists = prev.find(u => u.id === savedUser.id)
                 if (exists) return prev.map(u => u.id === savedUser.id ? { ...u, ...savedUser } : u)
-                return [...prev, { ...savedUser, id: Date.now(), active: true, locked: false, failed_attempts: 0 }]
+                return [...prev, { ...savedUser, id: Date.now(), active: true, locked: false, failed_attempts: 0, pin_set: false }]
               })
             } else {
               fetchUsers()
@@ -394,13 +418,14 @@ export default function Admin() {
 /* User create/edit modal                                              */
 /* ------------------------------------------------------------------ */
 
-function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
+function UserModal({ user: editUser, authFetch, actorRole, onClose, onSaved }) {
   const isEdit = !!editUser
   const [form, setForm] = useState({
-    username: editUser?.username || '',
-    password: '',
+    first_name: editUser?.first_name || '',
+    last_name: editUser?.last_name || '',
+    email: editUser?.email || '',
     display_name: editUser?.display_name || '',
-    role: editUser?.role || 'manager',
+    role: editUser?.role || 'utilisateur',
     sections: editUser?.sections || ['*'],
     active: editUser?.active ?? true,
   })
@@ -408,6 +433,25 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
   const [error, setError] = useState('')
 
   const update = (field, value) => setForm(f => ({ ...f, [field]: value }))
+
+  // Auto-generate display_name and show login preview
+  const generatedUsername = form.first_name && form.last_name
+    ? `${form.first_name.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '')}.${form.last_name.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '')}`
+    : ''
+
+  // Auto-fill display_name when creating
+  const handleNameChange = (field, value) => {
+    const newForm = { ...form, [field]: value }
+    if (!isEdit) {
+      newForm.display_name = `${field === 'first_name' ? value : form.first_name} ${field === 'last_name' ? value : form.last_name}`.trim()
+    }
+    setForm(newForm)
+  }
+
+  // Roles available based on actor
+  const availableRoles = actorRole === 'super_admin'
+    ? ALL_ROLES.filter(r => r.value !== 'super_admin')
+    : ALL_ROLES.filter(r => r.value === 'utilisateur')
 
   const toggleSection = (sec) => {
     setForm(f => {
@@ -418,16 +462,13 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
         ? f.sections.filter(s => s !== sec)
         : [...f.sections.filter(s => s !== '*'), sec]
 
-      // If toggling a parent ON, also add all its children
       const children = SECTIONS.filter(s => s.parent === sec).map(s => s.id)
       if (!has && children.length > 0) {
         children.forEach(c => { if (!next.includes(c)) next.push(c) })
       }
-      // If toggling a parent OFF, also remove all its children
       if (has && children.length > 0) {
         next = next.filter(s => !children.includes(s))
       }
-      // If toggling a child OFF, remove parent too
       const sectionDef = SECTIONS.find(s => s.id === sec)
       if (has && sectionDef?.parent) {
         next = next.filter(s => s !== sectionDef.parent)
@@ -439,20 +480,14 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.username || !form.display_name) {
-      setError('Champs obligatoires')
-      return
-    }
-    if (!isEdit && !form.password) {
-      setError('Mot de passe requis')
+    if (!form.first_name || !form.last_name || !form.display_name) {
+      setError('Prenom, nom et nom affiche sont obligatoires')
       return
     }
     setSaving(true)
     setError('')
     try {
       const body = { ...form }
-      if (isEdit && !body.password) delete body.password
-
       const url = isEdit ? `/api/admin/users/${editUser.id}` : '/api/admin/users'
       const method = isEdit ? 'PUT' : 'POST'
       const res = await authFetch(url, {
@@ -466,9 +501,8 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
       }
       onSaved() // server mode
     } catch (err) {
-      // Fallback: save locally
       if (err.message?.includes('fetch') || err.message?.includes('Failed') || err.message?.includes('NetworkError')) {
-        onSaved({ ...form, id: editUser?.id || Date.now() })
+        onSaved({ ...form, username: generatedUsername, id: editUser?.id || Date.now() })
         return
       }
       setError(err.message)
@@ -480,7 +514,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60" onClick={onClose}>
       <div
-        className="w-[90%] max-w-md bg-[var(--dark)] border border-[var(--card-border)] rounded-2xl p-6"
+        className="w-[90%] max-w-md max-h-[90vh] overflow-y-auto bg-[var(--dark)] border border-[var(--card-border)] rounded-2xl p-6"
         onClick={e => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
@@ -488,29 +522,57 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          {/* Username */}
-          <div>
-            <label className="block text-xs text-[var(--text-muted)] mb-1">Identifiant</label>
-            <input
-              type="text"
-              value={form.username}
-              onChange={e => update('username', e.target.value)}
-              disabled={isEdit}
-              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-lg
-                         px-3 py-2 text-[var(--text)] text-sm outline-none focus:border-[var(--card-border)]
-                         disabled:opacity-50"
-            />
+          {/* First name + Last name */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">Prenom</label>
+              <input
+                type="text"
+                value={form.first_name}
+                onChange={e => handleNameChange('first_name', e.target.value)}
+                disabled={isEdit}
+                autoFocus={!isEdit}
+                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-lg
+                           px-3 py-2 text-[var(--text)] text-sm outline-none focus:border-[var(--card-border)]
+                           disabled:opacity-50"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">Nom</label>
+              <input
+                type="text"
+                value={form.last_name}
+                onChange={e => handleNameChange('last_name', e.target.value)}
+                disabled={isEdit}
+                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-lg
+                           px-3 py-2 text-[var(--text)] text-sm outline-none focus:border-[var(--card-border)]
+                           disabled:opacity-50"
+              />
+            </div>
           </div>
 
-          {/* Password */}
+          {/* Login preview */}
+          {!isEdit && generatedUsername && (
+            <div className="px-3 py-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)]">
+              <span className="text-xs text-[var(--text-muted)]">Identifiant : </span>
+              <span className="text-xs font-mono text-[var(--text)] font-medium">{generatedUsername}</span>
+            </div>
+          )}
+          {isEdit && (
+            <div className="px-3 py-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)]">
+              <span className="text-xs text-[var(--text-muted)]">Identifiant : </span>
+              <span className="text-xs font-mono text-[var(--text)] font-medium">{editUser.username}</span>
+            </div>
+          )}
+
+          {/* Email */}
           <div>
-            <label className="block text-xs text-[var(--text-muted)] mb-1">
-              Mot de passe {isEdit && '(laisser vide pour ne pas changer)'}
-            </label>
+            <label className="block text-xs text-[var(--text-muted)] mb-1">Email professionnel</label>
             <input
-              type="password"
-              value={form.password}
-              onChange={e => update('password', e.target.value)}
+              type="email"
+              value={form.email}
+              onChange={e => update('email', e.target.value)}
+              placeholder="prenom.nom@filatex.mg"
               className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-lg
                          px-3 py-2 text-[var(--text)] text-sm outline-none focus:border-[var(--card-border)]"
             />
@@ -537,7 +599,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
               className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-lg
                          px-3 py-2 text-[var(--text)] text-sm outline-none focus:border-[var(--card-border)]"
             >
-              {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+              {availableRoles.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </div>
 
@@ -552,7 +614,6 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
                 const checked = isActive || allSelected
                 return (
                   <div key={sec.id}>
-                    {/* Parent checkbox */}
                     <label className="flex items-center gap-2.5 py-1 cursor-pointer hover:opacity-80 transition-opacity">
                       <div
                         onClick={(e) => { e.preventDefault(); toggleSection(sec.id) }}
@@ -572,7 +633,6 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
                         {sec.label}
                       </span>
                     </label>
-                    {/* Children checkboxes */}
                     {children.length > 0 && !allSelected && (isActive || children.some(c => form.sections.includes(c.id))) && (
                       <div className="ml-6 space-y-1 mb-1">
                         {children.map(child => {
@@ -606,6 +666,13 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
               })}
             </div>
           </div>
+
+          {/* Info: no password needed */}
+          {!isEdit && (
+            <div className="px-3 py-2 rounded-lg bg-[#426ab312] border border-[#426ab322] text-xs text-[#7ba4e0]">
+              L'utilisateur definira son code PIN (4 ou 6 chiffres) lors de sa premiere connexion.
+            </div>
+          )}
 
           {error && (
             <div className="text-[#ff5a5a] text-sm">{error}</div>

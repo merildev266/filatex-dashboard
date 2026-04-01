@@ -70,6 +70,15 @@ function ReportingLogo() {
   )
 }
 
+/* ── Finance card SVG ── */
+function FinanceLogo() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
+      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="34" fontWeight="400" fontStyle="italic">Finance</text>
+    </svg>
+  )
+}
+
 const CARD_LOGOS = {
   energy: EnergyLogo,
   investments: InvestmentsLogo,
@@ -77,6 +86,7 @@ const CARD_LOGOS = {
   capex: CapexLogo,
   csi: CsiLogo,
   reporting: ReportingLogo,
+  finance: FinanceLogo,
 }
 
 const SECTIONS = [
@@ -86,6 +96,7 @@ const SECTIONS = [
   { pole: 'capex', label: 'CAPEX', color: '#5e4c9f', path: '/capex', cardClass: 'card-capex' },
   { pole: 'csi', label: 'CSI', color: '#0096c7', path: '/csi', cardClass: 'card-csi' },
   { pole: 'reporting', label: 'Reporting', color: '#426ab3', path: '/reporting', cardClass: 'card-reporting' },
+  { pole: 'finance', label: 'Finance', color: '#1abc9c', path: '/finance', cardClass: 'card-finance' },
 ]
 
 
@@ -171,7 +182,7 @@ export default function Accueil() {
         </div>
 
         {/* ── BOTTOM LEFT: Admin (PMO only) ── */}
-        {user?.role === 'pmo' && (
+        {(user?.role === 'super_admin' || user?.role === 'admin') && (
           <div style={{position:'absolute',bottom:'16px',left:'16px',zIndex:10}}>
             <button
               onClick={() => navigate('/admin')}
