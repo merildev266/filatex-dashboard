@@ -177,76 +177,110 @@ export const NATURE_FILTERS = {
   'flx-caution': (c) => getFlxNature(c) === 'caution',
 }
 
-// Gruyère — compact proportional bar showing nature breakdown
-// linkTo: if provided, clicking a segment navigates to that base path with ?nature=filterKey
+// Donut chart — nature breakdown as a camembert
 import { useNavigate } from 'react-router-dom'
 
-export function NatureGruyere({ entity, clients, linkTo }) {
-  const navigate = useNavigate()
-  const total = clients.reduce((s, c) => s + (c.totalCreances || 0), 0)
-  if (!total) return null
-
-  let segments
+function buildSegments(entity, clients) {
   if (entity === 'filatex-sa') {
     const loyer = clients.filter(c => getFlxNature(c) === 'loyer')
     const penalite = clients.filter(c => getFlxNature(c) === 'penalite')
     const caution = clients.filter(c => getFlxNature(c) === 'caution')
-    segments = [
+    return [
       { filterKey: 'flx-loyer', label: 'Loyer', value: aggregate(loyer).totalCreances, count: loyer.length, color: '#3498db' },
       { filterKey: 'flx-penalite', label: 'Pénalité', value: aggregate(penalite).totalCreances, count: penalite.length, color: '#e67e22' },
       { filterKey: 'flx-caution', label: 'Caution', value: aggregate(caution).totalCreances, count: caution.length, color: '#9b59b6' },
     ]
-  } else {
-    const noteDebit = clients.filter(c => isTcmNoteDebit(c))
-    const loyerVente = clients.filter(c => !isTcmNoteDebit(c))
-    segments = [
-      { filterKey: 'tcm-loyervente', label: 'Loyer + Vente', value: aggregate(loyerVente).totalCreances, count: loyerVente.length, color: '#3498db' },
-      { filterKey: 'tcm-notedebit', label: 'Note de Débit', value: aggregate(noteDebit).totalCreances, count: noteDebit.length, color: '#e67e22' },
-    ]
   }
+  const noteDebit = clients.filter(c => isTcmNoteDebit(c))
+  const loyerVente = clients.filter(c => !isTcmNoteDebit(c))
+  return [
+    { filterKey: 'tcm-loyervente', label: 'Loyer + Vente', value: aggregate(loyerVente).totalCreances, count: loyerVente.length, color: '#3498db' },
+    { filterKey: 'tcm-notedebit', label: 'Note de Débit', value: aggregate(noteDebit).totalCreances, count: noteDebit.length, color: '#e67e22' },
+  ]
+}
 
-  const handleClick = (seg) => {
-    if (linkTo) {
-      // Navigate to hors-groupe (biggest list) with nature filter pre-set
-      navigate(`${linkTo}/hors-groupe?nature=${seg.filterKey}`)
-    }
+function PieSvg({ segments, total, size = 80 }) {
+  const cx = size / 2
+  const cy = size / 2
+  const r = size / 2 - 1
+  let startAngle = -90 // start from top
+
+  function polarToCart(angleDeg) {
+    const rad = (angleDeg * Math.PI) / 180
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)]
   }
 
   return (
-    <div style={{ width: '100%' }}>
-      {/* Proportional bar */}
-      <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 10, width: '100%', background: 'var(--card-border)' }}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle cx={cx} cy={cy} r={r} fill="var(--card-border)" />
+      {segments.map((seg, i) => {
+        const pct = total > 0 ? seg.value / total : 0
+        if (pct === 0) return null
+        const angle = pct * 360
+        const endAngle = startAngle + angle
+        const largeArc = angle > 180 ? 1 : 0
+        const [x1, y1] = polarToCart(startAngle)
+        const [x2, y2] = polarToCart(endAngle)
+        const d = pct >= 1
+          ? `M ${cx} ${cy} m -${r} 0 a ${r} ${r} 0 1 1 ${r * 2} 0 a ${r} ${r} 0 1 1 -${r * 2} 0`
+          : `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`
+        startAngle = endAngle
+        return (
+          <path
+            key={i} d={d} fill={seg.color}
+            style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
+            data-filter={seg.filterKey}
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
+export function NatureDonut({ entity, clients, linkTo }) {
+  const navigate = useNavigate()
+  const total = clients.reduce((s, c) => s + (c.totalCreances || 0), 0)
+  if (!total) return null
+  const segments = buildSegments(entity, clients)
+
+  const handleClick = (seg) => {
+    if (linkTo) navigate(`${linkTo}/hors-groupe?nature=${seg.filterKey}`)
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, width: '100%', justifyContent: 'center' }}>
+      {/* Donut */}
+      <div
+        style={{ flexShrink: 0, position: 'relative' }}
+        onClick={(e) => {
+          const el = e.target.closest('circle[data-filter]')
+          if (el && linkTo) {
+            const seg = segments.find(s => s.filterKey === el.dataset.filter)
+            if (seg) handleClick(seg)
+          }
+        }}
+      >
+        <PieSvg segments={segments} total={total} size={80} />
+      </div>
+      {/* Legend */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
         {segments.map((seg, i) => {
-          const pct = total > 0 ? (seg.value / total) * 100 : 0
-          if (pct === 0) return null
+          const pct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0
           return (
             <div
               key={i}
               onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
-              style={{
-                width: `${pct}%`, background: seg.color, transition: 'width 0.4s ease',
-                cursor: linkTo ? 'pointer' : 'default',
-              }}
-              title={`${seg.label}: ${fmtMga(seg.value)}`}
-            />
+              style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: linkTo ? 'pointer' : 'default' }}
+            >
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: seg.color, flexShrink: 0 }} />
+              <span style={{ fontSize: 9, color: 'var(--text-muted)' }}>
+                {seg.label}
+              </span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: seg.color }}>{fmtMga(seg.value)}</span>
+              <span style={{ fontSize: 8, color: 'var(--text-muted)', opacity: 0.6 }}>{pct}%</span>
+            </div>
           )
         })}
-      </div>
-      {/* Legend */}
-      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 6, flexWrap: 'wrap' }}>
-        {segments.map((seg, i) => (
-          <div
-            key={i}
-            onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
-            style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: linkTo ? 'pointer' : 'default' }}
-          >
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
-            <span style={{ fontSize: 8, color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
-              {seg.label} <span style={{ fontWeight: 700, color: seg.color }}>{fmtMga(seg.value)}</span>
-              <span style={{ opacity: 0.6 }}> ({seg.count})</span>
-            </span>
-          </div>
-        ))}
       </div>
     </div>
   )

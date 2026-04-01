@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, NatureGruyere, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ClientCount } from './financeHelpers.jsx'
 
 export default function FinanceOverview() {
   const navigate = useNavigate()
@@ -63,8 +63,8 @@ export default function FinanceOverview() {
                   ))}
                 </div>
               </div>
-              {/* Nature gruyère below */}
-              <NatureGruyere entity={entity.key} clients={entity.data} linkTo={entity.path} />
+              {/* Nature camembert below */}
+              <NatureDonut entity={entity.key} clients={entity.data} linkTo={entity.path} />
             </div>
           )
         })}

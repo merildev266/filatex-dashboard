@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, FlxNatureKpiCards, TcmNatureKpiCards, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
@@ -45,8 +45,7 @@ export default function FinanceEntity() {
         { label: 'Plan Mai', value: fmtMga(aggAll.planMai), color: COLOR },
         { label: 'Montant 2025', value: fmtMga(aggAll.montant2025) },
       ]} />
-      {entity === 'tcm' && <TcmNatureKpiCards clients={cfg.data} />}
-      {entity === 'filatex-sa' && <FlxNatureKpiCards clients={cfg.data} />}
+      <NatureDonut entity={entity} clients={cfg.data} linkTo={`/finance/${entity}`} />
 
       {/* Groupe / Hors Groupe cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 340px))', gap: 20, justifyContent: 'center', width: '100%', maxWidth: 760 }}>

@@ -218,23 +218,20 @@ export default function FinanceClientList() {
   const [natureFilter, setNatureFilter] = useState(null)
   const [sortMode, setSortMode] = useState('montant-desc')
 
-  // Init nature filter from URL ?nature= param (from gruyère click)
-  useEffect(() => {
-    const natureParam = searchParams.get('nature')
-    if (natureParam && NATURE_FILTERS[natureParam]) {
-      setNatureFilter(natureParam)
-      // Clean up URL
-      searchParams.delete('nature')
-      setSearchParams(searchParams, { replace: true })
-    }
-  }, [])
-
-  // Reset filters on navigation
+  // Reset filters on navigation + read ?nature= from URL (camembert click)
   useEffect(() => {
     setKpiFilter(null)
     setYearFilter('all')
-    setNatureFilter(null)
     setSortMode('montant-desc')
+    // Check for nature param from camembert navigation
+    const natureParam = searchParams.get('nature')
+    if (natureParam && NATURE_FILTERS[natureParam]) {
+      setNatureFilter(natureParam)
+      searchParams.delete('nature')
+      setSearchParams(searchParams, { replace: true })
+    } else {
+      setNatureFilter(null)
+    }
   }, [entity, category])
 
   const cfg = ENTITY_CFG[entity]
