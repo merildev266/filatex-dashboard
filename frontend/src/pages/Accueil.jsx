@@ -5,13 +5,6 @@ import { useTheme } from '../context/ThemeContext'
 import { useThemedLogo } from '../hooks/useThemedLogo'
 import { useAuth } from '../hooks/useAuth'
 
-/* ── Scrolling motif — themed SVG from public/logos ── */
-const MOTIF_BASE = import.meta.env.BASE_URL + 'logos'
-function MotifImg({ theme }) {
-  const src = theme === 'dark' ? `${MOTIF_BASE}/motif-dark.svg` : `${MOTIF_BASE}/motif-light.svg`
-  return <img src={src} alt="" style={{width:'50%',height:'100%',flexShrink:0,display:'block',objectFit:'cover'}} draggable={false} />
-}
-
 /* ── Themed card logos — use official SVGs from OneDrive ── */
 const LOGO_H = 50 // uniform height — matches Investments
 
@@ -137,14 +130,6 @@ export default function Accueil() {
     <>
       {/* ══ GLOBAL BACKGROUND ══ */}
       <div style={{position:'fixed',inset:0,overflow:'hidden',pointerEvents:'none',zIndex:0,background: theme === 'dark' ? '#000000' : '#e4f4fd',transition:'background 0.4s ease'}} />
-
-      {/* ══ MOTIF DEFILANT ══ */}
-      <div id="home-motif" style={{position:'fixed',left:0,right:0,top:0,bottom:0,pointerEvents:'none',zIndex:0,opacity:0.65,lineHeight:0,overflow:'hidden'}}>
-        <div style={{display:'flex',width:'200%',height:'100%',animation:'scrollMotif 40s linear infinite'}}>
-          <MotifImg theme={theme} />
-          <MotifImg theme={theme} />
-        </div>
-      </div>
 
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
