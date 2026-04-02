@@ -12,7 +12,7 @@ export default function Layout() {
   return (
     <div className={`min-h-screen bg-dark ${isHome ? '' : 'pb-14'}`}>
       {/* ══ MOTIF STATIQUE (toutes pages) ══ */}
-      <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:0,opacity:0.65,lineHeight:0,overflow:'hidden'}}>
+      <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:0,opacity:isHome ? 0.3 : 0.5,lineHeight:0,overflow:'hidden'}}>
         <img src={motifSrc} alt="" style={{width:'100%',height:'100%',display:'block',objectFit:'cover'}} draggable={false} />
       </div>
       <Outlet />
