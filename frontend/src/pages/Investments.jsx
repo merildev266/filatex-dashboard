@@ -187,7 +187,7 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
   const statusColor = project.status === 'En cours' ? TEAL : '#a8d98a'
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 24px' }}>
+    <div style={{ maxWidth: '100%', margin: '0 auto', padding: '16px 24px' }}>
       {/* Peer navigation */}
       <div className="site-nav" style={{ margin: '8px 0 0', flexWrap: 'wrap', gap: 6, display: 'flex' }}>
         {allOfType.map(fp => (

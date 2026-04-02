@@ -77,7 +77,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
   const deltaColor = project.deltaInvest && project.deltaInvest.startsWith('-') ? '#00ab63' : '#f37056'
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '16px 24px' }}>
+    <div style={{ maxWidth: '100%', margin: '0 auto', padding: '16px 24px' }}>
       <div className="capex-proj-card" style={{ borderColor: `rgba(${colorRgb},0.2)`, marginTop: 16 }}>
         {/* Title */}
         <div className="cpj-header">
@@ -156,7 +156,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
   const avgPct = projects.length > 0 ? Math.round(projects.reduce((s, p) => s + (p.etatPct || 0), 0) / projects.length) : 0
 
   return (
-    <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
+    <div className="capex-page-wrap" style={{ maxWidth: '100%', margin: '0 auto', padding: '0 40px 80px' }}>
       {/* Title */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
@@ -293,7 +293,7 @@ export default function Capex() {
   return (
     <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
     <SectionHeader name="CAPEX" color={ACCENT} />
-    <div className="capex-page-wrap" style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 80px' }}>
+    <div className="capex-page-wrap" style={{ maxWidth: '100%', margin: '0 auto', padding: '0 40px 80px' }}>
 
       {/* ══ GLOBAL SUMMARY ══ */}
       <div style={{ marginBottom: 40 }}>

@@ -14,7 +14,7 @@ function KpiCard({ label, value, sub, color }) {
 
 export default function RecouvrementDetail() {
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+    <div style={{ maxWidth: '100%', margin: '0 auto' }}>
       <div className="text-[9px] font-bold tracking-[0.4em] uppercase mb-[18px]"
         style={{ color: 'var(--text-dim)' }}>
         Vue consolid&eacute;e &middot; Encaissements & cr&eacute;ances

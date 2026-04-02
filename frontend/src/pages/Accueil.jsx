@@ -193,7 +193,7 @@ export default function Accueil() {
 
         {/* ── CARDS GRID ── */}
         <div className="cards-grid" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'20px',width:'100%',padding:'0 40px',margin:'0 auto',animation:'slideIn 0.7s 0.15s ease both'}}>
-          <div className="cards-row1" style={{display:'inline-grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,220px))',gap:'12px',justifyContent:'center',width:'100%',maxWidth:'720px'}}>
+          <div className="cards-row1" style={{display:'inline-grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,220px))',gap:'12px',justifyContent:'center',width:'100%',maxWidth:'100%'}}>
             {SECTIONS.map((section) => {
               const LogoComponent = CARD_LOGOS[section.pole]
               return (
