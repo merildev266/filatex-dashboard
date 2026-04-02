@@ -35,16 +35,16 @@ export default function FinanceEntity() {
       </div>
       <KpiCards items={[
         { label: 'Total Créances', value: fmtMga(aggAll.totalCreances), color: COLOR },
-        { label: 'Encaissé', value: fmtMga(aggAll.encaissements), color: '#00ab63' },
-        { label: 'Contentieux', value: fmtMga(aggAll.standby + aggAll.contentieux), color: '#e05c5c' },
-        { label: 'Reste à collecter', value: fmtMga(aggAll.resteACollecter), color: '#f39c12' },
+        { label: 'Encaissé', value: fmtMga(aggAll.encaissements), color: '#00ab63', pct: aggAll.totalCreances > 0 ? ((aggAll.encaissements / aggAll.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Contentieux', value: fmtMga(aggAll.standby + aggAll.contentieux), color: '#e05c5c', pct: aggAll.totalCreances > 0 ? (((aggAll.standby + aggAll.contentieux) / aggAll.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Reste à collecter', value: fmtMga(aggAll.resteACollecter), color: '#f39c12', pct: aggAll.totalCreances > 0 ? ((aggAll.resteACollecter / aggAll.totalCreances) * 100).toFixed(0) : 0 },
         { label: 'Retard moyen', value: `${aggAll.avgRetard}j`, color: aggAll.avgRetard > 180 ? '#e05c5c' : aggAll.avgRetard > 90 ? '#f37056' : '#f39c12', unit: `${aggAll.countRetard} clients · max ${aggAll.maxRetard}j` },
       ]} />
       <KpiCards items={[
-        { label: 'Plan Mars', value: fmtMga(aggAll.planMars), color: COLOR },
-        { label: 'Plan Avril', value: fmtMga(aggAll.planAvril), color: COLOR },
-        { label: 'Plan Mai', value: fmtMga(aggAll.planMai), color: COLOR },
-        { label: 'Montant 2025', value: fmtMga(aggAll.montant2025) },
+        { label: 'Plan Mars', value: fmtMga(aggAll.planMars), color: COLOR, pct: aggAll.totalCreances > 0 ? ((aggAll.planMars / aggAll.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Plan Avril', value: fmtMga(aggAll.planAvril), color: COLOR, pct: aggAll.totalCreances > 0 ? ((aggAll.planAvril / aggAll.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Plan Mai', value: fmtMga(aggAll.planMai), color: COLOR, pct: aggAll.totalCreances > 0 ? ((aggAll.planMai / aggAll.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Montant 2025', value: fmtMga(aggAll.montant2025), pct: aggAll.totalCreances > 0 ? ((aggAll.montant2025 / aggAll.totalCreances) * 100).toFixed(0) : 0 },
       ]} />
 
       <CashFlowChart monthlyData={cfg.monthly} />

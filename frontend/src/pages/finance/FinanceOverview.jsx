@@ -20,9 +20,9 @@ export default function FinanceOverview() {
       </div>
       <KpiCards items={[
         { label: 'Total Créances', value: fmtMga(all.totalCreances), color: COLOR },
-        { label: 'Encaissé', value: fmtMga(all.encaissements), color: '#00ab63' },
-        { label: 'Contentieux', value: fmtMga(all.standby + all.contentieux), color: '#e05c5c' },
-        { label: 'Reste à collecter', value: fmtMga(all.resteACollecter), color: '#f39c12' },
+        { label: 'Encaissé', value: fmtMga(all.encaissements), color: '#00ab63', pct: all.totalCreances > 0 ? ((all.encaissements / all.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Contentieux', value: fmtMga(all.standby + all.contentieux), color: '#e05c5c', pct: all.totalCreances > 0 ? (((all.standby + all.contentieux) / all.totalCreances) * 100).toFixed(0) : 0 },
+        { label: 'Reste à collecter', value: fmtMga(all.resteACollecter), color: '#f39c12', pct: all.totalCreances > 0 ? ((all.resteACollecter / all.totalCreances) * 100).toFixed(0) : 0 },
         { label: 'Retard moyen', value: `${all.avgRetard}j`, color: all.avgRetard > 180 ? '#e05c5c' : all.avgRetard > 90 ? '#f37056' : '#f39c12', unit: `${all.countRetard} clients · max ${all.maxRetard}j` },
       ]} />
 

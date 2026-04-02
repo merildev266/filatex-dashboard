@@ -43,6 +43,7 @@ export function KpiCards({ items }) {
         <div className="s1-card" key={i} style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)' }}>
           <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{kpi.label}</div>
           <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)', fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{kpi.value}</div>
+          {kpi.pct !== undefined && kpi.pct !== null && <div style={{ fontSize: 'clamp(9px, 1.1vw, 13px)', fontWeight: 700, color: kpi.color || 'var(--text)', opacity: 0.6, marginTop: 1 }}>{kpi.pct}%</div>}
           {kpi.unit && <div className="s1-card-unit-line" style={{ fontSize: 'clamp(8px, 0.9vw, 11px)' }}>{kpi.unit}</div>}
         </div>
       ))}
@@ -74,6 +75,7 @@ export function KpiFilterCards({ items, active, onSelect }) {
           >
             <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{kpi.label}</div>
             <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)', fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{kpi.value}</div>
+            {kpi.pct !== undefined && kpi.pct !== null && <div style={{ fontSize: 'clamp(9px, 1vw, 12px)', fontWeight: 700, color: kpi.color || 'var(--text)', opacity: 0.6, marginTop: 1 }}>{kpi.pct}%</div>}
             {kpi.count !== undefined && (
               <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{kpi.count} client{kpi.count > 1 ? 's' : ''}</div>
             )}

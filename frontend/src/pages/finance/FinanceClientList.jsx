@@ -341,15 +341,15 @@ export default function FinanceClientList() {
         onSelect={setKpiFilter}
         items={[
           { label: 'Total Créances', value: fmtMga(agg.totalCreances), color: COLOR, filterKey: 'all', count: clients.length },
-          { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63', filterKey: 'encaisse', count: countEncaisse },
-          { label: 'Contentieux', value: fmtMga(agg.standby + agg.contentieux), color: '#e05c5c', filterKey: 'contentieux', count: countContentieux },
-          { label: 'Reste à collecter', value: fmtMga(agg.resteACollecter), color: '#f39c12', filterKey: 'reste', count: countReste },
+          { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63', filterKey: 'encaisse', count: countEncaisse, pct: agg.totalCreances > 0 ? ((agg.encaissements / agg.totalCreances) * 100).toFixed(0) : 0 },
+          { label: 'Contentieux', value: fmtMga(agg.standby + agg.contentieux), color: '#e05c5c', filterKey: 'contentieux', count: countContentieux, pct: agg.totalCreances > 0 ? (((agg.standby + agg.contentieux) / agg.totalCreances) * 100).toFixed(0) : 0 },
+          { label: 'Reste à collecter', value: fmtMga(agg.resteACollecter), color: '#f39c12', filterKey: 'reste', count: countReste, pct: agg.totalCreances > 0 ? ((agg.resteACollecter / agg.totalCreances) * 100).toFixed(0) : 0 },
         ]}
       />
       <KpiCards items={[
         { label: 'Retard moyen', value: `${agg.avgRetard}j`, color: agg.avgRetard > 180 ? '#e05c5c' : agg.avgRetard > 90 ? '#f37056' : '#f39c12' },
         { label: 'Retard max', value: `${agg.maxRetard}j`, color: '#e05c5c' },
-        { label: 'En retard', value: `${agg.countRetard}`, color: '#f37056', unit: `sur ${clients.length} clients` },
+        { label: 'En retard', value: `${agg.countRetard}`, color: '#f37056', unit: `sur ${clients.length} clients`, pct: clients.length > 0 ? ((agg.countRetard / clients.length) * 100).toFixed(0) : 0 },
       ]} />
 
       {/* Nature filter cards */}
