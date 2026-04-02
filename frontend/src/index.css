@@ -44,9 +44,9 @@ html::-webkit-scrollbar { display: none; }
   --card-border: rgba(58,57,92,0.35);
   --border: rgba(58,57,92,0.20);
   --text: #e4f4fd;
-  --text-secondary: rgba(228,244,253,0.75);
-  --text-muted: rgba(228,244,253,0.75);
-  --text-dim: rgba(228,244,253,0.75);
+  --text-secondary: rgba(228,244,253,0.95);
+  --text-muted: rgba(228,244,253,0.95);
+  --text-dim: rgba(228,244,253,0.95);
   --selected: #8a92ab;
   --banner-bg: rgba(0,0,0,0.92);
   --banner-border: rgba(255,255,255,0.08);
@@ -99,9 +99,9 @@ html::-webkit-scrollbar { display: none; }
   --card-border: rgba(58,57,92,0.08);
   --border: rgba(58,57,92,0.08);
   --text: #3A395C;
-  --text-secondary: rgba(58,57,92,0.75);
-  --text-muted: rgba(58,57,92,0.75);
-  --text-dim: rgba(58,57,92,0.75);
+  --text-secondary: rgba(58,57,92,0.95);
+  --text-muted: rgba(58,57,92,0.95);
+  --text-dim: rgba(58,57,92,0.95);
   --selected: #aec1cd;
   --banner-bg: rgba(228,244,253,0.85);
   --banner-border: rgba(58,57,92,0.06);
