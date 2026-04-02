@@ -4841,3 +4841,1073 @@ export const TCM_MONTHLY = [
     "clientsReel": []
   }
 ]
+
+export const TCM_PROJECTS = [
+  {
+    "projet": "TRANO GASY",
+    "isGroup": true,
+    "totalCreances": 6043414807.57,
+    "encaissements": 2198083570.67,
+    "resteACollecter": 3845331236.9,
+    "nbClients": 9,
+    "sousProjectes": [
+      {
+        "nom": "TRANO GASY V08",
+        "totalCreances": 1588645303.2,
+        "encaissements": 50000000.0,
+        "resteACollecter": 1538645303.2,
+        "clients": [
+          {
+            "client": "RABETSAROANA Vololona",
+            "totalCreances": 1588645303.2,
+            "encaissements": 50000000.0
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V02",
+        "totalCreances": 1073979591.66,
+        "encaissements": 1079926040.5,
+        "resteACollecter": -5946448.84,
+        "clients": [
+          {
+            "client": "PINOU CHERALY",
+            "totalCreances": 1073979591.66,
+            "encaissements": 1079926040.5
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V06",
+        "totalCreances": 892778570.9,
+        "encaissements": 77744426.5,
+        "resteACollecter": 815034144.4,
+        "clients": [
+          {
+            "client": "HASSANALY NADIR",
+            "totalCreances": 892778570.9,
+            "encaissements": 77744426.5
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V09",
+        "totalCreances": 713877000.0,
+        "encaissements": 713877000.0,
+        "resteACollecter": 0.0,
+        "clients": [
+          {
+            "client": "DAMDJEE JAMIL",
+            "totalCreances": 713877000.0,
+            "encaissements": 713877000.0
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V05",
+        "totalCreances": 671724419.0,
+        "encaissements": 0,
+        "resteACollecter": 671724419.0,
+        "clients": [
+          {
+            "client": "YATRICK OUKABAY",
+            "totalCreances": 671724419.0,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V04",
+        "totalCreances": 392937957.24,
+        "encaissements": 107639999.96,
+        "resteACollecter": 285297957.28,
+        "clients": [
+          {
+            "client": "DJAFFAR RIAZ",
+            "totalCreances": 392937957.24,
+            "encaissements": 107639999.96
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY II Lot 1",
+        "totalCreances": 293074695.2,
+        "encaissements": 144645000.0,
+        "resteACollecter": 148429695.2,
+        "clients": [
+          {
+            "client": "SOCIETE SCIV",
+            "totalCreances": 293074695.2,
+            "encaissements": 144645000.0
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V10",
+        "totalCreances": 259860000.0,
+        "encaissements": 0,
+        "resteACollecter": 259860000.0,
+        "clients": [
+          {
+            "client": "FAYD HERBE DE MAUDAVE Fabienne Wendy",
+            "totalCreances": 259860000.0,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY V03 BIS",
+        "totalCreances": 132286166.66,
+        "encaissements": 0,
+        "resteACollecter": 132286166.66,
+        "clients": [
+          {
+            "client": "ENTIC IMMO",
+            "totalCreances": 132286166.66,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "TRANO GASY II",
+        "totalCreances": 24251103.71,
+        "encaissements": 24251103.71,
+        "resteACollecter": 0.0,
+        "clients": [
+          {
+            "client": "PINOU CHERALY",
+            "totalCreances": 24251103.71,
+            "encaissements": 24251103.71
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "RABETSAROANA Vololona",
+        "totalCreances": 1588645303.2,
+        "encaissements": 50000000.0
+      },
+      {
+        "client": "PINOU CHERALY",
+        "totalCreances": 1098230695.37,
+        "encaissements": 1104177144.21
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "totalCreances": 892778570.9,
+        "encaissements": 77744426.5
+      },
+      {
+        "client": "DAMDJEE JAMIL",
+        "totalCreances": 713877000.0,
+        "encaissements": 713877000.0
+      },
+      {
+        "client": "YATRICK OUKABAY",
+        "totalCreances": 671724419.0,
+        "encaissements": 0
+      },
+      {
+        "client": "DJAFFAR RIAZ",
+        "totalCreances": 392937957.24,
+        "encaissements": 107639999.96
+      },
+      {
+        "client": "SOCIETE SCIV",
+        "totalCreances": 293074695.2,
+        "encaissements": 144645000.0
+      },
+      {
+        "client": "FAYD HERBE DE MAUDAVE Fabienne Wendy",
+        "totalCreances": 259860000.0,
+        "encaissements": 0
+      },
+      {
+        "client": "ENTIC IMMO",
+        "totalCreances": 132286166.66,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "TERRAIN",
+    "isGroup": true,
+    "totalCreances": 5559835896.09,
+    "encaissements": 476979000.0,
+    "resteACollecter": 5082856896.09,
+    "nbClients": 6,
+    "sousProjectes": [
+      {
+        "nom": "TERRAIN AMAYA",
+        "totalCreances": 3678760066.98,
+        "encaissements": 79620000.0,
+        "resteACollecter": 3599140066.98,
+        "clients": [
+          {
+            "client": "YAKATALY ALIHOUSSEN",
+            "totalCreances": 2769589624.0,
+            "encaissements": 0
+          },
+          {
+            "client": "Société IVORY SARL",
+            "totalCreances": 708422760.12,
+            "encaissements": 0
+          },
+          {
+            "client": "NILESH KUMAR BHAGVANDAS",
+            "totalCreances": 120533815.94,
+            "encaissements": 79620000.0
+          },
+          {
+            "client": "HASSANALY CHAHICK",
+            "totalCreances": 80213866.92,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "ANDRANOTAPAHINA TERRAIN",
+        "totalCreances": 1062657102.96,
+        "encaissements": 0,
+        "resteACollecter": 1062657102.96,
+        "clients": [
+          {
+            "client": "SOCIETE SCIV",
+            "totalCreances": 1062657102.96,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "TERRAIN AMAYA MALAGA AVENIR",
+        "totalCreances": 434322608.0,
+        "encaissements": 207539000.0,
+        "resteACollecter": 226783608.0,
+        "clients": [
+          {
+            "client": "Société OMNIVEST",
+            "totalCreances": 434322608.0,
+            "encaissements": 207539000.0
+          }
+        ]
+      },
+      {
+        "nom": "TERRAIN CASA DEL LAGO ANDRANOTAPAHINA",
+        "totalCreances": 384096118.15,
+        "encaissements": 189820000.0,
+        "resteACollecter": 194276118.15,
+        "clients": [
+          {
+            "client": "SOCIETE SCIV",
+            "totalCreances": 384096118.15,
+            "encaissements": 189820000.0
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "totalCreances": 2769589624.0,
+        "encaissements": 0
+      },
+      {
+        "client": "SOCIETE SCIV",
+        "totalCreances": 1446753221.11,
+        "encaissements": 189820000.0
+      },
+      {
+        "client": "Société IVORY SARL",
+        "totalCreances": 708422760.12,
+        "encaissements": 0
+      },
+      {
+        "client": "Société OMNIVEST",
+        "totalCreances": 434322608.0,
+        "encaissements": 207539000.0
+      },
+      {
+        "client": "NILESH KUMAR BHAGVANDAS",
+        "totalCreances": 120533815.94,
+        "encaissements": 79620000.0
+      },
+      {
+        "client": "HASSANALY CHAHICK",
+        "totalCreances": 80213866.92,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "EDEN",
+    "isGroup": true,
+    "totalCreances": 2904733477.49,
+    "encaissements": 2512938306.58,
+    "resteACollecter": 391795170.91,
+    "nbClients": 9,
+    "sousProjectes": [
+      {
+        "nom": "EDEN 8 V03",
+        "totalCreances": 787812755.21,
+        "encaissements": 873622418.23,
+        "resteACollecter": -85809663.02,
+        "clients": [
+          {
+            "client": "Société SIC",
+            "totalCreances": 787812755.21,
+            "encaissements": 873622418.23
+          }
+        ]
+      },
+      {
+        "nom": "EDEN 8 V05",
+        "totalCreances": 725340673.96,
+        "encaissements": 824321100.89,
+        "resteACollecter": -98980426.93,
+        "clients": [
+          {
+            "client": "HASSANALY NADIR",
+            "totalCreances": 725340673.96,
+            "encaissements": 824321100.89
+          }
+        ]
+      },
+      {
+        "nom": "EDEN EXTENSION V01",
+        "totalCreances": 702813000.0,
+        "encaissements": 702813000.0,
+        "resteACollecter": 0.0,
+        "clients": [
+          {
+            "client": "MAMOD RAZA ASGARALY",
+            "totalCreances": 702813000.0,
+            "encaissements": 702813000.0
+          }
+        ]
+      },
+      {
+        "nom": "EDEN 8 V08",
+        "totalCreances": 391051281.88,
+        "encaissements": 103626781.88,
+        "resteACollecter": 287424500.0,
+        "clients": [
+          {
+            "client": "DAMDJEE JAMIL",
+            "totalCreances": 157504500.0,
+            "encaissements": 0
+          },
+          {
+            "client": "TANG SIOU MI Jade Amanda",
+            "totalCreances": 129920000.0,
+            "encaissements": 0
+          },
+          {
+            "client": "PINOU CHERALY",
+            "totalCreances": 103626781.88,
+            "encaissements": 103626781.88
+          }
+        ]
+      },
+      {
+        "nom": "EDEN 8 V06",
+        "totalCreances": 230000000.0,
+        "encaissements": 0,
+        "resteACollecter": 230000000.0,
+        "clients": [
+          {
+            "client": "MUFFAZAL NOURBHAY",
+            "totalCreances": 230000000.0,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "EDEN 8 V04",
+        "totalCreances": 55032133.33,
+        "encaissements": 0,
+        "resteACollecter": 55032133.33,
+        "clients": [
+          {
+            "client": "KASSIM LAKHOUBAY",
+            "totalCreances": 55032133.33,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "EDEN",
+        "totalCreances": 12683633.11,
+        "encaissements": 8555005.58,
+        "resteACollecter": 4128627.53,
+        "clients": [
+          {
+            "client": "ROBIMANANA Rivomanantsoa Orlando",
+            "totalCreances": 12683633.11,
+            "encaissements": 8555005.58
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "Société SIC",
+        "totalCreances": 787812755.21,
+        "encaissements": 873622418.23
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "totalCreances": 725340673.96,
+        "encaissements": 824321100.89
+      },
+      {
+        "client": "MAMOD RAZA ASGARALY",
+        "totalCreances": 702813000.0,
+        "encaissements": 702813000.0
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "totalCreances": 230000000.0,
+        "encaissements": 0
+      },
+      {
+        "client": "DAMDJEE JAMIL",
+        "totalCreances": 157504500.0,
+        "encaissements": 0
+      },
+      {
+        "client": "TANG SIOU MI Jade Amanda",
+        "totalCreances": 129920000.0,
+        "encaissements": 0
+      },
+      {
+        "client": "PINOU CHERALY",
+        "totalCreances": 103626781.88,
+        "encaissements": 103626781.88
+      },
+      {
+        "client": "KASSIM LAKHOUBAY",
+        "totalCreances": 55032133.33,
+        "encaissements": 0
+      },
+      {
+        "client": "ROBIMANANA Rivomanantsoa Orlando",
+        "totalCreances": 12683633.11,
+        "encaissements": 8555005.58
+      }
+    ]
+  },
+  {
+    "projet": "VENTANA",
+    "isGroup": false,
+    "totalCreances": 1165263499.23,
+    "encaissements": 648090208.98,
+    "resteACollecter": 517173290.25,
+    "nbClients": 25,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "FILATEX",
+        "totalCreances": 342270776.15,
+        "encaissements": 68454155.23
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "totalCreances": 211555296.99,
+        "encaissements": 305423150.44
+      },
+      {
+        "client": "ENAT",
+        "totalCreances": 137351389.1,
+        "encaissements": 0
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "totalCreances": 97016296.96,
+        "encaissements": 172603132.89
+      },
+      {
+        "client": "DIRECTION GENERALE DES FINANCES ET DES AFFAIRES GENERALES",
+        "totalCreances": 73296000.0,
+        "encaissements": 0
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "totalCreances": 71688494.9,
+        "encaissements": 0
+      },
+      {
+        "client": "PLG CONFECTION",
+        "totalCreances": 54044140.81,
+        "encaissements": 37035839.29
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "totalCreances": 45116647.36,
+        "encaissements": 0
+      },
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "totalCreances": 19913984.08,
+        "encaissements": 15200369.87
+      },
+      {
+        "client": "ENELEC",
+        "totalCreances": 12197479.89,
+        "encaissements": 0
+      },
+      {
+        "client": "DONGNAM",
+        "totalCreances": 12190480.08,
+        "encaissements": 4391474.35
+      },
+      {
+        "client": "RAVINALA COMPANY",
+        "totalCreances": 11421843.94,
+        "encaissements": 5769199.54
+      },
+      {
+        "client": "AGRICHEM SARL",
+        "totalCreances": 9752225.28,
+        "encaissements": 9752225.28
+      },
+      {
+        "client": "SONIA MADA TEXTILE",
+        "totalCreances": 9729846.0,
+        "encaissements": 4789016.08
+      },
+      {
+        "client": "BELKAHLA  NAOUFEL",
+        "totalCreances": 9355552.09,
+        "encaissements": 3269361.07
+      },
+      {
+        "client": "ECO ENERGY SARLU",
+        "totalCreances": 9094707.85,
+        "encaissements": 4544454.72
+      },
+      {
+        "client": "DAMOTTE ERIC",
+        "totalCreances": 7457648.27,
+        "encaissements": 0
+      },
+      {
+        "client": "I MAR MADAGASCAR",
+        "totalCreances": 7029875.34,
+        "encaissements": 7029875.34
+      },
+      {
+        "client": "RASOANANTENAINA",
+        "totalCreances": 5876915.21,
+        "encaissements": 0
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "totalCreances": 5229349.76,
+        "encaissements": 0
+      },
+      {
+        "client": "MHPC",
+        "totalCreances": 5023241.14,
+        "encaissements": 5023241.14
+      },
+      {
+        "client": "JARDINS MEUBLES",
+        "totalCreances": 4804713.74,
+        "encaissements": 4804713.74
+      },
+      {
+        "client": "Frederic GRENIER",
+        "totalCreances": 2965149.72,
+        "encaissements": 0
+      },
+      {
+        "client": "HOUSSENALY MOURDJEE Minaze",
+        "totalCreances": 690965.01,
+        "encaissements": 0
+      },
+      {
+        "client": "WANG Yanggang",
+        "totalCreances": 190479.56,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "ALHAMBRA",
+    "isGroup": true,
+    "totalCreances": 672429066.61,
+    "encaissements": 119362353.68,
+    "resteACollecter": 553066712.93,
+    "nbClients": 12,
+    "sousProjectes": [
+      {
+        "nom": "ALHAMBRA GALLERY",
+        "totalCreances": 667554542.53,
+        "encaissements": 119362353.68,
+        "resteACollecter": 548192188.85,
+        "clients": [
+          {
+            "client": "PADDY GROUP MADAGASCAR",
+            "totalCreances": 201122573.37,
+            "encaissements": 0
+          },
+          {
+            "client": "ANDILANA MADAGASCAR SARL",
+            "totalCreances": 164685586.91,
+            "encaissements": 0
+          },
+          {
+            "client": "TCM",
+            "totalCreances": 109757793.56,
+            "encaissements": 0
+          },
+          {
+            "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+            "totalCreances": 98279884.9,
+            "encaissements": 88398391.21
+          },
+          {
+            "client": "BANQUE BOA MADAGASCAR",
+            "totalCreances": 38544421.2,
+            "encaissements": 18040640.0
+          },
+          {
+            "client": "ORANGE MADAGASCAR",
+            "totalCreances": 16669800.0,
+            "encaissements": 0
+          },
+          {
+            "client": "RVL Consulting",
+            "totalCreances": 14421770.35,
+            "encaissements": 4878357.73
+          },
+          {
+            "client": "TOWERCO OF AFRICA",
+            "totalCreances": 9307969.2,
+            "encaissements": 3723187.68
+          },
+          {
+            "client": "SADROUDINE RICHAD",
+            "totalCreances": 7566034.0,
+            "encaissements": 0
+          },
+          {
+            "client": "ACOI",
+            "totalCreances": 4321777.06,
+            "encaissements": 4321777.06
+          },
+          {
+            "client": "CODE TALENT",
+            "totalCreances": 2876931.98,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "ALHAMBRA RESTAURANT",
+        "totalCreances": 4874524.08,
+        "encaissements": 0,
+        "resteACollecter": 4874524.08,
+        "clients": [
+          {
+            "client": "LE GRAND ORIENT",
+            "totalCreances": 4874524.08,
+            "encaissements": 0
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "PADDY GROUP MADAGASCAR",
+        "totalCreances": 201122573.37,
+        "encaissements": 0
+      },
+      {
+        "client": "ANDILANA MADAGASCAR SARL",
+        "totalCreances": 164685586.91,
+        "encaissements": 0
+      },
+      {
+        "client": "TCM",
+        "totalCreances": 109757793.56,
+        "encaissements": 0
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "totalCreances": 98279884.9,
+        "encaissements": 88398391.21
+      },
+      {
+        "client": "BANQUE BOA MADAGASCAR",
+        "totalCreances": 38544421.2,
+        "encaissements": 18040640.0
+      },
+      {
+        "client": "ORANGE MADAGASCAR",
+        "totalCreances": 16669800.0,
+        "encaissements": 0
+      },
+      {
+        "client": "RVL Consulting",
+        "totalCreances": 14421770.35,
+        "encaissements": 4878357.73
+      },
+      {
+        "client": "TOWERCO OF AFRICA",
+        "totalCreances": 9307969.2,
+        "encaissements": 3723187.68
+      },
+      {
+        "client": "SADROUDINE RICHAD",
+        "totalCreances": 7566034.0,
+        "encaissements": 0
+      },
+      {
+        "client": "LE GRAND ORIENT",
+        "totalCreances": 4874524.08,
+        "encaissements": 0
+      },
+      {
+        "client": "ACOI",
+        "totalCreances": 4321777.06,
+        "encaissements": 4321777.06
+      },
+      {
+        "client": "CODE TALENT",
+        "totalCreances": 2876931.98,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "GATEWAY",
+    "isGroup": false,
+    "totalCreances": 566296274.05,
+    "encaissements": 96448180.02,
+    "resteACollecter": 469848094.03,
+    "nbClients": 2,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "totalCreances": 529251408.05,
+        "encaissements": 96448180.02
+      },
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "totalCreances": 37044866.0,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "TAMARINDO",
+    "isGroup": true,
+    "totalCreances": 501031125.74,
+    "encaissements": 184985200.0,
+    "resteACollecter": 316045925.74,
+    "nbClients": 3,
+    "sousProjectes": [
+      {
+        "nom": "TAMARINDO TERRAIN",
+        "totalCreances": 260361248.76,
+        "encaissements": 69380000.0,
+        "resteACollecter": 190981248.76,
+        "clients": [
+          {
+            "client": "SOCIETE SCIV",
+            "totalCreances": 139401248.76,
+            "encaissements": 69380000.0
+          },
+          {
+            "client": "JARDIN DE TANA",
+            "totalCreances": 120960000.0,
+            "encaissements": 0
+          }
+        ]
+      },
+      {
+        "nom": "TAMARINDO Immeuble",
+        "totalCreances": 235516287.1,
+        "encaissements": 115605200.0,
+        "resteACollecter": 119911087.1,
+        "clients": [
+          {
+            "client": "SOCIETE SCIV",
+            "totalCreances": 235516287.1,
+            "encaissements": 115605200.0
+          }
+        ]
+      },
+      {
+        "nom": "TAMARINDO VILLA",
+        "totalCreances": 5153589.88,
+        "encaissements": 0,
+        "resteACollecter": 5153589.88,
+        "clients": [
+          {
+            "client": "Patrick RAJOELINA",
+            "totalCreances": 5153589.88,
+            "encaissements": 0
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "SOCIETE SCIV",
+        "totalCreances": 374917535.86,
+        "encaissements": 184985200.0
+      },
+      {
+        "client": "JARDIN DE TANA",
+        "totalCreances": 120960000.0,
+        "encaissements": 0
+      },
+      {
+        "client": "Patrick RAJOELINA",
+        "totalCreances": 5153589.88,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "MALAGA",
+    "isGroup": true,
+    "totalCreances": 144662529.92,
+    "encaissements": 80083550.41,
+    "resteACollecter": 64578979.51,
+    "nbClients": 5,
+    "sousProjectes": [
+      {
+        "nom": "MALAGA OFFICE",
+        "totalCreances": 87018577.78,
+        "encaissements": 61640967.94,
+        "resteACollecter": 25377609.84,
+        "clients": [
+          {
+            "client": "AFG ASSURANCE MADAGASCAR",
+            "totalCreances": 49798285.78,
+            "encaissements": 24420675.94
+          },
+          {
+            "client": "GO SAAS",
+            "totalCreances": 37220292.0,
+            "encaissements": 37220292.0
+          }
+        ]
+      },
+      {
+        "nom": "MALAGA RESIDENCE 1",
+        "totalCreances": 57643952.14,
+        "encaissements": 18442582.47,
+        "resteACollecter": 39201369.67,
+        "clients": [
+          {
+            "client": "NANA SAYOUBA",
+            "totalCreances": 36803464.36,
+            "encaissements": 4262145.0
+          },
+          {
+            "client": "JOCKER GRAPHICS",
+            "totalCreances": 13068964.76,
+            "encaissements": 6408914.45
+          },
+          {
+            "client": "DOMINIQUE  ANDREAS",
+            "totalCreances": 7771523.02,
+            "encaissements": 7771523.02
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "AFG ASSURANCE MADAGASCAR",
+        "totalCreances": 49798285.78,
+        "encaissements": 24420675.94
+      },
+      {
+        "client": "GO SAAS",
+        "totalCreances": 37220292.0,
+        "encaissements": 37220292.0
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "totalCreances": 36803464.36,
+        "encaissements": 4262145.0
+      },
+      {
+        "client": "JOCKER GRAPHICS",
+        "totalCreances": 13068964.76,
+        "encaissements": 6408914.45
+      },
+      {
+        "client": "DOMINIQUE  ANDREAS",
+        "totalCreances": 7771523.02,
+        "encaissements": 7771523.02
+      }
+    ]
+  },
+  {
+    "projet": "GHU",
+    "isGroup": false,
+    "totalCreances": 105526743.0,
+    "encaissements": 0,
+    "resteACollecter": 105526743.0,
+    "nbClients": 1,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "HAMANGA SARL",
+        "totalCreances": 105526743.0,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "D17",
+    "isGroup": false,
+    "totalCreances": 71313330.24,
+    "encaissements": 13508164.04,
+    "resteACollecter": 57805166.2,
+    "nbClients": 2,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "SAGEMCOM ENERGY & TELECOM SAS",
+        "totalCreances": 57805166.2,
+        "encaissements": 0
+      },
+      {
+        "client": "BANQUE SBM MADAGASCAR",
+        "totalCreances": 13508164.04,
+        "encaissements": 13508164.04
+      }
+    ]
+  },
+  {
+    "projet": "FONCIER",
+    "isGroup": false,
+    "totalCreances": 68175368.06,
+    "encaissements": 13065651.43,
+    "resteACollecter": 55109716.63,
+    "nbClients": 2,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "MADA TULEAR GREEN POWER",
+        "totalCreances": 55109716.63,
+        "encaissements": 0
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "totalCreances": 13065651.43,
+        "encaissements": 13065651.43
+      }
+    ]
+  },
+  {
+    "projet": "VILLA LOLA",
+    "isGroup": false,
+    "totalCreances": 55567299.0,
+    "encaissements": 18522433.0,
+    "resteACollecter": 37044866.0,
+    "nbClients": 1,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "totalCreances": 55567299.0,
+        "encaissements": 18522433.0
+      }
+    ]
+  },
+  {
+    "projet": "ANDRONDRAKELY",
+    "isGroup": false,
+    "totalCreances": 39097462.2,
+    "encaissements": 26362823.4,
+    "resteACollecter": 12734638.8,
+    "nbClients": 1,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "SITMA",
+        "totalCreances": 39097462.2,
+        "encaissements": 26362823.4
+      }
+    ]
+  },
+  {
+    "projet": "CANELA VILLA",
+    "isGroup": false,
+    "totalCreances": 29340851.4,
+    "encaissements": 0,
+    "resteACollecter": 29340851.4,
+    "nbClients": 2,
+    "sousProjectes": [],
+    "clients": [
+      {
+        "client": "Association KANTOKO",
+        "totalCreances": 19821734.1,
+        "encaissements": 0
+      },
+      {
+        "client": "Association  KANTOKO",
+        "totalCreances": 9519117.3,
+        "encaissements": 0
+      }
+    ]
+  },
+  {
+    "projet": "ZFI",
+    "isGroup": true,
+    "totalCreances": 5742240.81,
+    "encaissements": 9734933.71,
+    "resteACollecter": -3992692.9,
+    "nbClients": 2,
+    "sousProjectes": [
+      {
+        "nom": "ZFI TULEAR",
+        "totalCreances": 3093008.76,
+        "encaissements": 1508647.8,
+        "resteACollecter": 1584360.96,
+        "clients": [
+          {
+            "client": "MADAGREEN",
+            "totalCreances": 3093008.76,
+            "encaissements": 1508647.8
+          }
+        ]
+      },
+      {
+        "nom": "ZFI",
+        "totalCreances": 2649232.05,
+        "encaissements": 8226285.91,
+        "resteACollecter": -5577053.86,
+        "clients": [
+          {
+            "client": "SHOWROOM",
+            "totalCreances": 2649232.05,
+            "encaissements": 8226285.91
+          }
+        ]
+      }
+    ],
+    "clients": [
+      {
+        "client": "MADAGREEN",
+        "totalCreances": 3093008.76,
+        "encaissements": 1508647.8
+      },
+      {
+        "client": "SHOWROOM",
+        "totalCreances": 2649232.05,
+        "encaissements": 8226285.91
+      }
+    ]
+  }
+]

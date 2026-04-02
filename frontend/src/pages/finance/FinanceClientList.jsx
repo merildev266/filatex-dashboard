@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY } from '../../data/finance_data'
+import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY, TCM_PROJECTS } from '../../data/finance_data'
 import { COLOR, fmtMga, aggregate, KpiCards, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, CashFlowChart, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
@@ -242,6 +242,148 @@ function SortControls({ active, onChange }) {
   )
 }
 
+/* ── View toggle: Client / Projet (TCM only) ── */
+function ViewToggle({ active, onChange }) {
+  return (
+    <div style={{ display: 'flex', gap: 0, borderRadius: 10, overflow: 'hidden', border: `1px solid ${COLOR}33` }}>
+      {[
+        { key: 'client', label: 'Clients' },
+        { key: 'projet', label: 'Projets' },
+      ].map(tab => {
+        const isActive = active === tab.key
+        return (
+          <button
+            key={tab.key}
+            onClick={() => onChange(tab.key)}
+            style={{
+              padding: '7px 18px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+              cursor: 'pointer', border: 'none', transition: 'all 0.2s',
+              background: isActive ? '#9b59b6' : 'transparent',
+              color: isActive ? '#fff' : 'var(--text-muted)',
+            }}
+          >
+            {tab.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ── Project card with expandable sub-projects ── */
+function ProjectCard({ project }) {
+  const [open, setOpen] = useState(false)
+  const p = project
+  const pct = p.totalCreances > 0 ? ((p.encaissements / p.totalCreances) * 100).toFixed(0) : 0
+
+  return (
+    <div
+      className="card card-finance"
+      style={{ padding: '20px 18px', cursor: 'pointer', alignItems: 'stretch', textAlign: 'left' }}
+      onClick={() => setOpen(!open)}
+    >
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{p.projet}</div>
+          <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>
+            {p.nbClients} client{p.nbClients > 1 ? 's' : ''}
+            {p.isGroup && <span> · {p.sousProjectes.length} sous-projets</span>}
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12' }}>{pct}%</span>
+          <svg viewBox="0 0 20 20" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+            <polyline points="5 8 10 13 15 8" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Mini KPI cards */}
+      <div className="grid grid-cols-3 gap-1.5 w-full">
+        <div className="s1-card" style={{ padding: '8px 4px' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Créances</div>
+          <div className="s1-card-value" style={{ color: COLOR, fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{fmtMga(p.totalCreances)}</div>
+        </div>
+        <div className="s1-card" style={{ padding: '8px 4px' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Encaissé</div>
+          <div className="s1-card-value" style={{ color: '#00ab63', fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{fmtMga(p.encaissements)}</div>
+        </div>
+        <div className="s1-card" style={{ padding: '8px 4px' }}>
+          <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.6vw, 7px)' }}>Reste</div>
+          <div className="s1-card-value" style={{ color: '#f39c12', fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{fmtMga(p.resteACollecter)}</div>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{ height: 4, borderRadius: 2, background: 'var(--card-border)', overflow: 'hidden', marginTop: 8 }}>
+        <div style={{ width: `${pct}%`, height: '100%', background: '#00ab63', borderRadius: 2 }} />
+      </div>
+
+      {/* Expanded detail */}
+      {open && (
+        <div style={{ marginTop: 14, padding: '12px 0 0', borderTop: `1px solid ${COLOR}33` }}>
+          {/* Sub-projects */}
+          {p.isGroup && p.sousProjectes.length > 0 && (
+            <>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#9b59b6', marginBottom: 8 }}>
+                Sous-projets ({p.sousProjectes.length})
+              </div>
+              {p.sousProjectes.map((sp, i) => {
+                const spPct = sp.totalCreances > 0 ? ((sp.encaissements / sp.totalCreances) * 100).toFixed(0) : 0
+                return (
+                  <div key={i} style={{ marginBottom: 8, padding: '8px 10px', background: 'rgba(155,89,182,0.04)', borderRadius: 8, border: '1px solid rgba(155,89,182,0.12)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>{sp.nom}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: Number(spPct) >= 50 ? '#00ab63' : '#f39c12' }}>{spPct}%</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 12, fontSize: 9 }}>
+                      <span><span style={{ color: 'var(--text-muted)' }}>Créances:</span> <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(sp.totalCreances)}</span></span>
+                      <span><span style={{ color: 'var(--text-muted)' }}>Encaissé:</span> <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(sp.encaissements)}</span></span>
+                      <span><span style={{ color: 'var(--text-muted)' }}>Reste:</span> <span style={{ fontWeight: 700, color: '#f39c12' }}>{fmtMga(sp.resteACollecter)}</span></span>
+                    </div>
+                    {/* Progress bar */}
+                    <div style={{ height: 3, borderRadius: 2, background: 'var(--card-border)', overflow: 'hidden', marginTop: 4 }}>
+                      <div style={{ width: `${spPct}%`, height: '100%', background: '#00ab63', borderRadius: 2 }} />
+                    </div>
+                    {/* Clients */}
+                    <div style={{ marginTop: 4 }}>
+                      {sp.clients.map((c, j) => (
+                        <div key={j} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', fontSize: 9 }}>
+                          <span style={{ color: 'var(--text-muted)' }}>{c.client}</span>
+                          <span style={{ fontWeight: 600, color: COLOR }}>{fmtMga(c.totalCreances)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </>
+          )}
+
+          {/* Direct clients (for standalone projects) */}
+          {!p.isGroup && p.clients.length > 0 && (
+            <>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>
+                Clients ({p.clients.length})
+              </div>
+              {p.clients.map((c, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--card-border)' }}>
+                  <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: COLOR }}>{fmtMga(c.totalCreances)}</span>
+                    {c.encaissements > 0 && <span style={{ fontSize: 10, fontWeight: 600, color: '#00ab63' }}>{fmtMga(c.encaissements)}</span>}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function FinanceClientList() {
   const { entity, category } = useParams()
   const location = useLocation()
@@ -249,6 +391,7 @@ export default function FinanceClientList() {
   const [yearFilter, setYearFilter] = useState('all')
   const [natureFilter, setNatureFilter] = useState(null)
   const [sortMode, setSortMode] = useState('montant-desc')
+  const [viewMode, setViewMode] = useState('client') // 'client' | 'projet'
   const lastKey = useRef('')
 
   // Reset filters on navigation + read ?nature= from camembert
@@ -263,6 +406,7 @@ export default function FinanceClientList() {
       setKpiFilter(null)
       setYearFilter('all')
       setSortMode('montant-desc')
+      setViewMode('client')
       if (natureParam && NATURE_FILTERS[natureParam]) {
         setNatureFilter(natureParam)
         window.history.replaceState(null, '', location.pathname)
@@ -332,8 +476,11 @@ export default function FinanceClientList() {
         <ClientCount count={clients.length} />
       </div>
 
-      {/* Tab bar Groupe / Hors Groupe */}
-      <CategoryTabs entity={entity} active={category} />
+      {/* Tab bar Groupe / Hors Groupe + View toggle for TCM */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <CategoryTabs entity={entity} active={category} />
+        {!isFlx && <ViewToggle active={viewMode} onChange={setViewMode} />}
+      </div>
 
       {/* KPI filter cards */}
       <KpiFilterCards
@@ -370,7 +517,7 @@ export default function FinanceClientList() {
         <div style={{ fontSize: 10, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <span>{filtered.length} client{filtered.length > 1 ? 's' : ''} affiché{filtered.length > 1 ? 's' : ''}</span>
           <button
-            onClick={() => { setKpiFilter(null); setYearFilter('all'); setNatureFilter(null); setSortMode('montant-desc') }}
+            onClick={() => { setKpiFilter(null); setYearFilter('all'); setNatureFilter(null); setSortMode('montant-desc'); setViewMode('client') }}
             style={{ background: 'none', border: `1px solid ${COLOR}44`, borderRadius: 6, padding: '2px 8px', color: COLOR, fontSize: 9, cursor: 'pointer', fontWeight: 600, letterSpacing: '0.05em' }}
           >
             Réinitialiser
@@ -381,17 +528,33 @@ export default function FinanceClientList() {
       {/* Cash flow chart */}
       <CashFlowChart monthlyData={cfg.monthly} />
 
-      {/* Client cards — 3 per row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
-        {filtered.map((client, i) => (
-          <ClientCard key={client.code || client.client || i} client={client} isFlx={isFlx} />
-        ))}
-      </div>
-
-      {filtered.length === 0 && (
-        <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-          Aucun client pour ce filtre
-        </div>
+      {/* Cards — Client view or Project view */}
+      {viewMode === 'client' ? (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
+            {filtered.map((client, i) => (
+              <ClientCard key={client.code || client.client || i} client={client} isFlx={isFlx} />
+            ))}
+          </div>
+          {filtered.length === 0 && (
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+              Aucun client pour ce filtre
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
+            {TCM_PROJECTS.map((project, i) => (
+              <ProjectCard key={project.projet || i} project={project} />
+            ))}
+          </div>
+          {TCM_PROJECTS.length === 0 && (
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+              Aucun projet
+            </div>
+          )}
+        </>
       )}
     </div>
   )
