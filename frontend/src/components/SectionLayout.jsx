@@ -9,10 +9,23 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom'
  * @param {string} basePath   — Root path (e.g. "/energy")
  * @param {React.ReactNode} [headerRight] — Optional right-side content (e.g. FilterBar)
  */
-export default function SectionLayout({ name, color, basePath, headerRight }) {
+export default function SectionLayout({ name, color, basePath, headerRight, pageNames }) {
   const navigate = useNavigate()
   const location = useLocation()
   const isRoot = location.pathname === basePath
+
+  // Dynamic page title: match current path against pageNames map
+  const currentPage = (() => {
+    if (!pageNames) return name
+    const rel = location.pathname.replace(basePath, '').replace(/^\//, '')
+    if (!rel) return name
+    // Try exact match first, then partial
+    if (pageNames[rel]) return pageNames[rel]
+    // Try matching first segment (e.g. "hfo" from "hfo/something")
+    const first = rel.split('/')[0]
+    if (pageNames[first]) return pageNames[first]
+    return name
+  })()
 
   const backLabel = isRoot ? 'Accueil' : name
   const handleBack = () => isRoot ? navigate('/') : navigate(basePath)
@@ -46,7 +59,7 @@ export default function SectionLayout({ name, color, basePath, headerRight }) {
             whiteSpace: 'nowrap',
           }}
         >
-          {name}
+          {currentPage}
         </div>
         <div style={{ flex: 1 }} />
         {headerRight ? (

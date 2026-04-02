@@ -15,9 +15,8 @@ export default function FinanceOverview() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 28 }}>
-      {/* Global consolidated KPI cards */}
+      {/* Global KPI cards */}
       <div style={{ textAlign: 'center', marginBottom: 4 }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Consolidé Groupe</div>
         <ClientCount count={all.count} />
       </div>
       <KpiCards items={[

@@ -99,9 +99,6 @@ export default function FinanceEntity() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 28 }}>
       {/* Consolidated KPIs */}
       <div style={{ textAlign: 'center', marginBottom: 4 }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
-          {cfg.label} — Consolidé
-        </div>
         <ClientCount count={aggAll.count} />
       </div>
       <KpiCards items={[

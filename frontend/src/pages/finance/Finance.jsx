@@ -5,32 +5,40 @@ const ENTITY_LABELS = {
   'filatex-sa': 'Filatex SA',
   'tcm': 'TCM',
 }
+const CATEGORY_LABELS = {
+  'groupe': 'Client Groupe',
+  'hors-groupe': 'Client Hors Groupe',
+}
 
 export default function Finance() {
   const navigate = useNavigate()
   const location = useLocation()
   const path = location.pathname
 
-  // Determine back button label & target based on depth
-  // /finance                        → Accueil
-  // /finance/filatex-sa             → Finance
-  // /finance/filatex-sa/groupe      → Filatex SA
-  // /finance/tcm/hors-groupe        → TCM
   const parts = path.replace(/\/$/, '').split('/').filter(Boolean)
-  // parts: ["finance"] or ["finance","filatex-sa"] or ["finance","filatex-sa","groupe"]
+  // parts: ["finance"] | ["finance","filatex-sa"] | ["finance","filatex-sa","groupe"] | ["finance","tcm","projet","..."]
 
-  let backLabel, backPath
+  let backLabel, backPath, pageTitle
   if (parts.length <= 1) {
     backLabel = 'Accueil'
     backPath = '/'
+    pageTitle = 'Finance'
   } else if (parts.length === 2) {
     backLabel = 'Finance'
     backPath = '/finance'
-  } else {
-    // On client list — go back to entity
+    pageTitle = ENTITY_LABELS[parts[1]] || parts[1]
+  } else if (parts[2] === 'projet') {
+    // /finance/tcm/projet/PROJET_NAME
     const entity = parts[1]
     backLabel = ENTITY_LABELS[entity] || 'Finance'
     backPath = `/finance/${entity}`
+    pageTitle = decodeURIComponent(parts[3] || 'Projet')
+  } else {
+    // /finance/filatex-sa/groupe or /finance/tcm/hors-groupe
+    const entity = parts[1]
+    backLabel = ENTITY_LABELS[entity] || 'Finance'
+    backPath = `/finance/${entity}`
+    pageTitle = CATEGORY_LABELS[parts[2]] || parts[2]
   }
 
   return (
@@ -51,7 +59,7 @@ export default function Finance() {
             className="section-title-center text-sm font-extrabold tracking-wider uppercase"
             style={{ color: COLOR, position: 'absolute', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', whiteSpace: 'nowrap' }}
           >
-            Finance
+            {pageTitle}
           </div>
           <div style={{ flex: 1 }} />
           <div style={{ width: 70 }} />

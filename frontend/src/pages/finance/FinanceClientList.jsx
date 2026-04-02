@@ -397,9 +397,6 @@ export default function FinanceClientList() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, paddingTop: 20 }}>
       {/* Header */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
-          {cfg.label} — {categoryLabel}
-        </div>
         <ClientCount count={clients.length} />
       </div>
 

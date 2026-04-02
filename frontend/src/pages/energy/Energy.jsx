@@ -11,6 +11,12 @@ export default function Energy() {
       color="#00ab63"
       basePath="/energy"
       headerRight={<FilterBar current={currentFilter} onChange={setFilter} />}
+      pageNames={{
+        'hfo': 'HFO',
+        'hfo-projets': 'Projets HFO',
+        'enr': 'EnR',
+        'enr-projets': 'Projets EnR',
+      }}
     />
   )
 }
