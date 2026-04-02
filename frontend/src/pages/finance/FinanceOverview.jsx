@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY } from '../../data/finance_data'
+import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
 import { TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
-import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, ContractFlowChart, mergeMonthly, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ContractFlowChart, ClientCount } from './financeHelpers.jsx'
 import KpiCard from '../../components/KpiCard'
 
 export default function FinanceOverview() {
@@ -28,8 +28,7 @@ export default function FinanceOverview() {
         { label: 'Retard moyen', value: `${all.avgRetard}j`, color: all.avgRetard > 180 ? '#e05c5c' : all.avgRetard > 90 ? '#f37056' : '#f39c12', unit: `${all.countRetard} clients · max ${all.maxRetard}j` },
       ]} />
 
-      {/* Cash flow chart */}
-      <CashFlowChart monthlyData={mergeMonthly(FLX_MONTHLY, TCM_MONTHLY)} />
+      {/* Échéancier contractuel */}
       <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} />
 
       {/* Entity cards + Nature cards below each */}

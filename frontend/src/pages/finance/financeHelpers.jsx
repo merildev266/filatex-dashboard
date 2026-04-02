@@ -271,15 +271,33 @@ export function ContractFlowChart({ timeline }) {
 
   if (!timeline || timeline.length === 0) return null
 
-  // Split into sections: before 2026 (condensed), 2026 months, after 2026
-  const before2026 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) < 2026)
+  // Split into 4 sections: <2025 (aggregated), 2025, 2026 months, >2026 (aggregated)
+  const yearsBefore2025 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) < 2025)
+  const year2025 = timeline.filter(t => t.periode === '2025')
   const months2026 = timeline.filter(t => t.periode.startsWith('2026-'))
-  const after2026 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) >= 2027)
+  const yearsAfter2026 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) >= 2027)
+
+  // Aggregate <2025 into a single bar
+  const aggBefore2025 = yearsBefore2025.length > 0 ? {
+    periode: '<2025',
+    contractuel: yearsBefore2025.reduce((s, t) => s + t.contractuel, 0),
+    aTemps: yearsBefore2025.reduce((s, t) => s + t.aTemps, 0),
+    enRetard: yearsBefore2025.reduce((s, t) => s + t.enRetard, 0),
+  } : null
+
+  // Aggregate >2026 into a single bar
+  const aggAfter2026 = yearsAfter2026.length > 0 ? {
+    periode: '>2026',
+    contractuel: yearsAfter2026.reduce((s, t) => s + t.contractuel, 0),
+    aTemps: yearsAfter2026.reduce((s, t) => s + t.aTemps, 0),
+    enRetard: yearsAfter2026.reduce((s, t) => s + t.enRetard, 0),
+  } : null
 
   const allBars = [
-    ...before2026.map(t => ({ ...t, label: t.periode, section: 'past' })),
+    ...(aggBefore2025 ? [{ ...aggBefore2025, label: '<2025', section: 'past' }] : []),
+    ...year2025.map(t => ({ ...t, label: '2025', section: 'past' })),
     ...months2026.map(t => ({ ...t, label: MOIS_LABELS[t.periode.slice(5)] || t.periode.slice(5), section: '2026' })),
-    ...after2026.map(t => ({ ...t, label: t.periode, section: 'future' })),
+    ...(aggAfter2026 ? [{ ...aggAfter2026, label: '>2026', section: 'future' }] : []),
   ]
 
   const maxVal = Math.max(...allBars.map(b => b.contractuel), 1)
