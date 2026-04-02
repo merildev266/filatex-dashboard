@@ -23,8 +23,8 @@ html::-webkit-scrollbar { display: none; }
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--card, rgba(12,12,20,0.85));
-  border: 1px solid var(--card-border, rgba(58,57,92,0.2));
+  background: var(--card, #111324);
+  border: 1px solid var(--card-border, #252840);
   color: var(--text-muted, #c7c6c4);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -42,7 +42,7 @@ html::-webkit-scrollbar { display: none; }
   --surface2: #111118;
   --card: #111324;
   --card-border: #252840;
-  --border: rgba(58,57,92,0.20);
+  --border: #1e2038;
   --text: #e4f4fd;
   --text-secondary: rgba(228,244,253,0.95);
   --text-muted: rgba(228,244,253,0.95);
@@ -66,25 +66,25 @@ html::-webkit-scrollbar { display: none; }
   --red: #ff5050;
   --dev-blue: #426ab3;
   --filatex: #3A395C;
-  --filatex-bg: rgba(58,57,92,0.10);
-  --filatex-border: rgba(58,57,92,0.22);
+  --filatex-bg: #12142a;
+  --filatex-border: #1e2038;
   --inner-card: #131528;
   --inner-card-border: #1e2038;
   --inner-card-hover: #161830;
   --subtle-bg: #0e1020;
   --subtle-border: #191c2e;
-  --separator: rgba(255,255,255,0.06);
-  --separator-light: rgba(255,255,255,0.04);
-  --table-row-alt: rgba(15,19,34,0.5);
-  --table-row-hover: rgba(90,175,175,0.04);
-  --input-bg: rgba(58,57,92,0.18);
-  --input-border: rgba(58,57,92,0.35);
-  --hover-light: rgba(255,255,255,0.06);
+  --separator: #191c2e;
+  --separator-light: #151828;
+  --table-row-alt: #0c0e1c;
+  --table-row-hover: #0e1220;
+  --input-bg: #151838;
+  --input-border: #252840;
+  --hover-light: #191c2e;
   --overlay-bg: rgba(0,0,0,0.5);
-  --mini-card: rgba(0,0,0,0.2);
-  --progress-track: rgba(255,255,255,0.06);
-  --progress-track-light: rgba(255,255,255,0.08);
-  --badge-dim-bg: rgba(255,255,255,0.06);
+  --mini-card: #0a0c18;
+  --progress-track: #191c2e;
+  --progress-track-light: #1c1f32;
+  --badge-dim-bg: #191c2e;
 }
 
 /* ── Light mode (Filatex brand) ── */
@@ -97,7 +97,7 @@ html::-webkit-scrollbar { display: none; }
   --surface2: #edf6fc;
   --card: #dae9f3;
   --card-border: #d0e2ee;
-  --border: rgba(58,57,92,0.08);
+  --border: #d0e2ee;
   --text: #3A395C;
   --text-secondary: rgba(58,57,92,0.95);
   --text-muted: rgba(58,57,92,0.95);
@@ -121,25 +121,25 @@ html::-webkit-scrollbar { display: none; }
   --red: #ff5050;
   --dev-blue: #426ab3;
   --filatex: #3A395C;
-  --filatex-bg: rgba(58,57,92,0.06);
-  --filatex-border: rgba(58,57,92,0.15);
+  --filatex-bg: #dce9f3;
+  --filatex-border: #c8dce9;
   --inner-card: #ddf0f9;
   --inner-card-border: #c8dce9;
   --inner-card-hover: #d2e6f2;
   --subtle-bg: #e0f1fa;
   --subtle-border: #cde1ee;
-  --separator: rgba(58,57,92,0.08);
-  --separator-light: rgba(58,57,92,0.06);
-  --table-row-alt: rgba(58,57,92,0.04);
-  --table-row-hover: rgba(90,175,175,0.06);
-  --input-bg: rgba(228,244,253,0.6);
-  --input-border: rgba(58,57,92,0.12);
-  --hover-light: rgba(58,57,92,0.06);
+  --separator: #cde1ee;
+  --separator-light: #d5e7f2;
+  --table-row-alt: #e0f1fa;
+  --table-row-hover: #d8ecf6;
+  --input-bg: #d0e6f4;
+  --input-border: #c0d6e5;
+  --hover-light: #d5e7f2;
   --overlay-bg: rgba(58,57,92,0.25);
-  --mini-card: rgba(58,57,92,0.06);
-  --progress-track: rgba(58,57,92,0.08);
-  --progress-track-light: rgba(58,57,92,0.10);
-  --badge-dim-bg: rgba(58,57,92,0.08);
+  --mini-card: #dae9f3;
+  --progress-track: #cde1ee;
+  --progress-track-light: #c8dce9;
+  --badge-dim-bg: #cde1ee;
 }
 
 body {
