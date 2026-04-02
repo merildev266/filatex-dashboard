@@ -455,7 +455,7 @@ export default function FinanceClientList() {
       {/* Cards — Client view or Project view */}
       {viewMode === 'client' ? (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: '100%', paddingBottom: 40 }}>
             {filtered.map((client, i) => (
               <ClientCard key={client.code || client.client || i} client={client} isFlx={isFlx} />
             ))}
@@ -468,7 +468,7 @@ export default function FinanceClientList() {
         </>
       ) : (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: '100%', paddingBottom: 40 }}>
             {TCM_PROJECTS.map((project, i) => (
               <ProjectCard key={project.projet || i} project={project} onClick={() => navigate(`/finance/tcm/projet/${encodeURIComponent(project.projet)}`)} />
             ))}

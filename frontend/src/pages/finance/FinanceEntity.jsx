@@ -123,7 +123,7 @@ export default function FinanceEntity() {
 
       {/* ── CLIENT VIEW ── */}
       {viewMode === 'client' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: '100%', alignItems: 'start' }}>
           {CATEGORIES.map(cat => {
             const catClients = cat.key === 'groupe' ? groupe : horsGroupe
             return (
@@ -161,7 +161,7 @@ export default function FinanceEntity() {
           <div style={{ textAlign: 'center', fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
             {TCM_PROJECTS.length} projets immobiliers
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: '100%', paddingBottom: 40 }}>
             {TCM_PROJECTS.map((project, i) => (
               <ProjectCardMini
                 key={project.projet || i}

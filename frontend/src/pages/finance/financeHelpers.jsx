@@ -40,7 +40,7 @@ export function aggregate(clients) {
 // Compact KPI cards (static, no filter)
 export function KpiCards({ items }) {
   return (
-    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: '100%', gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
       {items.map((kpi, i) => (
         <KpiCard
           key={i}
@@ -62,7 +62,7 @@ export function KpiCards({ items }) {
 // Clickable KPI filter cards
 export function KpiFilterCards({ items, active, onSelect }) {
   return (
-    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: '100%', gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
       {items.map((kpi, i) => {
         const isActive = active === kpi.filterKey
         return (
@@ -148,7 +148,7 @@ export function TcmNatureKpiCards({ clients, active, onSelect }) {
     { key: 'tcm-loyervente', label: 'Loyer + Vente', total: aggregate(loyerVente).totalCreances, count: loyerVente.length, color: '#3498db' },
   ]
   return (
-    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(2, 1fr)' }}>
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: '100%', gridTemplateColumns: 'repeat(2, 1fr)' }}>
       {items.map((it) => (
         <NatureFilterCard
           key={it.key} it={it}
@@ -172,7 +172,7 @@ export function FlxNatureKpiCards({ clients, active, onSelect }) {
     { key: 'flx-caution', label: 'Caution', total: aggregate(caution).totalCreances, count: caution.length, color: '#9b59b6' },
   ]
   return (
-    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(3, 1fr)' }}>
+    <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: '100%', gridTemplateColumns: 'repeat(3, 1fr)' }}>
       {items.map((it) => (
         <NatureFilterCard
           key={it.key} it={it}
@@ -335,7 +335,7 @@ export function ContractFlowChart({ timeline, projects }) {
   const popupData = selectedCard ? _buildPopupDetail(selectedCard) : null
 
   return (
-    <div style={{ width: '100%', maxWidth: 850, margin: '0 auto', position: 'relative' }}>
+    <div style={{ width: '100%', maxWidth: '100%', margin: '0 auto', position: 'relative' }}>
       {/* Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14, flexWrap: 'wrap', gap: 6 }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
@@ -603,7 +603,7 @@ export function CashFlowChart({ monthlyData }) {
   const totalReel = allBars.reduce((s, b) => s + b.reel, 0)
 
   return (
-    <div style={{ width: '100%', maxWidth: 780, margin: '0 auto', position: 'relative' }}>
+    <div style={{ width: '100%', margin: '0 auto', position: 'relative' }}>
       {/* Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>

@@ -31,7 +31,7 @@ export default function FinanceOverview() {
       <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} projects={TCM_ECHEANCIER} />
 
       {/* Entity cards + Nature cards below each */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: '100%', alignItems: 'start' }}>
         {entities.map((entity) => {
           const agg = aggregate(entity.data)
           const grpCount = entity.data.filter(c => c.groupe).length

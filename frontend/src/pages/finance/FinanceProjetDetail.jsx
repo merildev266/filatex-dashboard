@@ -67,7 +67,7 @@ export default function FinanceProjetDetail() {
       </div>
 
       {/* KPIs consolidé */}
-      <div className="grid gap-2" style={{ width: '100%', maxWidth: 500, gridTemplateColumns: 'repeat(3, 1fr)' }}>
+      <div className="grid gap-2" style={{ width: '100%', maxWidth: '100%', gridTemplateColumns: 'repeat(3, 1fr)' }}>
         {[
           { label: 'Créances', value: fmtMga(p.totalCreances), color: COLOR },
           { label: 'Encaissé', value: fmtMga(p.encaissements), color: '#00ab63' },
@@ -81,7 +81,7 @@ export default function FinanceProjetDetail() {
       </div>
 
       {/* % encaissement + barre */}
-      <div style={{ width: '100%', maxWidth: 500 }}>
+      <div style={{ width: '100%', maxWidth: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
           <span style={{ fontSize: 9, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Taux d'encaissement</span>
           <span style={{ fontSize: 16, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : Number(pct) >= 25 ? '#f39c12' : '#e05c5c' }}>{pct}%</span>
@@ -93,7 +93,7 @@ export default function FinanceProjetDetail() {
 
       {/* Sub-projects (for groups) */}
       {p.isGroup && p.sousProjectes.length > 0 && (
-        <div style={{ width: '100%', maxWidth: 700 }}>
+        <div style={{ width: '100%', maxWidth: '100%' }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9b59b6', marginBottom: 12 }}>
             Sous-projets ({p.sousProjectes.length})
           </div>
@@ -107,7 +107,7 @@ export default function FinanceProjetDetail() {
 
       {/* Direct clients (for standalone) */}
       {!p.isGroup && p.clients.length > 0 && (
-        <div style={{ width: '100%', maxWidth: 700 }}>
+        <div style={{ width: '100%', maxWidth: '100%' }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
             Clients ({p.clients.length})
           </div>
