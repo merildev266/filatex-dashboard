@@ -1,5 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { COLOR } from './financeHelpers.jsx'
+import ThemeToggle from '../../components/ThemeToggle'
 
 const ENTITY_LABELS = {
   'filatex-sa': 'Filatex SA',
@@ -62,7 +63,7 @@ export default function Finance() {
             {pageTitle}
           </div>
           <div style={{ flex: 1 }} />
-          <div style={{ width: 70 }} />
+          <ThemeToggle />
         </div>
         <div style={{ height: 2, background: COLOR, opacity: 0.5 }} />
       </div>
