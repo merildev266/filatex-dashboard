@@ -301,71 +301,120 @@ export function NatureDonut({ entity, clients, linkTo }) {
   )
 }
 
-// ── Cash Flow Chart — estimated incoming payments timeline ──
+// ── Cash Flow Chart — full year 2026 (Jan-Déc) + 2027 summary ──
+const MOIS = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
+
 export function CashFlowChart({ clients }) {
   const agg = aggregate(clients)
-  const bars = [
-    { label: 'Déjà encaissé', value: agg.encaissements, color: '#00ab63' },
-    { label: 'Mars 2026', value: agg.planMars, color: '#3498db' },
-    { label: 'Avril 2026', value: agg.planAvril, color: '#2980b9' },
-    { label: 'Mai 2026', value: agg.planMai, color: '#1a6fa0' },
-  ]
   const contentieux = agg.standby + agg.contentieux
-  if (contentieux > 0) bars.push({ label: 'Contentieux', value: contentieux, color: '#e05c5c' })
 
-  const maxVal = Math.max(...bars.map(b => b.value), 1)
-  const totalPlan = agg.planMars + agg.planAvril + agg.planMai
-  const totalEstime = agg.encaissements + totalPlan
+  // Build 12 months for 2026 — only Mars/Avril/Mai have plan data
+  const months = MOIS.map((label, i) => {
+    let value = 0
+    if (i === 0) value = 0        // Jan
+    if (i === 1) value = agg.encaissements  // Fév — encaissements entre temps
+    if (i === 2) value = agg.planMars       // Mars
+    if (i === 3) value = agg.planAvril      // Avril
+    if (i === 4) value = agg.planMai        // Mai
+    // Jun-Déc: 0
+    return { label, value, month: i }
+  })
+
+  // 2027 summary: reste non couvert par le plan
+  const totalPlan = agg.encaissements + agg.planMars + agg.planAvril + agg.planMai + contentieux
+  const reste2027 = Math.max(0, agg.totalCreances - totalPlan)
+
+  const maxVal = Math.max(...months.map(m => m.value), reste2027 || 1, 1)
+  const totalEstime = agg.encaissements + agg.planMars + agg.planAvril + agg.planMai
+
+  function barColor(m) {
+    if (m.month === 1) return '#00ab63' // Fév = encaissé
+    if (m.value > 0) return '#3498db'   // Plan months
+    return 'var(--card-border)'         // Empty months
+  }
 
   return (
-    <div style={{ width: '100%', maxWidth: 700, margin: '0 auto' }}>
+    <div style={{ width: '100%', maxWidth: 750, margin: '0 auto' }}>
       {/* Title */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-          Flux de rentrées estimé
+          Flux de rentrées estimé — 2026
         </div>
         <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>
           Total estimé: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(totalEstime)}</span>
-          <span style={{ opacity: 0.5, marginLeft: 6 }}>sur {fmtMga(agg.totalCreances)} créances</span>
+          <span style={{ opacity: 0.5, marginLeft: 6 }}>sur {fmtMga(agg.totalCreances)}</span>
         </div>
       </div>
 
-      {/* Bars */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {bars.map((bar, i) => {
-          const pct = maxVal > 0 ? (bar.value / maxVal) * 100 : 0
+      {/* 12-month bars */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {months.map((m, i) => {
+          const pct = maxVal > 0 ? (m.value / maxVal) * 100 : 0
+          const color = barColor(m)
+          const hasValue = m.value > 0
           return (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {/* Label */}
-              <div style={{ width: 90, textAlign: 'right', fontSize: 9, color: 'var(--text-muted)', flexShrink: 0 }}>
-                {bar.label}
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 36, textAlign: 'right', fontSize: 9, fontWeight: hasValue ? 700 : 400, color: hasValue ? 'var(--text)' : 'var(--text-muted)', flexShrink: 0, opacity: hasValue ? 1 : 0.5 }}>
+                {m.label}
               </div>
-              {/* Bar container */}
-              <div style={{ flex: 1, height: 22, background: 'var(--card)', borderRadius: 6, overflow: 'hidden', position: 'relative', border: '1px solid var(--card-border)' }}>
+              <div style={{ flex: 1, height: 18, background: 'var(--card)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--card-border)' }}>
                 <div style={{
-                  width: `${Math.max(pct, bar.value > 0 ? 2 : 0)}%`,
+                  width: `${Math.max(pct, hasValue ? 2 : 0)}%`,
                   height: '100%',
-                  background: `linear-gradient(90deg, ${bar.color}CC, ${bar.color})`,
-                  borderRadius: 6,
+                  background: hasValue ? `linear-gradient(90deg, ${color}AA, ${color})` : 'transparent',
+                  borderRadius: 4,
                   transition: 'width 0.6s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  paddingRight: 6,
                 }} />
               </div>
-              {/* Value */}
-              <div style={{ width: 70, fontSize: 10, fontWeight: 700, color: bar.color, textAlign: 'right', flexShrink: 0 }}>
-                {fmtMga(bar.value)}
+              <div style={{ width: 65, fontSize: 9, fontWeight: 700, color: hasValue ? color : 'var(--text-muted)', textAlign: 'right', flexShrink: 0, opacity: hasValue ? 1 : 0.3 }}>
+                {hasValue ? fmtMga(m.value) : '—'}
               </div>
             </div>
           )
         })}
       </div>
 
+      {/* 2027 summary if any remainder */}
+      {reste2027 > 0 && (
+        <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 36, textAlign: 'right', fontSize: 9, fontWeight: 700, color: '#9b59b6', flexShrink: 0 }}>2027</div>
+          <div style={{ flex: 1, height: 18, background: 'var(--card)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--card-border)' }}>
+            <div style={{
+              width: `${Math.max((reste2027 / maxVal) * 100, 2)}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #9b59b6AA, #9b59b6)',
+              borderRadius: 4,
+              transition: 'width 0.6s ease',
+            }} />
+          </div>
+          <div style={{ width: 65, fontSize: 9, fontWeight: 700, color: '#9b59b6', textAlign: 'right', flexShrink: 0 }}>
+            {fmtMga(reste2027)}
+          </div>
+        </div>
+      )}
+
+      {/* Contentieux bar */}
+      {contentieux > 0 && (
+        <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 36, textAlign: 'right', fontSize: 8, color: '#e05c5c', flexShrink: 0, fontWeight: 600 }}>Cont.</div>
+          <div style={{ flex: 1, height: 18, background: 'var(--card)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--card-border)' }}>
+            <div style={{
+              width: `${Math.max((contentieux / maxVal) * 100, 2)}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #e05c5cAA, #e05c5c)',
+              borderRadius: 4,
+              transition: 'width 0.6s ease',
+            }} />
+          </div>
+          <div style={{ width: 65, fontSize: 9, fontWeight: 700, color: '#e05c5c', textAlign: 'right', flexShrink: 0 }}>
+            {fmtMga(contentieux)}
+          </div>
+        </div>
+      )}
+
       {/* Cumulative progress bar */}
       {agg.totalCreances > 0 && (
-        <div style={{ marginTop: 12 }}>
+        <div style={{ marginTop: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
             <span style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Progression recouvrement</span>
             <span style={{ fontSize: 9, fontWeight: 700, color: COLOR }}>
@@ -373,19 +422,23 @@ export function CashFlowChart({ clients }) {
             </span>
           </div>
           <div style={{ height: 8, borderRadius: 4, background: 'var(--card-border)', overflow: 'hidden', display: 'flex' }}>
-            {/* Encaissé */}
-            <div style={{ width: `${(agg.encaissements / agg.totalCreances) * 100}%`, background: '#00ab63', transition: 'width 0.6s' }} title={`Encaissé: ${fmtMga(agg.encaissements)}`} />
-            {/* Plan */}
-            <div style={{ width: `${(totalPlan / agg.totalCreances) * 100}%`, background: '#3498db', transition: 'width 0.6s' }} title={`Plan: ${fmtMga(totalPlan)}`} />
-            {/* Contentieux */}
-            {contentieux > 0 && (
-              <div style={{ width: `${(contentieux / agg.totalCreances) * 100}%`, background: '#e05c5c', transition: 'width 0.6s' }} title={`Contentieux: ${fmtMga(contentieux)}`} />
-            )}
+            <div style={{ width: `${(agg.encaissements / agg.totalCreances) * 100}%`, background: '#00ab63', transition: 'width 0.6s' }} />
+            <div style={{ width: `${((agg.planMars + agg.planAvril + agg.planMai) / agg.totalCreances) * 100}%`, background: '#3498db', transition: 'width 0.6s' }} />
+            {reste2027 > 0 && <div style={{ width: `${(reste2027 / agg.totalCreances) * 100}%`, background: '#9b59b6', transition: 'width 0.6s' }} />}
+            {contentieux > 0 && <div style={{ width: `${(contentieux / agg.totalCreances) * 100}%`, background: '#e05c5c', transition: 'width 0.6s' }} />}
           </div>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 6 }}>
-            <span style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: '#00ab63', display: 'inline-block' }} /> <span style={{ color: 'var(--text-muted)' }}>Encaissé</span></span>
-            <span style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: '#3498db', display: 'inline-block' }} /> <span style={{ color: 'var(--text-muted)' }}>Plan d'appurement</span></span>
-            {contentieux > 0 && <span style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: '#e05c5c', display: 'inline-block' }} /> <span style={{ color: 'var(--text-muted)' }}>Contentieux</span></span>}
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 6, flexWrap: 'wrap' }}>
+            {[
+              { color: '#00ab63', label: 'Encaissé' },
+              { color: '#3498db', label: 'Plan 2026' },
+              ...(reste2027 > 0 ? [{ color: '#9b59b6', label: 'Report 2027' }] : []),
+              ...(contentieux > 0 ? [{ color: '#e05c5c', label: 'Contentieux' }] : []),
+            ].map((l, i) => (
+              <span key={i} style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}>
+                <span style={{ width: 8, height: 8, borderRadius: 2, background: l.color, display: 'inline-block' }} />
+                <span style={{ color: 'var(--text-muted)' }}>{l.label}</span>
+              </span>
+            ))}
           </div>
         </div>
       )}
