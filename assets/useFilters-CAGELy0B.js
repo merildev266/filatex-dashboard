@@ -1,0 +1,1 @@
+import{r as e}from"./jsx-runtime-DAs1UGHr.js";import{t}from"./react-BRPyh-lz.js";import{a as n}from"./index-BGzZEs1i.js";var r=e(t(),1);function i(){let e=(0,r.useContext)(n);if(!e)throw Error(`useFilters must be used within FilterProvider`);return e}export{i as t};

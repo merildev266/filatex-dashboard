@@ -1,0 +1,1 @@
+function e(e){let t=e.replace(`#`,``);return`${parseInt(t.substring(0,2),16)},${parseInt(t.substring(2,4),16)},${parseInt(t.substring(4,6),16)}`}function t(e){if(!e||e===`—`)return 0;let t=e.replace(/[^\d.,kKmM$-]/g,``).replace(`,`,`.`),n=parseFloat(t.replace(/[kKmM$]/g,``))||0;return/M/i.test(e)?n:/k/i.test(e)?n/1e3:n/1e6}export{t as n,e as t};
