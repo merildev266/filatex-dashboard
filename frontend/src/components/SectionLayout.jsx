@@ -1,5 +1,4 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import ThemeToggle from './ThemeToggle'
 
 /**
  * Shared layout for all 6 main sections.
@@ -59,7 +58,7 @@ export default function SectionLayout({ name, color, basePath, headerRight, page
             {currentPage}
           </div>
           <div style={{ flex: 1 }} />
-          <ThemeToggle />
+          <div style={{ width: 70 }} />
         </div>
         <div style={{ height: 2, background: color, opacity: 0.5 }} />
       </div>

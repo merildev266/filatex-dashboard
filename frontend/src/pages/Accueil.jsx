@@ -173,11 +173,6 @@ export default function Accueil() {
           </div>
         )}
 
-        {/* ── BOTTOM RIGHT: Theme toggle ── */}
-        <div style={{position:'absolute',bottom:'16px',right:'16px',zIndex:10}}>
-          <ThemeToggle />
-        </div>
-
         {/* ── HEADER ── */}
         <header className="home-header" style={{position:'absolute',top:'48px',left:0,right:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px',padding:'0 24px',boxSizing:'border-box',animation:'fadeIn 0.8s ease both'}}>
           <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>

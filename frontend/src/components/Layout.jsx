@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import BottomNav from './BottomNav'
+import ThemeToggle from './ThemeToggle'
 
 const MOTIF_BASE = import.meta.env.BASE_URL + 'logos'
 
@@ -17,6 +18,10 @@ export default function Layout() {
       </div>
       <Outlet />
       <BottomNav />
+      {/* Theme toggle — fixed bottom right */}
+      <div style={{ position: 'fixed', bottom: 70, right: 16, zIndex: 100 }}>
+        <ThemeToggle />
+      </div>
     </div>
   )
 }

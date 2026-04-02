@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import ThemeToggle from './ThemeToggle'
 
 /**
  * Standalone sticky header for sections without nested routes.
@@ -37,7 +36,7 @@ export default function SectionHeader({ name, color, onBack }) {
           {name}
         </div>
         <div style={{ flex: 1 }} />
-        <ThemeToggle />
+        <div style={{ width: 70 }} />
       </div>
       <div style={{ height: 2, background: color, opacity: 0.5 }} />
     </div>
