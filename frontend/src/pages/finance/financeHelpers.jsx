@@ -401,55 +401,76 @@ export function CashFlowChart({ monthlyData }) {
       </div>
 
       {/* Popup — client detail on bar click */}
-      {popup && (
-        <div
-          style={{
-            position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-            background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 12,
-            padding: '14px 18px', zIndex: 20, width: 'min(90%, 380px)',
-            boxShadow: '0 16px 48px rgba(0,0,0,0.4)',
-            maxHeight: 300, overflowY: 'auto',
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>{popup.mois}</span>
-            <button onClick={() => setPopup(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 14 }}>x</button>
+      {popup && (() => {
+        const pctReel = popup.prevu > 0 ? ((popup.reel / popup.prevu) * 100).toFixed(0) : popup.reel > 0 ? '100+' : '0'
+        const nonPaye = popup.clientsPrevu.filter(c => !popup.clientsReel.find(r => r.client === c.client))
+        return (
+          <div
+            style={{
+              position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+              background: 'var(--dark, #0a0d1a)', border: '1px solid var(--card-border)', borderRadius: 12,
+              padding: '16px 20px', zIndex: 20, width: 'min(92%, 400px)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05)',
+              maxHeight: 340, overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header with month + percentage */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{popup.mois}</div>
+                <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>
+                  Réel <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(popup.reel)}</span>
+                  <span style={{ margin: '0 4px', opacity: 0.3 }}>/</span>
+                  Prévu <span style={{ fontWeight: 700, color: '#3498db' }}>{fmtMga(popup.prevu)}</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  fontSize: 18, fontWeight: 800,
+                  color: Number(pctReel) >= 100 ? '#00ab63' : Number(pctReel) >= 50 ? '#f39c12' : '#e05c5c',
+                }}>{pctReel}%</span>
+                <button onClick={() => setPopup(null)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--card-border)', borderRadius: 6, width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>x</button>
+              </div>
+            </div>
+
+            {/* Mini progress bar */}
+            <div style={{ height: 6, borderRadius: 3, background: '#3498db33', overflow: 'hidden', marginBottom: 12 }}>
+              <div style={{ width: `${Math.min(Number(pctReel) || 0, 100)}%`, height: '100%', background: '#00ab63', borderRadius: 3 }} />
+            </div>
+
+            {/* Clients who paid */}
+            {popup.clientsReel.length > 0 && (
+              <>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 6 }}>
+                  Encaissé ({popup.clientsReel.length})
+                </div>
+                {popup.clientsReel.map((c, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#00ab63' }}>{fmtMga(c.montant)}</span>
+                  </div>
+                ))}
+              </>
+            )}
+
+            {/* Clients expected but not paid */}
+            {nonPaye.length > 0 && (
+              <>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e05c5c', marginTop: 10, marginBottom: 6 }}>
+                  Non encaissé ({nonPaye.length})
+                </div>
+                {nonPaye.map((c, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.client}</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: '#e05c5c' }}>{fmtMga(c.montant)}</span>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
-
-          {/* Clients who paid */}
-          {popup.clientsReel.length > 0 && (
-            <>
-              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 4 }}>
-                Encaissé ({popup.clientsReel.length})
-              </div>
-              {popup.clientsReel.map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card-border)' }}>
-                  <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#00ab63' }}>{fmtMga(c.montant)}</span>
-                </div>
-              ))}
-            </>
-          )}
-
-          {/* Clients expected but not paid */}
-          {popup.clientsPrevu.length > 0 && (
-            <>
-              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#3498db', marginTop: 8, marginBottom: 4 }}>
-                Prévu — non encaissé ({popup.clientsPrevu.filter(c => !popup.clientsReel.find(r => r.client === c.client)).length})
-              </div>
-              {popup.clientsPrevu
-                .filter(c => !popup.clientsReel.find(r => r.client === c.client))
-                .map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card-border)' }}>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.client}</span>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: '#3498db' }}>{fmtMga(c.montant)}</span>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-      )}
+        )
+      })()}
     </div>
   )
 }
