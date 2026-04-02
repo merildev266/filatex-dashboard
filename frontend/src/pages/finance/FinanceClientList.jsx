@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
+import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY } from '../../data/finance_data'
 import { COLOR, fmtMga, aggregate, KpiCards, KpiFilterCards, FlxNatureKpiCards, TcmNatureKpiCards, NATURE_FILTERS, CashFlowChart, ClientCount } from './financeHelpers.jsx'
 
 const ENTITY_CFG = {
-  'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
-  'tcm': { label: 'TCM', data: TCM_CLIENTS },
+  'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS, monthly: FLX_MONTHLY },
+  'tcm': { label: 'TCM', data: TCM_CLIENTS, monthly: TCM_MONTHLY },
 }
 
 // KPI filter definitions
@@ -379,7 +379,7 @@ export default function FinanceClientList() {
       )}
 
       {/* Cash flow chart */}
-      <CashFlowChart clients={clients} />
+      <CashFlowChart monthlyData={cfg.monthly} />
 
       {/* Client cards — 3 per row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, width: '100%', maxWidth: 1000, paddingBottom: 40 }}>

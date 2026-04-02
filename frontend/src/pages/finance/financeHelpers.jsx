@@ -251,145 +251,203 @@ export function NatureDonut({ entity, clients, linkTo }) {
   )
 }
 
-// ── Cash Flow Chart — full year 2026 (Jan-Déc) + 2027 summary ──
-const MOIS = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
-
-export function CashFlowChart({ clients }) {
-  const agg = aggregate(clients)
-  const contentieux = agg.standby + agg.contentieux
-
-  // Build 12 months for 2026 — only Mars/Avril/Mai have plan data
-  const months = MOIS.map((label, i) => {
-    let value = 0
-    if (i === 0) value = 0        // Jan
-    if (i === 1) value = agg.encaissements  // Fév — encaissements entre temps
-    if (i === 2) value = agg.planMars       // Mars
-    if (i === 3) value = agg.planAvril      // Avril
-    if (i === 4) value = agg.planMai        // Mai
-    // Jun-Déc: 0
-    return { label, value, month: i }
+// Merge two monthly arrays into one
+export function mergeMonthly(a, b) {
+  const map = {}
+  ;[...(a || []), ...(b || [])].forEach(m => {
+    if (!map[m.mois]) map[m.mois] = { mois: m.mois, prevu: 0, reel: 0, clientsPrevu: [], clientsReel: [] }
+    map[m.mois].prevu += m.prevu
+    map[m.mois].reel += m.reel
+    map[m.mois].clientsPrevu.push(...m.clientsPrevu)
+    map[m.mois].clientsReel.push(...m.clientsReel)
   })
+  return Object.values(map).sort((a, b) => a.mois.localeCompare(b.mois))
+}
 
-  // 2027 summary: reste non couvert par le plan
-  const totalPlan = agg.encaissements + agg.planMars + agg.planAvril + agg.planMai + contentieux
-  const reste2027 = Math.max(0, agg.totalCreances - totalPlan)
+// ── Cash Flow Chart — vertical bars, prévu vs réel, click popup ──
+import { useState } from 'react'
 
-  const maxVal = Math.max(...months.map(m => m.value), reste2027 || 1, 1)
-  const totalEstime = agg.encaissements + agg.planMars + agg.planAvril + agg.planMai
+const MOIS_SHORT = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
 
-  function barColor(m) {
-    if (m.month === 1) return '#00ab63' // Fév = encaissé
-    if (m.value > 0) return '#3498db'   // Plan months
-    return 'var(--card-border)'         // Empty months
+export function CashFlowChart({ monthlyData }) {
+  const [popup, setPopup] = useState(null)
+
+  if (!monthlyData || monthlyData.length === 0) return null
+
+  // Filter 2026 months + group 2027
+  const months2026 = []
+  let sum2027prevu = 0, sum2027reel = 0, clients2027prevu = [], clients2027reel = []
+
+  for (let m = 1; m <= 12; m++) {
+    const key = `2026-${String(m).padStart(2, '0')}`
+    const found = monthlyData.find(d => d.mois === key)
+    months2026.push({
+      label: MOIS_SHORT[m - 1],
+      mois: key,
+      prevu: found ? found.prevu : 0,
+      reel: found ? found.reel : 0,
+      clientsPrevu: found ? found.clientsPrevu : [],
+      clientsReel: found ? found.clientsReel : [],
+    })
   }
 
+  monthlyData.forEach(d => {
+    if (d.mois >= '2027') {
+      sum2027prevu += d.prevu
+      sum2027reel += d.reel
+      d.clientsPrevu.forEach(c => clients2027prevu.push(c))
+      d.clientsReel.forEach(c => clients2027reel.push(c))
+    }
+  })
+
+  const allBars = [...months2026]
+  if (sum2027prevu > 0 || sum2027reel > 0) {
+    allBars.push({ label: '2027', mois: '2027', prevu: sum2027prevu, reel: sum2027reel, clientsPrevu: clients2027prevu, clientsReel: clients2027reel })
+  }
+
+  const maxVal = Math.max(...allBars.map(b => Math.max(b.prevu, b.reel)), 1)
+  const barHeight = 160
+  const totalPrevu = allBars.reduce((s, b) => s + b.prevu, 0)
+  const totalReel = allBars.reduce((s, b) => s + b.reel, 0)
+
   return (
-    <div style={{ width: '100%', maxWidth: 750, margin: '0 auto' }}>
+    <div style={{ width: '100%', maxWidth: 780, margin: '0 auto', position: 'relative' }}>
       {/* Title */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-          Flux de rentrées estimé — 2026
+          Encaissements 2026
         </div>
         <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>
-          Total estimé: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(totalEstime)}</span>
-          <span style={{ opacity: 0.5, marginLeft: 6 }}>sur {fmtMga(agg.totalCreances)}</span>
+          Réel: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(totalReel)}</span>
+          <span style={{ margin: '0 6px', opacity: 0.3 }}>|</span>
+          Prévu: <span style={{ fontWeight: 700, color: '#3498db' }}>{fmtMga(totalPrevu)}</span>
         </div>
       </div>
 
-      {/* 12-month bars */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        {months.map((m, i) => {
-          const pct = maxVal > 0 ? (m.value / maxVal) * 100 : 0
-          const color = barColor(m)
-          const hasValue = m.value > 0
+      {/* Vertical bars */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: barHeight, padding: '0 4px' }}>
+        {allBars.map((bar, i) => {
+          const prevuH = maxVal > 0 ? (bar.prevu / maxVal) * barHeight : 0
+          const reelH = maxVal > 0 ? (bar.reel / maxVal) * barHeight : 0
+          const hasData = bar.prevu > 0 || bar.reel > 0
+          const is2027 = bar.mois === '2027'
+
           return (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 36, textAlign: 'right', fontSize: 9, fontWeight: hasValue ? 700 : 400, color: hasValue ? 'var(--text)' : 'var(--text-muted)', flexShrink: 0, opacity: hasValue ? 1 : 0.5 }}>
-                {m.label}
-              </div>
-              <div style={{ flex: 1, height: 18, background: 'var(--card)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--card-border)' }}>
+            <div
+              key={i}
+              onClick={() => hasData ? setPopup(popup?.mois === bar.mois ? null : bar) : null}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: hasData ? 'pointer' : 'default', position: 'relative' }}
+            >
+              {/* Value on top */}
+              {hasData && (
+                <div style={{ fontSize: 7, fontWeight: 700, color: bar.reel > 0 ? '#00ab63' : '#3498db', marginBottom: 2, whiteSpace: 'nowrap' }}>
+                  {bar.reel > 0 ? fmtMga(bar.reel) : fmtMga(bar.prevu)}
+                </div>
+              )}
+              {/* Stacked bar */}
+              <div style={{ width: '100%', height: barHeight, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 0 }}>
+                {/* Prévu (full bar, lighter) */}
                 <div style={{
-                  width: `${Math.max(pct, hasValue ? 2 : 0)}%`,
-                  height: '100%',
-                  background: hasValue ? `linear-gradient(90deg, ${color}AA, ${color})` : 'transparent',
-                  borderRadius: 4,
-                  transition: 'width 0.6s ease',
-                }} />
-              </div>
-              <div style={{ width: 65, fontSize: 9, fontWeight: 700, color: hasValue ? color : 'var(--text-muted)', textAlign: 'right', flexShrink: 0, opacity: hasValue ? 1 : 0.3 }}>
-                {hasValue ? fmtMga(m.value) : '—'}
+                  width: '80%', height: Math.max(prevuH, hasData ? 2 : 0), borderRadius: '4px 4px 0 0',
+                  background: is2027 ? '#9b59b644' : '#3498db33',
+                  position: 'relative',
+                  transition: 'height 0.4s ease',
+                }}>
+                  {/* Réel (overlay from bottom, solid) */}
+                  {bar.reel > 0 && (
+                    <div style={{
+                      position: 'absolute', bottom: 0, left: 0, right: 0,
+                      height: Math.min(reelH, prevuH || reelH),
+                      background: '#00ab63',
+                      borderRadius: prevuH <= reelH ? '4px 4px 0 0' : '0',
+                      transition: 'height 0.4s ease',
+                    }} />
+                  )}
+                </div>
+                {/* If réel > prévu, show overflow */}
+                {bar.reel > bar.prevu && bar.prevu > 0 && (
+                  <div style={{
+                    width: '80%', height: reelH - prevuH, background: '#00ab63',
+                    borderRadius: '4px 4px 0 0', marginBottom: -1,
+                    transition: 'height 0.4s ease',
+                  }} />
+                )}
               </div>
             </div>
           )
         })}
       </div>
 
-      {/* 2027 summary if any remainder */}
-      {reste2027 > 0 && (
-        <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div style={{ width: 36, textAlign: 'right', fontSize: 9, fontWeight: 700, color: '#9b59b6', flexShrink: 0 }}>2027</div>
-          <div style={{ flex: 1, height: 18, background: 'var(--card)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--card-border)' }}>
-            <div style={{
-              width: `${Math.max((reste2027 / maxVal) * 100, 2)}%`,
-              height: '100%',
-              background: 'linear-gradient(90deg, #9b59b6AA, #9b59b6)',
-              borderRadius: 4,
-              transition: 'width 0.6s ease',
-            }} />
+      {/* Month labels */}
+      <div style={{ display: 'flex', gap: 2, padding: '4px 4px 0' }}>
+        {allBars.map((bar, i) => (
+          <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 8, fontWeight: (bar.prevu > 0 || bar.reel > 0) ? 700 : 400, color: (bar.prevu > 0 || bar.reel > 0) ? 'var(--text)' : 'var(--text-muted)', opacity: (bar.prevu > 0 || bar.reel > 0) ? 1 : 0.4 }}>
+            {bar.label}
           </div>
-          <div style={{ width: 65, fontSize: 9, fontWeight: 700, color: '#9b59b6', textAlign: 'right', flexShrink: 0 }}>
-            {fmtMga(reste2027)}
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
 
-      {/* Contentieux bar */}
-      {contentieux > 0 && (
-        <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div style={{ width: 36, textAlign: 'right', fontSize: 8, color: '#e05c5c', flexShrink: 0, fontWeight: 600 }}>Cont.</div>
-          <div style={{ flex: 1, height: 18, background: 'var(--card)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--card-border)' }}>
-            <div style={{
-              width: `${Math.max((contentieux / maxVal) * 100, 2)}%`,
-              height: '100%',
-              background: 'linear-gradient(90deg, #e05c5cAA, #e05c5c)',
-              borderRadius: 4,
-              transition: 'width 0.6s ease',
-            }} />
-          </div>
-          <div style={{ width: 65, fontSize: 9, fontWeight: 700, color: '#e05c5c', textAlign: 'right', flexShrink: 0 }}>
-            {fmtMga(contentieux)}
-          </div>
-        </div>
-      )}
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginTop: 10 }}>
+        {[
+          { color: '#3498db33', border: '#3498db', label: 'Prévu (échéances)' },
+          { color: '#00ab63', label: 'Réel (encaissé)' },
+        ].map((l, i) => (
+          <span key={i} style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 12, height: 10, borderRadius: 2, background: l.color, border: l.border ? `1px solid ${l.border}` : 'none', display: 'inline-block' }} />
+            <span style={{ color: 'var(--text-muted)' }}>{l.label}</span>
+          </span>
+        ))}
+      </div>
 
-      {/* Cumulative progress bar */}
-      {agg.totalCreances > 0 && (
-        <div style={{ marginTop: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Progression recouvrement</span>
-            <span style={{ fontSize: 9, fontWeight: 700, color: COLOR }}>
-              {((totalEstime / agg.totalCreances) * 100).toFixed(0)}%
-            </span>
+      {/* Popup — client detail on bar click */}
+      {popup && (
+        <div
+          style={{
+            position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+            background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 12,
+            padding: '14px 18px', zIndex: 20, width: 'min(90%, 380px)',
+            boxShadow: '0 16px 48px rgba(0,0,0,0.4)',
+            maxHeight: 300, overflowY: 'auto',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)' }}>{popup.mois}</span>
+            <button onClick={() => setPopup(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 14 }}>x</button>
           </div>
-          <div style={{ height: 8, borderRadius: 4, background: 'var(--card-border)', overflow: 'hidden', display: 'flex' }}>
-            <div style={{ width: `${(agg.encaissements / agg.totalCreances) * 100}%`, background: '#00ab63', transition: 'width 0.6s' }} />
-            <div style={{ width: `${((agg.planMars + agg.planAvril + agg.planMai) / agg.totalCreances) * 100}%`, background: '#3498db', transition: 'width 0.6s' }} />
-            {reste2027 > 0 && <div style={{ width: `${(reste2027 / agg.totalCreances) * 100}%`, background: '#9b59b6', transition: 'width 0.6s' }} />}
-            {contentieux > 0 && <div style={{ width: `${(contentieux / agg.totalCreances) * 100}%`, background: '#e05c5c', transition: 'width 0.6s' }} />}
-          </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 6, flexWrap: 'wrap' }}>
-            {[
-              { color: '#00ab63', label: 'Encaissé' },
-              { color: '#3498db', label: 'Plan 2026' },
-              ...(reste2027 > 0 ? [{ color: '#9b59b6', label: 'Report 2027' }] : []),
-              ...(contentieux > 0 ? [{ color: '#e05c5c', label: 'Contentieux' }] : []),
-            ].map((l, i) => (
-              <span key={i} style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}>
-                <span style={{ width: 8, height: 8, borderRadius: 2, background: l.color, display: 'inline-block' }} />
-                <span style={{ color: 'var(--text-muted)' }}>{l.label}</span>
-              </span>
-            ))}
-          </div>
+
+          {/* Clients who paid */}
+          {popup.clientsReel.length > 0 && (
+            <>
+              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 4 }}>
+                Encaissé ({popup.clientsReel.length})
+              </div>
+              {popup.clientsReel.map((c, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card-border)' }}>
+                  <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#00ab63' }}>{fmtMga(c.montant)}</span>
+                </div>
+              ))}
+            </>
+          )}
+
+          {/* Clients expected but not paid */}
+          {popup.clientsPrevu.length > 0 && (
+            <>
+              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#3498db', marginTop: 8, marginBottom: 4 }}>
+                Prévu — non encaissé ({popup.clientsPrevu.filter(c => !popup.clientsReel.find(r => r.client === c.client)).length})
+              </div>
+              {popup.clientsPrevu
+                .filter(c => !popup.clientsReel.find(r => r.client === c.client))
+                .map((c, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card-border)' }}>
+                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.client}</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: '#3498db' }}>{fmtMga(c.montant)}</span>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>

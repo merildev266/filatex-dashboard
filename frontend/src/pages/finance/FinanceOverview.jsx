@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, ClientCount } from './financeHelpers.jsx'
+import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY } from '../../data/finance_data'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, mergeMonthly, ClientCount } from './financeHelpers.jsx'
 
 export default function FinanceOverview() {
   const navigate = useNavigate()
@@ -27,7 +27,7 @@ export default function FinanceOverview() {
       ]} />
 
       {/* Cash flow chart */}
-      <CashFlowChart clients={[...FLX_CLIENTS, ...TCM_CLIENTS]} />
+      <CashFlowChart monthlyData={mergeMonthly(FLX_MONTHLY, TCM_MONTHLY)} />
 
       {/* Entity cards + Nature cards below each */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>

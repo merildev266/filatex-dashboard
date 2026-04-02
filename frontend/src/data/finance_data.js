@@ -2614,3 +2614,2230 @@ export const TCM_CLIENTS = [
     "retardJours": 401
   }
 ]
+
+export const FLX_MONTHLY = [
+  {
+    "mois": "2025-01",
+    "prevu": 1144006533.41,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "LID GROUP",
+        "montant": 349968417.71
+      },
+      {
+        "client": "SONIA MADA TEXTILE LTD",
+        "montant": 279931155.29
+      },
+      {
+        "client": "SALAMANCA INVESTMENTS",
+        "montant": 209974645.0
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 69508892.2
+      },
+      {
+        "client": "LIDERA GREEN POWER",
+        "montant": 62738400.0
+      },
+      {
+        "client": "ENELEC",
+        "montant": 58304493.68
+      },
+      {
+        "client": "FUTUR TEXTILE MADA",
+        "montant": 34694317.26
+      },
+      {
+        "client": "COMAT",
+        "montant": 20591928.0
+      },
+      {
+        "client": "RA APPAREL SARL",
+        "montant": 19902607.27
+      },
+      {
+        "client": "HAMANGA",
+        "montant": 16849461.64
+      },
+      {
+        "client": "MADA TULEAR GREEN POWER",
+        "montant": 6678000.0
+      },
+      {
+        "client": "JACQUOT RANAIVOSON",
+        "montant": 5000000.0
+      },
+      {
+        "client": "SOCIEDAD SARL (Haya)",
+        "montant": 4600000.0
+      },
+      {
+        "client": "MAISON SORAJ SARLU",
+        "montant": 4577815.36
+      },
+      {
+        "client": "BELKAHLA NAOUFEL",
+        "montant": 686400.0
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-05",
+    "prevu": 351346308.18,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 205013539.88
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 96291683.59
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 36835939.45
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 12560930.64
+      },
+      {
+        "client": "MAISON SORAJ SARLU",
+        "montant": 644214.62
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-06",
+    "prevu": 263139417.03,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 204056507.73
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 36663984.08
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 22418925.22
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-07",
+    "prevu": 479116483.28,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 202885530.09
+      },
+      {
+        "client": "TOAMASINA GREEN POWER",
+        "montant": 175510028.4
+      },
+      {
+        "client": "DIEGO GREEN POWER",
+        "montant": 42944796.67
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 35853059.13
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 21923068.99
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-08",
+    "prevu": 386020549.32,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 203264836.07
+      },
+      {
+        "client": "ENELEC",
+        "montant": 63547166.71
+      },
+      {
+        "client": "TOAMASINA GREEN POWER",
+        "montant": 60426414.88
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 36818076.28
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 21964055.38
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-09",
+    "prevu": 682038152.97,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "DONGNAM MADA",
+        "montant": 419456603.34
+      },
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 203679501.07
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 36893186.01
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 22008862.55
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-10",
+    "prevu": 422924072.13,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 205882526.65
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": 140609150.38
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 37101713.26
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 22133260.82
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 12898782.0
+      },
+      {
+        "client": "ZOHEIR ABDOULRASSOUL",
+        "montant": 4298639.02
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-11",
+    "prevu": 455280054.78,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 207130909.9
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": 142188139.46
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 37518351.86
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 22381809.19
+      },
+      {
+        "client": "ZOHEIR ABDOULRASSOUL",
+        "montant": 18954086.7
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 12930667.47
+      },
+      {
+        "client": "LIQUI MOLY MADAGASCAR",
+        "montant": 7199384.62
+      },
+      {
+        "client": "MTMT SARL",
+        "montant": 6976705.58
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-12",
+    "prevu": 578195985.77,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 206298012.03
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": 140831703.04
+      },
+      {
+        "client": "FUTUR TEXTILE MADA",
+        "montant": 84108758.29
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 64061357.53
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 37518351.86
+      },
+      {
+        "client": "ZOHEIR ABDOULRASSOUL",
+        "montant": 18588875.95
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 12681517.05
+      },
+      {
+        "client": "LIQUI MOLY MADAGASCAR",
+        "montant": 7130704.44
+      },
+      {
+        "client": "MTMT SARL",
+        "montant": 6976705.58
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2026-01",
+    "prevu": 546915847.45,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 209205181.86
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 143692327.31
+      },
+      {
+        "client": "FUTUR TEXTILE MADA",
+        "montant": 84051139.46
+      },
+      {
+        "client": "DAXU COSMETIC SARL",
+        "montant": 73934363.28
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 37492649.86
+      },
+      {
+        "client": "RA APPAREL SARL",
+        "montant": 23298469.37
+      },
+      {
+        "client": "ZOHEIR ABDOULRASSOUL",
+        "montant": 22813531.79
+      },
+      {
+        "client": "MAISON SORAJ SARLU",
+        "montant": 17335588.36
+      },
+      {
+        "client": "MTMT SARL",
+        "montant": 12988777.09
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 12969682.92
+      },
+      {
+        "client": "MAD ALU SYSTEM",
+        "montant": 10073243.42
+      },
+      {
+        "client": "AFRO EGYPT ENGINEERING MADAGASCAR",
+        "montant": 9081721.03
+      },
+      {
+        "client": "MAD POSE SARL",
+        "montant": 8759337.4
+      },
+      {
+        "client": "ENELEC",
+        "montant": 8461678.82
+      },
+      {
+        "client": "VESTOP MADAGASCAR SARL",
+        "montant": 7654436.07
+      },
+      {
+        "client": "LIQUI MOLY MADAGASCAR",
+        "montant": 7194452.67
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": -142090733.26
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2026-02",
+    "prevu": 1432267358.94,
+    "reel": 32756537.91,
+    "clientsPrevu": [
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "montant": 287344114.28
+      },
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 210434184.32
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": 142925463.36
+      },
+      {
+        "client": "SONIA MADA TEXTILE LTD",
+        "montant": 103253734.14
+      },
+      {
+        "client": "FUTUR TEXTILE MADA",
+        "montant": 84544908.58
+      },
+      {
+        "client": "I MAR MADAGASCAR",
+        "montant": 84051790.74
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 82498487.68
+      },
+      {
+        "client": "MIKEO KNITS MADAGASCAR",
+        "montant": 81967692.3
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 55415962.61
+      },
+      {
+        "client": "SASSEBO SARL",
+        "montant": 47045598.52
+      },
+      {
+        "client": "TANJAKA FOOD SARL",
+        "montant": 39525834.17
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 37712905.2
+      },
+      {
+        "client": "VELOGIC MADAGASCAR",
+        "montant": 32678206.51
+      },
+      {
+        "client": "COMAT",
+        "montant": 27589598.38
+      },
+      {
+        "client": "RA APPAREL SARL",
+        "montant": 23435339.2
+      },
+      {
+        "client": "ZOHEIR ABDOULRASSOUL",
+        "montant": 22951620.48
+      },
+      {
+        "client": "MAISON SORAJ SARLU",
+        "montant": 17437428.48
+      },
+      {
+        "client": "MTMT SARL",
+        "montant": 13061178.89
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 13048187.49
+      },
+      {
+        "client": "AFRO EGYPT ENGINEERING MADAGASCAR",
+        "montant": 9134332.56
+      },
+      {
+        "client": "ENELEC",
+        "montant": 8511388.02
+      },
+      {
+        "client": "VESTOP MADAGASCAR SARL",
+        "montant": 7699403.03
+      }
+    ],
+    "clientsReel": [
+      {
+        "client": "MAISON SORAJ SARLU",
+        "montant": 14516423.08
+      },
+      {
+        "client": "MAD ALU SYSTEM",
+        "montant": 9648213.66
+      },
+      {
+        "client": "MAD POSE SARL",
+        "montant": 8591901.17
+      }
+    ]
+  },
+  {
+    "mois": "2026-03",
+    "prevu": 1542397381.7,
+    "reel": 1474175321.77,
+    "clientsPrevu": [
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "montant": 273712230.22
+      },
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 199359965.86
+      },
+      {
+        "client": "TOAMASINA GREEN POWER",
+        "montant": 125486745.94
+      },
+      {
+        "client": "MIKEO KNITS MADAGASCAR",
+        "montant": 81967692.3
+      },
+      {
+        "client": "FUTUR TEXTILE MADA",
+        "montant": 80504691.26
+      },
+      {
+        "client": "I MAR MADAGASCAR",
+        "montant": 80035138.45
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 78556064.36
+      },
+      {
+        "client": "DAXU COSMETIC SARL",
+        "montant": 71443055.98
+      },
+      {
+        "client": "OURSUN GREEN POWER SARL",
+        "montant": 52767754.26
+      },
+      {
+        "client": "YKA SA",
+        "montant": 47031110.66
+      },
+      {
+        "client": "SASSEBO SARL",
+        "montant": 45271612.37
+      },
+      {
+        "client": "ENELEC",
+        "montant": 41881316.1
+      },
+      {
+        "client": "TANJAKA FOOD SARL",
+        "montant": 37636980.5
+      },
+      {
+        "client": "MARINE ET MOI",
+        "montant": 35910687.47
+      },
+      {
+        "client": "AGRICHEM SARL",
+        "montant": 32198647.15
+      },
+      {
+        "client": "VELOGIC MADAGASCAR",
+        "montant": 31116586.09
+      },
+      {
+        "client": "JARDIN MEUBLES SA",
+        "montant": 30728867.96
+      },
+      {
+        "client": "COMAT",
+        "montant": 26425857.64
+      },
+      {
+        "client": "DIEGO GREEN POWER",
+        "montant": 22826057.58
+      },
+      {
+        "client": "RA APPAREL SARL",
+        "montant": 22315415.3
+      },
+      {
+        "client": "ZOHEIR ABDOULRASSOUL",
+        "montant": 22086165.3
+      },
+      {
+        "client": "SOPHARMAD",
+        "montant": 19207870.26
+      },
+      {
+        "client": "MAISON SORAJ SARLU",
+        "montant": 16604131.7
+      },
+      {
+        "client": "MTMT SARL",
+        "montant": 12607408.79
+      },
+      {
+        "client": "L'Association HAKANTO CONTEMPORARY",
+        "montant": 12556169.01
+      },
+      {
+        "client": "MAD ALU SYSTEM",
+        "montant": 9648213.66
+      },
+      {
+        "client": "HAREL MALLAC TECHNOLOGIES",
+        "montant": 9530126.05
+      },
+      {
+        "client": "MAD POSE SARL",
+        "montant": 8591901.17
+      },
+      {
+        "client": "VESTOP MADAGASCAR SARL",
+        "montant": 7331465.31
+      },
+      {
+        "client": "LIQUI MOLY MADAGASCAR",
+        "montant": 7057453.0
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": 0.0
+      }
+    ],
+    "clientsReel": [
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "montant": 273712230.22
+      },
+      {
+        "client": "TOAMASINA GREEN POWER",
+        "montant": 235936443.28
+      },
+      {
+        "client": "DONGNAM MADA",
+        "montant": 142090733.26
+      },
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 107800000.0
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 78556064.36
+      },
+      {
+        "client": "MIKEO KNITS MADAGASCAR",
+        "montant": 78556064.36
+      },
+      {
+        "client": "JARDIN MEUBLES SA",
+        "montant": 77923168.39
+      },
+      {
+        "client": "I MAR MADAGASCAR",
+        "montant": 76908500.81
+      },
+      {
+        "client": "DAXU COSMETIC SARL",
+        "montant": 71443055.98
+      },
+      {
+        "client": "YKA SA",
+        "montant": 47031110.66
+      },
+      {
+        "client": "RA APPAREL SARL",
+        "montant": 46369976.0
+      },
+      {
+        "client": "SASSEBO SARL",
+        "montant": 43017456.28
+      },
+      {
+        "client": "DIEGO GREEN POWER",
+        "montant": 42944796.67
+      },
+      {
+        "client": "TANJAKA FOOD SARL",
+        "montant": 37636980.5
+      },
+      {
+        "client": "AGRICHEM SARL",
+        "montant": 32198647.15
+      },
+      {
+        "client": "VELOGIC MADAGASCAR",
+        "montant": 31116586.09
+      },
+      {
+        "client": "SOPHARMAD",
+        "montant": 19207870.26
+      },
+      {
+        "client": "MTMT SARL",
+        "montant": 13061178.89
+      },
+      {
+        "client": "HAREL MALLAC TECHNOLOGIES",
+        "montant": 9530126.05
+      },
+      {
+        "client": "AFRO EGYPT ENGINEERING MADAGASCAR",
+        "montant": 9134332.56
+      }
+    ]
+  },
+  {
+    "mois": "2026-04",
+    "prevu": 352648792.54,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "DONGNAM MADA",
+        "montant": 352648792.54
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2026-05",
+    "prevu": 0,
+    "reel": 2011680214.1,
+    "clientsPrevu": [],
+    "clientsReel": [
+      {
+        "client": "ORIGINALCONFECTION",
+        "montant": 2011680214.1
+      }
+    ]
+  }
+]
+
+export const TCM_MONTHLY = [
+  {
+    "mois": "2023-10",
+    "prevu": 0,
+    "reel": 45373446.42,
+    "clientsPrevu": [],
+    "clientsReel": [
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 45373446.42
+      }
+    ]
+  },
+  {
+    "mois": "2023-11",
+    "prevu": 0,
+    "reel": 43024944.79,
+    "clientsPrevu": [],
+    "clientsReel": [
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 43024944.79
+      }
+    ]
+  },
+  {
+    "mois": "2025-01",
+    "prevu": 3031861073.44,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "ENELEC",
+        "montant": 613423003.38
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 511142025.36
+      },
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 418626348.0
+      },
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "montant": 266131882.87
+      },
+      {
+        "client": "ANDILANA MADAGASCAR SARL",
+        "montant": 164685586.91
+      },
+      {
+        "client": "LIDERA GREEN POWER",
+        "montant": 162884397.0
+      },
+      {
+        "client": "INAYATALY MOHAMED NASSIR",
+        "montant": 108946242.43
+      },
+      {
+        "client": "HAMANGA SARL",
+        "montant": 105526743.0
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 88398391.21
+      },
+      {
+        "client": "SALAMANCA INVESTMENTS",
+        "montant": 86955050.0
+      },
+      {
+        "client": "DIRECTION GENERALE DES FINANCES ET DES AFFAIRES GENERALES",
+        "montant": 73296000.0
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "VESTOP MADAGASCAR",
+        "montant": 52354800.0
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 50000000.0
+      },
+      {
+        "client": "Société ENINEMNE",
+        "montant": 37022713.38
+      },
+      {
+        "client": "LEONG BTP SARL",
+        "montant": 29692148.5
+      },
+      {
+        "client": "TCM",
+        "montant": 26696115.32
+      },
+      {
+        "client": "ALI TOUSSI",
+        "montant": 18754300.0
+      },
+      {
+        "client": "Joël Andrianomearisoa",
+        "montant": 14788843.0
+      },
+      {
+        "client": "IRCHAD PIERALY",
+        "montant": 13749078.88
+      },
+      {
+        "client": "VASSANTRAI Babou",
+        "montant": 11240173.17
+      },
+      {
+        "client": "ZAKIR KAKAL",
+        "montant": 11212395.24
+      },
+      {
+        "client": "NAZARALY MOMED",
+        "montant": 9310496.25
+      },
+      {
+        "client": "SADROUDINE RICHAD",
+        "montant": 7566034.0
+      },
+      {
+        "client": "DAMOTTE ERIC",
+        "montant": 7457648.27
+      },
+      {
+        "client": "Patrick RAJOELINA",
+        "montant": 5153589.88
+      },
+      {
+        "client": "Christian ANDRIATSITOHAINA",
+        "montant": 5000000.0
+      },
+      {
+        "client": "LE GRAND ORIENT",
+        "montant": 4874524.08
+      },
+      {
+        "client": "KOURDJEE FIDAHOUSSEN BADOURALY",
+        "montant": 4779115.0
+      },
+      {
+        "client": "Frederic GRENIER",
+        "montant": 2965149.72
+      },
+      {
+        "client": "SHOWROOM",
+        "montant": 2649232.05
+      },
+      {
+        "client": "BANQUE BOA MADAGASCAR",
+        "montant": 2463141.2
+      },
+      {
+        "client": "SABIR SIVJEE",
+        "montant": 870300.0
+      },
+      {
+        "client": "MOUSTAPHA RADJAN",
+        "montant": 471591.0
+      },
+      {
+        "client": "SOCOMA Sté Commerciale MANDROSO",
+        "montant": 468000.0
+      },
+      {
+        "client": "MOHAMED TAKY DANIS",
+        "montant": 398018.0
+      },
+      {
+        "client": "SOCIETE LUXOR",
+        "montant": 306776.0
+      },
+      {
+        "client": "JAOTINA SEVARANJANJARA",
+        "montant": 297142.0
+      },
+      {
+        "client": "VELDJEE NAZIR",
+        "montant": 171818.0
+      },
+      {
+        "client": "ANDRIANTIANA NOURIA",
+        "montant": 126632.19
+      },
+      {
+        "client": "VELDJEE NAVAGE",
+        "montant": 94630.0
+      },
+      {
+        "client": "GUY RANDRIANASOLO",
+        "montant": 42822.0
+      },
+      {
+        "client": "MAMOD NAZIR VASRAM",
+        "montant": 12630.0
+      },
+      {
+        "client": "FENO JEAN PIERRE",
+        "montant": 10268.0
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-02",
+    "prevu": 348378237.59,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "SOCOMA Sté Commerciale MANDROSO",
+        "montant": 36000.0
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-03",
+    "prevu": 396596476.41,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "TCM",
+        "montant": 27275952.79
+      },
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "montant": 18932286.03
+      },
+      {
+        "client": "LEONG BTP SARL",
+        "montant": 2010000.0
+      },
+      {
+        "client": "SOCOMA Sté Commerciale MANDROSO",
+        "montant": 36000.0
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-04",
+    "prevu": 633619752.9,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "JARDIN DE TANA",
+        "montant": 120960000.0
+      },
+      {
+        "client": "PADDY GROUP MADAGASCAR",
+        "montant": 119851723.92
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "TCM",
+        "montant": 27795991.39
+      },
+      {
+        "client": "ORANGE MADAGASCAR",
+        "montant": 16669800.0
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-05",
+    "prevu": 460707241.19,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 51810048.14
+      },
+      {
+        "client": "TCM",
+        "montant": 27989734.06
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 20717598.6
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6279630.28
+      },
+      {
+        "client": "ENAT",
+        "montant": 5567992.52
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-06",
+    "prevu": 469285355.11,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "ENAT",
+        "montant": 52764251.73
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 51810048.14
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 10000000.0
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6368817.65
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-07",
+    "prevu": 707599395.35,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 95601857.09
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "MADA TULEAR GREEN POWER",
+        "montant": 55109716.63
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 51810048.14
+      },
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "montant": 47511518.81
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 40000000.0
+      },
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "montant": 37044866.0
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 13065651.43
+      },
+      {
+        "client": "ENAT",
+        "montant": 12540527.81
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6475977.05
+      },
+      {
+        "client": "Association KANTOKO",
+        "montant": 96994.8
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-08",
+    "prevu": 572108321.23,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 95601857.09
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 51810048.14
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 40000000.0
+      },
+      {
+        "client": "ENAT",
+        "montant": 13203944.37
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6627757.73
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6327988.53
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 5245156.1
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 4949331.68
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-09",
+    "prevu": 1445564359.54,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 955542116.0
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 95601857.09
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 84171905.23
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 40000000.0
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 29416217.02
+      },
+      {
+        "client": "ENAT",
+        "montant": 13122470.23
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6955581.8
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6796511.71
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5157578.87
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-10",
+    "prevu": 864275043.56,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "DJAFFAR RIAZ",
+        "montant": 98234489.31
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 95601857.09
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "DAMDJEE JAMIL",
+        "montant": 52501500.0
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 42859681.93
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 40000000.0
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 16210303.84
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6031646.03
+      },
+      {
+        "client": "ENAT",
+        "montant": 6022536.0
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 5865039.08
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5193847.46
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-11",
+    "prevu": 899831508.86,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "DJAFFAR RIAZ",
+        "montant": 98234489.31
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 95601857.09
+      },
+      {
+        "client": "PADDY GROUP MADAGASCAR",
+        "montant": 81270849.45
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "DAMDJEE JAMIL",
+        "montant": 52501500.0
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 29696302.24
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 20973378.58
+      },
+      {
+        "client": "ENAT",
+        "montant": 6875608.82
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6802345.04
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6735715.93
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5385319.58
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2025-12",
+    "prevu": 1121137098.51,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "YATRICK OUKABAY",
+        "montant": 255000000.0
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "YAKATALY ALIHOUSSEN",
+        "montant": 139542116.0
+      },
+      {
+        "client": "DJAFFAR RIAZ",
+        "montant": 98234489.31
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 97954843.44
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 95601857.09
+      },
+      {
+        "client": "Société IVORY SARL",
+        "montant": 59035230.01
+      },
+      {
+        "client": "DAMDJEE JAMIL",
+        "montant": 52501500.0
+      },
+      {
+        "client": "Société SIC",
+        "montant": 51810048.14
+      },
+      {
+        "client": "NILESH KUMAR BHAGVANDAS",
+        "montant": 39810000.0
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 20511868.03
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 18742976.88
+      },
+      {
+        "client": "MUFFAZAL NOURBHAY",
+        "montant": 10000000.0
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 9833640.33
+      },
+      {
+        "client": "ENAT",
+        "montant": 6743128.36
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6599372.41
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6522569.01
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5281554.27
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2026-01",
+    "prevu": 1356241469.83,
+    "reel": 13142679.0,
+    "clientsPrevu": [
+      {
+        "client": "SOCIETE SCIV",
+        "montant": 531328551.48
+      },
+      {
+        "client": "Société OMNIVEST",
+        "montant": 220086500.0
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 147415248.03
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "DJAFFAR RIAZ",
+        "montant": 98234489.31
+      },
+      {
+        "client": "ENTIC IMMO",
+        "montant": 41737833.33
+      },
+      {
+        "client": "NILESH KUMAR BHAGVANDAS",
+        "montant": 40913815.94
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 20977965.27
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 19943040.91
+      },
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "montant": 18522433.0
+      },
+      {
+        "client": "SITMA",
+        "montant": 13142679.0
+      },
+      {
+        "client": "Association KANTOKO",
+        "montant": 9832611.6
+      },
+      {
+        "client": "ENAT",
+        "montant": 6896354.46
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6717533.56
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6405158.14
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5401568.59
+      },
+      {
+        "client": "RVL Consulting",
+        "montant": 4849007.04
+      },
+      {
+        "client": "ROBIMANANA Rivomanantsoa Orlando",
+        "montant": 4264596.14
+      },
+      {
+        "client": "DONGNAM",
+        "montant": 3609244.77
+      },
+      {
+        "client": "BELKAHLA  NAOUFEL",
+        "montant": 3121443.2
+      },
+      {
+        "client": "CODE TALENT",
+        "montant": 2876931.98
+      },
+      {
+        "client": "TOWERCO OF AFRICA",
+        "montant": 1861593.84
+      },
+      {
+        "client": "HOUSSENALY MOURDJEE Minaze",
+        "montant": 690965.01
+      }
+    ],
+    "clientsReel": [
+      {
+        "client": "SITMA",
+        "montant": 13142679.0
+      }
+    ]
+  },
+  {
+    "mois": "2026-02",
+    "prevu": 3388469730.28,
+    "reel": 116586518.74,
+    "clientsPrevu": [
+      {
+        "client": "SOCIETE SCIV",
+        "montant": 1063966700.69
+      },
+      {
+        "client": "MAMOD RAZA ASGARALY",
+        "montant": 702813000.0
+      },
+      {
+        "client": "FAYD HERBE DE MAUDAVE Fabienne Wendy",
+        "montant": 259860000.0
+      },
+      {
+        "client": "Société OMNIVEST",
+        "montant": 214236108.0
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 171666351.74
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "TANG SIOU MI Jade Amanda",
+        "montant": 129920000.0
+      },
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "montant": 100227540.32
+      },
+      {
+        "client": "ENTIC IMMO",
+        "montant": 90548333.33
+      },
+      {
+        "client": "HASSANALY CHAHICK",
+        "montant": 80213866.92
+      },
+      {
+        "client": "FILATEX",
+        "montant": 68454155.23
+      },
+      {
+        "client": "KASSIM LAKHOUBAY",
+        "montant": 55032133.33
+      },
+      {
+        "client": "NILESH KUMAR BHAGVANDAS",
+        "montant": 39810000.0
+      },
+      {
+        "client": "SAGEMCOM ENERGY & TELECOM SAS",
+        "montant": 29435841.14
+      },
+      {
+        "client": "AFG ASSURANCE MADAGASCAR",
+        "montant": 25377609.84
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 22057916.45
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 21104943.42
+      },
+      {
+        "client": "GO SAAS",
+        "montant": 18967762.32
+      },
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "montant": 18522433.0
+      },
+      {
+        "client": "BANQUE BOA MADAGASCAR",
+        "montant": 18040640.0
+      },
+      {
+        "client": "SITMA",
+        "montant": 13220144.4
+      },
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "montant": 10038677.74
+      },
+      {
+        "client": "Association KANTOKO",
+        "montant": 9892127.7
+      },
+      {
+        "client": "ENAT",
+        "montant": 6938097.61
+      },
+      {
+        "client": "JOCKER GRAPHICS",
+        "montant": 6660050.31
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6615687.53
+      },
+      {
+        "client": "RASOANANTENAINA MARIA",
+        "montant": 6071358.81
+      },
+      {
+        "client": "RAVINALA COMPANY",
+        "montant": 5652644.4
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5434263.91
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 5021508.93
+      },
+      {
+        "client": "SONIA MADA TEXTILE",
+        "montant": 4940829.92
+      },
+      {
+        "client": "RVL Consulting",
+        "montant": 4878357.73
+      },
+      {
+        "client": "ECO ENERGY SARLU",
+        "montant": 4550253.13
+      },
+      {
+        "client": "ROBIMANANA Rivomanantsoa Orlando",
+        "montant": 4290409.44
+      },
+      {
+        "client": "DONGNAM",
+        "montant": 4189760.96
+      },
+      {
+        "client": "DOMINIQUE  ANDREAS",
+        "montant": 3960431.09
+      },
+      {
+        "client": "TOWERCO OF AFRICA",
+        "montant": 3723187.68
+      },
+      {
+        "client": "BELKAHLA  NAOUFEL",
+        "montant": 3140337.07
+      },
+      {
+        "client": "MADAGREEN",
+        "montant": 1584360.96
+      }
+    ],
+    "clientsReel": [
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 70994194.36
+      },
+      {
+        "client": "GO SAAS",
+        "montant": 18967762.32
+      },
+      {
+        "client": "BANQUE BOA MADAGASCAR",
+        "montant": 18040640.0
+      },
+      {
+        "client": "ACOI",
+        "montant": 4321777.06
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 4262145.0
+      }
+    ]
+  },
+  {
+    "mois": "2026-03",
+    "prevu": 2548284625.64,
+    "reel": 6180036786.97,
+    "clientsPrevu": [
+      {
+        "client": "DAMDJEE JAMIL",
+        "montant": 713877000.0
+      },
+      {
+        "client": "SOCIETE SCIV",
+        "montant": 519450200.0
+      },
+      {
+        "client": "YATRICK OUKABAY",
+        "montant": 416724419.0
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 104995880.83
+      },
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "montant": 96448180.02
+      },
+      {
+        "client": "MADA TULEAR GREEN POWER",
+        "montant": 78014877.74
+      },
+      {
+        "client": "FILATEX",
+        "montant": 68454155.23
+      },
+      {
+        "client": "Société SIC",
+        "montant": 55525353.0
+      },
+      {
+        "client": "SAGEMCOM ENERGY & TELECOM SAS",
+        "montant": 28369325.06
+      },
+      {
+        "client": "AFG ASSURANCE MADAGASCAR",
+        "montant": 24420675.94
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 22152584.03
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 21146596.75
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 21025564.38
+      },
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "montant": 18522433.0
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 18418592.38
+      },
+      {
+        "client": "GO SAAS",
+        "montant": 18252529.68
+      },
+      {
+        "client": "BANQUE BOA MADAGASCAR",
+        "montant": 18040640.0
+      },
+      {
+        "client": "BANQUE SBM MADAGASCAR",
+        "montant": 13508164.04
+      },
+      {
+        "client": "SITMA",
+        "montant": 12734638.8
+      },
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "montant": 9875306.34
+      },
+      {
+        "client": "AGRICHEM SARL",
+        "montant": 9752225.28
+      },
+      {
+        "client": "Association  KANTOKO",
+        "montant": 9519117.3
+      },
+      {
+        "client": "ENELEC",
+        "montant": 9022189.16
+      },
+      {
+        "client": "I MAR MADAGASCAR",
+        "montant": 7029875.34
+      },
+      {
+        "client": "ENAT",
+        "montant": 6676477.19
+      },
+      {
+        "client": "JULES ETIENNE Roland",
+        "montant": 6606451.97
+      },
+      {
+        "client": "JOCKER GRAPHICS",
+        "montant": 6408914.45
+      },
+      {
+        "client": "RASOANANTENAINA",
+        "montant": 5876915.21
+      },
+      {
+        "client": "RAVINALA COMPANY",
+        "montant": 5769199.54
+      },
+      {
+        "client": "NANA SAYOUBA",
+        "montant": 5229349.76
+      },
+      {
+        "client": "MHPC",
+        "montant": 5023241.14
+      },
+      {
+        "client": "JARDINS MEUBLES",
+        "montant": 4804713.74
+      },
+      {
+        "client": "SONIA MADA TEXTILE",
+        "montant": 4789016.08
+      },
+      {
+        "client": "RVL Consulting",
+        "montant": 4694405.58
+      },
+      {
+        "client": "ECO ENERGY SARLU",
+        "montant": 4544454.72
+      },
+      {
+        "client": "DONGNAM",
+        "montant": 4391474.35
+      },
+      {
+        "client": "ACOI",
+        "montant": 4321777.06
+      },
+      {
+        "client": "ROBIMANANA Rivomanantsoa Orlando",
+        "montant": 4128627.53
+      },
+      {
+        "client": "DOMINIQUE  ANDREAS",
+        "montant": 3811091.93
+      },
+      {
+        "client": "TOWERCO OF AFRICA",
+        "montant": 3723187.68
+      },
+      {
+        "client": "BELKAHLA  NAOUFEL",
+        "montant": 3093771.82
+      },
+      {
+        "client": "MADAGREEN",
+        "montant": 1508647.8
+      },
+      {
+        "client": "WANG Yanggang",
+        "montant": 190479.56
+      }
+    ],
+    "clientsReel": [
+      {
+        "client": "PINOU CHERALY",
+        "montant": 1207803926.09
+      },
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 902065527.39
+      },
+      {
+        "client": "Société SIC",
+        "montant": 873622418.23
+      },
+      {
+        "client": "DAMDJEE JAMIL",
+        "montant": 713877000.0
+      },
+      {
+        "client": "MAMOD RAZA ASGARALY",
+        "montant": 702813000.0
+      },
+      {
+        "client": "SOCIETE SCIV",
+        "montant": 519450200.0
+      },
+      {
+        "client": "FILATEX SERVICES",
+        "montant": 305423150.44
+      },
+      {
+        "client": "Société OMNIVEST",
+        "montant": 207539000.0
+      },
+      {
+        "client": "DJAFFAR RIAZ",
+        "montant": 107639999.96
+      },
+      {
+        "client": "ORIGINAL CONFECTION",
+        "montant": 101608938.53
+      },
+      {
+        "client": "AFG BANK MADAGASCAR",
+        "montant": 96448180.02
+      },
+      {
+        "client": "NILESH KUMAR BHAGVANDAS",
+        "montant": 79620000.0
+      },
+      {
+        "client": "FILATEX",
+        "montant": 68454155.23
+      },
+      {
+        "client": "RABETSAROANA Vololona",
+        "montant": 50000000.0
+      },
+      {
+        "client": "PLG CONFECTION",
+        "montant": 37035839.29
+      },
+      {
+        "client": "AFG ASSURANCE MADAGASCAR",
+        "montant": 24420675.94
+      },
+      {
+        "client": "BACE/PRECIPAM-UE",
+        "montant": 18522433.0
+      },
+      {
+        "client": "GO SAAS",
+        "montant": 18252529.68
+      },
+      {
+        "client": "PAUL BOYE INDUSTRIES",
+        "montant": 15200369.87
+      },
+      {
+        "client": "BANQUE SBM MADAGASCAR",
+        "montant": 13508164.04
+      },
+      {
+        "client": "SITMA",
+        "montant": 13220144.4
+      },
+      {
+        "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
+        "montant": 13065651.43
+      },
+      {
+        "client": "AGRICHEM SARL",
+        "montant": 9752225.28
+      },
+      {
+        "client": "ROBIMANANA Rivomanantsoa Orlando",
+        "montant": 8555005.58
+      },
+      {
+        "client": "SHOWROOM",
+        "montant": 8226285.91
+      },
+      {
+        "client": "DOMINIQUE  ANDREAS",
+        "montant": 7771523.02
+      },
+      {
+        "client": "I MAR MADAGASCAR",
+        "montant": 7029875.34
+      },
+      {
+        "client": "JOCKER GRAPHICS",
+        "montant": 6408914.45
+      },
+      {
+        "client": "RAVINALA COMPANY",
+        "montant": 5769199.54
+      },
+      {
+        "client": "MHPC",
+        "montant": 5023241.14
+      },
+      {
+        "client": "RVL Consulting",
+        "montant": 4878357.73
+      },
+      {
+        "client": "JARDINS MEUBLES",
+        "montant": 4804713.74
+      },
+      {
+        "client": "SONIA MADA TEXTILE",
+        "montant": 4789016.08
+      },
+      {
+        "client": "ECO ENERGY SARLU",
+        "montant": 4544454.72
+      },
+      {
+        "client": "DONGNAM",
+        "montant": 4391474.35
+      },
+      {
+        "client": "TOWERCO OF AFRICA",
+        "montant": 3723187.68
+      },
+      {
+        "client": "BELKAHLA  NAOUFEL",
+        "montant": 3269361.07
+      },
+      {
+        "client": "MADAGREEN",
+        "montant": 1508647.8
+      }
+    ]
+  },
+  {
+    "mois": "2026-04",
+    "prevu": 379026413.46,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 107635000.0
+      },
+      {
+        "client": "FILATEX",
+        "montant": 68454155.23
+      },
+      {
+        "client": "Société SIC",
+        "montant": 55525353.0
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2026-05",
+    "prevu": 367441386.1,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "PINOU CHERALY",
+        "montant": 96533854.11
+      },
+      {
+        "client": "FILATEX",
+        "montant": 68454155.23
+      },
+      {
+        "client": "Société SIC",
+        "montant": 55041471.53
+      }
+    ],
+    "clientsReel": []
+  },
+  {
+    "mois": "2026-06",
+    "prevu": 215866060.46,
+    "reel": 0,
+    "clientsPrevu": [
+      {
+        "client": "HASSANALY NADIR",
+        "montant": 147411905.23
+      },
+      {
+        "client": "FILATEX",
+        "montant": 68454155.23
+      }
+    ],
+    "clientsReel": []
+  }
+]
