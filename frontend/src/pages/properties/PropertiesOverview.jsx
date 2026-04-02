@@ -60,7 +60,7 @@ function SectionCard({ title, subtitle, accent, kpis, onClick }) {
         }}
         onMouseEnter={e => {
           e.currentTarget.style.borderColor = rgba(accent, 0.5)
-          e.currentTarget.style.background = rgba(accent, 0.06)
+          e.currentTarget.style.background = '#1e1a0e'
           e.currentTarget.style.boxShadow = `0 16px 50px ${rgba(accent, 0.15)}`
         }}
         onMouseLeave={e => {

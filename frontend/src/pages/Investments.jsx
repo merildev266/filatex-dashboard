@@ -52,7 +52,7 @@ function SummaryColumn({ title, kpis, onClick }) {
         style={{ borderColor: `rgba(${ACCENT_RGB},0.35)`, cursor: 'pointer', flex: 1 }}
         onMouseEnter={e => {
           e.currentTarget.style.borderColor = `rgba(${ACCENT_RGB},0.7)`
-          e.currentTarget.style.background = `rgba(${ACCENT_RGB},0.06)`
+          e.currentTarget.style.background = '#1e1210'
           e.currentTarget.style.boxShadow = `0 16px 40px rgba(${ACCENT_RGB},0.2)`
           e.currentTarget.style.transform = 'translateY(-3px)'
         }}

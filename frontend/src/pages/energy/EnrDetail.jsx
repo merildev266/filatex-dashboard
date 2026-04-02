@@ -355,7 +355,7 @@ export default function EnrDetail() {
                 borderRadius: 20, padding: '24px 20px', cursor: 'pointer', transition: 'all 0.3s',
                 position: 'relative', overflow: 'hidden',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = `rgba(${rgb},0.1)`; e.currentTarget.style.borderColor = `rgba(${rgb},0.35)`; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#0e1e18'; e.currentTarget.style.borderColor = `rgb(${rgb})`; e.currentTarget.style.transform = 'translateY(-2px)' }}
               onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'translateY(0)' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
