@@ -271,6 +271,7 @@ const MOIS_SHORT = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'S
 
 export function CashFlowChart({ monthlyData }) {
   const [popup, setPopup] = useState(null)
+  const [popupFilter, setPopupFilter] = useState(null) // 'reel' | 'nonpaye' | null
 
   if (!monthlyData || monthlyData.length === 0) return null
 
@@ -335,7 +336,7 @@ export function CashFlowChart({ monthlyData }) {
           return (
             <div
               key={i}
-              onClick={() => hasData ? setPopup(popup?.mois === bar.mois ? null : bar) : null}
+              onClick={() => { if (hasData) { setPopupFilter(null); setPopup(popup?.mois === bar.mois ? null : bar) } }}
               style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: hasData ? 'pointer' : 'default', position: 'relative' }}
             >
               {/* Value on top */}
@@ -415,16 +416,9 @@ export function CashFlowChart({ monthlyData }) {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header with month + percentage */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{popup.mois}</div>
-                <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>
-                  Réel <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(popup.reel)}</span>
-                  <span style={{ margin: '0 4px', opacity: 0.3 }}>/</span>
-                  Prévu <span style={{ fontWeight: 700, color: '#3498db' }}>{fmtMga(popup.prevu)}</span>
-                </div>
-              </div>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{popup.mois}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{
                   fontSize: 18, fontWeight: 800,
@@ -434,15 +428,47 @@ export function CashFlowChart({ monthlyData }) {
               </div>
             </div>
 
+            {/* Clickable filter cards: Encaissé / Non encaissé */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
+              <div
+                onClick={() => setPopupFilter(popupFilter === 'reel' ? null : 'reel')}
+                style={{
+                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
+                  background: popupFilter === 'reel' ? 'rgba(0,171,99,0.15)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${popupFilter === 'reel' ? '#00ab63' : 'var(--card-border)'}`,
+                  transition: 'all 0.2s',
+                  opacity: popupFilter && popupFilter !== 'reel' ? 0.4 : 1,
+                }}
+              >
+                <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#00ab63', fontWeight: 700, marginBottom: 2 }}>Encaissé</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: '#00ab63' }}>{fmtMga(popup.reel)}</div>
+                <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{popup.clientsReel.length} client{popup.clientsReel.length > 1 ? 's' : ''}</div>
+              </div>
+              <div
+                onClick={() => setPopupFilter(popupFilter === 'nonpaye' ? null : 'nonpaye')}
+                style={{
+                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
+                  background: popupFilter === 'nonpaye' ? 'rgba(224,92,92,0.15)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${popupFilter === 'nonpaye' ? '#e05c5c' : 'var(--card-border)'}`,
+                  transition: 'all 0.2s',
+                  opacity: popupFilter && popupFilter !== 'nonpaye' ? 0.4 : 1,
+                }}
+              >
+                <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#e05c5c', fontWeight: 700, marginBottom: 2 }}>Non encaissé</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: '#e05c5c' }}>{fmtMga(Math.max(0, popup.prevu - popup.reel))}</div>
+                <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{nonPaye.length} client{nonPaye.length > 1 ? 's' : ''}</div>
+              </div>
+            </div>
+
             {/* Mini progress bar */}
-            <div style={{ height: 6, borderRadius: 3, background: '#3498db33', overflow: 'hidden', marginBottom: 12 }}>
+            <div style={{ height: 5, borderRadius: 3, background: '#e05c5c33', overflow: 'hidden', marginBottom: 10 }}>
               <div style={{ width: `${Math.min(Number(pctReel) || 0, 100)}%`, height: '100%', background: '#00ab63', borderRadius: 3 }} />
             </div>
 
-            {/* Clients who paid */}
-            {popup.clientsReel.length > 0 && (
+            {/* Client lists — filtered by popupFilter */}
+            {(!popupFilter || popupFilter === 'reel') && popup.clientsReel.length > 0 && (
               <>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 6 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 4 }}>
                   Encaissé ({popup.clientsReel.length})
                 </div>
                 {popup.clientsReel.map((c, i) => (
@@ -454,10 +480,9 @@ export function CashFlowChart({ monthlyData }) {
               </>
             )}
 
-            {/* Clients expected but not paid */}
-            {nonPaye.length > 0 && (
+            {(!popupFilter || popupFilter === 'nonpaye') && nonPaye.length > 0 && (
               <>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e05c5c', marginTop: 10, marginBottom: 6 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e05c5c', marginTop: popupFilter ? 0 : 10, marginBottom: 4 }}>
                   Non encaissé ({nonPaye.length})
                 </div>
                 {nonPaye.map((c, i) => (
