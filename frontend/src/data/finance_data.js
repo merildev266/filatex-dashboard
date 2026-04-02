@@ -18,7 +18,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CG0004",
@@ -38,7 +38,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-03-04",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CG0010",
@@ -58,7 +58,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CG0011",
@@ -78,7 +78,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "code": "CG0012",
@@ -98,7 +98,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CG0014",
@@ -118,7 +118,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CG0015",
@@ -138,7 +138,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CG0016",
@@ -158,7 +158,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-07-07",
     "dateFactureRecente": "2026-03-04",
     "echeance": "2025-07-07",
-    "retardJours": 214
+    "retardJours": 269
   },
   {
     "code": "CG0017",
@@ -178,7 +178,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-07-07",
     "dateFactureRecente": "2026-03-04",
     "echeance": "2025-07-07",
-    "retardJours": 214
+    "retardJours": 269
   },
   {
     "code": "CE0001",
@@ -198,7 +198,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0006",
@@ -218,7 +218,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0007",
@@ -238,7 +238,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-05-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-05-05",
-    "retardJours": 277
+    "retardJours": 332
   },
   {
     "code": "CL0008",
@@ -258,7 +258,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-02-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0013",
@@ -278,7 +278,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0014",
@@ -298,7 +298,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0027",
@@ -318,7 +318,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-05-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-05-05",
-    "retardJours": 277
+    "retardJours": 332
   },
   {
     "code": "CL0028",
@@ -338,7 +338,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0029",
@@ -358,7 +358,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0031",
@@ -378,7 +378,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0043",
@@ -398,7 +398,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "code": "CL0044",
@@ -418,7 +418,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-11-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-11-05",
-    "retardJours": 93
+    "retardJours": 148
   },
   {
     "code": "CL0050",
@@ -438,7 +438,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0051",
@@ -458,7 +458,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0052",
@@ -478,7 +478,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "code": "CL0061",
@@ -498,7 +498,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0064",
@@ -518,7 +518,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "code": "CL0066",
@@ -538,7 +538,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0067",
@@ -558,7 +558,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0070",
@@ -578,7 +578,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-02-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "code": "CL0074",
@@ -598,7 +598,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-10-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-10-05",
-    "retardJours": 124
+    "retardJours": 179
   },
   {
     "code": "CL0075",
@@ -618,7 +618,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "code": "CL0076",
@@ -638,7 +638,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "code": "CL0077",
@@ -658,7 +658,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-09-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-09-05",
-    "retardJours": 154
+    "retardJours": 209
   },
   {
     "code": "CL0078",
@@ -678,7 +678,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-05",
-    "retardJours": 397
+    "retardJours": 452
   },
   {
     "code": "CL0079",
@@ -698,7 +698,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-04-08",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-05-05",
-    "retardJours": 277
+    "retardJours": 332
   },
   {
     "code": "CL0080",
@@ -718,7 +718,7 @@ export const FLX_CLIENTS = [
     "dateFacture": "2025-11-18",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-11-18",
-    "retardJours": 80
+    "retardJours": 135
   }
 ]
 
@@ -742,7 +742,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "AFG BANK MADAGASCAR",
@@ -763,7 +763,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2023-08-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "ALI TOUSSI",
@@ -784,7 +784,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-07-27",
     "dateFactureRecente": "2021-07-27",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "ANDILANA MADAGASCAR SARL",
@@ -805,7 +805,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2020-01-01",
     "dateFactureRecente": "2020-06-08",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "ANDRIANTIANA NOURIA",
@@ -826,7 +826,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "Association KANTOKO",
@@ -847,7 +847,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-07-01",
     "dateFactureRecente": "2026-02-01",
     "echeance": "2025-07-01",
-    "retardJours": 220
+    "retardJours": 275
   },
   {
     "client": "BACE/PRECIPAM-UE",
@@ -868,7 +868,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-07-09",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-07-09",
-    "retardJours": 212
+    "retardJours": 267
   },
   {
     "client": "BANQUE BOA MADAGASCAR",
@@ -889,7 +889,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2022-02-23",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "BELKAHLA NAOUFEL",
@@ -931,7 +931,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2022-06-09",
     "dateFactureRecente": "2022-06-09",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "CODE TALENT",
@@ -952,7 +952,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-01-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "client": "DAMDJEE JAMIL",
@@ -973,7 +973,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-10-28",
     "dateFactureRecente": "2026-03-28",
     "echeance": "2025-10-28",
-    "retardJours": 101
+    "retardJours": 156
   },
   {
     "client": "DAMOTTE ERIC",
@@ -994,7 +994,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2020-01-01",
     "dateFactureRecente": "2020-09-10",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "DIRECTION GENERALE DES FINANCES ET DES AFFAIRES GENERALES",
@@ -1015,7 +1015,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-10-22",
     "dateFactureRecente": "2022-09-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "DJAFFAR RIAZ",
@@ -1036,7 +1036,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-10-28",
     "dateFactureRecente": "2026-01-28",
     "echeance": "2025-10-28",
-    "retardJours": 101
+    "retardJours": 156
   },
   {
     "client": "DOMINIQUE ANDREAS",
@@ -1078,7 +1078,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-05",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "client": "ECO ENERGY SARLU",
@@ -1099,7 +1099,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "ENAT",
@@ -1120,7 +1120,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-05-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-05-01",
-    "retardJours": 281
+    "retardJours": 336
   },
   {
     "client": "ENELEC",
@@ -1141,7 +1141,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-02-25",
     "dateFactureRecente": "2026-03-04",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "ENTIC IMMO",
@@ -1162,7 +1162,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-31",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2026-01-31",
-    "retardJours": 6
+    "retardJours": 61
   },
   {
     "client": "FAYD HERBE DE MAUDAVE Fabienne Wendy",
@@ -1183,7 +1183,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-28",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2026-02-28",
-    "retardJours": null
+    "retardJours": 33
   },
   {
     "client": "FENO JEAN PIERRE",
@@ -1204,7 +1204,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "FILATEX",
@@ -1225,7 +1225,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-28",
     "dateFactureRecente": "2026-06-30",
     "echeance": "2026-02-28",
-    "retardJours": null
+    "retardJours": 33
   },
   {
     "client": "FILATEX SERVICES",
@@ -1246,7 +1246,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-05-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-05-01",
-    "retardJours": 281
+    "retardJours": 336
   },
   {
     "client": "Frederic GRENIER",
@@ -1267,7 +1267,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2023-10-01",
     "dateFactureRecente": "2023-10-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "GO SAAS",
@@ -1288,7 +1288,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "GUY RANDRIANASOLO",
@@ -1309,7 +1309,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "HAMANGA SARL",
@@ -1330,7 +1330,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2023-06-12",
     "dateFactureRecente": "2023-06-12",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "HASSANALY CHAHICK",
@@ -1351,7 +1351,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-28",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2026-02-28",
-    "retardJours": null
+    "retardJours": 33
   },
   {
     "client": "HASSANALY NADIR",
@@ -1372,7 +1372,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-05-31",
     "dateFactureRecente": "2026-06-30",
     "echeance": "2025-05-31",
-    "retardJours": 251
+    "retardJours": 306
   },
   {
     "client": "HOUSSENALY MOURDJEE Minaze",
@@ -1393,7 +1393,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-02",
     "dateFactureRecente": "2026-01-02",
     "echeance": "2026-01-15",
-    "retardJours": 22
+    "retardJours": 77
   },
   {
     "client": "INAYATALY MOHAMED NASSIR",
@@ -1414,7 +1414,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2020-07-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "IRCHAD PIERALY",
@@ -1435,7 +1435,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "JAOTINA SEVARANJANJARA",
@@ -1456,7 +1456,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "JARDIN DE TANA",
@@ -1477,7 +1477,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-04-29",
     "dateFactureRecente": "2025-04-29",
     "echeance": "2025-04-29",
-    "retardJours": 283
+    "retardJours": 338
   },
   {
     "client": "JOCKER GRAPHICS",
@@ -1498,7 +1498,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "Joël Andrianomearisoa",
@@ -1519,7 +1519,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-11-04",
     "dateFactureRecente": "2021-11-04",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "JULES ETIENNE Roland",
@@ -1540,7 +1540,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-05-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-05-01",
-    "retardJours": 281
+    "retardJours": 336
   },
   {
     "client": "KASSIM LAKHOUBAY",
@@ -1561,7 +1561,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-28",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2026-02-28",
-    "retardJours": null
+    "retardJours": 33
   },
   {
     "client": "KOURDJEE FIDAHOUSSEN BADOURALY",
@@ -1582,7 +1582,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-03-08",
     "dateFactureRecente": "2021-07-16",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "LE GRAND ORIENT",
@@ -1603,7 +1603,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-12-01",
     "dateFactureRecente": "2021-12-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "LEONG BTP SARL",
@@ -1624,7 +1624,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-05-25",
     "dateFactureRecente": "2025-03-06",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "LIDERA GREEN POWER",
@@ -1645,7 +1645,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-06-01",
     "dateFactureRecente": "2022-01-03",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "MADA TULEAR GREEN POWER",
@@ -1666,7 +1666,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-07-07",
     "dateFactureRecente": "2026-03-04",
     "echeance": "2025-07-07",
-    "retardJours": 214
+    "retardJours": 269
   },
   {
     "client": "MADAGREEN",
@@ -1687,7 +1687,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "MAMOD NAZIR VASRAM",
@@ -1708,7 +1708,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "MOHAMED TAKY DANIS",
@@ -1729,7 +1729,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "MOUSTAPHA RADJAN",
@@ -1750,7 +1750,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "MUFFAZAL NOURBHAY",
@@ -1771,7 +1771,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2023-01-28",
     "dateFactureRecente": "2025-12-28",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "NANA SAYOUBA",
@@ -1792,7 +1792,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-08-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-08-01",
-    "retardJours": 189
+    "retardJours": 244
   },
   {
     "client": "NAZARALY MOMED",
@@ -1813,7 +1813,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2020-07-01",
     "dateFactureRecente": "2022-06-10",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "NILESH KUMAR BHAGVANDAS",
@@ -1834,7 +1834,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-12-28",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2025-12-28",
-    "retardJours": 40
+    "retardJours": 95
   },
   {
     "client": "ORANGE MADAGASCAR",
@@ -1855,7 +1855,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-10-09",
     "dateFactureRecente": "2025-10-09",
     "echeance": "2025-04-01",
-    "retardJours": 311
+    "retardJours": 366
   },
   {
     "client": "ORIGINAL CONFECTION",
@@ -1876,7 +1876,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-10-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-10-05",
-    "retardJours": 124
+    "retardJours": 179
   },
   {
     "client": "PADDY GROUP MADAGASCAR",
@@ -1897,7 +1897,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-04-02",
     "dateFactureRecente": "2025-11-30",
     "echeance": "2025-04-02",
-    "retardJours": 310
+    "retardJours": 365
   },
   {
     "client": "Patrick RAJOELINA",
@@ -1918,7 +1918,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2023-10-01",
     "dateFactureRecente": "2023-10-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "PAUL BOYE INDUSTRIES",
@@ -1939,7 +1939,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "PINOU CHERALY",
@@ -1960,7 +1960,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-07-30",
     "dateFactureRecente": "2026-05-30",
     "echeance": "2025-07-30",
-    "retardJours": 191
+    "retardJours": 246
   },
   {
     "client": "PLG CONFECTION",
@@ -1981,7 +1981,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-12-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2025-12-05",
-    "retardJours": 63
+    "retardJours": 118
   },
   {
     "client": "RABETSAROANA Vololona",
@@ -2002,7 +2002,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2024-08-28",
     "dateFactureRecente": "2025-12-28",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "RASOANANTENAINA MARIA",
@@ -2023,7 +2023,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-08-01",
     "dateFactureRecente": "2026-02-01",
     "echeance": "2025-08-01",
-    "retardJours": 189
+    "retardJours": 244
   },
   {
     "client": "RAVINALA COMPANY",
@@ -2044,7 +2044,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "ROBIMANANA Rivomanantsoa Orlando",
@@ -2065,7 +2065,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "client": "RVL Consulting",
@@ -2086,7 +2086,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "client": "SABIR SIVJEE",
@@ -2107,7 +2107,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "SADROUDINE RICHAD",
@@ -2128,7 +2128,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "SAGEMCOM ENERGY & TELECOM SAS",
@@ -2149,7 +2149,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "SALAMANCA INVESTMENTS",
@@ -2170,7 +2170,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2022-07-08",
     "dateFactureRecente": "2022-07-08",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "SHOWROOM",
@@ -2191,7 +2191,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2024-09-09",
     "dateFactureRecente": "2024-09-09",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "SITMA",
@@ -2212,7 +2212,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "client": "Société ENINEMNE",
@@ -2233,7 +2233,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "Société IVORY SARL",
@@ -2254,7 +2254,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-28",
     "dateFactureRecente": "2025-12-28",
     "echeance": "2025-01-28",
-    "retardJours": 374
+    "retardJours": 429
   },
   {
     "client": "SOCIETE LUXOR",
@@ -2275,7 +2275,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2022-04-15",
     "dateFactureRecente": "2022-04-15",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "SOCIETE MAHAJANGA GREEN POWER SARLU",
@@ -2296,7 +2296,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2022-01-01",
     "dateFactureRecente": "2026-03-04",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "Société OMNIVEST",
@@ -2317,7 +2317,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-31",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2026-01-31",
-    "retardJours": 6
+    "retardJours": 61
   },
   {
     "client": "SOCIETE SCIV",
@@ -2338,7 +2338,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-31",
     "dateFactureRecente": "2026-03-28",
     "echeance": "2026-01-31",
-    "retardJours": 6
+    "retardJours": 61
   },
   {
     "client": "Société SIC",
@@ -2359,7 +2359,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-28",
     "dateFactureRecente": "2026-05-28",
     "echeance": "2025-01-28",
-    "retardJours": 374
+    "retardJours": 429
   },
   {
     "client": "SOCOMA Sté Commerciale MANDROSO",
@@ -2380,7 +2380,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-03-07",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "SONIA MADA TEXTILE",
@@ -2401,7 +2401,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-02-05",
-    "retardJours": 1
+    "retardJours": 56
   },
   {
     "client": "TANG SIOU MI Jade Amanda",
@@ -2422,7 +2422,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-02-28",
     "dateFactureRecente": "2026-02-28",
     "echeance": "2026-02-28",
-    "retardJours": null
+    "retardJours": 33
   },
   {
     "client": "TCM",
@@ -2443,7 +2443,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2024-12-01",
     "dateFactureRecente": "2025-05-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "TOWERCO OF AFRICA",
@@ -2464,7 +2464,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2026-01-01",
     "dateFactureRecente": "2026-03-01",
     "echeance": "2026-01-05",
-    "retardJours": 32
+    "retardJours": 87
   },
   {
     "client": "VASSANTRAI Babou",
@@ -2485,7 +2485,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2023-06-12",
     "dateFactureRecente": "2023-06-12",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "VELDJEE NAVAGE",
@@ -2506,7 +2506,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "VELDJEE NAZIR",
@@ -2527,7 +2527,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-01",
     "dateFactureRecente": "2025-01-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "VESTOP MADAGASCAR",
@@ -2548,7 +2548,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-05-26",
     "dateFactureRecente": "2021-06-01",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   },
   {
     "client": "YAKATALY ALIHOUSSEN",
@@ -2569,7 +2569,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-01-28",
     "dateFactureRecente": "2025-12-28",
     "echeance": "2025-01-28",
-    "retardJours": 374
+    "retardJours": 429
   },
   {
     "client": "YATRICK OUKABAY",
@@ -2590,7 +2590,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2025-12-28",
     "dateFactureRecente": "2026-03-31",
     "echeance": "2025-12-28",
-    "retardJours": 40
+    "retardJours": 95
   },
   {
     "client": "ZAKIR KAKAL",
@@ -2611,7 +2611,7 @@ export const TCM_CLIENTS = [
     "dateFacture": "2021-08-02",
     "dateFactureRecente": "2022-04-15",
     "echeance": "2025-01-01",
-    "retardJours": 401
+    "retardJours": 456
   }
 ]
 
@@ -3340,15 +3340,15 @@ export const FLX_MONTHLY = [
   },
   {
     "mois": "2026-05",
-    "prevu": 0,
-    "reel": 2011680214.1,
-    "clientsPrevu": [],
-    "clientsReel": [
+    "prevu": 2011680214.1,
+    "reel": 0,
+    "clientsPrevu": [
       {
         "client": "ORIGINALCONFECTION",
         "montant": 2011680214.1
       }
-    ]
+    ],
+    "clientsReel": []
   }
 ]
 
