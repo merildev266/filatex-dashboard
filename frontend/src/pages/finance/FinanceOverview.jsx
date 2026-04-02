@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ClientCount } from './financeHelpers.jsx'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, ClientCount } from './financeHelpers.jsx'
 
 export default function FinanceOverview() {
   const navigate = useNavigate()
@@ -25,6 +25,9 @@ export default function FinanceOverview() {
         { label: 'Reste à collecter', value: fmtMga(all.resteACollecter), color: '#f39c12' },
         { label: 'Retard moyen', value: `${all.avgRetard}j`, color: all.avgRetard > 180 ? '#e05c5c' : all.avgRetard > 90 ? '#f37056' : '#f39c12', unit: `${all.countRetard} clients · max ${all.maxRetard}j` },
       ]} />
+
+      {/* Cash flow chart */}
+      <CashFlowChart clients={[...FLX_CLIENTS, ...TCM_CLIENTS]} />
 
       {/* Entity cards + Nature cards below each */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>

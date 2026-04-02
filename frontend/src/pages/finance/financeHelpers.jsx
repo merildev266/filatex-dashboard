@@ -301,6 +301,98 @@ export function NatureDonut({ entity, clients, linkTo }) {
   )
 }
 
+// ── Cash Flow Chart — estimated incoming payments timeline ──
+export function CashFlowChart({ clients }) {
+  const agg = aggregate(clients)
+  const bars = [
+    { label: 'Déjà encaissé', value: agg.encaissements, color: '#00ab63' },
+    { label: 'Mars 2026', value: agg.planMars, color: '#3498db' },
+    { label: 'Avril 2026', value: agg.planAvril, color: '#2980b9' },
+    { label: 'Mai 2026', value: agg.planMai, color: '#1a6fa0' },
+  ]
+  const contentieux = agg.standby + agg.contentieux
+  if (contentieux > 0) bars.push({ label: 'Contentieux', value: contentieux, color: '#e05c5c' })
+
+  const maxVal = Math.max(...bars.map(b => b.value), 1)
+  const totalPlan = agg.planMars + agg.planAvril + agg.planMai
+  const totalEstime = agg.encaissements + totalPlan
+
+  return (
+    <div style={{ width: '100%', maxWidth: 700, margin: '0 auto' }}>
+      {/* Title */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+          Flux de rentrées estimé
+        </div>
+        <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>
+          Total estimé: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(totalEstime)}</span>
+          <span style={{ opacity: 0.5, marginLeft: 6 }}>sur {fmtMga(agg.totalCreances)} créances</span>
+        </div>
+      </div>
+
+      {/* Bars */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {bars.map((bar, i) => {
+          const pct = maxVal > 0 ? (bar.value / maxVal) * 100 : 0
+          return (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Label */}
+              <div style={{ width: 90, textAlign: 'right', fontSize: 9, color: 'var(--text-muted)', flexShrink: 0 }}>
+                {bar.label}
+              </div>
+              {/* Bar container */}
+              <div style={{ flex: 1, height: 22, background: 'var(--card)', borderRadius: 6, overflow: 'hidden', position: 'relative', border: '1px solid var(--card-border)' }}>
+                <div style={{
+                  width: `${Math.max(pct, bar.value > 0 ? 2 : 0)}%`,
+                  height: '100%',
+                  background: `linear-gradient(90deg, ${bar.color}CC, ${bar.color})`,
+                  borderRadius: 6,
+                  transition: 'width 0.6s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  paddingRight: 6,
+                }} />
+              </div>
+              {/* Value */}
+              <div style={{ width: 70, fontSize: 10, fontWeight: 700, color: bar.color, textAlign: 'right', flexShrink: 0 }}>
+                {fmtMga(bar.value)}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Cumulative progress bar */}
+      {agg.totalCreances > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+            <span style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Progression recouvrement</span>
+            <span style={{ fontSize: 9, fontWeight: 700, color: COLOR }}>
+              {((totalEstime / agg.totalCreances) * 100).toFixed(0)}%
+            </span>
+          </div>
+          <div style={{ height: 8, borderRadius: 4, background: 'var(--card-border)', overflow: 'hidden', display: 'flex' }}>
+            {/* Encaissé */}
+            <div style={{ width: `${(agg.encaissements / agg.totalCreances) * 100}%`, background: '#00ab63', transition: 'width 0.6s' }} title={`Encaissé: ${fmtMga(agg.encaissements)}`} />
+            {/* Plan */}
+            <div style={{ width: `${(totalPlan / agg.totalCreances) * 100}%`, background: '#3498db', transition: 'width 0.6s' }} title={`Plan: ${fmtMga(totalPlan)}`} />
+            {/* Contentieux */}
+            {contentieux > 0 && (
+              <div style={{ width: `${(contentieux / agg.totalCreances) * 100}%`, background: '#e05c5c', transition: 'width 0.6s' }} title={`Contentieux: ${fmtMga(contentieux)}`} />
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 6 }}>
+            <span style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: '#00ab63', display: 'inline-block' }} /> <span style={{ color: 'var(--text-muted)' }}>Encaissé</span></span>
+            <span style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: '#3498db', display: 'inline-block' }} /> <span style={{ color: 'var(--text-muted)' }}>Plan d'appurement</span></span>
+            {contentieux > 0 && <span style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: '#e05c5c', display: 'inline-block' }} /> <span style={{ color: 'var(--text-muted)' }}>Contentieux</span></span>}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // Client count badge
 export function ClientCount({ count, label }) {
   return (
