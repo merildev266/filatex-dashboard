@@ -19,8 +19,8 @@ const FILTERS = {
 // Year filter: keep clients that have amounts in that year
 const YEAR_FILTERS = {
   all:  () => true,
-  2025: (c) => (c.montant2025 || 0) > 0,
-  2026: (c) => (c.montant2026 || 0) > 0,
+  '2025': (c) => (c.montant2025 || 0) > 0,
+  '2026': (c) => (c.montant2026 || 0) > 0,
 }
 
 function DetailRow({ label, value, color }) {
@@ -369,31 +369,26 @@ export default function FinanceClientList() {
     2026: clients.filter(YEAR_FILTERS[2026]).length,
   }
 
-  // Sort function
-  const sortFn = (a, b) => {
-    if (sortMode === 'montant-desc') return (b.totalCreances || 0) - (a.totalCreances || 0)
-    if (sortMode === 'montant-asc') return (a.totalCreances || 0) - (b.totalCreances || 0)
-    // Date sort: clients with only 2025 are "older", clients with 2026 are "newer"
-    // Use presence of 2026 amounts as proxy for recency
-    if (sortMode === 'date-asc') {
-      const aYear = (a.montant2026 || 0) > 0 ? 2026 : 2025
-      const bYear = (b.montant2026 || 0) > 0 ? 2026 : 2025
-      return aYear !== bYear ? aYear - bYear : (b.totalCreances || 0) - (a.totalCreances || 0)
-    }
-    if (sortMode === 'date-desc') {
-      const aYear = (a.montant2026 || 0) > 0 ? 2026 : 2025
-      const bYear = (b.montant2026 || 0) > 0 ? 2026 : 2025
-      return aYear !== bYear ? bYear - aYear : (b.totalCreances || 0) - (a.totalCreances || 0)
-    }
-    return 0
-  }
-
   // Apply all filters + sort
   const filtered = useMemo(() => {
     const kpiFn = kpiFilter ? (FILTERS[kpiFilter] || FILTERS.all) : FILTERS.all
     const yearFn = YEAR_FILTERS[yearFilter] || YEAR_FILTERS.all
     const natureFn = natureFilter ? (NATURE_FILTERS[natureFilter] || (() => true)) : () => true
-    return [...clients.filter(c => kpiFn(c) && yearFn(c) && natureFn(c))].sort(sortFn)
+    return [...clients.filter(c => kpiFn(c) && yearFn(c) && natureFn(c))].sort((a, b) => {
+      if (sortMode === 'montant-desc') return (b.totalCreances || 0) - (a.totalCreances || 0)
+      if (sortMode === 'montant-asc') return (a.totalCreances || 0) - (b.totalCreances || 0)
+      if (sortMode === 'date-asc') {
+        const aYear = (a.montant2026 || 0) > 0 ? 2026 : 2025
+        const bYear = (b.montant2026 || 0) > 0 ? 2026 : 2025
+        return aYear !== bYear ? aYear - bYear : (b.totalCreances || 0) - (a.totalCreances || 0)
+      }
+      if (sortMode === 'date-desc') {
+        const aYear = (a.montant2026 || 0) > 0 ? 2026 : 2025
+        const bYear = (b.montant2026 || 0) > 0 ? 2026 : 2025
+        return aYear !== bYear ? bYear - aYear : (b.totalCreances || 0) - (a.totalCreances || 0)
+      }
+      return 0
+    })
   }, [clients, kpiFilter, yearFilter, natureFilter, sortMode])
 
   const hasActiveFilter = (kpiFilter && kpiFilter !== 'all') || yearFilter !== 'all' || !!natureFilter

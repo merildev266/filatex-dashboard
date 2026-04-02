@@ -1,6 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-
-const COLOR = '#1abc9c'
+import { COLOR } from './financeHelpers.jsx'
 
 const ENTITY_LABELS = {
   'filatex-sa': 'Filatex SA',

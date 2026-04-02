@@ -39,7 +39,7 @@ Secondaires : `#5aafaf` (teal), `#E05C5C` (rouge/retard), `#426ab3` (bleu/dev)
 
 ## Helpers partagés (React)
 
-`frontend/src/utils/helpers.js` : `hexToRgb()`, `fmtM()`, `parseDollar()`, `getPhase()`, `getTimingColor()`
+`frontend/src/utils/helpers.js` : `hexToRgb()`, `parseDollar()`
 
 ## Règles métier
 

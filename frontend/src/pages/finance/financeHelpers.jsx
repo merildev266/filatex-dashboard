@@ -147,7 +147,6 @@ export function TcmNatureKpiCards({ clients, active, onSelect }) {
     { key: 'tcm-notedebit', label: 'Note de Débit', total: aggregate(noteDebit).totalCreances, count: noteDebit.length, color: '#e67e22' },
     { key: 'tcm-loyervente', label: 'Loyer + Vente', total: aggregate(loyerVente).totalCreances, count: loyerVente.length, color: '#3498db' },
   ]
-  const isFilterable = !!onSelect
   return (
     <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(2, 1fr)' }}>
       {items.map((it) => (
@@ -155,7 +154,7 @@ export function TcmNatureKpiCards({ clients, active, onSelect }) {
           key={it.key} it={it}
           isActive={active === it.key}
           hasFilter={!!active}
-          onClick={isFilterable ? () => onSelect(active === it.key ? null : it.key) : undefined}
+          onClick={() => onSelect(active === it.key ? null : it.key)}
         />
       ))}
     </div>
@@ -172,7 +171,6 @@ export function FlxNatureKpiCards({ clients, active, onSelect }) {
     { key: 'flx-penalite', label: 'Pénalité', total: aggregate(penalite).totalCreances, count: penalite.length, color: '#e67e22' },
     { key: 'flx-caution', label: 'Caution', total: aggregate(caution).totalCreances, count: caution.length, color: '#9b59b6' },
   ]
-  const isFilterable = !!onSelect
   return (
     <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: 'repeat(3, 1fr)' }}>
       {items.map((it) => (
@@ -180,7 +178,7 @@ export function FlxNatureKpiCards({ clients, active, onSelect }) {
           key={it.key} it={it}
           isActive={active === it.key}
           hasFilter={!!active}
-          onClick={isFilterable ? () => onSelect(active === it.key ? null : it.key) : undefined}
+          onClick={() => onSelect(active === it.key ? null : it.key)}
         />
       ))}
     </div>

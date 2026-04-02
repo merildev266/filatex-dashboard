@@ -218,7 +218,7 @@ export default function BottomNav() {
       />
 
       <div className={`mob-nav-sidebar ${isOpen ? 'open' : ''}`}>
-        {NAV_ITEMS.map((item, i) => {
+        {visibleItems.map((item, i) => {
           const isActive = activePole === item.pole
           const color = POLE_COLORS[item.pole]
           const rgb = POLE_COLORS_RGB[item.pole]
