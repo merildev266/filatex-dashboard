@@ -536,7 +536,7 @@ body::-webkit-scrollbar { display: none; }
   text-align: center;
   box-sizing: border-box;
 }
-.tfilter:hover { color: #00ab63; background: rgba(0,171,99,0.08); }
+.tfilter:hover { color: #00ab63; background: #0e1e18; }
 .tfilter.active { background: rgba(0,171,99,0.15); color: #00ab63; border: 1px solid rgba(0,171,99,0.3); }
 
 /* ── FilterBar component ── */
@@ -553,7 +553,7 @@ body::-webkit-scrollbar { display: none; }
   border: none; cursor: pointer; transition: all 0.2s;
   font-family: 'DM Sans', sans-serif;
 }
-.filter-item:hover { background: rgba(0,171,99,0.06); }
+.filter-item:hover { background: #0e1e18; }
 .filter-icon-circle {
   width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -975,7 +975,7 @@ body::-webkit-scrollbar { display: none; }
 .enrp-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 
 .enrp-card{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:18px;cursor:pointer;transition:all 0.3s;}
-.enrp-card:hover{border-color:rgba(0,171,99,0.35);background:rgba(0,171,99,0.08);transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,171,99,0.12);}
+.enrp-card:hover{border-color:#00ab63;background:#0e1e18;transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,171,99,0.12);}
 
 .enrp-card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
 .enrp-card-icon{font-size:18px;margin-top:2px;}
@@ -1012,9 +1012,9 @@ body::-webkit-scrollbar { display: none; }
 .rpt-poles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:36px;}
 .rpt-pole-card{background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:36px 24px 28px;cursor:pointer;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;}
 .rpt-pole-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(66,106,179,0.15);}
-.rpt-pole-enr:hover{border-color:rgba(0,171,99,0.5);background:rgba(0,171,99,0.05);}
-.rpt-pole-props:hover{border-color:rgba(253,184,35,0.5);background:rgba(253,184,35,0.05);}
-.rpt-pole-inv:hover{border-color:rgba(243,112,86,0.5);background:rgba(243,112,86,0.05);}
+.rpt-pole-enr:hover{border-color:#00ab63;background:#0e1e18;}
+.rpt-pole-props:hover{border-color:#FDB823;background:#1e1a0e;}
+.rpt-pole-inv:hover{border-color:#f37056;background:#1e1210;}
 .rpt-pole-icon svg{width:48px;height:48px;}
 .rpt-pole-title{font-size:18px;font-weight:700;letter-spacing:0.02em;}
 .rpt-pole-sub{font-size:12px;color:var(--text-muted);letter-spacing:0.04em;}
@@ -1095,10 +1095,10 @@ body::-webkit-scrollbar { display: none; }
 .ckpi-pct{font-size:10px;font-weight:700;color:#5e4c9f;}
 
 /* CAPEX Section cards — pole hover states */
-.capex-section-card[data-pole="enr"]:hover{border-color:rgba(0,171,99,0.35) !important;background:rgba(0,171,99,0.05) !important;box-shadow:0 16px 50px rgba(0,171,99,0.12) !important;transform:translateY(-4px) !important;}
-.capex-section-card[data-pole="hfo"]:hover{border-color:rgba(66,106,179,0.35) !important;background:rgba(66,106,179,0.05) !important;box-shadow:0 16px 50px rgba(66,106,179,0.12) !important;transform:translateY(-4px) !important;}
-.capex-section-card[data-pole="immo"]:hover{border-color:rgba(253,184,35,0.32) !important;background:rgba(253,184,35,0.04) !important;box-shadow:0 16px 50px rgba(253,184,35,0.10) !important;transform:translateY(-4px) !important;}
-.capex-section-card[data-pole="ventures"]:hover{border-color:rgba(243,112,86,0.35) !important;background:rgba(243,112,86,0.05) !important;box-shadow:0 16px 50px rgba(243,112,86,0.12) !important;transform:translateY(-4px) !important;}
+.capex-section-card[data-pole="enr"]:hover{border-color:#00ab63 !important;background:#0e1e18 !important;box-shadow:0 16px 50px rgba(0,171,99,0.12) !important;transform:translateY(-4px) !important;}
+.capex-section-card[data-pole="hfo"]:hover{border-color:#426ab3 !important;background:#101624 !important;box-shadow:0 16px 50px rgba(66,106,179,0.12) !important;transform:translateY(-4px) !important;}
+.capex-section-card[data-pole="immo"]:hover{border-color:#FDB823 !important;background:#1e1a0e !important;box-shadow:0 16px 50px rgba(253,184,35,0.10) !important;transform:translateY(-4px) !important;}
+.capex-section-card[data-pole="ventures"]:hover{border-color:#f37056 !important;background:#1e1210 !important;box-shadow:0 16px 50px rgba(243,112,86,0.12) !important;transform:translateY(-4px) !important;}
 .csec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
 .csec-dot{width:10px;height:10px;border-radius:50%;}
 .csec-title{font-size:15px;font-weight:800;letter-spacing:0.05em;}

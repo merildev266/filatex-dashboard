@@ -216,7 +216,7 @@ export default function EnergyOverview() {
   const hfoHover = {
     onMouseEnter: (e) => {
       e.currentTarget.style.borderColor = 'rgba(138,146,171,0.7)'
-      e.currentTarget.style.background = 'rgba(138,146,171,0.08)'
+      e.currentTarget.style.background = '#161828'
       e.currentTarget.style.boxShadow = '0 16px 40px rgba(138,146,171,0.25)'
       e.currentTarget.style.transform = 'translateY(-3px)'
     },
@@ -230,7 +230,7 @@ export default function EnergyOverview() {
   const enrHover = {
     onMouseEnter: (e) => {
       e.currentTarget.style.borderColor = 'rgba(0,171,99,0.45)'
-      e.currentTarget.style.background = 'rgba(0,171,99,0.06)'
+      e.currentTarget.style.background = '#0e1e18'
       e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,171,99,0.15)'
       e.currentTarget.style.transform = 'translateY(-3px)'
     },
