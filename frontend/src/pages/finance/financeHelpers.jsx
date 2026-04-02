@@ -1,4 +1,6 @@
 // Finance helpers — shared formatting & aggregation utilities
+import KpiCard from '../../components/KpiCard'
+
 export const COLOR = '#1abc9c'
 
 export function fmtMga(v) {
@@ -35,17 +37,23 @@ export function aggregate(clients) {
   return { totalCreances, encaissements, standby, contentieux, resteACollecter, planMars, planAvril, planMai, montant2025, montant2026, count: clients.length, avgRetard, maxRetard, countRetard }
 }
 
-// Compact s1-card style KPI cards (static, no filter)
+// Compact KPI cards (static, no filter)
 export function KpiCards({ items }) {
   return (
     <div className="grid gap-2 mb-3" style={{ width: '100%', maxWidth: 700, gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
       {items.map((kpi, i) => (
-        <div className="s1-card" key={i} style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)' }}>
-          <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{kpi.label}</div>
-          <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)', fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{kpi.value}</div>
-          {kpi.pct !== undefined && kpi.pct !== null && <div style={{ fontSize: 'clamp(9px, 1.1vw, 13px)', fontWeight: 700, color: kpi.color || 'var(--text)', opacity: 0.6, marginTop: 1 }}>{kpi.pct}%</div>}
-          {kpi.unit && <div className="s1-card-unit-line" style={{ fontSize: 'clamp(8px, 0.9vw, 11px)' }}>{kpi.unit}</div>}
-        </div>
+        <KpiCard
+          key={i}
+          variant="card"
+          size="sm"
+          value={kpi.value}
+          label={kpi.label}
+          color={kpi.color || 'var(--text)'}
+          subText={kpi.pct !== undefined && kpi.pct !== null ? `${kpi.pct}%` : undefined}
+          unit={kpi.unit}
+          unitPosition="below"
+          style={{ padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)' }}
+        />
       ))}
     </div>
   )
@@ -59,26 +67,27 @@ export function KpiFilterCards({ items, active, onSelect }) {
         const isActive = active === kpi.filterKey
         return (
           <div
-            className="s1-card"
             key={i}
             onClick={(e) => { e.stopPropagation(); onSelect(isActive ? null : kpi.filterKey) }}
-            style={{
-              padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
-              cursor: 'pointer',
-              transition: 'all 0.25s ease',
-              borderColor: isActive ? (kpi.color || COLOR) : undefined,
-              boxShadow: isActive ? `0 0 20px ${kpi.color || COLOR}33, inset 0 0 12px ${kpi.color || COLOR}11` : undefined,
-              background: isActive ? `${kpi.color || COLOR}0A` : undefined,
-              transform: isActive ? 'scale(1.03)' : undefined,
-              opacity: active && !isActive ? 0.45 : 1,
-            }}
           >
-            <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{kpi.label}</div>
-            <div className="s1-card-value" style={{ color: kpi.color || 'var(--text)', fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{kpi.value}</div>
-            {kpi.pct !== undefined && kpi.pct !== null && <div style={{ fontSize: 'clamp(9px, 1vw, 12px)', fontWeight: 700, color: kpi.color || 'var(--text)', opacity: 0.6, marginTop: 1 }}>{kpi.pct}%</div>}
-            {kpi.count !== undefined && (
-              <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{kpi.count} client{kpi.count > 1 ? 's' : ''}</div>
-            )}
+            <KpiCard
+              variant="card"
+              size="sm"
+              value={kpi.value}
+              label={kpi.label}
+              color={kpi.color || 'var(--text)'}
+              subText={kpi.pct !== undefined && kpi.pct !== null ? `${kpi.pct}%` : (kpi.count !== undefined ? `${kpi.count} client${kpi.count > 1 ? 's' : ''}` : undefined)}
+              style={{
+                padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
+                cursor: 'pointer',
+                transition: 'all 0.25s ease',
+                borderColor: isActive ? (kpi.color || COLOR) : undefined,
+                boxShadow: isActive ? `0 0 20px ${kpi.color || COLOR}33, inset 0 0 12px ${kpi.color || COLOR}11` : undefined,
+                background: isActive ? `${kpi.color || COLOR}0A` : undefined,
+                transform: isActive ? 'scale(1.03)' : undefined,
+                opacity: active && !isActive ? 0.45 : 1,
+              }}
+            />
           </div>
         )
       })}
@@ -106,24 +115,26 @@ export function getFlxNature(c) {
 // Nature filter card renderer (shared between FLX and TCM)
 function NatureFilterCard({ it, isActive, hasFilter, onClick }) {
   return (
-    <div
-      className="s1-card"
-      onClick={onClick}
-      style={{
-        padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
-        borderLeft: `3px solid ${it.color}`,
-        cursor: 'pointer',
-        transition: 'all 0.25s ease',
-        borderColor: isActive ? it.color : undefined,
-        boxShadow: isActive ? `0 0 20px ${it.color}33, inset 0 0 12px ${it.color}11` : undefined,
-        background: isActive ? `${it.color}0A` : undefined,
-        transform: isActive ? 'scale(1.03)' : undefined,
-        opacity: hasFilter && !isActive ? 0.45 : 1,
-      }}
-    >
-      <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>{it.label}</div>
-      <div className="s1-card-value" style={{ color: it.color, fontSize: 'clamp(15px, 2.2vw, 24px)' }}>{fmtMga(it.total)}</div>
-      <div style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)', marginTop: 2 }}>{it.count} client{it.count > 1 ? 's' : ''}</div>
+    <div onClick={onClick}>
+      <KpiCard
+        variant="card"
+        size="sm"
+        value={fmtMga(it.total)}
+        label={it.label}
+        color={it.color}
+        subText={`${it.count} client${it.count > 1 ? 's' : ''}`}
+        style={{
+          padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
+          borderLeft: `3px solid ${it.color}`,
+          cursor: 'pointer',
+          transition: 'all 0.25s ease',
+          borderColor: isActive ? it.color : undefined,
+          boxShadow: isActive ? `0 0 20px ${it.color}33, inset 0 0 12px ${it.color}11` : undefined,
+          background: isActive ? `${it.color}0A` : undefined,
+          transform: isActive ? 'scale(1.03)' : undefined,
+          opacity: hasFilter && !isActive ? 0.45 : 1,
+        }}
+      />
     </div>
   )
 }
@@ -229,26 +240,185 @@ export function NatureDonut({ entity, clients, linkTo }) {
         return (
           <div
             key={i}
-            className="s1-card"
             onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
-            style={{
-              padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
-              borderLeft: `3px solid ${seg.color}`,
-              cursor: linkTo ? 'pointer' : 'default',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={linkTo ? (e) => { e.currentTarget.style.borderColor = seg.color; e.currentTarget.style.boxShadow = `0 0 16px ${seg.color}22`; e.currentTarget.style.transform = 'translateY(-2px)' } : undefined}
-            onMouseLeave={linkTo ? (e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = '' } : undefined}
+            onMouseEnter={linkTo ? (e) => { const card = e.currentTarget.firstChild; card.style.borderColor = seg.color; card.style.boxShadow = `0 0 16px ${seg.color}22`; card.style.transform = 'translateY(-2px)' } : undefined}
+            onMouseLeave={linkTo ? (e) => { const card = e.currentTarget.firstChild; card.style.borderColor = ''; card.style.boxShadow = ''; card.style.transform = '' } : undefined}
           >
-            <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(2px, 0.4vw, 4px)' }}>{seg.label}</div>
-            <div className="s1-card-value" style={{ color: seg.color, fontSize: 'clamp(14px, 2vw, 22px)' }}>{fmtMga(seg.value)}</div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 3 }}>
-              <span style={{ fontSize: 'clamp(11px, 1.4vw, 16px)', fontWeight: 800, color: seg.color, opacity: 0.7 }}>{pct}%</span>
-              <span style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)' }}>{seg.count} client{seg.count > 1 ? 's' : ''}</span>
-            </div>
+            <KpiCard
+              variant="card"
+              size="sm"
+              value={fmtMga(seg.value)}
+              label={seg.label}
+              color={seg.color}
+              subText={`${pct}% — ${seg.count} client${seg.count > 1 ? 's' : ''}`}
+              style={{
+                padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
+                borderLeft: `3px solid ${seg.color}`,
+                cursor: linkTo ? 'pointer' : 'default',
+                transition: 'all 0.2s',
+              }}
+            />
           </div>
         )
       })}
+    </div>
+  )
+}
+
+// ── Contractual Flow Chart — échéancier with à temps / en retard split ──
+const MOIS_LABELS = { '01': 'Jan', '02': 'Fév', '03': 'Mar', '04': 'Avr', '05': 'Mai', '06': 'Jun', '07': 'Jul', '08': 'Aoû', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Déc' }
+
+export function ContractFlowChart({ timeline }) {
+  const [selectedBar, setSelectedBar] = useState(null)
+
+  if (!timeline || timeline.length === 0) return null
+
+  // Split into sections: before 2026 (condensed), 2026 months, after 2026
+  const before2026 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) < 2026)
+  const months2026 = timeline.filter(t => t.periode.startsWith('2026-'))
+  const after2026 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) >= 2027)
+
+  const allBars = [
+    ...before2026.map(t => ({ ...t, label: t.periode, section: 'past' })),
+    ...months2026.map(t => ({ ...t, label: MOIS_LABELS[t.periode.slice(5)] || t.periode.slice(5), section: '2026' })),
+    ...after2026.map(t => ({ ...t, label: t.periode, section: 'future' })),
+  ]
+
+  const maxVal = Math.max(...allBars.map(b => b.contractuel), 1)
+  const barH = 180
+  const totalContractuel = allBars.reduce((s, b) => s + b.contractuel, 0)
+  const totalATemps = allBars.reduce((s, b) => s + b.aTemps, 0)
+  const totalEnRetard = allBars.reduce((s, b) => s + b.enRetard, 0)
+
+  return (
+    <div style={{ width: '100%', maxWidth: 850, margin: '0 auto', position: 'relative' }}>
+      {/* Title */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14, flexWrap: 'wrap', gap: 6 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+          Échéancier contractuel TCM
+        </div>
+        <div style={{ fontSize: 9, color: 'var(--text-muted)', display: 'flex', gap: 10 }}>
+          <span>Total: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(totalContractuel)}</span></span>
+          <span>À temps: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(totalATemps)}</span></span>
+          <span>En retard: <span style={{ fontWeight: 700, color: '#e05c5c' }}>{fmtMga(totalEnRetard)}</span></span>
+        </div>
+      </div>
+
+      {/* Vertical bars */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 1, height: barH, padding: '0 2px' }}>
+        {allBars.map((bar, i) => {
+          const totalH = maxVal > 0 ? (bar.contractuel / maxVal) * barH : 0
+          const retardH = maxVal > 0 ? (bar.enRetard / maxVal) * barH : 0
+          const tempsH = totalH - retardH
+          const is2026 = bar.section === '2026'
+          const isPast = bar.section === 'past'
+          const isSelected = selectedBar?.periode === bar.periode
+
+          return (
+            <div
+              key={i}
+              style={{ flex: is2026 ? 1.5 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', position: 'relative' }}
+              onClick={() => setSelectedBar(isSelected ? null : bar)}
+            >
+              {/* Value on top */}
+              {bar.contractuel > 0 && (
+                <div style={{ fontSize: 6, fontWeight: 700, color: bar.enRetard > 0 ? '#e05c5c' : '#00ab63', marginBottom: 1, whiteSpace: 'nowrap', opacity: is2026 ? 1 : 0.6 }}>
+                  {fmtMga(bar.contractuel)}
+                </div>
+              )}
+              {/* Stacked bar: green (à temps) + red (en retard) */}
+              <div style={{ width: '80%', height: barH, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                {bar.enRetard > 0 && (
+                  <div style={{
+                    width: '100%', height: retardH, background: '#e05c5c',
+                    borderRadius: tempsH > 0 ? '4px 4px 0 0' : '4px 4px 0 0',
+                    opacity: isPast ? 0.5 : 1,
+                  }} />
+                )}
+                {bar.aTemps > 0 && (
+                  <div style={{
+                    width: '100%', height: tempsH, background: '#00ab63',
+                    borderRadius: bar.enRetard > 0 ? '0' : '4px 4px 0 0',
+                    opacity: isPast ? 0.5 : 1,
+                  }} />
+                )}
+                {bar.contractuel === 0 && (
+                  <div style={{ width: '100%', height: 2, background: 'var(--card-border)', borderRadius: 1 }} />
+                )}
+              </div>
+              {/* Selection indicator */}
+              {isSelected && <div style={{ width: '80%', height: 2, background: COLOR, marginTop: 2, borderRadius: 1 }} />}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Labels */}
+      <div style={{ display: 'flex', gap: 1, padding: '3px 2px 0' }}>
+        {allBars.map((bar, i) => {
+          const is2026 = bar.section === '2026'
+          return (
+            <div key={i} style={{
+              flex: is2026 ? 1.5 : 1, textAlign: 'center',
+              fontSize: is2026 ? 8 : 7, fontWeight: is2026 ? 700 : 400,
+              color: is2026 ? 'var(--text)' : 'var(--text-muted)',
+              opacity: is2026 ? 1 : 0.5,
+            }}>
+              {bar.label}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Section separators */}
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8, fontSize: 7, color: 'var(--text-muted)' }}>
+        <span style={{ opacity: 0.5 }}>← Historique</span>
+        <span style={{ fontWeight: 700, color: COLOR }}>2026 (mois)</span>
+        <span style={{ opacity: 0.5 }}>Futur →</span>
+      </div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginTop: 8 }}>
+        {[
+          { color: '#00ab63', label: 'Clients à temps' },
+          { color: '#e05c5c', label: 'Clients en retard' },
+        ].map((l, i) => (
+          <span key={i} style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 10, height: 10, borderRadius: 2, background: l.color, display: 'inline-block' }} />
+            <span style={{ color: 'var(--text-muted)' }}>{l.label}</span>
+          </span>
+        ))}
+      </div>
+
+      {/* Selected bar detail */}
+      {selectedBar && (
+        <div style={{
+          marginTop: 12, padding: '12px 16px', background: 'var(--dark, #0a0d1a)',
+          border: '1px solid var(--card-border)', borderRadius: 10,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{selectedBar.periode}</span>
+            <button onClick={() => setSelectedBar(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>x</button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 8, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>Contractuel</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: COLOR }}>{fmtMga(selectedBar.contractuel)}</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 8, textTransform: 'uppercase', color: '#00ab63', letterSpacing: '0.08em' }}>À temps</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#00ab63' }}>{fmtMga(selectedBar.aTemps)}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedBar.contractuel > 0 ? ((selectedBar.aTemps / selectedBar.contractuel) * 100).toFixed(0) : 0}%</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 8, textTransform: 'uppercase', color: '#e05c5c', letterSpacing: '0.08em' }}>En retard</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#e05c5c' }}>{fmtMga(selectedBar.enRetard)}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedBar.contractuel > 0 ? ((selectedBar.enRetard / selectedBar.contractuel) * 100).toFixed(0) : 0}%</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

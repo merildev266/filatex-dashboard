@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY, TCM_PROJECTS } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, ClientCount } from './financeHelpers.jsx'
+import { TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, ContractFlowChart, ClientCount } from './financeHelpers.jsx'
+import KpiCard from '../../components/KpiCard'
 
 const ENTITY_CFG = {
   'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS, monthly: FLX_MONTHLY },
@@ -60,10 +62,7 @@ function ProjectCardMini({ project, onClick }) {
           { label: 'Encaissé', value: fmtMga(p.encaissements), color: '#00ab63' },
           { label: 'Reste', value: fmtMga(p.resteACollecter), color: '#f39c12' },
         ].map((k, i) => (
-          <div key={i} className="s1-card" style={{ padding: '6px 4px' }}>
-            <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.55vw, 7px)', marginBottom: 2 }}>{k.label}</div>
-            <div className="s1-card-value" style={{ color: k.color, fontSize: 'clamp(11px, 1.4vw, 15px)' }}>{k.value}</div>
-          </div>
+          <KpiCard key={i} variant="card" size="xs" value={k.value} label={k.label} color={k.color} />
         ))}
       </div>
       {/* % + progress bar BELOW KPIs */}
@@ -120,6 +119,7 @@ export default function FinanceEntity() {
       ]} />
 
       <CashFlowChart monthlyData={cfg.monthly} />
+      {isTcm && <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} />}
 
       {/* Toggle Client / Projet (TCM only) */}
       {isTcm && <ViewToggle active={viewMode} onChange={setViewMode} />}
@@ -147,10 +147,7 @@ export default function FinanceEntity() {
                       { label: 'Encaissé', value: fmtMga(cat.agg.encaissements), color: '#00ab63' },
                       { label: 'Reste', value: fmtMga(cat.agg.resteACollecter), color: '#f39c12' },
                     ].map((k, i) => (
-                      <div key={i} className="s1-card" style={{ padding: '7px 4px' }}>
-                        <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.55vw, 7px)', marginBottom: 2 }}>{k.label}</div>
-                        <div className="s1-card-value" style={{ color: k.color, fontSize: 'clamp(12px, 1.6vw, 17px)' }}>{k.value}</div>
-                      </div>
+                      <KpiCard key={i} variant="card" size="xs" value={k.value} label={k.label} color={k.color} />
                     ))}
                   </div>
                 </div>

@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS, FLX_MONTHLY, TCM_MONTHLY } from '../../data/finance_data'
-import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, mergeMonthly, ClientCount } from './financeHelpers.jsx'
+import { TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
+import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, CashFlowChart, ContractFlowChart, mergeMonthly, ClientCount } from './financeHelpers.jsx'
+import KpiCard from '../../components/KpiCard'
 
 export default function FinanceOverview() {
   const navigate = useNavigate()
@@ -28,6 +30,7 @@ export default function FinanceOverview() {
 
       {/* Cash flow chart */}
       <CashFlowChart monthlyData={mergeMonthly(FLX_MONTHLY, TCM_MONTHLY)} />
+      <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} />
 
       {/* Entity cards + Nature cards below each */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>
@@ -60,10 +63,7 @@ export default function FinanceOverview() {
                     { label: 'Encaissé', value: fmtMga(agg.encaissements), color: '#00ab63' },
                     { label: 'Reste', value: fmtMga(agg.resteACollecter), color: '#f39c12' },
                   ].map((k, i) => (
-                    <div key={i} className="s1-card" style={{ padding: '7px 4px' }}>
-                      <div className="s1-card-label" style={{ fontSize: 'clamp(5px, 0.55vw, 7px)', marginBottom: 2 }}>{k.label}</div>
-                      <div className="s1-card-value" style={{ color: k.color, fontSize: 'clamp(12px, 1.6vw, 17px)' }}>{k.value}</div>
-                    </div>
+                    <KpiCard key={i} variant="card" size="xs" value={k.value} label={k.label} color={k.color} />
                   ))}
                 </div>
               </div>
