@@ -183,7 +183,7 @@ export const NATURE_FILTERS = {
   'flx-caution': (c) => getFlxNature(c) === 'caution',
 }
 
-// Donut chart — nature breakdown as a camembert
+// Nature KPI cards with percentage — replaces pie chart
 import { useNavigate } from 'react-router-dom'
 
 function buildSegments(entity, clients) {
@@ -205,44 +205,6 @@ function buildSegments(entity, clients) {
   ]
 }
 
-function PieSvg({ segments, total, size = 80 }) {
-  const cx = size / 2
-  const cy = size / 2
-  const r = size / 2 - 1
-  let startAngle = -90 // start from top
-
-  function polarToCart(angleDeg) {
-    const rad = (angleDeg * Math.PI) / 180
-    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)]
-  }
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle cx={cx} cy={cy} r={r} fill="var(--card-border)" />
-      {segments.map((seg, i) => {
-        const pct = total > 0 ? seg.value / total : 0
-        if (pct === 0) return null
-        const angle = pct * 360
-        const endAngle = startAngle + angle
-        const largeArc = angle > 180 ? 1 : 0
-        const [x1, y1] = polarToCart(startAngle)
-        const [x2, y2] = polarToCart(endAngle)
-        const d = pct >= 1
-          ? `M ${cx} ${cy} m -${r} 0 a ${r} ${r} 0 1 1 ${r * 2} 0 a ${r} ${r} 0 1 1 -${r * 2} 0`
-          : `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`
-        startAngle = endAngle
-        return (
-          <path
-            key={i} d={d} fill={seg.color}
-            style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
-            data-filter={seg.filterKey}
-          />
-        )
-      })}
-    </svg>
-  )
-}
-
 export function NatureDonut({ entity, clients, linkTo }) {
   const navigate = useNavigate()
   const total = clients.reduce((s, c) => s + (c.totalCreances || 0), 0)
@@ -251,7 +213,6 @@ export function NatureDonut({ entity, clients, linkTo }) {
 
   const handleClick = (seg) => {
     if (linkTo) {
-      // If linkTo already includes a category (groupe/hors-groupe), use it directly
       const target = linkTo.includes('/groupe') || linkTo.includes('/hors-groupe')
         ? `${linkTo}?nature=${seg.filterKey}`
         : `${linkTo}/hors-groupe?nature=${seg.filterKey}`
@@ -260,43 +221,32 @@ export function NatureDonut({ entity, clients, linkTo }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
-      {/* Pie chart — centré */}
-      <div
-        style={{ flexShrink: 0 }}
-        onClick={(e) => {
-          const el = e.target.closest('path[data-filter]')
-          if (el) {
-            const seg = segments.find(s => s.filterKey === el.dataset.filter)
-            if (seg) handleClick(seg)
-          }
-        }}
-      >
-        <PieSvg segments={segments} total={total} size={200} />
-      </div>
-      {/* Légende — en dessous, centrée */}
-      <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-        {segments.map((seg, i) => {
-          const pct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0
-          return (
-            <div
-              key={i}
-              onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
-              style={{ display: 'flex', alignItems: 'center', gap: 5, cursor: linkTo ? 'pointer' : 'default' }}
-            >
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: seg.color, flexShrink: 0 }} />
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text)' }}>{seg.label}</span>
-                <span style={{ fontSize: 9 }}>
-                  <span style={{ fontWeight: 700, color: seg.color }}>{fmtMga(seg.value)}</span>
-                  <span style={{ color: 'var(--text-muted)', marginLeft: 4 }}>{pct}%</span>
-                  <span style={{ color: 'var(--text-muted)', opacity: 0.5, marginLeft: 3 }}>({seg.count})</span>
-                </span>
-              </div>
+    <div className="grid gap-2" style={{ width: '100%', gridTemplateColumns: `repeat(${segments.length}, 1fr)` }}>
+      {segments.map((seg, i) => {
+        const pct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0
+        return (
+          <div
+            key={i}
+            className="s1-card"
+            onClick={(e) => { e.stopPropagation(); handleClick(seg) }}
+            style={{
+              padding: 'clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px)',
+              borderLeft: `3px solid ${seg.color}`,
+              cursor: linkTo ? 'pointer' : 'default',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={linkTo ? (e) => { e.currentTarget.style.borderColor = seg.color; e.currentTarget.style.boxShadow = `0 0 16px ${seg.color}22`; e.currentTarget.style.transform = 'translateY(-2px)' } : undefined}
+            onMouseLeave={linkTo ? (e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = '' } : undefined}
+          >
+            <div className="s1-card-label" style={{ fontSize: 'clamp(6px, 0.7vw, 8px)', marginBottom: 'clamp(2px, 0.4vw, 4px)' }}>{seg.label}</div>
+            <div className="s1-card-value" style={{ color: seg.color, fontSize: 'clamp(14px, 2vw, 22px)' }}>{fmtMga(seg.value)}</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 3 }}>
+              <span style={{ fontSize: 'clamp(11px, 1.4vw, 16px)', fontWeight: 800, color: seg.color, opacity: 0.7 }}>{pct}%</span>
+              <span style={{ fontSize: 'clamp(7px, 0.8vw, 9px)', color: 'var(--text-muted)' }}>{seg.count} client{seg.count > 1 ? 's' : ''}</span>
             </div>
-          )
-        })}
-      </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
