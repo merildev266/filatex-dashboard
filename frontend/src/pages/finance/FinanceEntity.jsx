@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS, TCM_PROJECTS } from '../../data/finance_data'
-import { TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
+import { TCM_ECHEANCIER, TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
 import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ContractFlowChart, ClientCount } from './financeHelpers.jsx'
 import KpiCard from '../../components/KpiCard'
 
@@ -119,7 +119,7 @@ export default function FinanceEntity() {
         { label: 'Montant 2026', value: fmtMga(aggAll.montant2026) },
       ]} />
 
-      {isTcm && <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} />}
+      {isTcm && <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} projects={TCM_ECHEANCIER} />}
 
       {/* Toggle Client / Projet (TCM only) */}
       {isTcm && <ViewToggle active={viewMode} onChange={setViewMode} />}

@@ -266,45 +266,73 @@ export function NatureDonut({ entity, clients, linkTo }) {
 // ── Contractual Flow Chart — échéancier with à temps / en retard split ──
 const MOIS_LABELS = { '01': 'Jan', '02': 'Fév', '03': 'Mar', '04': 'Avr', '05': 'Mai', '06': 'Jun', '07': 'Jul', '08': 'Aoû', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Déc' }
 
-export function ContractFlowChart({ timeline }) {
+export function ContractFlowChart({ timeline, projects }) {
   const [selectedBar, setSelectedBar] = useState(null)
+  const [selectedCard, setSelectedCard] = useState(null)
+  const [popupView, setPopupView] = useState('client') // 'client' | 'projet'
 
   if (!timeline || timeline.length === 0) return null
 
-  // Split into 4 sections: <2025 (aggregated), 2025, 2026 months, >2026 (aggregated)
+  // Separate years vs 2026 months
   const yearsBefore2025 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) < 2025)
-  const year2025 = timeline.filter(t => t.periode === '2025')
+  const year2025 = timeline.find(t => t.periode === '2025')
   const months2026 = timeline.filter(t => t.periode.startsWith('2026-'))
   const yearsAfter2026 = timeline.filter(t => !t.periode.includes('-') && parseInt(t.periode) >= 2027)
 
-  // Aggregate <2025 into a single bar
-  const aggBefore2025 = yearsBefore2025.length > 0 ? {
-    periode: '<2025',
-    contractuel: yearsBefore2025.reduce((s, t) => s + t.contractuel, 0),
-    aTemps: yearsBefore2025.reduce((s, t) => s + t.aTemps, 0),
-    enRetard: yearsBefore2025.reduce((s, t) => s + t.enRetard, 0),
-  } : null
+  // Aggregate helper
+  const _agg = (arr) => ({
+    contractuel: arr.reduce((s, t) => s + t.contractuel, 0),
+    aTemps: arr.reduce((s, t) => s + t.aTemps, 0),
+    enRetard: arr.reduce((s, t) => s + t.enRetard, 0),
+  })
 
-  // Aggregate >2026 into a single bar
-  const aggAfter2026 = yearsAfter2026.length > 0 ? {
-    periode: '>2026',
-    contractuel: yearsAfter2026.reduce((s, t) => s + t.contractuel, 0),
-    aTemps: yearsAfter2026.reduce((s, t) => s + t.aTemps, 0),
-    enRetard: yearsAfter2026.reduce((s, t) => s + t.enRetard, 0),
-  } : null
+  // Year summary cards
+  const yearCards = [
+    yearsBefore2025.length > 0 ? { label: '< 2025', ..._agg(yearsBefore2025), details: yearsBefore2025 } : null,
+    year2025 ? { label: '2025', contractuel: year2025.contractuel, aTemps: year2025.aTemps, enRetard: year2025.enRetard, details: [year2025] } : null,
+    yearsAfter2026.length > 0 ? { label: '> 2026', ..._agg(yearsAfter2026), details: yearsAfter2026 } : null,
+  ].filter(Boolean)
 
-  const allBars = [
-    ...(aggBefore2025 ? [{ ...aggBefore2025, label: '<2025', section: 'past' }] : []),
-    ...year2025.map(t => ({ ...t, label: '2025', section: 'past' })),
-    ...months2026.map(t => ({ ...t, label: MOIS_LABELS[t.periode.slice(5)] || t.periode.slice(5), section: '2026' })),
-    ...(aggAfter2026 ? [{ ...aggAfter2026, label: '>2026', section: 'future' }] : []),
-  ]
+  // 2026 bars only
+  const bars2026 = months2026.map(t => ({
+    ...t,
+    label: MOIS_LABELS[t.periode.slice(5)] || t.periode.slice(5),
+  }))
 
-  const maxVal = Math.max(...allBars.map(b => b.contractuel), 1)
+  const maxVal = Math.max(...bars2026.map(b => b.contractuel), 1)
   const barH = 180
-  const totalContractuel = allBars.reduce((s, b) => s + b.contractuel, 0)
-  const totalATemps = allBars.reduce((s, b) => s + b.aTemps, 0)
-  const totalEnRetard = allBars.reduce((s, b) => s + b.enRetard, 0)
+  const total2026 = _agg(bars2026)
+
+  // Build popup detail from projects data
+  const _buildPopupDetail = (card) => {
+    if (!projects || !card.details) return { clients: [], projets: [] }
+    // Get matching periods for this card
+    const periodes = new Set(card.details.map(d => d.periode))
+
+    // Per-project breakdown
+    const projets = projects.map(p => {
+      const matching = (p.timeline || []).filter(t => periodes.has(t.periode))
+      const agg = _agg(matching)
+      if (agg.contractuel === 0) return null
+      return { nom: p.projet, ...agg, nbClients: p.nbClients, nbEnRetard: p.nbEnRetard }
+    }).filter(Boolean).sort((a, b) => b.contractuel - a.contractuel)
+
+    // Per-client breakdown (flatten all projects' clients)
+    const clientMap = {}
+    projects.forEach(p => {
+      (p.clients || []).forEach(c => {
+        const key = c.client.toUpperCase()
+        if (!clientMap[key]) clientMap[key] = { client: c.client, contractuel: 0, enRetard: c.enRetard }
+        clientMap[key].contractuel += c.montantContractuel || 0
+      })
+    })
+    const clients = Object.values(clientMap).sort((a, b) => b.contractuel - a.contractuel).slice(0, 20)
+
+    return { clients, projets }
+  }
+
+  // Popup content for year card
+  const popupData = selectedCard ? _buildPopupDetail(selectedCard) : null
 
   return (
     <div style={{ width: '100%', maxWidth: 850, margin: '0 auto', position: 'relative' }}>
@@ -314,87 +342,162 @@ export function ContractFlowChart({ timeline }) {
           Échéancier contractuel TCM
         </div>
         <div style={{ fontSize: 9, color: 'var(--text-muted)', display: 'flex', gap: 10 }}>
-          <span>Total: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(totalContractuel)}</span></span>
-          <span>À temps: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(totalATemps)}</span></span>
-          <span>En retard: <span style={{ fontWeight: 700, color: '#e05c5c' }}>{fmtMga(totalEnRetard)}</span></span>
+          <span>2026: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(total2026.contractuel)}</span></span>
+          <span>À temps: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(total2026.aTemps)}</span></span>
+          {total2026.enRetard > 0 && <span>Retard: <span style={{ fontWeight: 700, color: '#e05c5c' }}>{fmtMga(total2026.enRetard)}</span></span>}
         </div>
       </div>
 
-      {/* Vertical bars */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 1, height: barH, padding: '0 2px' }}>
-        {allBars.map((bar, i) => {
+      {/* Year summary cards (clickable) */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        {yearCards.map((card, i) => {
+          const isActive = selectedCard?.label === card.label
+          const retardPct = card.contractuel > 0 ? (card.enRetard / card.contractuel * 100) : 0
+          return (
+            <div
+              key={i}
+              onClick={() => { setSelectedCard(isActive ? null : card); setPopupView('client') }}
+              className="s1-card"
+              style={{
+                flex: 1, padding: '10px 12px', cursor: 'pointer', transition: 'all 0.25s ease',
+                borderLeft: `3px solid ${card.enRetard > 0 ? '#e05c5c' : '#00ab63'}`,
+                ...(isActive ? {
+                  boxShadow: `0 0 20px ${COLOR}33, inset 0 0 12px ${COLOR}11`,
+                  background: `${COLOR}0A`, transform: 'scale(1.03)',
+                } : {}),
+              }}
+            >
+              <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: 4 }}>{card.label}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: COLOR }}>{fmtMga(card.contractuel)}</div>
+              <div style={{ display: 'flex', gap: 6, marginTop: 4, fontSize: 8 }}>
+                <span style={{ color: '#00ab63' }}>✓ {fmtMga(card.aTemps)}</span>
+                {card.enRetard > 0 && <span style={{ color: '#e05c5c' }}>✗ {fmtMga(card.enRetard)} ({retardPct.toFixed(0)}%)</span>}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Year card popup */}
+      {selectedCard && popupData && (
+        <div style={{
+          marginBottom: 16, padding: '14px 16px', background: 'var(--dark, #0a0d1a)',
+          border: `1px solid ${COLOR}33`, borderRadius: 12,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{selectedCard.label} — Détail</span>
+            <div style={{ display: 'flex', gap: 0, alignItems: 'center' }}>
+              {/* Toggle Client / Projet */}
+              <div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', border: `1px solid ${COLOR}33`, marginRight: 10 }}>
+                {['client', 'projet'].map(v => (
+                  <button key={v} onClick={() => setPopupView(v)} style={{
+                    padding: '4px 12px', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+                    cursor: 'pointer', border: 'none', transition: 'all 0.2s',
+                    background: popupView === v ? '#9b59b6' : 'transparent',
+                    color: popupView === v ? '#fff' : 'var(--text-muted)',
+                  }}>{v === 'client' ? 'Clients' : 'Projets'}</button>
+                ))}
+              </div>
+              <button onClick={() => setSelectedCard(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 14 }}>×</button>
+            </div>
+          </div>
+
+          {/* KPI summary */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 7, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>Contractuel</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: COLOR }}>{fmtMga(selectedCard.contractuel)}</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 7, textTransform: 'uppercase', color: '#00ab63', letterSpacing: '0.08em' }}>À temps</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#00ab63' }}>{fmtMga(selectedCard.aTemps)}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedCard.contractuel > 0 ? ((selectedCard.aTemps / selectedCard.contractuel) * 100).toFixed(0) : 0}%</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 7, textTransform: 'uppercase', color: '#e05c5c', letterSpacing: '0.08em' }}>En retard</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#e05c5c' }}>{fmtMga(selectedCard.enRetard)}</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedCard.contractuel > 0 ? ((selectedCard.enRetard / selectedCard.contractuel) * 100).toFixed(0) : 0}%</div>
+            </div>
+          </div>
+
+          {/* List — Client or Projet view */}
+          <div style={{ maxHeight: 240, overflowY: 'auto' }}>
+            {popupView === 'projet' ? (
+              popupData.projets.map((p, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--card-border)' }}>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text)' }}>{p.nom}</div>
+                    <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{p.nbClients} clients{p.nbEnRetard > 0 ? ` · ${p.nbEnRetard} en retard` : ''}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: COLOR }}>{fmtMga(p.contractuel)}</div>
+                    {p.enRetard > 0 && <div style={{ fontSize: 8, color: '#e05c5c' }}>retard: {fmtMga(p.enRetard)}</div>}
+                  </div>
+                </div>
+              ))
+            ) : (
+              popupData.clients.map((c, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--card-border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.enRetard ? '#e05c5c' : '#00ab63', flexShrink: 0 }} />
+                    <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: c.enRetard ? '#e05c5c' : COLOR }}>{fmtMga(c.contractuel)}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 2026 monthly bars */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: barH, padding: '0 2px' }}>
+        {bars2026.map((bar, i) => {
           const totalH = maxVal > 0 ? (bar.contractuel / maxVal) * barH : 0
           const retardH = maxVal > 0 ? (bar.enRetard / maxVal) * barH : 0
           const tempsH = totalH - retardH
-          const is2026 = bar.section === '2026'
-          const isPast = bar.section === 'past'
           const isSelected = selectedBar?.periode === bar.periode
 
           return (
             <div
               key={i}
-              style={{ flex: is2026 ? 1.5 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', position: 'relative' }}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
               onClick={() => setSelectedBar(isSelected ? null : bar)}
             >
-              {/* Value on top */}
               {bar.contractuel > 0 && (
-                <div style={{ fontSize: 6, fontWeight: 700, color: bar.enRetard > 0 ? '#e05c5c' : '#00ab63', marginBottom: 1, whiteSpace: 'nowrap', opacity: is2026 ? 1 : 0.6 }}>
+                <div style={{ fontSize: 7, fontWeight: 700, color: bar.enRetard > 0 ? '#e05c5c' : '#00ab63', marginBottom: 2, whiteSpace: 'nowrap' }}>
                   {fmtMga(bar.contractuel)}
                 </div>
               )}
-              {/* Stacked bar: green (à temps) + red (en retard) */}
-              <div style={{ width: '80%', height: barH, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <div style={{ width: '75%', height: barH, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
                 {bar.enRetard > 0 && (
-                  <div style={{
-                    width: '100%', height: retardH, background: '#e05c5c',
-                    borderRadius: tempsH > 0 ? '4px 4px 0 0' : '4px 4px 0 0',
-                    opacity: isPast ? 0.5 : 1,
-                  }} />
+                  <div style={{ width: '100%', height: retardH, background: '#e05c5c', borderRadius: tempsH > 0 ? '4px 4px 0 0' : '4px 4px 0 0' }} />
                 )}
                 {bar.aTemps > 0 && (
-                  <div style={{
-                    width: '100%', height: tempsH, background: '#00ab63',
-                    borderRadius: bar.enRetard > 0 ? '0' : '4px 4px 0 0',
-                    opacity: isPast ? 0.5 : 1,
-                  }} />
+                  <div style={{ width: '100%', height: tempsH, background: '#00ab63', borderRadius: bar.enRetard > 0 ? '0' : '4px 4px 0 0' }} />
                 )}
                 {bar.contractuel === 0 && (
                   <div style={{ width: '100%', height: 2, background: 'var(--card-border)', borderRadius: 1 }} />
                 )}
               </div>
-              {/* Selection indicator */}
-              {isSelected && <div style={{ width: '80%', height: 2, background: COLOR, marginTop: 2, borderRadius: 1 }} />}
+              {isSelected && <div style={{ width: '75%', height: 2, background: COLOR, marginTop: 2, borderRadius: 1 }} />}
             </div>
           )
         })}
       </div>
 
-      {/* Labels */}
-      <div style={{ display: 'flex', gap: 1, padding: '3px 2px 0' }}>
-        {allBars.map((bar, i) => {
-          const is2026 = bar.section === '2026'
-          return (
-            <div key={i} style={{
-              flex: is2026 ? 1.5 : 1, textAlign: 'center',
-              fontSize: is2026 ? 8 : 7, fontWeight: is2026 ? 700 : 400,
-              color: is2026 ? 'var(--text)' : 'var(--text-muted)',
-              opacity: is2026 ? 1 : 0.5,
-            }}>
-              {bar.label}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Section separators */}
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8, fontSize: 7, color: 'var(--text-muted)' }}>
-        <span style={{ opacity: 0.5 }}>← Historique</span>
-        <span style={{ fontWeight: 700, color: COLOR }}>2026 (mois)</span>
-        <span style={{ opacity: 0.5 }}>Futur →</span>
+      {/* Month labels */}
+      <div style={{ display: 'flex', gap: 2, padding: '4px 2px 0' }}>
+        {bars2026.map((bar, i) => (
+          <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text)' }}>
+            {bar.label}
+          </div>
+        ))}
       </div>
 
       {/* Legend */}
-      <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginTop: 8 }}>
+      <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginTop: 10 }}>
         {[
           { color: '#00ab63', label: 'Clients à temps' },
           { color: '#e05c5c', label: 'Clients en retard' },
@@ -406,7 +509,7 @@ export function ContractFlowChart({ timeline }) {
         ))}
       </div>
 
-      {/* Selected bar detail */}
+      {/* Selected month bar detail */}
       {selectedBar && (
         <div style={{
           marginTop: 12, padding: '12px 16px', background: 'var(--dark, #0a0d1a)',
@@ -414,8 +517,8 @@ export function ContractFlowChart({ timeline }) {
           boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{selectedBar.periode}</span>
-            <button onClick={() => setSelectedBar(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>x</button>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{selectedBar.label} 2026</span>
+            <button onClick={() => setSelectedBar(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 14 }}>×</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
             <div style={{ textAlign: 'center' }}>

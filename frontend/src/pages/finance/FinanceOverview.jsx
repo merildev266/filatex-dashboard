@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { FLX_CLIENTS, TCM_CLIENTS } from '../../data/finance_data'
-import { TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
+import { TCM_ECHEANCIER, TCM_ECHEANCIER_GLOBAL } from '../../data/finance_echeancier'
 import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ContractFlowChart, ClientCount } from './financeHelpers.jsx'
 import KpiCard from '../../components/KpiCard'
 
@@ -29,7 +29,7 @@ export default function FinanceOverview() {
       ]} />
 
       {/* Échéancier contractuel */}
-      <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} />
+      <ContractFlowChart timeline={TCM_ECHEANCIER_GLOBAL} projects={TCM_ECHEANCIER} />
 
       {/* Entity cards + Nature cards below each */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, width: '100%', maxWidth: 760, alignItems: 'start' }}>
