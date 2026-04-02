@@ -6,8 +6,8 @@ import { COLOR, fmtMga, aggregate, KpiCards, NatureDonut, ContractFlowChart, Cli
 import KpiCard from '../../components/KpiCard'
 
 const ENTITY_CFG = {
-  'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS, monthly: FLX_MONTHLY },
-  'tcm': { label: 'TCM', data: TCM_CLIENTS, monthly: TCM_MONTHLY },
+  'filatex-sa': { label: 'Filatex SA', data: FLX_CLIENTS },
+  'tcm': { label: 'TCM', data: TCM_CLIENTS },
 }
 
 /* ── Toggle Client / Projet ── */
