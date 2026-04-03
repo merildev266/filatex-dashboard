@@ -18,7 +18,7 @@ export default {
         filatex: 'var(--filatex)',
       },
       fontFamily: {
-        sans: ['DM Sans', 'sans-serif'],
+        sans: ['Aeonik', 'sans-serif'],
         serif: ['Larken', 'Playfair Display', 'serif'],
       },
     },

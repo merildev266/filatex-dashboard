@@ -217,8 +217,8 @@ export default function Accueil() {
 
       {/* ══ FOOTER ══ */}
       <div id="home-footer" style={{position:'fixed',bottom:'10px',left:'50%',transform:'translateX(-50%)',zIndex:2,pointerEvents:'none',textAlign:'center',whiteSpace:'nowrap',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
-        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik','DM Sans',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--text-dim)', opacity: 0.24,fontWeight:500}}>Made by PMO with Love</span>
-        <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik','DM Sans',sans-serif",color:'var(--text-dim)',letterSpacing:'0.14em',fontStyle:'italic',opacity:0.79}}>Ceci n'est pas un Dashboard.</span>
+        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--text-dim)', opacity: 0.24,fontWeight:500}}>Made by PMO with Love</span>
+        <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik',sans-serif",color:'var(--text-dim)',letterSpacing:'0.14em',fontStyle:'italic',opacity:0.79}}>Ceci n'est pas un Dashboard.</span>
       </div>
     </>
   )
