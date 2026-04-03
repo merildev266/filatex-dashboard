@@ -50,23 +50,10 @@ function SectionCard({ title, subtitle, accent, kpis, onClick }) {
       </div>
       <div
         onClick={onClick}
-        className="w-full cursor-pointer transition-all duration-200"
+        className="unified-card clickable-props w-full"
         style={{
           aspectRatio: '1/1',
           display: 'flex', flexDirection: 'column', justifyContent: 'center', boxSizing: 'border-box',
-          background: 'var(--subtle-bg)',
-          border: `1px solid ${rgba(accent, 0.2)}`,
-          borderRadius: '16px',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.borderColor = rgba(accent, 0.5)
-          e.currentTarget.style.background = '#1e1a0e'
-          e.currentTarget.style.boxShadow = `0 16px 50px ${rgba(accent, 0.15)}`
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = rgba(accent, 0.2)
-          e.currentTarget.style.background = ''
-          e.currentTarget.style.boxShadow = 'none'
         }}
       >
         <div style={{

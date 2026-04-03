@@ -619,14 +619,8 @@ export default function DevDetail() {
             <div
               key={p.id}
               onClick={() => setSelectedProjectIdx(idx)}
-              style={{
-                background: 'var(--card)',
-                border: '1px solid var(--card-border)',
-                borderRadius: 12, padding: 16, cursor: 'pointer',
-                transition: 'border-color 0.2s, transform 0.15s'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(66,106,179,0.35)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.transform = 'none' }}
+              className="unified-card clickable-props"
+              style={{ padding: 16 }}
             >
               {/* Name + status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
