@@ -34,23 +34,30 @@ export default function Layout() {
     <div className={`min-h-screen bg-dark ${isHome ? '' : 'pb-14'}`} data-section={sectionKey?.replace('/', '') || ''}>
       {/* ══ MOTIF — colored strokes via CSS mask ══ */}
       <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:0,overflow:'hidden'}}>
-        {sectionColor ? (
-          /* Section pages: motif as mask → pole-colored strokes */
-          <div style={{
-            width:'100%',height:'100%',
+        {/* Motif — same technique everywhere so position never shifts */}
+        <div style={{
+          width:'100%',height:'100%',
+          ...(sectionColor ? {
+            /* Section pages: mask → only strokes visible, colored by pole */
             background: sectionColor,
             WebkitMaskImage: `url(${motifSrc})`,
             maskImage: `url(${motifSrc})`,
             WebkitMaskSize: 'cover',
             maskSize: 'cover',
+            WebkitMaskPosition: 'center',
+            maskPosition: 'center',
             WebkitMaskRepeat: 'no-repeat',
             maskRepeat: 'no-repeat',
             opacity: theme === 'dark' ? 0.4 : 0.3,
-          }} />
-        ) : (
-          /* Home: original motif at full opacity */
-          <img src={motifSrc} alt="" style={{width:'100%',height:'100%',display:'block',objectFit:'cover',opacity:1}} draggable={false} />
-        )}
+          } : {
+            /* Home: original motif image at full opacity */
+            backgroundImage: `url(${motifSrc})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 1,
+          }),
+        }} />
       </div>
       <Outlet />
       <BottomNav />
