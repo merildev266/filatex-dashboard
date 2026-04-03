@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { REPORTING_ENR } from '../../data/reporting_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
-import { INV_PROJECTS } from '../../data/investments_data'
-import { PROPS_SAV, PROPS_TVX, PROPS_DEV } from '../../data/props_data'
+import { invProjects as INV_PROJECTS } from '../../data/investments_data'
+import { propsData_sav as PROPS_SAV, propsData_tvx as PROPS_TVX, propsData_dev as PROPS_DEV } from '../../data/props_data'
 import {
   COM_VENTE_IMMO_TOTAL,
   COM_VENTE_FONCIERE_TOTAL,
