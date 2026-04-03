@@ -183,11 +183,9 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
         {projects.map(p => (
           <div
             key={p.id}
-            className="capex-section-card"
+            className="unified-card clickable-capex"
             onClick={() => onSelectProject(p)}
-            style={{ borderColor: `rgba(${colorRgb},0.2)`, padding: 16 }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.5)`; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 24px rgba(${colorRgb},0.15)` }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = `rgba(${colorRgb},0.2)`; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+            style={{ padding: 16 }}
           >
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

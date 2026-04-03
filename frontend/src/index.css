@@ -799,6 +799,14 @@ body::-webkit-scrollbar { display: none; }
 }
 .unified-card.clickable-invest:active{transform:translateY(-3px) scale(0.99);}
 
+/* CAPEX clickable cards */
+.unified-card.clickable-capex{cursor:pointer;}
+.unified-card.clickable-capex:hover{
+  transform:translateY(-6px);border-color:#5e4c9f;background:#14101e;
+  box-shadow:0 28px 80px rgba(94,76,159,0.22);
+}
+.unified-card.clickable-capex:active{transform:translateY(-3px) scale(0.99);}
+
 /* Properties clickable cards */
 .unified-card.clickable-props{cursor:pointer;}
 .unified-card.clickable-props:hover{
@@ -1127,7 +1135,7 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ══ CAPEX PAGE STYLES ══ */
-.capex-kpi-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;}
+.capex-kpi-card{background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:20px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);position:relative;z-index:1;}
 .capex-section-label{font-size:9px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;}
 .ckpi-label{font-size:9px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-muted);}
 .ckpi-val{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1.1;}
@@ -1143,10 +1151,10 @@ body::-webkit-scrollbar { display: none; }
 .ckpi-pct{font-size:10px;font-weight:700;color:#5e4c9f;}
 
 /* CAPEX Section cards — pole hover states */
-.capex-section-card[data-pole="enr"]:hover{border-color:#00ab63 !important;background:#0e1e18 !important;box-shadow:0 16px 50px rgba(0,171,99,0.12) !important;transform:translateY(-4px) !important;}
-.capex-section-card[data-pole="hfo"]:hover{border-color:#426ab3 !important;background:#101624 !important;box-shadow:0 16px 50px rgba(66,106,179,0.12) !important;transform:translateY(-4px) !important;}
-.capex-section-card[data-pole="immo"]:hover{border-color:#FDB823 !important;background:#1e1a0e !important;box-shadow:0 16px 50px rgba(253,184,35,0.10) !important;transform:translateY(-4px) !important;}
-.capex-section-card[data-pole="ventures"]:hover{border-color:#f37056 !important;background:#1e1210 !important;box-shadow:0 16px 50px rgba(243,112,86,0.12) !important;transform:translateY(-4px) !important;}
+.capex-section-card[data-pole="enr"]:hover{border-color:#00ab63 !important;background:#0e1e18 !important;box-shadow:0 28px 80px rgba(0,171,99,0.22) !important;transform:translateY(-6px) !important;}
+.capex-section-card[data-pole="hfo"]:hover{border-color:#426ab3 !important;background:#101624 !important;box-shadow:0 28px 80px rgba(66,106,179,0.22) !important;transform:translateY(-6px) !important;}
+.capex-section-card[data-pole="immo"]:hover{border-color:#FDB823 !important;background:#1e1a0e !important;box-shadow:0 28px 80px rgba(253,184,35,0.22) !important;transform:translateY(-6px) !important;}
+.capex-section-card[data-pole="ventures"]:hover{border-color:#f37056 !important;background:#1e1210 !important;box-shadow:0 28px 80px rgba(243,112,86,0.22) !important;transform:translateY(-6px) !important;}
 .csec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
 .csec-dot{width:10px;height:10px;border-radius:50%;}
 .csec-title{font-size:15px;font-weight:800;letter-spacing:0.05em;}
@@ -1162,7 +1170,7 @@ body::-webkit-scrollbar { display: none; }
 .csec-progress-mini div{height:100%;border-radius:2px;}
 
 /* CAPEX project detail cards */
-.capex-proj-card{background:var(--inner-card);border:1px solid var(--inner-card-border);border-radius:20px;padding:28px;margin-bottom:16px;transition:border-color 0.25s,background 0.25s;}
+.capex-proj-card{background:var(--card);border:1px solid var(--card-border);border-radius:20px;padding:28px;margin-bottom:16px;box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);transition:border-color 0.25s,background 0.25s;position:relative;z-index:1;}
 .cpj-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
 .cpj-name{font-size:16px;font-weight:800;color:var(--text);}
 .cpj-status{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;padding:4px 10px;border-radius:6px;}
