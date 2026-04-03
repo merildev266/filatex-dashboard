@@ -23,25 +23,23 @@ function PropertiesLogo() {
   return <img src={src} alt="Properties" style={{height:LOGO_H,width:'auto',maxWidth:'100%'}} draggable={false} />
 }
 
-/* ── CAPEX card SVG (no official logo — text with theme color) ── */
+/* ── Text card SVGs — uniform viewBox for consistent sizing ── */
 function CapexLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
-      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CAPEX</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CAPEX</text>
     </svg>
   )
 }
 
-/* ── CSI card SVG ── */
 function CsiLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55">
-      <text fill="var(--text)" x="60" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CSI</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CSI</text>
     </svg>
   )
 }
 
-/* ── Reporting card SVG ── */
 function ReportingLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
@@ -50,11 +48,10 @@ function ReportingLogo() {
   )
 }
 
-/* ── Finance card SVG ── */
 function FinanceLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 55">
-      <text fill="var(--text)" x="100" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">FINANCE</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">FINANCE</text>
     </svg>
   )
 }
@@ -73,10 +70,10 @@ const SECTIONS = [
   { pole: 'energy', label: 'Energy', color: '#00ab63', path: '/energy', cardClass: 'card-energy' },
   { pole: 'investments', label: 'Investments', color: '#f37056', path: '/investments', cardClass: 'card-invest' },
   { pole: 'properties', label: 'Properties', color: '#FDB823', path: '/properties', cardClass: 'card-props' },
+  { pole: 'finance', label: 'Finance', color: '#1abc9c', path: '/finance', cardClass: 'card-finance' },
   { pole: 'capex', label: 'CAPEX', color: '#5e4c9f', path: '/capex', cardClass: 'card-capex' },
   { pole: 'csi', label: 'CSI', color: '#0096c7', path: '/csi', cardClass: 'card-csi' },
   { pole: 'reporting', label: 'Reporting', color: '#426ab3', path: '/reporting', cardClass: 'card-reporting' },
-  { pole: 'finance', label: 'Finance', color: '#1abc9c', path: '/finance', cardClass: 'card-finance' },
 ]
 
 
