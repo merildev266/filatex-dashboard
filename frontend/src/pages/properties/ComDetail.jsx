@@ -103,7 +103,7 @@ function CategorySection({ cat }) {
                     return (
                       <th key={qi} colSpan={2} style={{
                         textAlign: 'center', padding: '10px 6px', fontSize: 10, fontWeight: 700,
-                        color: isActive ? cat.color : 'rgba(255,255,255,0.4)',
+                        color: isActive ? cat.color : 'var(--text-dim)',
                         letterSpacing: '0.05em'
                       }}>
                         Q{qi}{isActive ? ' \u25CF' : ''}
@@ -131,7 +131,7 @@ function CategorySection({ cat }) {
                   const rowPct = row.objectif ? Math.round(rowRealise / row.objectif * 100) : 0
 
                   return (
-                    <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <tr key={i} style={{ borderTop: '1px solid var(--card-border)' }}>
                       <td style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, textAlign: 'left', color: 'var(--text-secondary)' }}>{row.name}</td>
                       <td style={{ padding: '8px 8px', fontSize: 11, textAlign: 'center', color: 'var(--text-secondary)' }}>{fmtEur(row.objectif)}</td>
                       {[1, 2, 3, 4].map(qi => {
@@ -145,7 +145,7 @@ function CategorySection({ cat }) {
                               {fmtCell(obj)}
                             </td>
                             <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', fontWeight: 600, background: bgS,
-                              color: real != null ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.15)'
+                              color: real != null ? 'var(--text)' : 'var(--text-dim)'
                             }}>
                               {real != null ? fmtEur(real) : <span style={{ color: 'var(--text-dim)' }}>&mdash;</span>}
                             </td>

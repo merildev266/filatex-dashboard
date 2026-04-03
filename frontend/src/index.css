@@ -1288,7 +1288,8 @@ body::-webkit-scrollbar { display: none; }
 
 /* ══ COMMERCIAL OBJECTIFS ══ */
 .com-obj-card{background:#000000;border:1px solid var(--card-border);border-radius:20px;padding:20px 24px;box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease,background 0.3s ease;position:relative;z-index:1;}
-.com-obj-card:hover{background:#0e1e18;border-color:#00ab63;box-shadow:0 28px 80px rgba(0,171,99,0.22);transform:translateY(-6px);}
+.com-obj-card:hover{background:#1e1a0e;border-color:#FDB823;box-shadow:0 28px 80px rgba(253,184,35,0.18);transform:translateY(-6px);}
+[data-theme="light"] .com-obj-card:hover{background:#fdf3d8;}
 .com-obj-card-header{display:flex;align-items:center;gap:20px;}
 .com-obj-card-title{font-size:18px;font-weight:800;letter-spacing:-0.02em;min-width:140px;}
 .com-obj-card-kpis{display:flex;gap:28px;flex:1;}

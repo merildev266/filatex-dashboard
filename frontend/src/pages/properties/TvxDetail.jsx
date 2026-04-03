@@ -7,7 +7,7 @@ const VERT = '#00ab63'
 const TEAL = '#5aafaf'
 
 function getTimingColor(t) {
-  if (!t) return 'rgba(255,255,255,0.4)'
+  if (!t) return 'var(--text-dim)'
   const lower = t.toLowerCase()
   if (lower.includes('delay') && lower.includes('>=30')) return RED
   if (lower.includes('delay')) return '#FDB823'
@@ -24,12 +24,12 @@ function getTimingLabel(t) {
 }
 
 function getStatusColor(s) {
-  if (!s) return 'rgba(255,255,255,0.4)'
+  if (!s) return 'var(--text-dim)'
   const lower = s.toLowerCase()
   if (lower.includes('termin')) return VERT
   if (lower.includes('en cours') || lower.includes('travaux')) return TEAL
-  if (lower.includes('pas encore') || lower.includes('non')) return 'rgba(255,255,255,0.35)'
-  return 'rgba(255,255,255,0.5)'
+  if (lower.includes('pas encore') || lower.includes('non')) return 'var(--text-dim)'
+  return 'var(--text-muted)'
 }
 
 export default function TvxDetail() {
@@ -101,9 +101,9 @@ export default function TvxDetail() {
             style={{
               padding: '6px 12px', borderRadius: 8, fontSize: 10, fontWeight: 700,
               textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
-              border: `1px solid ${filter === f.key ? 'rgba(253,184,35,0.4)' : 'rgba(255,255,255,0.1)'}`,
+              border: `1px solid ${filter === f.key ? 'rgba(253,184,35,0.4)' : 'var(--card-border)'}`,
               background: filter === f.key ? 'rgba(253,184,35,0.2)' : 'transparent',
-              color: filter === f.key ? '#fff' : 'rgba(255,255,255,0.5)',
+              color: filter === f.key ? '#fff' : 'var(--text-muted)',
               transition: 'all 0.2s'
             }}
           >
@@ -180,7 +180,7 @@ export default function TvxDetail() {
           />
           <div style={{
             position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-            background: 'var(--card)', border: '1px solid var(--card-border)',
+            background: 'var(--dark)', border: '1px solid #FDB823',
             borderRadius: 16, padding: 24, maxWidth: 500, width: '90%',
             maxHeight: '80vh', overflowY: 'auto', zIndex: 100
           }}>
@@ -201,14 +201,14 @@ export default function TvxDetail() {
               ].map((item, i) => (
                 <div key={i} style={{ fontSize: 10 }}>
                   <span style={{ color: 'var(--text-dim)' }}>{item.label}: </span>
-                  <span style={{ fontWeight: 700, color: item.color || 'rgba(255,255,255,0.8)' }}>{item.value}</span>
+                  <span style={{ fontWeight: 700, color: item.color || 'var(--text)' }}>{item.value}</span>
                 </div>
               ))}
             </div>
 
             <div style={{
               padding: '10px 14px', borderRadius: 8,
-              background: 'var(--card)', border: '1px solid var(--card-border)',
+              background: 'var(--dark)', border: '1px solid var(--card-border)',
               marginBottom: 12
             }}>
               <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
@@ -218,7 +218,7 @@ export default function TvxDetail() {
             {selectedProject.latest_comment && (
               <div style={{
                 padding: '10px 14px', borderRadius: 8,
-                background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)'
+                background: 'var(--dark)', border: '1px solid var(--card-border)'
               }}>
                 <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})

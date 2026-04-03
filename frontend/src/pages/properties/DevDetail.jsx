@@ -180,7 +180,7 @@ function DelayPopup({ task, project, position, onClose }) {
       background: 'var(--overlay-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <div ref={popupRef} style={{
-        background: 'var(--card)', border: '1px solid var(--card-border)',
+        background: 'var(--dark)', border: '1px solid #FDB823',
         borderRadius: 16, padding: 0, maxWidth: 440, width: '90%',
         boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,64,96,0.08)',
         overflow: 'hidden'
@@ -228,7 +228,7 @@ function DelayPopup({ task, project, position, onClose }) {
               {comments.map((c, i) => (
                 <div key={i} style={{
                   padding: '7px 10px', marginBottom: 4, borderRadius: 6,
-                  background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)',
+                  background: 'var(--dark)', border: '1px solid var(--card-border)',
                   fontSize: 10, lineHeight: 1.4
                 }}>
                   <span style={{ fontWeight: 700, color: 'var(--text-dim)', marginRight: 6 }}>{c.week}</span>
@@ -297,7 +297,7 @@ function GanttChart({ project, onTaskAlert }) {
               position: 'absolute', left: `${y.left}%`, width: `${y.width}%`, height: '100%',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 10, fontWeight: 700, color: 'var(--text-dim)',
-              borderLeft: '1px solid rgba(255,255,255,0.05)'
+              borderLeft: '1px solid var(--card-border)'
             }}>
               {y.label}
             </div>
@@ -410,7 +410,7 @@ function GanttChart({ project, onTaskAlert }) {
                         background: barColor, border: `1px solid ${barBorder}`, overflow: 'hidden'
                       }}>
                         {pctVal > 0 && pctVal < 100 && (
-                          <div style={{ height: '100%', width: `${pctVal}%`, background: 'rgba(255,255,255,0.12)', borderRadius: '5px 0 0 5px' }} />
+                          <div style={{ height: '100%', width: `${pctVal}%`, background: 'var(--card-border)', borderRadius: '5px 0 0 5px' }} />
                         )}
                       </div>
                       {pctVal > 0 && (
