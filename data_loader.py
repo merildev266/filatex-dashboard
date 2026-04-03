@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 BASE_DIR = os.path.join(
     os.path.expanduser("~"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "01_Energy",
     "Production",
@@ -253,7 +254,7 @@ SITE_CONFIG = {
     },
     "tulear": {
         "name": "Tuléar",
-        "data_dir": os.path.join(BASE_DIR, "Tulera"),
+        "data_dir": os.path.join(BASE_DIR, "Tulear"),
         "file_pattern": "Tulear_2026_*.xlsx",
         "contrat": 9.9,
         "mw_per_dg": 3.5,  # average (DGs have different MW)
@@ -1176,6 +1177,9 @@ def load_site_files(cfg):
 
         # --- Daily Data ---
         dd_sheet = cfg.get("daily_data_sheet", "Daily Data")
+        if dd_sheet not in xls.sheet_names:
+            print(f"  [WARN] Feuille '{dd_sheet}' absente dans {_fname}, fichier ignore")
+            continue
         dd_start = cfg.get("dd_data_start_row", 4)
         dd = pd.read_excel(xls, sheet_name=dd_sheet, header=None)
         dd_data = dd.iloc[dd_start:].copy()
