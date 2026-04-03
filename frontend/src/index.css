@@ -868,9 +868,11 @@ body::-webkit-scrollbar { display: none; }
 .gd-kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
 @media(min-width:768px){.gd-kpi-grid{grid-template-columns:repeat(4,1fr);}}
 .gd-kpi-card{
-  border:1px solid var(--border);border-radius:clamp(10px,1.3vw,16px);
+  background:var(--card);border:1px solid var(--card-border);border-radius:20px;
+  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
   padding:clamp(12px,1.8vw,18px) clamp(10px,1.4vw,16px);text-align:center;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;z-index:1;
 }
 .gd-kpi-label{
   font-size:clamp(7px,0.7vw,9px);text-transform:uppercase;letter-spacing:0.2em;
@@ -890,7 +892,9 @@ body::-webkit-scrollbar { display: none; }
 .gd-arret-banner{
   display:flex;align-items:center;gap:16px;
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:14px;padding:14px 18px;margin-bottom:16px;
+  border-radius:20px;padding:14px 18px;margin-bottom:16px;
+  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
+  position:relative;z-index:1;
 }
 .gd-arret-days{
   font-size:36px;font-weight:800;color:#e05c5c;line-height:1;flex-shrink:0;
@@ -908,8 +912,10 @@ body::-webkit-scrollbar { display: none; }
 /* Chart card */
 .gd-chart-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:clamp(10px,1.3vw,16px);padding:clamp(10px,1.4vw,16px);
+  border-radius:20px;padding:clamp(10px,1.4vw,16px);
   margin-bottom:14px;
+  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
+  position:relative;z-index:1;
 }
 .gd-chart-title{
   display:flex;justify-content:space-between;align-items:center;
@@ -930,9 +936,11 @@ body::-webkit-scrollbar { display: none; }
   .gd-metrics-grid-4{grid-template-columns:repeat(2,1fr);}
 }
 .gd-metric-card{
-  border:1px solid var(--border);border-radius:clamp(10px,1.3vw,16px);
+  background:var(--card);border:1px solid var(--card-border);border-radius:20px;
+  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
   padding:clamp(10px,1.4vw,16px);
   display:flex;flex-direction:column;
+  position:relative;z-index:1;
 }
 .gd-metric-top{
   display:flex;justify-content:space-between;align-items:center;margin-bottom:clamp(6px,0.8vw,10px);
