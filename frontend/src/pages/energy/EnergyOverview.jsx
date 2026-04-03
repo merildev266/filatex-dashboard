@@ -212,36 +212,6 @@ export default function EnergyOverview() {
     }
   }, [currentFilter])
 
-  // Hover handlers for cards
-  const hfoHover = {
-    onMouseEnter: (e) => {
-      e.currentTarget.style.borderColor = 'rgba(138,146,171,0.7)'
-      e.currentTarget.style.background = '#161828'
-      e.currentTarget.style.boxShadow = '0 16px 40px rgba(138,146,171,0.25)'
-      e.currentTarget.style.transform = 'translateY(-3px)'
-    },
-    onMouseLeave: (e) => {
-      e.currentTarget.style.borderColor = 'rgba(138,146,171,0.35)'
-      e.currentTarget.style.background = ''
-      e.currentTarget.style.boxShadow = ''
-      e.currentTarget.style.transform = ''
-    },
-  }
-  const enrHover = {
-    onMouseEnter: (e) => {
-      e.currentTarget.style.borderColor = 'rgba(0,171,99,0.45)'
-      e.currentTarget.style.background = '#0e1e18'
-      e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,171,99,0.15)'
-      e.currentTarget.style.transform = 'translateY(-3px)'
-    },
-    onMouseLeave: (e) => {
-      e.currentTarget.style.borderColor = 'rgba(0,171,99,0.15)'
-      e.currentTarget.style.background = ''
-      e.currentTarget.style.boxShadow = ''
-      e.currentTarget.style.transform = ''
-    },
-  }
-
   const pctContratColor = hfo.pctContrat >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
   const pctContratArrow = hfo.pctContrat >= 100 ? '▲ du contrat' : '▼ du contrat'
   const pctProdColor = hfo.pctProd >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
@@ -260,10 +230,8 @@ export default function EnergyOverview() {
 
         {/* HFO Production card */}
         <div
-          className="capex-section-card e-card"
+          className="capex-section-card e-card unified-card clickable-energy"
           onClick={() => navigate('/energy/hfo')}
-          style={{ borderColor: 'rgba(138,146,171,0.35)' }}
-          {...hfoHover}
         >
           {/* Puissance dispo vs Contractuel */}
           <div className="e-sec">
@@ -356,10 +324,8 @@ export default function EnergyOverview() {
         {/* HFO Projets */}
         <div className="e-col-title e-col-title-proj" style={{ color: 'var(--text-dim)' }}>Projets</div>
         <div
-          className="capex-section-card e-card e-card-mini"
+          className="capex-section-card e-card e-card-mini unified-card clickable-energy"
           onClick={() => navigate('/energy/hfo-projets')}
-          style={{ borderColor: 'rgba(138,146,171,0.35)', cursor: 'pointer' }}
-          {...hfoHover}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
             <div style={{ textAlign: 'center' }}>
@@ -386,10 +352,8 @@ export default function EnergyOverview() {
 
         {/* EnR Production card */}
         <div
-          className="capex-section-card e-card e-enr"
+          className="capex-section-card e-card e-enr unified-card clickable-energy"
           onClick={() => navigate('/energy/enr')}
-          style={{ borderColor: 'rgba(0,171,99,0.15)' }}
-          {...enrHover}
         >
           {/* Production moyenne vs Capacite */}
           <div className="e-sec">
@@ -471,10 +435,8 @@ export default function EnergyOverview() {
         {/* EnR Projets */}
         <div className="e-col-title e-col-title-proj" style={{ color: 'var(--text)' }}>Projets</div>
         <div
-          className="capex-section-card e-card e-enr e-card-mini"
+          className="capex-section-card e-card e-enr e-card-mini unified-card clickable-energy"
           onClick={() => navigate('/energy/enr-projets')}
-          style={{ borderColor: 'rgba(0,171,99,0.15)', cursor: 'pointer' }}
-          {...enrHover}
         >
           {/* Row 1: Total + MWc + CAPEX */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', marginBottom: '10px' }}>

@@ -16,7 +16,9 @@ export default function Layout() {
       <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:0,opacity:isHome ? 0.3 : 0.35,lineHeight:0,overflow:'hidden'}}>
         <img src={motifSrc} alt="" style={{width:'100%',height:'100%',display:'block',objectFit:'cover'}} draggable={false} />
       </div>
-      <Outlet />
+      <div style={{position:'relative',zIndex:1}}>
+        <Outlet />
+      </div>
       <BottomNav />
       {/* Theme toggle — fixed bottom right */}
       <div style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 100 }}>

@@ -106,7 +106,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
       {/* Site card */}
       <div
         onClick={onClick}
-        className={`glass-card p-4 cursor-pointer hover:-translate-y-1 transition-transform ${borderCls}`}
+        className={`glass-card clickable-energy p-4 ${borderCls}`}
       >
         {/* KPI 1: Puissance dispo / Contrat */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>

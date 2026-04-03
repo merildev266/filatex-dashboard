@@ -234,11 +234,12 @@ function ProjectDetailPanel({ project, onClose }) {
   const pOth = total > 0 ? (other / total) * 100 : 0
 
   const cardStyle = {
-    background: 'var(--inner-card)',
-    border: '1px solid var(--inner-card-border)',
-    borderRadius: 14,
+    background: 'var(--card)',
+    border: '1px solid var(--card-border)',
+    borderRadius: 20,
     padding: 16,
     textAlign: 'center',
+    boxShadow: '0 8px 60px rgba(58,57,92,0.12), 0 4px 24px rgba(58,57,92,0.08), inset 0 1px 0 rgba(58,57,92,0.15)',
   }
   const labelStyle = { fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }
   const valStyle = (c) => ({ fontSize: 20, fontWeight: 800, color: c })
@@ -482,13 +483,13 @@ function ProjectDetailPanel({ project, onClose }) {
 
       {/* === BLOCAGES & ACTIONS === */}
       {p.blocages && (
-        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
+        <div className="unified-card" style={{ padding: '16px 20px', marginBottom: 12 }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Blocages</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.blocages}</div>
         </div>
       )}
       {p.actionsS && (
-        <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 16, padding: '16px 20px', marginBottom: 12 }}>
+        <div className="unified-card" style={{ padding: '16px 20px', marginBottom: 12 }}>
           <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 6 }}>Actions</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{p.actionsS}</div>
         </div>
