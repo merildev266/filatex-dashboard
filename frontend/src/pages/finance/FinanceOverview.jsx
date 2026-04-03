@@ -49,7 +49,7 @@ export default function FinanceOverview() {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 45">
                     <text fill="var(--text)" x="110" y="32" textAnchor="middle"
                       fontFamily="'Aeonik',sans-serif"
-                      fontSize={entity.key === 'tcm' ? '34' : '26'} fontWeight="400" fontStyle="italic">
+                      fontSize={entity.key === 'tcm' ? '34' : '26'} fontWeight="400">
                       {entity.label}
                     </text>
                   </svg>

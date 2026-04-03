@@ -361,7 +361,7 @@ function ComSection() {
               <div className="text-sm font-bold mb-3" style={{ color: 'var(--text)' }}>
                 {cat.title} {'\u2014'} 0 items
               </div>
-              <div className="text-[11px] text-[var(--text-dim)] italic">Aucun suivi disponible</div>
+              <div className="text-[11px] text-[var(--text-dim)]">Aucun suivi disponible</div>
             </div>
           )
         }
@@ -406,7 +406,7 @@ function ComSection() {
                         {lastH.comment && <div className="text-[var(--text-muted)] mt-1 leading-snug">{lastH.comment}</div>}
                       </div>
                     ) : (
-                      <div className="text-[11px] text-[var(--text-dim)] italic">Aucun suivi</div>
+                      <div className="text-[11px] text-[var(--text-dim)]">Aucun suivi</div>
                     )}
                   </div>
                 )

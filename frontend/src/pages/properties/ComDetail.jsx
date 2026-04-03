@@ -112,7 +112,7 @@ function CategorySection({ cat }) {
                   })}
                   <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>% Annuel</th>
                 </tr>
-                <tr style={{ fontSize: 8, opacity: 0.5 }}>
+                <tr style={{ fontSize: 8, opacity: 1 }}>
                   <th></th>
                   <th></th>
                   {[1, 2, 3, 4].map(qi => (

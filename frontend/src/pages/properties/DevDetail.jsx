@@ -326,7 +326,7 @@ function GanttChart({ project, onTaskAlert }) {
             }}>
               <div style={{
                 position: 'absolute', top: -4, left: -18,
-                fontSize: 7, fontWeight: 700, color: 'var(--text-dim)', opacity: 0.8, whiteSpace: 'nowrap'
+                fontSize: 7, fontWeight: 700, color: 'var(--text-dim)', opacity: 1, whiteSpace: 'nowrap'
               }}>Auj.</div>
             </div>
           )}

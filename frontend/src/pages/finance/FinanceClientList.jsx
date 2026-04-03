@@ -201,7 +201,7 @@ function YearFilter({ active, onChange, counts }) {
               color: isActive ? COLOR : 'var(--text-muted)',
             }}
           >
-            {opt.label} <span style={{ fontSize: 8, opacity: 0.7 }}>({opt.count})</span>
+            {opt.label} <span style={{ fontSize: 8, opacity: 1 }}>({opt.count})</span>
           </button>
         )
       })}

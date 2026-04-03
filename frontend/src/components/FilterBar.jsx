@@ -176,7 +176,7 @@ export default function FilterBar({ current, onChange }) {
                   <span className="mob-nav-label">{opt.full}</span>
                   {/* Sub-value below the label */}
                   {active && opt.key !== 'J-1' && (
-                    <span style={{ fontSize: 10, opacity: 0.7, color: '#00ab63', marginTop: -2 }}>{getSubLabel(opt.key)}</span>
+                    <span style={{ fontSize: 10, opacity: 1, color: '#00ab63', marginTop: -2 }}>{getSubLabel(opt.key)}</span>
                   )}
                 </button>
                 {/* Mobile sub-options — grid, positioned relative to this item */}

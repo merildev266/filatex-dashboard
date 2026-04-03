@@ -340,7 +340,7 @@ body::-webkit-scrollbar { display: none; }
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--item-color);
-    opacity: 0.7;
+    opacity: 1;
   }
   .mob-nav-item.active .mob-nav-label {
     opacity: 1;
@@ -387,7 +387,7 @@ body::-webkit-scrollbar { display: none; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--item-color);
-  opacity: 0.6;
+  opacity: 1;
 }
 .bnav-item.active .bnav-label { opacity: 1; }
 .bnav-item:hover .bnav-icon-circle {
@@ -1054,7 +1054,7 @@ body::-webkit-scrollbar { display: none; }
 .gd-metric-label{
   font-size:clamp(7px,0.7vw,9px);text-transform:uppercase;letter-spacing:0.15em;
 }
-.gd-metric-icon{font-size:clamp(14px,1.5vw,18px);opacity:0.6;}
+.gd-metric-icon{font-size:clamp(14px,1.5vw,18px);opacity:1;}
 .gd-metric-value{
   font-size:clamp(20px,2.4vw,28px);font-weight:700;color:var(--text);
   line-height:1;letter-spacing:-0.5px;

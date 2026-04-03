@@ -611,7 +611,7 @@ export function CashFlowChart({ monthlyData }) {
         </div>
         <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>
           Réel: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(totalReel)}</span>
-          <span style={{ margin: '0 6px', opacity: 0.3 }}>|</span>
+          <span style={{ margin: '0 6px', opacity: 1 }}>|</span>
           Prévu: <span style={{ fontWeight: 700, color: '#3498db' }}>{fmtMga(totalPrevu)}</span>
         </div>
       </div>
