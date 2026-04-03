@@ -14,7 +14,7 @@ function DetailRow({ label, value, color }) {
 function SubProjectCard({ sp }) {
   const pct = sp.totalCreances > 0 ? ((sp.encaissements / sp.totalCreances) * 100).toFixed(0) : 0
   return (
-    <div style={{ padding: '16px 18px', background: 'rgba(155,89,182,0.04)', borderRadius: 12, border: '1px solid rgba(155,89,182,0.12)' }}>
+    <div className="unified-card" style={{ padding: '16px 18px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{sp.nom}</span>
         <span style={{ fontSize: 14, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12' }}>{pct}%</span>
