@@ -138,10 +138,8 @@ function PropsTable({ sub }) {
             return (
               <div
                 key={pi}
-                className="rounded-xl p-4"
+                className="unified-card p-4"
                 style={{
-                  background: 'var(--filatex-bg)',
-                  border: `1px solid ${delayedP > 0 ? 'rgba(224,92,92,0.3)' : 'rgba(0,171,99,0.2)'}`,
                   borderLeft: `3px solid ${borderColor}`,
                 }}
               >
@@ -371,9 +369,8 @@ function ComSection() {
         return (
           <div key={cat.key} className="mb-8">
             <div
-              className="flex items-center justify-between mb-3 px-3 py-2 rounded-lg"
+              className="unified-card flex items-center justify-between mb-3 px-3 py-2"
               style={{
-                background: 'var(--card)',
                 borderLeft: `3px solid ${cat.color}`,
               }}
             >
@@ -388,10 +385,8 @@ function ComSection() {
                 return (
                   <div
                     key={i}
-                    className="rounded-xl p-3"
+                    className="unified-card p-3"
                     style={{
-                      background: 'var(--card)',
-                      border: '1px solid var(--card-border)',
                       borderLeft: `3px solid ${lastH ? cat.color : 'var(--card-border)'}`,
                     }}
                   >

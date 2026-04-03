@@ -26,19 +26,19 @@ function HfoSubCards({ onSelect }) {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-8">
       <div
         onClick={() => onSelect('overhauls')}
-        className="bg-[var(--inner-card)] border border-[rgba(0,171,99,0.15)] rounded-xl p-6 text-center cursor-pointer hover:bg-[rgba(0,171,99,0.05)] transition-all"
+        className="unified-card clickable-energy p-6 text-center"
       >
         <div className="text-base font-bold text-[var(--text)] mb-1">Overhauls</div>
         <div className="text-[11px] text-[var(--text-muted)]">Maintenance moteurs</div>
       </div>
       <div
         onClick={() => onSelect('projets')}
-        className="bg-[var(--inner-card)] border border-[rgba(0,171,99,0.15)] rounded-xl p-6 text-center cursor-pointer hover:bg-[rgba(0,171,99,0.05)] transition-all"
+        className="unified-card clickable-energy p-6 text-center"
       >
         <div className="text-base font-bold text-[var(--text)] mb-1">Projet annexe</div>
         <div className="text-[11px] text-[var(--text-muted)]">Projets complementaires</div>
       </div>
-      <div className="bg-[var(--inner-card)] border border-[var(--subtle-border)] rounded-xl p-6 text-center opacity-40">
+      <div className="unified-card p-6 text-center opacity-40">
         <div className="text-base font-bold text-[var(--text)] mb-1">Informations site</div>
         <div className="text-[11px] text-[var(--text-dim)]">Bientot disponible</div>
       </div>
