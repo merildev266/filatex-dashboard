@@ -88,12 +88,9 @@ function CategorySection({ cat }) {
       {/* Detail table (collapsible) */}
       {open && (
         <div className="com-obj-detail open">
-          <div className="table-wrap" style={{
-            background: 'var(--subtle-bg)',
-            borderColor: `rgba(${rgb},0.12)`,
+          <div className="unified-card table-wrap" style={{
             marginTop: 12,
             border: `1px solid rgba(${rgb},0.12)`,
-            borderRadius: 12,
             overflow: 'hidden'
           }}>
             <table className="groups-table com-obj-table" style={{ width: '100%', borderCollapse: 'collapse' }}>

@@ -2,8 +2,7 @@ const CLR = '#FDB823'
 
 function KpiCard({ label, value, sub, color }) {
   return (
-    <div className="text-center p-5 rounded-2xl"
-      style={{ background: 'var(--card)', border: `1px solid var(--card-border)` }}>
+    <div className="unified-card text-center p-5">
       <div className="text-[9px] font-bold tracking-[0.3em] uppercase mb-2"
         style={{ color: 'var(--text-dim)' }}>{label}</div>
       <div className="text-[28px] font-extrabold" style={{ color: color || '#fff' }}>{value}</div>
@@ -29,12 +28,12 @@ export default function FoncierDetail() {
       </div>
 
       {/* Placeholders */}
-      <div className="text-center p-10 rounded-2xl mb-6"
-        style={{ background: 'var(--subtle-bg)', border: '1px dashed rgba(253,184,35,0.15)', color: 'var(--text-dim)', fontSize: 13 }}>
+      <div className="unified-card text-center p-10 mb-6"
+        style={{ border: '1px dashed rgba(253,184,35,0.15)', color: 'var(--text-dim)', fontSize: 13 }}>
         Liste des terrains &mdash; Donn&eacute;es &agrave; int&eacute;grer
       </div>
-      <div className="text-center p-10 rounded-2xl min-h-[200px] flex items-center justify-center"
-        style={{ background: 'var(--subtle-bg)', border: '1px dashed rgba(253,184,35,0.15)', color: 'var(--text-dim)', fontSize: 13 }}>
+      <div className="unified-card text-center p-10 min-h-[200px] flex items-center justify-center"
+        style={{ border: '1px dashed rgba(253,184,35,0.15)', color: 'var(--text-dim)', fontSize: 13 }}>
         Carte / r&eacute;partition g&eacute;ographique &mdash; Espace r&eacute;serv&eacute;
       </div>
     </div>

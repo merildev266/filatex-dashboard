@@ -80,9 +80,8 @@ export default function TvxDetail() {
 
       {/* Alert banner */}
       {kpis.delayed > 0 && (
-        <div style={{
-          marginBottom: 16, padding: '10px 16px', borderRadius: 10,
-          background: 'var(--card)', border: '1px solid var(--card-border)',
+        <div className="unified-card" style={{
+          marginBottom: 16, padding: '10px 16px',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: RED }}>&#9888; {kpis.delayed} projet{kpis.delayed > 1 ? 's' : ''} en retard</span>

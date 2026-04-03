@@ -283,7 +283,7 @@ function GanttChart({ project, onTaskAlert }) {
   const NAME_W = 170
 
   return (
-    <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 20, position: 'relative' }}>
+    <div className="unified-card" style={{ position: 'relative' }}>
       <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'var(--text-dim)', padding: '16px 24px 0' }}>
         Planning &middot; Gantt
       </div>
@@ -513,9 +513,8 @@ function ProjectDetail({ project, onBack }) {
 
       {/* Comment */}
       {project.comment && (
-        <div style={{
-          padding: '10px 14px', borderRadius: 8,
-          background: 'var(--card)', border: '1px solid var(--card-border)',
+        <div className="unified-card" style={{
+          padding: '10px 14px',
           fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: 24
         }}>
           <b style={{ color: 'var(--text-secondary)' }}>Notes :</b> {project.comment}
@@ -588,9 +587,8 @@ export default function DevDetail() {
 
       {/* Alert banner */}
       {delayed.length > 0 && (
-        <div style={{
-          marginBottom: 16, padding: '10px 16px', borderRadius: 10,
-          background: 'var(--card)', border: '1px solid var(--card-border)',
+        <div className="unified-card" style={{
+          marginBottom: 16, padding: '10px 16px',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-dim)' }}>&#9888; Projets en retard :</span>
