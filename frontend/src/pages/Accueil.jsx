@@ -27,7 +27,7 @@ function PropertiesLogo() {
 function CapexLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
-      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="38" fontWeight="400" fontStyle="italic">CAPEX</text>
+      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CAPEX</text>
     </svg>
   )
 }
@@ -36,7 +36,7 @@ function CapexLogo() {
 function CsiLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55">
-      <text fill="var(--text)" x="60" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="38" fontWeight="400" fontStyle="italic">CSI</text>
+      <text fill="var(--text)" x="60" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CSI</text>
     </svg>
   )
 }
@@ -44,8 +44,8 @@ function CsiLogo() {
 /* ── Reporting card SVG ── */
 function ReportingLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
-      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="32" fontWeight="400" fontStyle="italic">Reporting</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 55">
+      <text fill="var(--text)" x="110" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="30" fontWeight="700" letterSpacing="0.12em">REPORTING</text>
     </svg>
   )
 }
@@ -53,8 +53,8 @@ function ReportingLogo() {
 /* ── Finance card SVG ── */
 function FinanceLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
-      <text fill="var(--text)" x="90" y="38" textAnchor="middle" fontFamily="'Larken','Playfair Display',serif" fontSize="34" fontWeight="400" fontStyle="italic">Finance</text>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 55">
+      <text fill="var(--text)" x="100" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="32" fontWeight="700" letterSpacing="0.12em">FINANCE</text>
     </svg>
   )
 }
