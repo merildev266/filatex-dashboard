@@ -103,7 +103,18 @@ Labels : 8px, 9px (mix aleatoire)
 
 ## 2. CODE MORT
 
-### 2.1 Fichier data inutilise (PRIORITE HAUTE)
+### 2.1 Imports indefinis (CRITIQUE - erreurs runtime)
+
+**Fichier** : `frontend/src/pages/reporting/ReportingOverview.jsx`
+
+| Ligne | Import utilise | Export reel dans le fichier data | Impact |
+|-------|---------------|----------------------------------|--------|
+| 8 | `INV_PROJECTS` | `invProjects` | **Runtime error** |
+| 10-12 | `PROPS_SAV, PROPS_TVX, PROPS_DEV` | `propsData_sav, propsData_tvx, propsData_dev` | **Runtime error** |
+
+**Action** : Corriger immediatement les noms d'import.
+
+### 2.2 Fichier data inutilise (PRIORITE HAUTE)
 
 | Fichier | Taille | Statut |
 |---------|--------|--------|
@@ -111,24 +122,44 @@ Labels : 8px, 9px (mix aleatoire)
 
 **Action** : Supprimer ce fichier.
 
-### 2.2 Composant ThemeToggle duplique
+### 2.3 31 classes CSS inutilisees
+
+Definies dans `frontend/src/index.css` mais jamais referencees dans le JSX :
+
+**Reporting (13)** : `.rpt-badge`, `.rpt-badge-blue`, `.rpt-badge-dim`, `.rpt-badge-green`, `.rpt-badge-orange`, `.rpt-badge-red`, `.rpt-kpi-bar`, `.rpt-kpi-item`, `.rpt-prog-bar`, `.rpt-prog-fill`, `.rpt-table`, `.rpt-table-wrap`, `.rpt-detail-section`
+
+**Layout (4)** : `.filter-bar-wrap`, `.header-divider`, `.header-label`, `.nav-filter`
+
+**Site detail (2)** : `.sd-site-name`, `.sd-sticky-bar`
+
+**Admin (3)** : `.admin-section-active`, `.back-btn-react`, `.clickable-csi`
+
+**Time filter (2)** : `.tfilter`, `.time-filter`
+
+**Energy (2)** : `.enr-kpi-grid-`, `.enr-site-grid-` (noms incomplets)
+
+**Font refs (3)** : `.css`, `.otf`, `.ttf`
+
+### 2.4 Composant ThemeToggle duplique
 
 - `frontend/src/components/ThemeToggle.jsx` : composant principal (utilise dans Layout)
 - `frontend/src/pages/Accueil.jsx:81-102` : version locale dupliquee
 
 **Action** : Utiliser le composant partage dans Accueil.jsx.
 
-### 2.3 Bilan code mort
+### 2.5 Propriete context inutilisee
+
+- `frontend/src/context/AuthContext.jsx:42` : `token: null` - jamais accedee nulle part
+
+### 2.6 Bilan code mort
 
 | Type | Nombre | Severite |
 |------|--------|----------|
+| Imports indefinis (runtime error) | 2 | **CRITIQUE** |
 | Fichiers data inutilises | 1 (157KB) | **HAUTE** |
-| CSS classes inutilisees | 0 | - |
-| Fonctions inutilisees | 0 | - |
-| Imports inutilises | 0 | - |
-| Composants orphelins | 0 | - |
-| Code commente | 0 | - |
+| CSS classes inutilisees | 31 | MOYENNE |
 | Fonctions dupliquees | 1 | BASSE |
+| Proprietes context inutilisees | 1 | BASSE |
 
 ---
 
@@ -192,10 +223,14 @@ La classe `.capex-section-card` (definie pour CAPEX) est utilisee par :
 
 ## 5. PLAN D'ACTION RECOMMANDE
 
+### Priorite 0 - Bugs critiques
+1. Corriger les imports indefinis dans `ReportingOverview.jsx` (INV_PROJECTS, PROPS_SAV/TVX/DEV)
+
 ### Priorite 1 - Quick wins
-1. Supprimer `hfo_site_data.js` (157KB de dead code)
-2. Centraliser les couleurs en CSS variables
-3. Creer `--shadow-card` variable
+2. Supprimer `hfo_site_data.js` (157KB de dead code)
+3. Supprimer les 31 classes CSS inutilisees
+4. Centraliser les couleurs en CSS variables
+5. Creer `--shadow-card` variable
 
 ### Priorite 2 - Unification visuelle
 4. Creer echelle border-radius (`--radius-sm/md/lg/xl`)
