@@ -237,7 +237,7 @@ function PropsTable({ sub }) {
       )}
 
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
+      <div className="unified-card flex flex-wrap gap-4 justify-center mb-6 py-3">
         <KpiItem value={allProjects.length} label="Projets" color="#00ab63" />
         <KpiItem value={rawRows.length} label={'\u00c9tapes'} color="#5aafaf" />
         <KpiItem value={onTimeCount} label="On Time" color="#FDB823" />
@@ -321,7 +321,7 @@ function ComSection() {
   return (
     <div>
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
+      <div className="unified-card flex flex-wrap gap-4 justify-center mb-6 py-3">
         {cats.map(cat => (
           <div
             key={cat.key}
