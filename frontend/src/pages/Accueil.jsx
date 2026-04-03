@@ -27,7 +27,7 @@ function PropertiesLogo() {
 function CapexLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 55">
-      <text fill="rgba(255,255,255,0.85)" x="90" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CAPEX</text>
+      <text fill="#ffffff" x="90" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CAPEX</text>
     </svg>
   )
 }
@@ -36,7 +36,7 @@ function CapexLogo() {
 function CsiLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 55">
-      <text fill="rgba(255,255,255,0.85)" x="60" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CSI</text>
+      <text fill="#ffffff" x="60" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CSI</text>
     </svg>
   )
 }
@@ -45,7 +45,7 @@ function CsiLogo() {
 function ReportingLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
-      <text fill="rgba(255,255,255,0.85)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">REPORTING</text>
+      <text fill="#ffffff" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">REPORTING</text>
     </svg>
   )
 }
@@ -54,7 +54,7 @@ function ReportingLogo() {
 function FinanceLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 55">
-      <text fill="rgba(255,255,255,0.85)" x="100" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">FINANCE</text>
+      <text fill="#ffffff" x="100" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">FINANCE</text>
     </svg>
   )
 }
@@ -181,13 +181,13 @@ export default function Accueil() {
 
           {/* ── VALUES ── */}
           <div className="home-values" style={{display:'flex',alignItems:'center',gap:0,animation:'fadeIn 0.9s 0.1s ease both'}}>
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)'}}>Excellence</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'#ffffff'}}>Excellence</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.25)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)'}}>Innovation</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'#ffffff'}}>Innovation</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.25)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)'}}>Engagement</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'#ffffff'}}>Engagement</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.25)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)'}}>Respect</span>
+            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'#ffffff'}}>Respect</span>
           </div>
         </header>
 
