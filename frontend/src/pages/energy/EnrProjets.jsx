@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { usePageTitle } from '../../context/PageTitleContext'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
 
 const PHASE_LABELS = { termine: 'Termin\u00e9', construction: 'En construction', developpement: 'D\u00e9veloppement', planifie: 'Planifi\u00e9' }
@@ -31,6 +32,17 @@ function typeIcon(t) { return t === 'Eolien' || t === 'wind' ? '\uD83D\uDCA8' : 
 export default function EnrProjets() {
   const [selectedProject, setSelectedProject] = useState(null)
   const [phaseFilter, setPhaseFilter] = useState(null)
+  const { setPageTitle, clearTitle } = usePageTitle()
+
+  useEffect(() => {
+    if (selectedProject) {
+      setPageTitle(selectedProject.name || selectedProject.id)
+    } else {
+      clearTitle()
+    }
+  }, [selectedProject])
+
+  useEffect(() => clearTitle, [])
 
   const projects = ENR_PROJECTS_DATA?.projects || []
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
  * Standalone sticky header for sections without nested routes.
  * Same design as SectionLayout header.
  */
-export default function SectionHeader({ name, color, onBack }) {
+export default function SectionHeader({ name, title, color, onBack }) {
   const navigate = useNavigate()
   const handleBack = onBack || (() => navigate('/'))
   const label = onBack ? name : 'Accueil'
@@ -33,7 +33,7 @@ export default function SectionHeader({ name, color, onBack }) {
             whiteSpace: 'nowrap',
           }}
         >
-          {name}
+          {title || name}
         </div>
         <div style={{ flex: 1 }} />
         <div style={{ width: 70 }} />

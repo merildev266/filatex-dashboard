@@ -329,7 +329,7 @@ export default function Investments() {
     const allOfType = selectedProject.type === 'externe' ? extProjects : intProjects
     return (
       <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
-        <SectionHeader name="Investments" color={ACCENT} onBack={() => setSelectedProject(null)} />
+        <SectionHeader name="Investments" title={selectedProject.name || selectedProject.projet} color={ACCENT} onBack={() => setSelectedProject(null)} />
         <div className="inv-page-inner">
           <InvDetail
             project={selectedProject}
@@ -346,7 +346,7 @@ export default function Investments() {
   if (activeType) {
     return (
       <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
-        <SectionHeader name="Investments" color={ACCENT} onBack={() => setActiveType(null)} />
+        <SectionHeader name="Investments" title={activeType === 'externe' ? 'Externe' : 'Interne'} color={ACCENT} onBack={() => setActiveType(null)} />
         <div className="inv-page-inner">
           <GridView
             type={activeType}

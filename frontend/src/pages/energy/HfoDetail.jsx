@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useFilters } from '../../hooks/useFilters'
+import { usePageTitle } from '../../context/PageTitleContext'
 import HfoSite from './HfoSite'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
@@ -111,8 +112,19 @@ function calcGenSfoc(g) {
 
 export default function HfoDetail() {
   const { currentFilter, setFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+  const { setPageTitle } = usePageTitle()
   const [selectedSite, setSelectedSite] = useState(null)
   const [projectFilter, setProjectFilter] = useState(null) // { type: 'site'|'cat', key: string }
+
+  // Update banner title based on current view
+  useEffect(() => {
+    if (selectedSite) {
+      setPageTitle(selectedSite.charAt(0).toUpperCase() + selectedSite.slice(1))
+    } else {
+      setPageTitle(null) // fallback to default "HFO"
+    }
+    return () => setPageTitle(null)
+  }, [selectedSite, setPageTitle])
 
   const siteData = useMemo(() => buildSiteData(), [])
 
@@ -231,8 +243,20 @@ export default function HfoDetail() {
 /** Full site detail panel — replaces main view when a site is selected */
 function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, onNavigate }) {
   const { selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+  const { setPageTitle } = usePageTitle()
   const [selectedGenerator, setSelectedGenerator] = useState(null)
   const s = siteData[siteId]
+
+  // Update banner when generator is selected
+  useEffect(() => {
+    if (selectedGenerator) {
+      const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
+      setPageTitle(`${siteName} — ${selectedGenerator}`)
+    } else {
+      const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
+      setPageTitle(siteName)
+    }
+  }, [selectedGenerator, siteId, setPageTitle])
   const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter)
 
   // If a generator is selected, show its detail panel

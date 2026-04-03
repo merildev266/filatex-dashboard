@@ -1,4 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
+import { usePageTitle } from '../context/PageTitleContext'
 
 /**
  * Shared layout for all 6 main sections.
@@ -13,10 +14,11 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 export default function SectionLayout({ name, color, basePath, headerRight, pageNames }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { pageTitle } = usePageTitle()
   const isRoot = location.pathname === basePath
 
-  // Dynamic page title: match current path against pageNames map
-  const currentPage = (() => {
+  // Dynamic page title: child components can override via usePageTitle
+  const currentPage = pageTitle || (() => {
     if (!pageNames) return name
     const rel = location.pathname.replace(basePath, '').replace(/^\//, '')
     if (!rel) return name

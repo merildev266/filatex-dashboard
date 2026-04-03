@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { usePageTitle } from '../../context/PageTitleContext'
 import { ENR_SITES } from '../../data/enr_site_data'
 import { MONTH_NAMES } from '../../utils/projects'
 
@@ -85,9 +86,20 @@ function getFilteredSiteData(site, filterState) {
 export default function EnrDetail() {
   const filterState = useEnrFilter()
   const [selectedSite, setSelectedSite] = useState(null)
+  const { setPageTitle, clearTitle } = usePageTitle()
   const maxDataMonth = getEnrDataMonth()
 
   const sites = ENR_SITES || []
+
+  useEffect(() => {
+    if (selectedSite !== null && sites[selectedSite]) {
+      setPageTitle(sites[selectedSite].name)
+    } else {
+      clearTitle()
+    }
+  }, [selectedSite])
+
+  useEffect(() => clearTitle, [])
 
   /* -- Aggregate production data -- */
   const { totalProdKwh, totalAvgDaily, totalCapMw, siteFiltered } = useMemo(() => {

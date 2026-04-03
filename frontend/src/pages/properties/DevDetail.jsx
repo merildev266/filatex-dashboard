@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
+import { usePageTitle } from '../../context/PageTitleContext'
 import { propsData_dev } from '../../data/props_data'
 import { propsData_dev_full } from '../../data/props_data_dev_full'
 
@@ -538,6 +539,17 @@ function ProjectDetail({ project, onBack }) {
 /* ────── MAIN COMPONENT ────── */
 export default function DevDetail() {
   const [selectedProjectIdx, setSelectedProjectIdx] = useState(null)
+  const { setPageTitle, clearTitle } = usePageTitle()
+
+  useEffect(() => {
+    if (selectedProjectIdx !== null) {
+      setPageTitle(devProjects[selectedProjectIdx].name)
+    } else {
+      clearTitle()
+    }
+  }, [selectedProjectIdx])
+
+  useEffect(() => clearTitle, [])
 
   const total = devProjects.length
   const enRetard = devProjects.filter(p => p.glissMax > 30).length

@@ -262,7 +262,7 @@ export default function Capex() {
     const catData = capexData[activeCategory]
     return (
       <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
-        <SectionHeader name="CAPEX" color={ACCENT} onBack={() => setSelectedProject(null)} />
+        <SectionHeader name="CAPEX" title={selectedProject.name || selectedProject.projet} color={ACCENT} onBack={() => setSelectedProject(null)} />
         <ProjectDetail
           project={selectedProject}
           color={catData.color}
@@ -275,9 +275,10 @@ export default function Capex() {
 
   // Category drill-down view
   if (activeCategory) {
+    const catTitle = capexData[activeCategory]?.title || activeCategory
     return (
       <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
-        <SectionHeader name="CAPEX" color={ACCENT} onBack={() => setActiveCategory(null)} />
+        <SectionHeader name="CAPEX" title={catTitle} color={ACCENT} onBack={() => setActiveCategory(null)} />
         <CategoryView
           poleKey={activeCategory}
           onBack={() => setActiveCategory(null)}
