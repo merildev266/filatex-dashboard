@@ -76,7 +76,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
         </div>
         <div
           className={`glass-card flex flex-col items-center justify-center gap-2 min-h-[200px] opacity-60`}
-          style={{ borderColor: 'rgba(138,146,171,0.15)' }}
+          style={{}}
         >
           <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
             {isRecon ? 'En reparation' : 'En construction'}

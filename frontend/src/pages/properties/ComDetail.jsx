@@ -55,7 +55,7 @@ function CategorySection({ cat }) {
       {/* Clickable header card */}
       <div
         className="com-obj-card"
-        style={{ borderColor: `rgba(${rgb},0.25)`, cursor: 'pointer' }}
+        style={{ cursor: 'pointer' }}
         onClick={() => setOpen(!open)}
       >
         <div className="com-obj-card-header">
@@ -227,22 +227,22 @@ export default function ComDetail() {
     <div>
       {/* KPI bar */}
       <div className="com-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Objectif total 2026</div>
           <div className="props-kpi-val" style={{ color: VERT }}>{fmtEur(grandTotal)}</div>
           <div className="props-kpi-sub">Ventes + Location</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Projets / Biens</div>
           <div className="props-kpi-val" style={{ color: VERT }}>{nbItems}</div>
           <div className="props-kpi-sub">{cats[0].data.length} projets &middot; {cats[1].data.length} terrains &middot; {cats[2].data.length} biens</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.18)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Realise global</div>
           <div className="props-kpi-val" style={{ color: globalPct >= 80 ? VERT : globalPct >= 40 ? YELLOW : RED }}>{globalPct} %</div>
           <div className="props-kpi-sub">{fmtEur(grandRealise)} encaisse</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.25)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Trimestre</div>
           <div className="props-kpi-val" style={{ color: TEAL }}>Q{Q}</div>
           <div className="props-kpi-sub">{Q_LABELS[Q - 1]} 2026</div>

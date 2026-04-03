@@ -7,10 +7,10 @@ const NAV_ITEMS = [
   { pole: 'energy', path: '/energy', label: 'Energy', section: 'energy' },
   { pole: 'investments', path: '/investments', label: 'Invest.', section: 'investments' },
   { pole: 'properties', path: '/properties', label: 'Properties', section: 'properties' },
+  { pole: 'finance', path: '/finance', label: 'Finance', section: 'finance' },
   { pole: 'capex', path: '/capex', label: 'CAPEX', section: 'capex' },
   { pole: 'csi', path: '/csi', label: 'CSI', section: 'csi' },
   { pole: 'reporting', path: '/reporting', label: 'Reporting', section: 'reporting' },
-  { pole: 'finance', path: '/finance', label: 'Finance', section: 'finance' },
 ]
 
 const POLE_COLORS = {

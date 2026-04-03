@@ -163,7 +163,7 @@ function EnrProjectCard({ project, onClick }) {
   const avReel = hasCc ? p.cc.avReel : null
 
   return (
-    <div className="enrp-card" style={{ borderColor: `rgba(${rgb},0.18)` }} onClick={onClick}>
+    <div className="enrp-card" onClick={onClick}>
       <div className="enrp-card-head">
         <span className="enrp-card-icon">{typeIcon(p.type)}</span>
         <div style={{ flex: 1, minWidth: 0 }}>

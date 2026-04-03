@@ -59,22 +59,22 @@ export default function SavDetail() {
     <div>
       {/* KPIs */}
       <div className="props-kpi-row-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Projets SAV</div>
           <div className="props-kpi-val" style={{ color: TEAL }}>{kpis.total}</div>
           <div className="props-kpi-sub">Total</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(0,171,99,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">On Time</div>
           <div className="props-kpi-val" style={{ color: VERT }}>{kpis.onTime}</div>
           <div className="props-kpi-sub">Dans les temps</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(224,92,92,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">En retard</div>
           <div className="props-kpi-val" style={{ color: kpis.delayed > 0 ? RED : VERT }}>{kpis.delayed}</div>
           <div className="props-kpi-sub">Projets en retard</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Decision requise</div>
           <div className="props-kpi-val" style={{ color: TEAL }}>{kpis.mgmtRequired}</div>
           <div className="props-kpi-sub">Management</div>

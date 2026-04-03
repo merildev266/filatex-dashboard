@@ -289,7 +289,7 @@ function GanttChart({ project, onTaskAlert }) {
       </div>
 
       {/* Timeline header */}
-      <div style={{ display: 'flex', padding: '12px 24px 0 24px', background: 'var(--subtle-bg)' }}>
+      <div style={{ display: 'flex', padding: '12px 24px 0 24px' }}>
         <div style={{ flex: `0 0 ${NAME_W}px` }} />
         <div style={{ display: 'flex', flex: 1, position: 'relative', height: 28 }}>
           {years.map((y, i) => (
@@ -347,8 +347,7 @@ function GanttChart({ project, onTaskAlert }) {
                   width: NAME_W, flexShrink: 0,
                   fontSize: 10, fontWeight: isDelayed ? 700 : 500,
                   color: isDelayed ? 'var(--text)' : 'var(--text-muted)',
-                  paddingRight: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                  background: 'var(--subtle-bg)'
+                  paddingRight: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
                 }}>
                   {t.name}
                 </div>
@@ -484,17 +483,17 @@ function ProjectDetail({ project, onBack }) {
 
       {/* KPIs */}
       <div className="dev-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Avancement</div>
           <div className="props-kpi-val" style={{ color: AZUR }}>{project.pct} %</div>
           <div className="props-kpi-sub">{project.duree} jours total</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Statut</div>
           <div className="props-kpi-val" style={{ color: statusColor, fontSize: 'clamp(14px,1.6vw,20px)' }}>{statusLabel}</div>
           <div className="props-kpi-sub">{project.tasks.length} taches</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Glissement max</div>
           <div className="props-kpi-val" style={{
             color: project.glissMax > 0 ? NEON_RED : VERT,
@@ -504,7 +503,7 @@ function ProjectDetail({ project, onBack }) {
           </div>
           <div className="props-kpi-sub">{tasksWithDelay.length} tache{tasksWithDelay.length > 1 ? 's' : ''} impactee{tasksWithDelay.length > 1 ? 's' : ''}</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Periode</div>
           <div className="props-kpi-val" style={{ color: AZUR, fontSize: 'clamp(11px,1.2vw,15px)' }}>{fmtDate(project.debut)}</div>
           <div className="props-kpi-sub">au {fmtDate(project.fin)}</div>
@@ -563,22 +562,22 @@ export default function DevDetail() {
     <div>
       {/* KPIs */}
       <div className="dev-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Projets en cours</div>
           <div className="props-kpi-val" style={{ color: AZUR }}>{total}</div>
           <div className="props-kpi-sub">Développement actif</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Permis déposés</div>
           <div className="props-kpi-val">{permisDeposes} / {total}</div>
           <div className="props-kpi-sub">En instruction</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Avancement moy.</div>
           <div className="props-kpi-val" style={{ color: AZUR }}>{avgPct} %</div>
           <div className="props-kpi-sub">Tous projets</div>
         </div>
-        <div className="props-kpi-card" style={{ borderColor: 'rgba(66,106,179,0.15)' }}>
+        <div className="props-kpi-card" style={{}}>
           <div className="props-kpi-label">Glissement moy.</div>
           <div className="props-kpi-val" style={{ color: glissMoy > 30 ? RED : AZUR }}>{glissMoy} j</div>
           <div className="props-kpi-sub">{enRetard} projet{enRetard > 1 ? 's' : ''} en retard</div>

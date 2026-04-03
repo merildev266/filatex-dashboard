@@ -827,17 +827,20 @@ body::-webkit-scrollbar { display: none; }
 [data-theme="light"] .rpt-table-wrap,
 [data-theme="light"] .capex-kpi-card,
 [data-theme="light"] .capex-proj-card,
+[data-theme="light"] .cpj-block,
 [data-theme="light"] .props-kpi-card,
 [data-theme="light"] .com-obj-card,
 [data-theme="light"] .gd-arret-banner,
-[data-theme="light"] .gd-chart-card { background:#e4f4fd; }
+[data-theme="light"] .gd-chart-card,
+[data-theme="light"] .gd-kpi-card,
+[data-theme="light"] .gd-metric-card { background:#e4f4fd; }
 
 /* ── Section pole border colors on all cards ── */
-[data-section="energy"] .unified-card, [data-section="energy"] .s1-card, [data-section="energy"] .capex-section-card, [data-section="energy"] .glass-card, [data-section="energy"] .gd-arret-banner, [data-section="energy"] .gd-chart-card, [data-section="energy"] .enrp-kbox, [data-section="energy"] .enrp-card { border-color: #00ab63; }
+[data-section="energy"] .unified-card, [data-section="energy"] .s1-card, [data-section="energy"] .capex-section-card, [data-section="energy"] .glass-card, [data-section="energy"] .gd-arret-banner, [data-section="energy"] .gd-chart-card, [data-section="energy"] .enrp-kbox, [data-section="energy"] .enrp-card, [data-section="energy"] .gd-kpi-card, [data-section="energy"] .gd-metric-card { border-color: #00ab63; }
 [data-section="investments"] .unified-card, [data-section="investments"] .s1-card, [data-section="investments"] .capex-section-card { border-color: #f37056; }
 [data-section="properties"] .unified-card, [data-section="properties"] .s1-card, [data-section="properties"] .props-kpi-card, [data-section="properties"] .com-obj-card { border-color: #FDB823; }
-[data-section="finance"] .unified-card, [data-section="finance"] .s1-card { border-color: #1abc9c; }
-[data-section="capex"] .unified-card, [data-section="capex"] .s1-card, [data-section="capex"] .capex-kpi-card, [data-section="capex"] .capex-proj-card, [data-section="capex"] .capex-section-card { border-color: #5e4c9f; }
+[data-section="finance"] .unified-card, [data-section="finance"] .s1-card, [data-section="finance"] .card-finance { border-color: #1abc9c; }
+[data-section="capex"] .unified-card, [data-section="capex"] .s1-card, [data-section="capex"] .capex-kpi-card, [data-section="capex"] .capex-proj-card, [data-section="capex"] .capex-section-card, [data-section="capex"] .cpj-block { border-color: #5e4c9f; }
 [data-section="csi"] .unified-card, [data-section="csi"] .s1-card { border-color: #0096c7; }
 [data-section="reporting"] .unified-card, [data-section="reporting"] .s1-card, [data-section="reporting"] .rpt-pole-card, [data-section="reporting"] .rpt-kpi-item, [data-section="reporting"] .rpt-table-wrap { border-color: #426ab3; }
 
@@ -1247,7 +1250,7 @@ body::-webkit-scrollbar { display: none; }
 .cpj-name{font-size:16px;font-weight:800;color:var(--text);}
 .cpj-status{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;padding:4px 10px;border-radius:6px;}
 .cpj-grid{display:grid;gap:16px;}
-.cpj-block{background:var(--inner-card);border:1px solid var(--subtle-border);border-radius:12px;padding:16px;}
+.cpj-block{background:#000000;border:1px solid var(--card-border);border-radius:20px;padding:16px;box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);}
 .cpj-block-label{font-size:8px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
 
 /* Back button (React version) */

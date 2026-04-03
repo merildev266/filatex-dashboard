@@ -456,7 +456,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
                       {/* Card body */}
                       <div
                         className="s1-card gen-card-body"
-                        style={{ borderColor, cursor: 'pointer' }}
+                        style={{ cursor: 'pointer' }}
                         onClick={() => setSelectedGenerator(g.id)}
                       >
                         <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">Puissance</div>
@@ -550,9 +550,9 @@ function GeneratorDetailPanel({
   const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko)
 
   // Card border/label/bg colors
-  const bc = 'var(--card-border)'
+  const bc = undefined
   const lc = isContra ? 'rgba(160,90,255,0.65)' : isKO ? 'rgba(224,92,92,0.65)' : 'rgba(138,146,171,0.65)'
-  const bg = 'var(--card)'
+  const bg = undefined
 
   // ── Section 1 — Heures de marche (filter-aware, matches original thresholds) ──
   let s1_hVal, s1_hUnit = 'h', s1_sbSub, s1_hColor, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel
