@@ -32,7 +32,7 @@ export default function SectionLayout({ name, color, basePath, headerRight, page
   const handleBack = () => isRoot ? navigate('/') : navigate(basePath)
 
   return (
-    <div style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
+    <div data-section={basePath.replace('/', '')} style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
       {/* Sticky header */}
       <div className="sticky top-0 z-50 section-banner">
         <div className="flex items-center px-4 py-3" style={{ position: 'relative' }}>
