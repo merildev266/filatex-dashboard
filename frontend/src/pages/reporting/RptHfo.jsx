@@ -133,7 +133,7 @@ export default function RptHfo() {
       </div>
 
       {/* KPI bar */}
-      <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
+      <div className="unified-card flex flex-wrap gap-4 justify-center mb-6 py-3">
         <KpiItem value={total} label="Total" color="#00ab63" />
         <KpiItem value={enCours} label="En cours" color="#5aafaf" />
         <KpiItem value={urgent} label="Urgent" color="#E05C5C" />
@@ -141,7 +141,7 @@ export default function RptHfo() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="unified-card overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[var(--inner-card-border)]">

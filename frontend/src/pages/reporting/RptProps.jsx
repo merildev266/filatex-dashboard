@@ -122,7 +122,7 @@ function PropsTable({ sub }) {
         </div>
 
         {/* KPIs */}
-        <div className="flex flex-wrap gap-4 justify-center mb-6 py-3 bg-[var(--subtle-bg)] rounded-xl">
+        <div className="unified-card flex flex-wrap gap-4 justify-center mb-6 py-3">
           <KpiItem value={propsData_dev_full.length} label="Projets" color="#00ab63" />
           <KpiItem value={propsData_dev_full.reduce((s, p) => s + p.etapes.length, 0)} label={'\u00c9tapes'} color="#5aafaf" />
           <KpiItem value={propsData_dev_full.reduce((s, p) => s + p.etapes.filter(e => e.timing_var === 'On Time').length, 0)} label="On Time" color="#FDB823" />
@@ -245,7 +245,7 @@ function PropsTable({ sub }) {
       </div>
 
       {/* Table with collapsible project groups */}
-      <div className="overflow-x-auto">
+      <div className="unified-card overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[var(--inner-card-border)]">
