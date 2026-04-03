@@ -3,9 +3,9 @@ const CLR = '#FDB823'
 function KpiCard({ label, value, sub, color }) {
   return (
     <div className="unified-card text-center p-5">
-      <div className="text-[9px] font-bold tracking-[0.3em] uppercase mb-2"
+      <div className="text-[9px] tracking-[0.3em] uppercase mb-2"
         style={{ color: 'var(--text-dim)' }}>{label}</div>
-      <div className="text-[28px] font-extrabold" style={{ color: color || '#fff' }}>{value}</div>
+      <div className="text-[28px]" style={{ color: color || '#fff' }}>{value}</div>
       <div className="text-[10px] mt-1" style={{ color: 'var(--text-dim)' }}>{sub}</div>
     </div>
   )
@@ -14,7 +14,7 @@ function KpiCard({ label, value, sub, color }) {
 export default function FoncierDetail() {
   return (
     <div style={{ maxWidth: '100%', margin: '0 auto' }}>
-      <div className="text-[9px] font-bold tracking-[0.4em] uppercase mb-[18px]"
+      <div className="text-[9px] tracking-[0.4em] uppercase mb-[18px]"
         style={{ color: 'var(--text-dim)' }}>
         Vue consolid&eacute;e &middot; Acquisitions terrain
       </div>

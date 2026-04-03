@@ -15,7 +15,7 @@ export default function SectionHeader({ name, title, color, onBack }) {
         <div className="nav-back">
           <button
             onClick={handleBack}
-            className="section-back-btn text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg
+            className="section-back-btn text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg
                        bg-transparent cursor-pointer transition-colors"
             style={{ border: `1px solid ${color}4D`, color }}
           >
@@ -23,7 +23,7 @@ export default function SectionHeader({ name, title, color, onBack }) {
           </button>
         </div>
         <div
-          className="section-title-center text-sm font-extrabold tracking-wider uppercase"
+          className="section-title-center text-sm tracking-wider uppercase"
           style={{
             color,
             position: 'absolute',

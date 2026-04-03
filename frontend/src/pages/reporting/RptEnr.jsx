@@ -13,7 +13,7 @@ function PhaseBadge({ phase }) {
   }
   const cls = map[phase] || map.Planifie
   return (
-    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${cls}`}>
+    <span className={`inline-block px-2 py-0.5 rounded text-[10px] border ${cls}`}>
       {phase || '\u2014'}
     </span>
   )
@@ -75,7 +75,7 @@ export default function RptEnr() {
             value={selectedWeek}
             onChange={e => setSelectedWeek(e.target.value)}
             className="bg-[var(--badge-dim-bg)] border border-[var(--card-border)]
-                       rounded-lg text-[var(--text)] text-xs font-semibold px-3 py-1.5
+                       rounded-lg text-[var(--text)] text-xs px-3 py-1.5
                        cursor-pointer outline-none"
           >
             {weekKeys.map(k => (
@@ -102,14 +102,14 @@ export default function RptEnr() {
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[var(--inner-card-border)]">
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Projet</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold text-right">MWc</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Phase</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Avancement</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Glissement</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">EPC</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Blocages & Risques</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Actions S</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Projet</th>
+              <th className="px-3 py-2 text-[var(--text-muted)] text-right">MWc</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Phase</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Avancement</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Glissement</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">EPC</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Blocages & Risques</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Actions S</th>
             </tr>
           </thead>
           <tbody>
@@ -120,11 +120,11 @@ export default function RptEnr() {
 
               return (
                 <tr key={p.id} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
-                  <td className="px-3 py-2 font-semibold whitespace-nowrap text-[var(--text)]">{p.projet}</td>
+                  <td className="px-3 py-2 whitespace-nowrap text-[var(--text)]">{p.projet}</td>
                   <td className="px-3 py-2 text-right whitespace-nowrap">{p.puissance || 0}</td>
                   <td className="px-3 py-2"><PhaseBadge phase={p.phase} /></td>
                   <td className="px-3 py-2">
-                    <span className="font-semibold" style={{ color: progColor }}>{p.avancement || 0}%</span>
+                    <span className="" style={{ color: progColor }}>{p.avancement || 0}%</span>
                     <div className="w-full h-1.5 bg-[var(--badge-dim-bg)] rounded-full mt-1">
                       <div
                         className="h-full rounded-full transition-all"
@@ -132,7 +132,7 @@ export default function RptEnr() {
                       />
                     </div>
                   </td>
-                  <td className="px-3 py-2 font-semibold" style={{ color: glissColor }}>{glissText}</td>
+                  <td className="px-3 py-2" style={{ color: glissColor }}>{glissText}</td>
                   <td className="px-3 py-2 whitespace-nowrap">{p.epc || ''}</td>
                   <td className="px-3 py-2 text-[11px] text-[var(--text-muted)] max-w-[200px]">{p.blocages || ''}</td>
                   <td className="px-3 py-2 text-[11px] text-[var(--text-muted)] max-w-[200px]">{p.actions || ''}</td>

@@ -3,9 +3,9 @@ const CLR = '#5e4c9f'
 function KpiCard({ label, value, sub, color }) {
   return (
     <div className="unified-card text-center p-5">
-      <div className="text-[9px] font-bold tracking-[0.3em] uppercase mb-2"
+      <div className="text-[9px] tracking-[0.3em] uppercase mb-2"
         style={{ color: 'var(--text-dim)' }}>{label}</div>
-      <div className="text-[28px] font-extrabold" style={{ color: color || 'var(--text)' }}>{value}</div>
+      <div className="text-[28px]" style={{ color: color || 'var(--text)' }}>{value}</div>
       <div className="text-[10px] mt-1" style={{ color: 'var(--text-dim)' }}>{sub}</div>
     </div>
   )
@@ -14,7 +14,7 @@ function KpiCard({ label, value, sub, color }) {
 export default function RecouvrementDetail() {
   return (
     <div style={{ maxWidth: '100%', margin: '0 auto' }}>
-      <div className="text-[9px] font-bold tracking-[0.4em] uppercase mb-[18px]"
+      <div className="text-[9px] tracking-[0.4em] uppercase mb-[18px]"
         style={{ color: 'var(--text-dim)' }}>
         Vue consolid&eacute;e &middot; Encaissements & cr&eacute;ances
       </div>

@@ -93,7 +93,7 @@ export default function SavDetail() {
             key={f.key}
             onClick={() => setFilter(f.key)}
             style={{
-              padding: '6px 12px', borderRadius: 8, fontSize: 10, fontWeight: 700,
+              padding: '6px 12px', borderRadius: 8, fontSize: 10, fontWeight: 400,
               textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
               border: `1px solid ${filter === f.key ? 'rgba(90,175,175,0.4)' : 'var(--card-border)'}`,
               background: filter === f.key ? 'rgba(90,175,175,0.2)' : 'transparent',
@@ -121,18 +121,18 @@ export default function SavDetail() {
               {/* Name + badges */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{p.site}</div>
+                  <div style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)' }}>{p.site}</div>
                   {p.resp && (
                     <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 2 }}>Resp: {p.resp}</div>
                   )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                   <span style={{
-                    fontSize: 9, fontWeight: 700, color: 'var(--text)',
+                    fontSize: 9, fontWeight: 400, color: 'var(--text)',
                     background: timingColor + '15', padding: '2px 6px', borderRadius: 4
                   }}>{getTimingLabel(p.timing_var)}</span>
                   <span style={{
-                    fontSize: 9, fontWeight: 600, color: 'var(--text)',
+                    fontSize: 9, fontWeight: 400, color: 'var(--text)',
                     background: getStatusColor(p.status) + '15', padding: '2px 6px', borderRadius: 4
                   }}>{p.status || 'N/A'}</span>
                 </div>
@@ -156,7 +156,7 @@ export default function SavDetail() {
 
               {isMgmt && (
                 <div style={{
-                  marginTop: 8, fontSize: 9, fontWeight: 700,
+                  marginTop: 8, fontSize: 9, fontWeight: 400,
                   display: 'inline-block', padding: '2px 8px', borderRadius: 4,
                   background: `${TEAL}15`, color: 'var(--text)'
                 }}>
@@ -182,7 +182,7 @@ export default function SavDetail() {
             maxHeight: '80vh', overflowY: 'auto', zIndex: 100
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)' }}>{selectedProject.site}</span>
+              <span style={{ fontSize: 16, fontWeight: 400, color: 'var(--text)' }}>{selectedProject.site}</span>
               <button onClick={() => setSelectedProject(null)} style={{
                 background: 'transparent', border: 'none', color: 'var(--text-muted)',
                 fontSize: 18, cursor: 'pointer'
@@ -198,18 +198,18 @@ export default function SavDetail() {
               ].map((item, i) => (
                 <div key={i} style={{ fontSize: 10 }}>
                   <span style={{ color: 'var(--text-dim)' }}>{item.label}: </span>
-                  <span style={{ fontWeight: 700, color: item.color || 'var(--text)' }}>{item.value}</span>
+                  <span style={{ fontWeight: 400, color: item.color || 'var(--text)' }}>{item.value}</span>
                 </div>
               ))}
             </div>
 
             <div style={{ fontSize: 10, marginBottom: 12 }}>
               <span style={{ color: 'var(--text-dim)' }}>Statut: </span>
-              <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{selectedProject.status || 'N/A'}</span>
+              <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{selectedProject.status || 'N/A'}</span>
             </div>
             <div style={{ fontSize: 10, marginBottom: 12 }}>
               <span style={{ color: 'var(--text-dim)' }}>CPs: </span>
-              <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{selectedProject.status_cps || 'N/A'}</span>
+              <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{selectedProject.status_cps || 'N/A'}</span>
             </div>
 
             <div style={{
@@ -217,7 +217,7 @@ export default function SavDetail() {
               background: 'var(--dark)', border: '1px solid var(--card-border)',
               marginBottom: 12
             }}>
-              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
+              <div style={{ fontSize: 9, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
               <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{selectedProject.etape}</div>
             </div>
 
@@ -226,7 +226,7 @@ export default function SavDetail() {
                 padding: '10px 14px', borderRadius: 8,
                 background: 'var(--dark)', border: '1px solid var(--card-border)'
               }}>
-                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{selectedProject.latest_comment}</div>

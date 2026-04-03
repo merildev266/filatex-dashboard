@@ -44,7 +44,7 @@ export default function Login() {
         <button
           type="submit"
           className="w-full bg-[var(--card)] border border-[var(--card-border)] rounded-xl
-                     px-4 py-3 text-[var(--text)] text-sm font-semibold uppercase tracking-wider
+                     px-4 py-3 text-[var(--text)] text-sm uppercase tracking-wider
                      hover:bg-[var(--inner-card-hover)] transition-colors cursor-pointer"
         >
           Acceder

@@ -6,7 +6,7 @@ function DetailRow({ label, value, color }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--card-border)' }}>
       <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</span>
-      <span style={{ fontSize: 12, fontWeight: 600, color: color || 'var(--text)' }}>{value}</span>
+      <span style={{ fontSize: 12, fontWeight: 400, color: color || 'var(--text)' }}>{value}</span>
     </div>
   )
 }
@@ -16,8 +16,8 @@ function SubProjectCard({ sp }) {
   return (
     <div className="unified-card" style={{ padding: '16px 18px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{sp.nom}</span>
-        <span style={{ fontSize: 14, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12' }}>{pct}%</span>
+        <span style={{ fontSize: 14, fontWeight: 400, color: 'var(--text)' }}>{sp.nom}</span>
+        <span style={{ fontSize: 14, fontWeight: 400, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12' }}>{pct}%</span>
       </div>
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-1.5 w-full mb-2">
@@ -41,8 +41,8 @@ function SubProjectCard({ sp }) {
         <div key={j} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
           <span style={{ fontSize: 11, color: 'var(--text)' }}>{c.client}</span>
           <div style={{ display: 'flex', gap: 10 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: COLOR }}>{fmtMga(c.totalCreances)}</span>
-            {c.encaissements > 0 && <span style={{ fontSize: 11, fontWeight: 600, color: '#00ab63' }}>{fmtMga(c.encaissements)}</span>}
+            <span style={{ fontSize: 11, fontWeight: 400, color: COLOR }}>{fmtMga(c.totalCreances)}</span>
+            {c.encaissements > 0 && <span style={{ fontSize: 11, fontWeight: 400, color: '#00ab63' }}>{fmtMga(c.encaissements)}</span>}
           </div>
         </div>
       ))}
@@ -62,7 +62,7 @@ export default function FinanceProjetDetail() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 24, paddingBottom: 40 }}>
       {/* Header */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', fontFamily: "'Aeonik',sans-serif" }}>{p.projet}</div>
+        <div style={{ fontSize: 22, fontWeight: 400, color: 'var(--text)', fontFamily: "'Aeonik',sans-serif" }}>{p.projet}</div>
         <ClientCount count={p.nbClients} label={p.isGroup ? `clients · ${p.sousProjectes.length} sous-projets` : 'clients'} />
       </div>
 
@@ -84,7 +84,7 @@ export default function FinanceProjetDetail() {
       <div style={{ width: '100%', maxWidth: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
           <span style={{ fontSize: 9, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Taux d'encaissement</span>
-          <span style={{ fontSize: 16, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : Number(pct) >= 25 ? '#f39c12' : '#e05c5c' }}>{pct}%</span>
+          <span style={{ fontSize: 16, fontWeight: 400, color: Number(pct) >= 50 ? '#00ab63' : Number(pct) >= 25 ? '#f39c12' : '#e05c5c' }}>{pct}%</span>
         </div>
         <div style={{ height: 8, borderRadius: 4, background: 'var(--card-border)', overflow: 'hidden' }}>
           <div style={{ width: `${pct}%`, height: '100%', background: '#00ab63', borderRadius: 4, transition: 'width 0.6s' }} />
@@ -94,7 +94,7 @@ export default function FinanceProjetDetail() {
       {/* Sub-projects (for groups) */}
       {p.isGroup && p.sousProjectes.length > 0 && (
         <div style={{ width: '100%', maxWidth: '100%' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9b59b6', marginBottom: 12 }}>
+          <div style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#9b59b6', marginBottom: 12 }}>
             Sous-projets ({p.sousProjectes.length})
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -108,15 +108,15 @@ export default function FinanceProjetDetail() {
       {/* Direct clients (for standalone) */}
       {!p.isGroup && p.clients.length > 0 && (
         <div style={{ width: '100%', maxWidth: '100%' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
+          <div style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
             Clients ({p.clients.length})
           </div>
           {p.clients.map((c, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--card-border)' }}>
               <span style={{ fontSize: 12, color: 'var(--text)' }}>{c.client}</span>
               <div style={{ display: 'flex', gap: 12 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: COLOR }}>{fmtMga(c.totalCreances)}</span>
-                {c.encaissements > 0 && <span style={{ fontSize: 12, fontWeight: 600, color: '#00ab63' }}>{fmtMga(c.encaissements)}</span>}
+                <span style={{ fontSize: 12, fontWeight: 400, color: COLOR }}>{fmtMga(c.totalCreances)}</span>
+                {c.encaissements > 0 && <span style={{ fontSize: 12, fontWeight: 400, color: '#00ab63' }}>{fmtMga(c.encaissements)}</span>}
               </div>
             </div>
           ))}

@@ -22,7 +22,7 @@ function ViewToggle({ active, onChange }) {
           key={tab.key}
           onClick={() => onChange(tab.key)}
           style={{
-            padding: '7px 18px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+            padding: '7px 18px', fontSize: 10, fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase',
             cursor: 'pointer', border: 'none', transition: 'all 0.2s',
             background: active === tab.key ? '#9b59b6' : 'transparent',
             color: active === tab.key ? '#fff' : 'var(--text-muted)',
@@ -48,7 +48,7 @@ function ProjectCardMini({ project, onClick }) {
       <div className="card-accent" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{p.projet}</div>
+          <div style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)', lineHeight: 1.2 }}>{p.projet}</div>
           <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>
             {p.nbClients} client{p.nbClients > 1 ? 's' : ''}
             {p.isGroup && ` · ${p.sousProjectes.length} sous-projets`}
@@ -70,7 +70,7 @@ function ProjectCardMini({ project, onClick }) {
         <div style={{ flex: 1, height: 5, borderRadius: 3, background: 'var(--card-border)', overflow: 'hidden' }}>
           <div style={{ width: `${pct}%`, height: '100%', background: '#00ab63', borderRadius: 3 }} />
         </div>
-        <span style={{ fontSize: 12, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12', flexShrink: 0 }}>{pct}%</span>
+        <span style={{ fontSize: 12, fontWeight: 400, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12', flexShrink: 0 }}>{pct}%</span>
       </div>
     </div>
   )
@@ -134,7 +134,7 @@ export default function FinanceEntity() {
                   style={{ cursor: 'pointer', padding: '28px 20px' }}
                 >
                   <div className="card-accent" />
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', fontFamily: "'Aeonik',sans-serif", marginBottom: 4 }}>
+                  <div style={{ fontSize: 18, fontWeight: 400, color: 'var(--text)', fontFamily: "'Aeonik',sans-serif", marginBottom: 4 }}>
                     {cat.label}
                   </div>
                   <ClientCount count={cat.count} />

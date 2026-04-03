@@ -33,7 +33,7 @@ export default function HfoProjets() {
   return (
     <div className="inner-page-inner">
       {/* Title */}
-      <h2 className="text-lg font-extrabold tracking-wider uppercase mb-6">Projets HFO</h2>
+      <h2 className="text-lg tracking-wider uppercase mb-6">Projets HFO</h2>
 
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
@@ -45,8 +45,8 @@ export default function HfoProjets() {
           { value: hfp.urgents, label: 'Urgents', color: '#f37056' },
         ].map(k => (
           <div key={k.label} className="s1-card text-center">
-            <div className="text-2xl font-extrabold" style={{ color: k.color }}>{k.value}</div>
-            <div className="text-[8px] font-bold tracking-widest uppercase text-[var(--text-dim)] mt-1">{k.label}</div>
+            <div className="text-2xl" style={{ color: k.color }}>{k.value}</div>
+            <div className="text-[8px] tracking-widest uppercase text-[var(--text-dim)] mt-1">{k.label}</div>
           </div>
         ))}
       </div>
@@ -58,16 +58,16 @@ export default function HfoProjets() {
           className={`rounded-xl p-3 text-center cursor-pointer transition-all border
             ${!filter ? 'border-[#00ab63] bg-[rgba(0,171,99,0.08)]' : 'border-[rgba(138,146,171,0.15)] bg-[rgba(138,146,171,0.05)] hover:border-[rgba(138,146,171,0.5)]'}`}
         >
-          <div className="text-[10px] font-bold text-[var(--text-muted)] mb-1">Tous</div>
-          <div className="text-xl font-extrabold text-[var(--text)]">{hfp.total}</div>
+          <div className="text-[10px] text-[var(--text-muted)] mb-1">Tous</div>
+          <div className="text-xl text-[var(--text)]">{hfp.total}</div>
         </button>
         <button
           onClick={() => setFilter(filter?.key === 'OVERHAUL' ? null : { type: 'cat', key: 'OVERHAUL' })}
           className={`rounded-xl p-3 text-center cursor-pointer transition-all border
             ${filter?.key === 'OVERHAUL' ? 'border-[#00ab63] bg-[rgba(0,171,99,0.08)]' : 'border-[rgba(138,146,171,0.15)] bg-[rgba(138,146,171,0.05)] hover:border-[rgba(138,146,171,0.5)]'}`}
         >
-          <div className="text-[10px] font-bold text-[var(--text-muted)] mb-1">Overhauls</div>
-          <div className="text-xl font-extrabold text-[var(--text)]">{hfp.overhauls}</div>
+          <div className="text-[10px] text-[var(--text-muted)] mb-1">Overhauls</div>
+          <div className="text-xl text-[var(--text)]">{hfp.overhauls}</div>
         </button>
         {hfp.sites.map(s => (
           <button
@@ -76,14 +76,14 @@ export default function HfoProjets() {
             className={`rounded-xl p-3 text-center cursor-pointer transition-all border
               ${filter?.key === s ? 'border-[#00ab63] bg-[rgba(0,171,99,0.08)]' : 'border-[rgba(138,146,171,0.15)] bg-[rgba(138,146,171,0.05)] hover:border-[rgba(138,146,171,0.5)]'}`}
           >
-            <div className="text-[10px] font-bold text-[var(--text-muted)] mb-1">{s.charAt(0) + s.slice(1).toLowerCase()}</div>
-            <div className="text-xl font-extrabold text-[var(--text)]">{hfp.bySite[s]?.total || 0}</div>
+            <div className="text-[10px] text-[var(--text-muted)] mb-1">{s.charAt(0) + s.slice(1).toLowerCase()}</div>
+            <div className="text-xl text-[var(--text)]">{hfp.bySite[s]?.total || 0}</div>
           </button>
         ))}
       </div>
 
       {/* Project list */}
-      <div className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-muted)] border-b border-[rgba(138,146,171,0.15)] pb-2 mb-3">
+      <div className="text-[10px] tracking-widest uppercase text-[var(--text-muted)] border-b border-[rgba(138,146,171,0.15)] pb-2 mb-3">
         {filter ? (filter.type === 'cat' ? `Overhauls — ${filtered.length} projets` : `${filter.key.charAt(0)}${filter.key.slice(1).toLowerCase()} — ${filtered.length} projets`) : `Tous les projets — ${filtered.length}`}
       </div>
       <div className="space-y-2">
@@ -94,17 +94,17 @@ export default function HfoProjets() {
           return (
             <div key={i} className="glass-card p-3.5 flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-bold text-[var(--text)] truncate">{p.projet}</div>
+                <div className="text-xs text-[var(--text)] truncate">{p.projet}</div>
                 <div className="text-[9px] text-[var(--text-dim)] mt-0.5">
                   {cLabel}{p.moteur ? ` · ${p.moteur}` : ''}{p.resp ? ` · ${p.resp}` : ''}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-[9px] font-bold tracking-wider uppercase" style={{ color: 'var(--text-dim)' }}>
+                <div className="text-[9px] tracking-wider uppercase" style={{ color: 'var(--text-dim)' }}>
                   {sLabel}
                 </div>
                 {p.dayToGo != null && p.dayToGo > 0 && (
-                  <div className="text-sm font-extrabold text-[var(--text-muted)] mt-0.5">
+                  <div className="text-sm text-[var(--text-muted)] mt-0.5">
                     {p.dayToGo} <span className="text-[9px] font-normal text-[var(--text-dim)]">jours</span>
                   </div>
                 )}

@@ -149,7 +149,7 @@ export default function Admin() {
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-xl font-semibold text-[var(--text)]">Administration</h1>
+        <h1 className="text-xl text-[var(--text)]">Administration</h1>
       </div>
 
       {/* Tabs */}
@@ -158,7 +158,7 @@ export default function Admin() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer
+            className={`flex-1 py-2 px-3 rounded-lg text-sm transition-colors cursor-pointer
               ${tab === t.id
                 ? 'bg-[var(--inner-card)] text-[var(--text)] border border-[var(--card-border)]'
                 : 'text-[var(--text-muted)] hover:text-[var(--text)]'
@@ -186,7 +186,7 @@ export default function Admin() {
             <button
               onClick={() => { setEditUser(null); setShowModal(true) }}
               className="px-4 py-2 rounded-xl bg-[var(--card)] border border-[var(--card-border)]
-                         text-[var(--text)] text-sm font-medium hover:bg-[var(--inner-card-hover)]
+                         text-[var(--text)] text-sm hover:bg-[var(--inner-card-hover)]
                          transition-colors cursor-pointer"
             >
               + Nouvel utilisateur
@@ -196,12 +196,12 @@ export default function Admin() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[var(--card)] border-b border-[var(--card-border)]">
-                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Utilisateur</th>
-                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Nom</th>
-                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Role</th>
-                  <th className="text-left p-3 text-[var(--text-muted)] font-medium">Sections</th>
-                  <th className="text-center p-3 text-[var(--text-muted)] font-medium">Statut</th>
-                  <th className="text-center p-3 text-[var(--text-muted)] font-medium">Actions</th>
+                  <th className="text-left p-3 text-[var(--text-muted)]">Utilisateur</th>
+                  <th className="text-left p-3 text-[var(--text-muted)]">Nom</th>
+                  <th className="text-left p-3 text-[var(--text-muted)]">Role</th>
+                  <th className="text-left p-3 text-[var(--text-muted)]">Sections</th>
+                  <th className="text-center p-3 text-[var(--text-muted)]">Statut</th>
+                  <th className="text-center p-3 text-[var(--text-muted)]">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -210,7 +210,7 @@ export default function Admin() {
                     <td className="p-3 text-[var(--text)]">{u.username}</td>
                     <td className="p-3 text-[var(--text)]">{u.display_name}</td>
                     <td className="p-3">
-                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs ${
                         u.role === 'pmo' ? 'bg-[#5e4c9f33] text-[#a78bfa]' :
                         'bg-[#426ab322] text-[#7ba4e0]'
                       }`}>
@@ -278,10 +278,10 @@ export default function Admin() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-[var(--card)] border-b border-[var(--card-border)]">
-                <th className="text-left p-3 text-[var(--text-muted)] font-medium">Utilisateur</th>
-                <th className="text-left p-3 text-[var(--text-muted)] font-medium">Date</th>
-                <th className="text-center p-3 text-[var(--text-muted)] font-medium">Resultat</th>
-                <th className="text-left p-3 text-[var(--text-muted)] font-medium">IP</th>
+                <th className="text-left p-3 text-[var(--text-muted)]">Utilisateur</th>
+                <th className="text-left p-3 text-[var(--text-muted)]">Date</th>
+                <th className="text-center p-3 text-[var(--text-muted)]">Resultat</th>
+                <th className="text-left p-3 text-[var(--text-muted)]">IP</th>
               </tr>
             </thead>
             <tbody>
@@ -292,7 +292,7 @@ export default function Admin() {
                     {new Date(h.timestamp).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
                   </td>
                   <td className="p-3 text-center">
-                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs ${
                       h.success ? 'bg-[#00ab6322] text-[#00ab63]' : 'bg-[#E05C5C22] text-[#E05C5C]'
                     }`}>
                       {h.success ? 'OK' : 'Echec'}
@@ -326,18 +326,18 @@ export default function Admin() {
               </div>
             </div>
 
-            <h3 className="text-center text-lg font-semibold text-[var(--text)] mb-2">
+            <h3 className="text-center text-lg text-[var(--text)] mb-2">
               Compte verrouille
             </h3>
 
             <div className="space-y-2 mb-5">
               <div className="flex justify-between py-2 px-3 rounded-lg bg-[var(--card)]">
                 <span className="text-sm text-[var(--text-muted)]">Utilisateur</span>
-                <span className="text-sm font-medium text-[var(--text)]">{lockedPopup.display_name}</span>
+                <span className="text-sm text-[var(--text)]">{lockedPopup.display_name}</span>
               </div>
               <div className="flex justify-between py-2 px-3 rounded-lg bg-[var(--card)]">
                 <span className="text-sm text-[var(--text-muted)]">Raison</span>
-                <span className="text-sm font-medium text-[#E05C5C]">{lockedPopup.failed_attempts} tentatives echouees</span>
+                <span className="text-sm text-[#E05C5C]">{lockedPopup.failed_attempts} tentatives echouees</span>
               </div>
               <div className="flex justify-between py-2 px-3 rounded-lg bg-[var(--card)]">
                 <span className="text-sm text-[var(--text-muted)]">Seuil</span>
@@ -359,7 +359,7 @@ export default function Admin() {
                   setLockedPopup(null)
                 }}
                 className="flex-1 py-2.5 rounded-xl bg-[#00ab6322] border border-[#00ab6344]
-                           text-[#00ab63] text-sm font-medium hover:bg-[#00ab6333] transition-colors cursor-pointer"
+                           text-[#00ab63] text-sm hover:bg-[#00ab6333] transition-colors cursor-pointer"
               >
                 Deverrouiller
               </button>
@@ -486,7 +486,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
         className="w-[90%] max-w-md bg-[var(--dark)] border border-[var(--card-border)] rounded-2xl p-6"
         onClick={e => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
+        <h2 className="text-lg text-[var(--text)] mb-4">
           {isEdit ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}
         </h2>
 
@@ -571,7 +571,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
                           </svg>
                         )}
                       </div>
-                      <span className={`text-xs font-semibold ${checked ? 'text-[var(--text)]' : 'text-[var(--text-muted)]'}`}>
+                      <span className={`text-xs ${checked ? 'text-[var(--text)]' : 'text-[var(--text-muted)]'}`}>
                         {sec.label}
                       </span>
                     </label>
@@ -627,7 +627,7 @@ function UserModal({ user: editUser, authFetch, onClose, onSaved }) {
               type="submit"
               disabled={saving}
               className="flex-1 py-2 rounded-xl bg-[var(--inner-card)] border border-[var(--card-border)]
-                         text-[var(--text)] text-sm font-medium hover:bg-[var(--inner-card-hover)]
+                         text-[var(--text)] text-sm hover:bg-[var(--inner-card-hover)]
                          transition-colors cursor-pointer disabled:opacity-50"
             >
               {saving ? 'Enregistrement...' : isEdit ? 'Enregistrer' : 'Creer'}

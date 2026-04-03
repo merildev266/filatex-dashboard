@@ -27,7 +27,7 @@ function PropertiesLogo() {
 function CapexLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
-      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CAPEX</text>
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="400" letterSpacing="0.12em">CAPEX</text>
     </svg>
   )
 }
@@ -35,7 +35,7 @@ function CapexLogo() {
 function CsiLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
-      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">CSI</text>
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="400" letterSpacing="0.12em">CSI</text>
     </svg>
   )
 }
@@ -43,7 +43,7 @@ function CsiLogo() {
 function ReportingLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
-      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">REPORTING</text>
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="400" letterSpacing="0.12em">REPORTING</text>
     </svg>
   )
 }
@@ -51,7 +51,7 @@ function ReportingLogo() {
 function FinanceLogo() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 55">
-      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="700" letterSpacing="0.12em">FINANCE</text>
+      <text fill="var(--text)" x="120" y="38" textAnchor="middle" fontFamily="'Aeonik',sans-serif" fontSize="34" fontWeight="400" letterSpacing="0.12em">FINANCE</text>
     </svg>
   )
 }
@@ -178,13 +178,13 @@ export default function Accueil() {
 
           {/* ── VALUES ── */}
           <div className="home-values" style={{display:'flex',alignItems:'center',gap:0,animation:'fadeIn 0.9s 0.1s ease both'}}>
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Excellence</span>
+            <span style={{fontSize:'10px',fontWeight:400,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Excellence</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'var(--text-muted)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Innovation</span>
+            <span style={{fontSize:'10px',fontWeight:400,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Innovation</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'var(--text-muted)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Engagement</span>
+            <span style={{fontSize:'10px',fontWeight:400,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Engagement</span>
             <span className="home-val-sep" style={{width:'28px',height:'1px',background:'var(--text-muted)',margin:'0 18px'}} />
-            <span style={{fontSize:'10px',fontWeight:700,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Respect</span>
+            <span style={{fontSize:'10px',fontWeight:400,letterSpacing:'0.45em',textTransform:'uppercase',color:'var(--text)'}}>Respect</span>
           </div>
         </header>
 
@@ -214,7 +214,7 @@ export default function Accueil() {
 
       {/* ══ FOOTER ══ */}
       <div id="home-footer" style={{position:'fixed',bottom:'10px',left:'50%',transform:'translateX(-50%)',zIndex:2,pointerEvents:'none',textAlign:'center',whiteSpace:'nowrap',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
-        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--text-dim)', opacity: 0.24,fontWeight:500}}>Made by PMO with Love</span>
+        <span id="home-footer-pmo" style={{fontSize:'5px',fontFamily:"'Aeonik',sans-serif",letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--text-dim)', opacity: 0.24,fontWeight:400}}>Made by PMO with Love</span>
         <span id="home-footer-magritte" style={{fontSize:'11px',fontFamily:"'Aeonik',sans-serif",color:'var(--text-dim)',letterSpacing:'0.14em',opacity:0.79}}>Ceci n'est pas un Dashboard.</span>
       </div>
     </>

@@ -329,17 +329,17 @@ export default function EnergyOverview() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)' }}>{hfo.projectCount}</div>
+              <div style={{ fontSize: '22px', fontWeight: 400, color: 'var(--text)' }}>{hfo.projectCount}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>projets</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'var(--border)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>{hfo.urgents}</div>
+              <div style={{ fontSize: '18px', fontWeight: 400, color: 'var(--text)' }}>{hfo.urgents}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>urgent</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'var(--border)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-secondary)' }}>{hfo.enCours}</div>
+              <div style={{ fontSize: '18px', fontWeight: 400, color: 'var(--text-secondary)' }}>{hfo.enCours}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>en cours</div>
             </div>
           </div>
@@ -416,7 +416,7 @@ export default function EnergyOverview() {
                     borderRadius: '6px',
                     padding: '4px 6px',
                   }}>
-                    <div style={{ fontSize: 'clamp(10px,1vw,15px)', fontWeight: 800, color: col }}>
+                    <div style={{ fontSize: 'clamp(10px,1vw,15px)', fontWeight: 400, color: col }}>
                       {(s.avgDailyKwh / 1000).toFixed(1)}
                     </div>
                     <div style={{ fontSize: 'clamp(6px,0.5vw,8px)', color: `${col}80` }}>
@@ -441,17 +441,17 @@ export default function EnergyOverview() {
           {/* Row 1: Total + MWc + CAPEX */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', marginBottom: '10px' }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#00ab63' }}>{enr.projectCount}</div>
+              <div style={{ fontSize: '22px', fontWeight: 400, color: '#00ab63' }}>{enr.projectCount}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>projets</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(0,171,99,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-secondary)' }}>{enr.totalMwcPipeline.toFixed(1)}</div>
+              <div style={{ fontSize: '18px', fontWeight: 400, color: 'var(--text-secondary)' }}>{enr.totalMwcPipeline.toFixed(1)}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>MWc total</div>
             </div>
             <div style={{ width: '1px', height: '24px', background: 'rgba(0,171,99,0.15)' }}></div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: '#FDB823' }}>{enr.totalCapex.toFixed(1)}</div>
+              <div style={{ fontSize: '16px', fontWeight: 400, color: '#FDB823' }}>{enr.totalCapex.toFixed(1)}</div>
               <div style={{ fontSize: '7px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>CAPEX M$</div>
             </div>
           </div>
@@ -459,19 +459,19 @@ export default function EnergyOverview() {
           {/* Row 2: Phase badges */}
           <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '8px' }}>
             <div style={{ background: 'rgba(0,171,99,0.1)', border: '1px solid rgba(0,171,99,0.25)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.termine.length}</span>
+              <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-secondary)' }}>{enr.grouped.termine.length}</span>
               <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Terminé</span>
             </div>
             <div style={{ background: 'rgba(253,184,35,0.08)', border: '1px solid rgba(253,184,35,0.2)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.construction.length}</span>
+              <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-secondary)' }}>{enr.grouped.construction.length}</span>
               <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Const.</span>
             </div>
             <div style={{ background: 'rgba(90,175,175,0.08)', border: '1px solid rgba(90,175,175,0.2)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-secondary)' }}>{enr.grouped.developpement.length}</span>
+              <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-secondary)' }}>{enr.grouped.developpement.length}</span>
               <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Dev.</span>
             </div>
             <div style={{ background: 'var(--inner-card)', border: '1px solid var(--inner-card-border)', borderRadius: '6px', padding: '3px 8px', textAlign: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)' }}>{enr.grouped.planifie.length}</span>
+              <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-muted)' }}>{enr.grouped.planifie.length}</span>
               <span style={{ fontSize: '7px', color: 'var(--text-dim)', marginLeft: '3px' }}>Plan.</span>
             </div>
           </div>

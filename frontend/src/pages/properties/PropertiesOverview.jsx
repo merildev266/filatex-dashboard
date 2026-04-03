@@ -31,9 +31,9 @@ function KpiCell({ label, value, color, borderRight, borderBottom, accentColor }
         padding: 'clamp(6px, 0.8vw, 12px)',
       }}
     >
-      <div className="text-[clamp(6px,0.55vw,9px)] font-bold tracking-[0.15em] uppercase"
+      <div className="text-[clamp(6px,0.55vw,9px)] tracking-[0.15em] uppercase"
         style={{ color: 'var(--text-muted)' }}>{label}</div>
-      <div className="text-[clamp(14px,1.5vw,24px)] font-extrabold"
+      <div className="text-[clamp(14px,1.5vw,24px)]"
         style={{ color: color || 'var(--text)' }}>{value}</div>
     </div>
   )
@@ -43,7 +43,7 @@ function KpiCell({ label, value, color, borderRight, borderBottom, accentColor }
 function SectionCard({ title, subtitle, accent, kpis, onClick }) {
   return (
     <div className="p-col flex flex-col items-center">
-      <div className="text-[clamp(16px,2vw,28px)] font-extrabold tracking-tight leading-none mb-1 text-center"
+      <div className="text-[clamp(16px,2vw,28px)] tracking-tight leading-none mb-1 text-center"
         style={{ color: 'var(--text)' }}>{title}</div>
       <div className="text-[clamp(6px,0.5vw,9px)] tracking-[0.2em] uppercase opacity-40 text-[var(--text)] mb-[clamp(8px,1vw,16px)]">
         {subtitle}

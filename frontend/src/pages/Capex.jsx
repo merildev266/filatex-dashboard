@@ -98,7 +98,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
           ].map((k, i) => (
             <div key={i} className="cpj-block">
               <div className="cpj-block-label">{k.label}</div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: k.color || 'var(--text)' }}>{k.value}</div>
+              <div style={{ fontSize: 15, fontWeight: 400, color: k.color || 'var(--text)' }}>{k.value}</div>
             </div>
           ))}
         </div>
@@ -112,7 +112,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
           <div style={{ width: '100%', height: 6, background: `rgba(${colorRgb},0.1)`, borderRadius: 3 }}>
             <div style={{ width: `${project.etatPct}%`, height: '100%', background: color, borderRadius: 3 }} />
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color, marginTop: 8 }}>{project.etatPct}%</div>
+          <div style={{ fontSize: 26, fontWeight: 400, color, marginTop: 8 }}>{project.etatPct}%</div>
           <div style={{ fontSize: 9, color: 'var(--text-dim)' }}>engage sur budget total</div>
         </div>
 
@@ -126,7 +126,7 @@ function ProjectDetail({ project, color, colorRgb, onClose }) {
           ].map((k, i) => (
             <div key={i}>
               <div className="cpj-block-label">{k.label}</div>
-              <div style={{ fontSize: 13, fontWeight: 700 }}>{k.value}</div>
+              <div style={{ fontSize: 13, fontWeight: 400 }}>{k.value}</div>
             </div>
           ))}
         </div>
@@ -160,7 +160,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
       {/* Title */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
-        <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>{catData.title}</span>
+        <span style={{ fontSize: 18, fontWeight: 400, color: 'var(--text)' }}>{catData.title}</span>
       </div>
 
       {/* KPI row */}
@@ -191,7 +191,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}` }} />
-                <span style={{ fontSize: 'clamp(13px,1.2vw,16px)', fontWeight: 800, color: 'var(--text)' }}>{p.name}</span>
+                <span style={{ fontSize: 'clamp(13px,1.2vw,16px)', fontWeight: 400, color: 'var(--text)' }}>{p.name}</span>
               </div>
               <StatusBadge status={p.status} color={color} />
             </div>
@@ -200,15 +200,15 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
               <div>
                 <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Init.</div>
-                <div style={{ fontSize: 14, fontWeight: 800 }}>{p.investInit}</div>
+                <div style={{ fontSize: 14, fontWeight: 400 }}>{p.investInit}</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Reel</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color }}>{p.investReel}</div>
+                <div style={{ fontSize: 14, fontWeight: 400, color }}>{p.investReel}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>TRI</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#4ecdc4' }}>{p.triInit}</div>
+                <div style={{ fontSize: 14, fontWeight: 400, color: '#4ecdc4' }}>{p.triInit}</div>
               </div>
             </div>
 
@@ -218,7 +218,7 @@ function CategoryView({ poleKey, onBack, onSelectProject }) {
                 <span style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                   {p.etatEnCours} sur {p.etatTotal}
                 </span>
-                <span style={{ fontSize: 11, fontWeight: 800, color }}>{p.etatPct}%</span>
+                <span style={{ fontSize: 11, fontWeight: 400, color }}>{p.etatPct}%</span>
               </div>
               <div style={{ width: '100%', height: 4, background: `rgba(${colorRgb},0.1)`, borderRadius: 2 }}>
                 <div style={{ width: `${p.etatPct}%`, height: '100%', background: color, borderRadius: 2, transition: 'width 0.5s' }} />

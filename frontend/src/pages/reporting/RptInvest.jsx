@@ -44,7 +44,7 @@ export default function RptInvest() {
             <button
               key={t.key}
               onClick={() => setFilter(t.key)}
-              className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
+              className={`px-3 py-1 rounded-lg text-[11px] border cursor-pointer transition-all
                 ${filter === t.key
                   ? 'bg-[rgba(243,112,86,0.15)] text-[var(--text)] border-[rgba(243,112,86,0.3)]'
                   : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
@@ -68,13 +68,13 @@ export default function RptInvest() {
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[var(--inner-card-border)]">
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Projet</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Type</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Status</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Invest</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Realise</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold text-right">%</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Resp.</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Projet</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Type</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Status</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Invest</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Realise</th>
+              <th className="px-3 py-2 text-[var(--text-muted)] text-right">%</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Resp.</th>
             </tr>
           </thead>
           <tbody>
@@ -85,10 +85,10 @@ export default function RptInvest() {
 
               return (
                 <tr key={p.id} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
-                  <td className="px-3 py-2 font-semibold text-[var(--text)]">{p.nom}</td>
+                  <td className="px-3 py-2 text-[var(--text)]">{p.nom}</td>
                   <td className="px-3 py-2">
                     <span
-                      className="text-[10px] font-bold px-2 py-0.5 rounded border"
+                      className="text-[10px] px-2 py-0.5 rounded border"
                       style={{
                         color: typeColor,
                         background: `${typeColor}20`,
@@ -99,9 +99,9 @@ export default function RptInvest() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-[var(--text-muted)]">{p.status}</td>
-                  <td className="px-3 py-2 font-semibold text-[#f37056]">{capex.invest || '\u2014'}</td>
+                  <td className="px-3 py-2 text-[#f37056]">{capex.invest || '\u2014'}</td>
                   <td className="px-3 py-2 text-[var(--text-muted)]">{capex.etat || '\u2014'}</td>
-                  <td className="px-3 py-2 text-right font-bold" style={{ color: p.capex ? pctColor : 'var(--text-dim)' }}>
+                  <td className="px-3 py-2 text-right" style={{ color: p.capex ? pctColor : 'var(--text-dim)' }}>
                     {p.capex ? `${capex.pct || 0}%` : '\u2014'}
                   </td>
                   <td className="px-3 py-2 text-[11px] text-[var(--text-muted)]">{p.resp}</td>

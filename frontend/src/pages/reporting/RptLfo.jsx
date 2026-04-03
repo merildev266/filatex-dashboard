@@ -93,7 +93,7 @@ export default function RptLfo() {
           <button
             key={t.key}
             onClick={() => setFilter(t.key)}
-            className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
+            className={`px-3 py-1 rounded-lg text-[11px] border cursor-pointer transition-all
               ${filter === t.key
                 ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
                 : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
@@ -118,16 +118,16 @@ export default function RptLfo() {
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[var(--inner-card-border)]">
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">N</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Num Serie</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Type</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold text-right">kW</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Site depart</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Affectation</th>
-              {filter === 'all' && <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Section</th>}
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Transfert</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Reparation</th>
-              <th className="px-2 py-2 text-[var(--text-muted)] font-semibold">Situation finale</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">N</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">Num Serie</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">Type</th>
+              <th className="px-2 py-2 text-[var(--text-muted)] text-right">kW</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">Site depart</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">Affectation</th>
+              {filter === 'all' && <th className="px-2 py-2 text-[var(--text-muted)]">Section</th>}
+              <th className="px-2 py-2 text-[var(--text-muted)]">Transfert</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">Reparation</th>
+              <th className="px-2 py-2 text-[var(--text-muted)]">Situation finale</th>
             </tr>
           </thead>
           <tbody>
@@ -142,9 +142,9 @@ export default function RptLfo() {
                   <td className="px-2 py-2 text-[var(--text-dim)]">{m.n}</td>
                   <td className="px-2 py-2 font-mono text-[11px]">{m.serie}</td>
                   <td className="px-2 py-2 whitespace-nowrap">{m.type}</td>
-                  <td className="px-2 py-2 text-right font-semibold">{m.puissance}</td>
+                  <td className="px-2 py-2 text-right">{m.puissance}</td>
                   <td className="px-2 py-2 whitespace-nowrap text-[var(--text-muted)]">{m.depart}</td>
-                  <td className="px-2 py-2 whitespace-nowrap font-semibold text-[var(--text)]">{m.affectation}</td>
+                  <td className="px-2 py-2 whitespace-nowrap text-[var(--text)]">{m.affectation}</td>
                   {filter === 'all' && (
                     <td className="px-2 py-2">
                       <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--badge-dim-bg)] text-[var(--text-muted)]">

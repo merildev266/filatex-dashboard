@@ -12,7 +12,7 @@ export default function KpiCard({ value, label, color, subText, unit, unitPositi
       <div style={{ fontSize: s.label, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'clamp(3px, 0.5vw, 6px)' }}>
         {label}
       </div>
-      <div style={{ fontSize: s.value, fontWeight: 700, color: color || 'var(--text)' }}>
+      <div style={{ fontSize: s.value, fontWeight: 400, color: color || 'var(--text)' }}>
         {value ?? '—'}
         {unit && unitPosition === 'inline' && (
           <span style={{ fontSize: s.sub, color: 'var(--text-muted)', marginLeft: 4, fontWeight: 400 }}>{unit}</span>

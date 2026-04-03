@@ -187,7 +187,7 @@ export default function HfoDetail() {
     <div>
       {/* Title */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-base font-bold tracking-wide uppercase" style={{ letterSpacing: '0.12em' }}>
+        <h2 className="text-base tracking-wide uppercase" style={{ letterSpacing: '0.12em' }}>
           Consolide HFO
         </h2>
       </div>
@@ -319,7 +319,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
         >
           &#8592;
         </button>
-        <h2 className="text-base font-bold uppercase tracking-wider">{s.name}</h2>
+        <h2 className="text-base uppercase tracking-wider">{s.name}</h2>
       </div>
 
       {/* Site navigation strip */}
@@ -352,7 +352,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       {!isConstruction && (
         <>
           {/* Section 1 — Donnees generales */}
-          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-2">
+          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-2">
             Donnees generales
           </div>
           <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
@@ -383,7 +383,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           </div>
 
           {/* Section 1b — KPIs operationnels */}
-          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
+          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2">
             KPIs operationnels
           </div>
           <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
@@ -438,7 +438,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           {/* Section 2 — Generateurs */}
           {s.groupes && s.groupes.length > 0 && (
             <>
-              <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-3">
+              <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-3">
                 Generateurs ({s.groupes.length})
               </div>
               <div className="gen-cards-row">
@@ -484,20 +484,20 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
                         onClick={() => setSelectedGenerator(g.id)}
                       >
                         <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">Puissance</div>
-                        <div className="text-[16px] font-bold text-[var(--text)] leading-none">
+                        <div className="text-[16px] text-[var(--text)] leading-none">
                           {mw}<span className="text-[9px] text-[var(--text-muted)] font-normal ml-0.5">MW</span>
                         </div>
-                        <div className="text-[8px] font-bold mt-1.5" style={{ color: dotColor }}>
+                        <div className="text-[8px] mt-1.5" style={{ color: dotColor }}>
                           {statusLabel}{daysLabel}
                         </div>
                         <div className="flex justify-center gap-2 mt-1.5">
                           <div className="text-center">
                             <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">SFOC</div>
-                            <div className="text-[12px] font-bold" style={{ color: sfocColor }}>{sfocStr}</div>
+                            <div className="text-[12px]" style={{ color: sfocColor }}>{sfocStr}</div>
                           </div>
                           <div className="text-center">
                             <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">SLOC</div>
-                            <div className="text-[12px] font-bold text-[var(--text)]">{gSlocVal}</div>
+                            <div className="text-[12px] text-[var(--text)]">{gSlocVal}</div>
                           </div>
                         </div>
                       </div>
@@ -509,7 +509,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           )}
 
           {/* Section 3 — Blackouts */}
-          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-6">
+          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-6">
             Blackouts
           </div>
           <div className="s1-card mb-6" style={{ maxWidth: 200 }}>
@@ -519,7 +519,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           </div>
 
           {/* Section 4 — Fuel Stock detail */}
-          <div className="text-[9px] font-bold tracking-widest uppercase text-[var(--text-dim)] mb-2">
+          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2">
             Stock Fuel
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-6">
@@ -865,7 +865,7 @@ function GeneratorDetailPanel({
           &#8592;
         </button>
         <div>
-          <h2 className="text-base font-bold uppercase tracking-wider m-0">{fmtGId(g.id)}</h2>
+          <h2 className="text-base uppercase tracking-wider m-0">{fmtGId(g.id)}</h2>
           <div className="text-[10px] text-[var(--text-muted)] mt-0.5">
             {g.model || ''} &middot; {s.name} &middot; {g.mw} MW
           </div>
@@ -933,10 +933,10 @@ function GeneratorDetailPanel({
             <div className="gd-arret-reason">{g.maint}</div>
           </div>
           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>
+            <div style={{ fontSize: 8, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>
               Arret force
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: '#e05c5c' }}>
+            <div style={{ fontSize: 22, fontWeight: 400, color: '#e05c5c' }}>
               {parseFloat(g.arretForce || 0).toFixed(1)}
               <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 3 }}>h</span>
             </div>

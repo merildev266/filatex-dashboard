@@ -84,7 +84,7 @@ export default function TvxDetail() {
           marginBottom: 16, padding: '10px 16px',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap'
         }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: RED }}>&#9888; {kpis.delayed} projet{kpis.delayed > 1 ? 's' : ''} en retard</span>
+          <span style={{ fontSize: 11, fontWeight: 400, color: RED }}>&#9888; {kpis.delayed} projet{kpis.delayed > 1 ? 's' : ''} en retard</span>
         </div>
       )}
 
@@ -99,7 +99,7 @@ export default function TvxDetail() {
             key={f.key}
             onClick={() => setFilter(f.key)}
             style={{
-              padding: '6px 12px', borderRadius: 8, fontSize: 10, fontWeight: 700,
+              padding: '6px 12px', borderRadius: 8, fontSize: 10, fontWeight: 400,
               textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
               border: `1px solid ${filter === f.key ? 'rgba(253,184,35,0.4)' : 'var(--card-border)'}`,
               background: filter === f.key ? 'rgba(253,184,35,0.2)' : 'transparent',
@@ -125,9 +125,9 @@ export default function TvxDetail() {
             >
               {/* Name + status */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{p.site}</div>
+                <div style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)' }}>{p.site}</div>
                 <span style={{
-                  fontSize: 9, fontWeight: 700, color: timingColor,
+                  fontSize: 9, fontWeight: 400, color: timingColor,
                   background: timingColor + '15', padding: '3px 8px', borderRadius: 6
                 }}>{getTimingLabel(p.timing_var)}</span>
               </div>
@@ -135,7 +135,7 @@ export default function TvxDetail() {
               {/* Resp */}
               {p.resp && (
                 <div style={{ fontSize: 10, color: 'var(--text-dim)', marginBottom: 6 }}>
-                  Resp: <span style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{p.resp}</span>
+                  Resp: <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>{p.resp}</span>
                 </div>
               )}
 
@@ -185,7 +185,7 @@ export default function TvxDetail() {
             maxHeight: '80vh', overflowY: 'auto', zIndex: 100
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <span style={{ fontSize: 16, fontWeight: 800, color: PROPS }}>{selectedProject.site}</span>
+              <span style={{ fontSize: 16, fontWeight: 400, color: PROPS }}>{selectedProject.site}</span>
               <button onClick={() => setSelectedProject(null)} style={{
                 background: 'transparent', border: 'none', color: 'var(--text-muted)',
                 fontSize: 18, cursor: 'pointer'
@@ -201,7 +201,7 @@ export default function TvxDetail() {
               ].map((item, i) => (
                 <div key={i} style={{ fontSize: 10 }}>
                   <span style={{ color: 'var(--text-dim)' }}>{item.label}: </span>
-                  <span style={{ fontWeight: 700, color: item.color || 'var(--text)' }}>{item.value}</span>
+                  <span style={{ fontWeight: 400, color: item.color || 'var(--text)' }}>{item.value}</span>
                 </div>
               ))}
             </div>
@@ -211,7 +211,7 @@ export default function TvxDetail() {
               background: 'var(--dark)', border: '1px solid var(--card-border)',
               marginBottom: 12
             }}>
-              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
+              <div style={{ fontSize: 9, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>Etape en cours</div>
               <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{selectedProject.etape}</div>
             </div>
 
@@ -220,7 +220,7 @@ export default function TvxDetail() {
                 padding: '10px 14px', borderRadius: 8,
                 background: 'var(--dark)', border: '1px solid var(--card-border)'
               }}>
-                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-dim)', marginBottom: 4 }}>
                   Dernier commentaire ({selectedProject.latest_week})
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{selectedProject.latest_comment}</div>

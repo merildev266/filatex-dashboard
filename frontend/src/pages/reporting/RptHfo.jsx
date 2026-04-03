@@ -12,7 +12,7 @@ function StatusBadge({ status }) {
   const s = map[status] || map.indefini
   return (
     <span
-      className="inline-block px-2 py-0.5 rounded text-[10px] font-bold border"
+      className="inline-block px-2 py-0.5 rounded text-[10px] border"
       style={{ background: s.bg, color: s.color, borderColor: `${s.color}33` }}
     >
       {s.label}
@@ -28,18 +28,18 @@ function HfoSubCards({ onSelect }) {
         onClick={() => onSelect('overhauls')}
         className="unified-card clickable-energy p-6 text-center"
       >
-        <div className="text-base font-bold text-[var(--text)] mb-1">Overhauls</div>
+        <div className="text-base text-[var(--text)] mb-1">Overhauls</div>
         <div className="text-[11px] text-[var(--text-muted)]">Maintenance moteurs</div>
       </div>
       <div
         onClick={() => onSelect('projets')}
         className="unified-card clickable-energy p-6 text-center"
       >
-        <div className="text-base font-bold text-[var(--text)] mb-1">Projet annexe</div>
+        <div className="text-base text-[var(--text)] mb-1">Projet annexe</div>
         <div className="text-[11px] text-[var(--text-muted)]">Projets complementaires</div>
       </div>
       <div className="unified-card p-6 text-center opacity-40">
-        <div className="text-base font-bold text-[var(--text)] mb-1">Informations site</div>
+        <div className="text-base text-[var(--text)] mb-1">Informations site</div>
         <div className="text-[11px] text-[var(--text-dim)]">Bientot disponible</div>
       </div>
     </div>
@@ -96,7 +96,7 @@ export default function RptHfo() {
           <button
             key={v}
             onClick={() => { setView(v); setSiteFilter('all') }}
-            className={`px-3 py-1 rounded-lg text-[10px] font-bold border cursor-pointer transition-all
+            className={`px-3 py-1 rounded-lg text-[10px] border cursor-pointer transition-all
               ${view === v
                 ? 'bg-[rgba(0,171,99,0.15)] border-[rgba(0,171,99,0.4)] text-[var(--text)]'
                 : 'bg-transparent border-[rgba(255,255,255,0.08)] text-[var(--text-muted)] hover:text-[var(--text)]'
@@ -111,7 +111,7 @@ export default function RptHfo() {
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={() => setSiteFilter('all')}
-          className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
+          className={`px-3 py-1 rounded-lg text-[11px] border cursor-pointer transition-all
             ${siteFilter === 'all'
               ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
               : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
@@ -122,7 +122,7 @@ export default function RptHfo() {
           <button
             key={s}
             onClick={() => setSiteFilter(s)}
-            className={`px-3 py-1 rounded-lg text-[11px] font-bold border cursor-pointer transition-all
+            className={`px-3 py-1 rounded-lg text-[11px] border cursor-pointer transition-all
               ${siteFilter === s
                 ? 'bg-[rgba(0,171,99,0.15)] text-[var(--text)] border-[rgba(0,171,99,0.3)]'
                 : 'bg-[var(--inner-card)] text-[var(--text-muted)] border-[var(--inner-card-border)]'}`}
@@ -145,15 +145,15 @@ export default function RptHfo() {
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[var(--inner-card-border)]">
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Site</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Projet</th>
-              {isOverhaul && <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Moteur</th>}
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Status</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Ecart (j)</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">DTG (j)</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Commentaire</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Action</th>
-              <th className="px-3 py-2 text-[var(--text-muted)] font-semibold">Resp.</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Site</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Projet</th>
+              {isOverhaul && <th className="px-3 py-2 text-[var(--text-muted)]">Moteur</th>}
+              <th className="px-3 py-2 text-[var(--text-muted)]">Status</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Ecart (j)</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">DTG (j)</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Commentaire</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Action</th>
+              <th className="px-3 py-2 text-[var(--text-muted)]">Resp.</th>
             </tr>
           </thead>
           <tbody>
@@ -161,11 +161,11 @@ export default function RptHfo() {
               const ecartColor = (p.ecartJours || 0) > 90 ? '#E05C5C' : (p.ecartJours || 0) > 30 ? '#FDB823' : '#00ab63'
               return (
                 <tr key={i} className="border-b border-[var(--separator-light)] hover:bg-[var(--subtle-bg)]">
-                  <td className="px-3 py-2 whitespace-nowrap text-[var(--text)] font-semibold">{p.site}</td>
-                  <td className="px-3 py-2 font-semibold text-[var(--text)] max-w-[200px]">{p.projet}</td>
-                  {isOverhaul && <td className="px-3 py-2 text-[var(--text)] font-semibold">{p.moteur || '\u2014'}</td>}
+                  <td className="px-3 py-2 whitespace-nowrap text-[var(--text)]">{p.site}</td>
+                  <td className="px-3 py-2 text-[var(--text)] max-w-[200px]">{p.projet}</td>
+                  {isOverhaul && <td className="px-3 py-2 text-[var(--text)]">{p.moteur || '\u2014'}</td>}
                   <td className="px-3 py-2"><StatusBadge status={p.status} /></td>
-                  <td className="px-3 py-2 font-semibold" style={{ color: ecartColor }}>
+                  <td className="px-3 py-2" style={{ color: ecartColor }}>
                     {p.ecartJours != null ? `${p.ecartJours}j` : '\u2014'}
                   </td>
                   <td className="px-3 py-2 text-[var(--text-muted)]">

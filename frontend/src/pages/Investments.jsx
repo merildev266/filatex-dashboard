@@ -140,23 +140,23 @@ function InvProjectCard({ project, onClick }) {
       style={{ padding: 16 }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: 'clamp(14px,1.2vw,18px)', fontWeight: 800, color: 'var(--text)' }}>{project.nom}</div>
-        <div style={{ fontSize: 9, fontWeight: 700, color: statusColor, border: '1px solid', borderRadius: 4, padding: '2px 6px' }}>{project.status}</div>
+        <div style={{ fontSize: 'clamp(14px,1.2vw,18px)', fontWeight: 400, color: 'var(--text)' }}>{project.nom}</div>
+        <div style={{ fontSize: 9, fontWeight: 400, color: statusColor, border: '1px solid', borderRadius: 4, padding: '2px 6px' }}>{project.status}</div>
       </div>
       <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4 }}>S{project.week} &middot; {project.resp}</div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
         <div>
           <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Invest</div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: ACCENT }}>{investVal}</div>
+          <div style={{ fontSize: 16, fontWeight: 400, color: ACCENT }}>{investVal}</div>
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Decaisse</div>
-          <div style={{ fontSize: 16, fontWeight: 800 }}>{decaisseVal}</div>
+          <div style={{ fontSize: 16, fontWeight: 400 }}>{decaisseVal}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 9, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Execution</div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: TEAL }}>{execVal}</div>
+          <div style={{ fontSize: 16, fontWeight: 400, color: TEAL }}>{execVal}</div>
         </div>
       </div>
 
@@ -193,15 +193,15 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
             <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Responsable</div>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{project.resp}</div>
+            <div style={{ fontSize: 14, fontWeight: 400 }}>{project.resp}</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Statut</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: statusColor }}>{project.status}</div>
+            <div style={{ fontSize: 14, fontWeight: 400, color: statusColor }}>{project.status}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 10, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Derniere MAJ</div>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>Semaine {project.week}</div>
+            <div style={{ fontSize: 14, fontWeight: 400 }}>Semaine {project.week}</div>
           </div>
         </div>
 
@@ -212,15 +212,15 @@ function InvDetail({ project, onClose, allOfType, onSelect }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Investissement</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: ACCENT }}>{project.capex.invest}</div>
+                <div style={{ fontSize: 22, fontWeight: 400, color: ACCENT }}>{project.capex.invest}</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Decaisse</div>
-                <div style={{ fontSize: 22, fontWeight: 800 }}>{project.capex.etat}</div>
+                <div style={{ fontSize: 22, fontWeight: 400 }}>{project.capex.etat}</div>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Execution</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: TEAL }}>{project.capex.pct}%</div>
+                <div style={{ fontSize: 22, fontWeight: 400, color: TEAL }}>{project.capex.pct}%</div>
               </div>
             </div>
             <div style={{ width: '100%', height: 6, background: `rgba(${ACCENT_RGB},0.1)`, borderRadius: 3, marginTop: 12 }}>
@@ -280,7 +280,7 @@ function GridView({ type, onBack, onSelectProject, onSwitchType }) {
       </div>
 
       <div style={{ padding: '8px 24px 0' }}>
-        <div style={{ textAlign: 'center', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: `rgba(${ACCENT_RGB},0.4)` }}>
+        <div style={{ textAlign: 'center', fontSize: 9, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: `rgba(${ACCENT_RGB},0.4)` }}>
           Projets \u2014 Cliquez pour le detail
         </div>
       </div>

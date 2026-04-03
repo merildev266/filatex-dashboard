@@ -35,7 +35,7 @@ function pct(realise, objectif) {
   if (!realise) return <span style={{ color: 'var(--text-dim)' }}>0 %</span>
   const p = Math.round(realise / objectif * 100)
   const col = p >= 80 ? VERT : p >= 40 ? YELLOW : RED
-  return <span style={{ color: col, fontWeight: 700 }}>{p} %</span>
+  return <span style={{ color: col, fontWeight: 400 }}>{p} %</span>
 }
 
 /* ═══ Category section: header card + collapsible detail table ═══ */
@@ -96,13 +96,13 @@ function CategorySection({ cat }) {
             <table className="groups-table com-obj-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Nom</th>
-                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Objectif</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 10, fontWeight: 400, color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Nom</th>
+                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 400, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Objectif</th>
                   {[1, 2, 3, 4].map(qi => {
                     const isActive = qi === Q
                     return (
                       <th key={qi} colSpan={2} style={{
-                        textAlign: 'center', padding: '10px 6px', fontSize: 10, fontWeight: 700,
+                        textAlign: 'center', padding: '10px 6px', fontSize: 10, fontWeight: 400,
                         color: isActive ? cat.color : 'var(--text-dim)',
                         letterSpacing: '0.05em'
                       }}>
@@ -110,7 +110,7 @@ function CategorySection({ cat }) {
                       </th>
                     )
                   })}
-                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>% Annuel</th>
+                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: 10, fontWeight: 400, color: 'var(--text-muted)' }}>% Annuel</th>
                 </tr>
                 <tr style={{ fontSize: 8, opacity: 1 }}>
                   <th></th>
@@ -132,7 +132,7 @@ function CategorySection({ cat }) {
 
                   return (
                     <tr key={i} style={{ borderTop: '1px solid var(--card-border)' }}>
-                      <td style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, textAlign: 'left', color: 'var(--text-secondary)' }}>{row.name}</td>
+                      <td style={{ padding: '8px 12px', fontSize: 11, fontWeight: 400, textAlign: 'left', color: 'var(--text-secondary)' }}>{row.name}</td>
                       <td style={{ padding: '8px 8px', fontSize: 11, textAlign: 'center', color: 'var(--text-secondary)' }}>{fmtEur(row.objectif)}</td>
                       {[1, 2, 3, 4].map(qi => {
                         const obj = row['t' + qi]
@@ -144,7 +144,7 @@ function CategorySection({ cat }) {
                             <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', color: 'var(--text-muted)', background: bgS }}>
                               {fmtCell(obj)}
                             </td>
-                            <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', fontWeight: 600, background: bgS,
+                            <td style={{ padding: '8px 4px', fontSize: 10, textAlign: 'center', fontWeight: 400, background: bgS,
                               color: real != null ? 'var(--text)' : 'var(--text-dim)'
                             }}>
                               {real != null ? fmtEur(real) : <span style={{ color: 'var(--text-dim)' }}>&mdash;</span>}
@@ -160,7 +160,7 @@ function CategorySection({ cat }) {
                 })}
 
                 {/* TOTAL row */}
-                <tr style={{ borderTop: `2px solid rgba(${rgb},0.2)`, fontWeight: 800 }}>
+                <tr style={{ borderTop: `2px solid rgba(${rgb},0.2)`, fontWeight: 400 }}>
                   <td style={{ padding: '10px 12px', fontSize: 11, textAlign: 'left', color: 'var(--text)' }}>TOTAL</td>
                   <td style={{ padding: '10px 8px', fontSize: 11, textAlign: 'center', color: cat.color }}>{fmtEur(cat.total)}</td>
                   {[1, 2, 3, 4].map(qi => {
@@ -173,7 +173,7 @@ function CategorySection({ cat }) {
                         <td style={{ padding: '10px 4px', fontSize: 10, textAlign: 'center', color: cat.color, background: bgS }}>
                           {fmtCell(tObj || null)}
                         </td>
-                        <td style={{ padding: '10px 4px', fontSize: 10, textAlign: 'center', color: VERT, fontWeight: 700, background: bgS }}>
+                        <td style={{ padding: '10px 4px', fontSize: 10, textAlign: 'center', color: VERT, fontWeight: 400, background: bgS }}>
                           {fmtCell(tReal || null)}
                         </td>
                       </Fragment>

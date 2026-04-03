@@ -338,13 +338,13 @@ export function ContractFlowChart({ timeline, projects }) {
     <div style={{ width: '100%', maxWidth: '100%', margin: '0 auto', position: 'relative' }}>
       {/* Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14, flexWrap: 'wrap', gap: 6 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+        <div style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
           Échéancier contractuel TCM
         </div>
         <div style={{ fontSize: 9, color: 'var(--text-muted)', display: 'flex', gap: 10 }}>
-          <span>2026: <span style={{ fontWeight: 700, color: COLOR }}>{fmtMga(total2026.contractuel)}</span></span>
-          <span>À temps: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(total2026.aTemps)}</span></span>
-          {total2026.enRetard > 0 && <span>Retard: <span style={{ fontWeight: 700, color: '#e05c5c' }}>{fmtMga(total2026.enRetard)}</span></span>}
+          <span>2026: <span style={{ fontWeight: 400, color: COLOR }}>{fmtMga(total2026.contractuel)}</span></span>
+          <span>À temps: <span style={{ fontWeight: 400, color: '#00ab63' }}>{fmtMga(total2026.aTemps)}</span></span>
+          {total2026.enRetard > 0 && <span>Retard: <span style={{ fontWeight: 400, color: '#e05c5c' }}>{fmtMga(total2026.enRetard)}</span></span>}
         </div>
       </div>
 
@@ -368,7 +368,7 @@ export function ContractFlowChart({ timeline, projects }) {
               }}
             >
               <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: 4 }}>{card.label}</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: COLOR }}>{fmtMga(card.contractuel)}</div>
+              <div style={{ fontSize: 16, fontWeight: 400, color: COLOR }}>{fmtMga(card.contractuel)}</div>
               <div style={{ display: 'flex', gap: 6, marginTop: 4, fontSize: 8 }}>
                 <span style={{ color: '#00ab63' }}>✓ {fmtMga(card.aTemps)}</span>
                 {card.enRetard > 0 && <span style={{ color: '#e05c5c' }}>✗ {fmtMga(card.enRetard)} ({retardPct.toFixed(0)}%)</span>}
@@ -386,13 +386,13 @@ export function ContractFlowChart({ timeline, projects }) {
           boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{selectedCard.label} — Détail</span>
+            <span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)' }}>{selectedCard.label} — Détail</span>
             <div style={{ display: 'flex', gap: 0, alignItems: 'center' }}>
               {/* Toggle Client / Projet */}
               <div style={{ display: 'flex', gap: 0, borderRadius: 8, overflow: 'hidden', border: `1px solid ${COLOR}33`, marginRight: 10 }}>
                 {['client', 'projet'].map(v => (
                   <button key={v} onClick={() => setPopupView(v)} style={{
-                    padding: '4px 12px', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+                    padding: '4px 12px', fontSize: 8, fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase',
                     cursor: 'pointer', border: 'none', transition: 'all 0.2s',
                     background: popupView === v ? '#9b59b6' : 'transparent',
                     color: popupView === v ? '#fff' : 'var(--text-muted)',
@@ -407,16 +407,16 @@ export function ContractFlowChart({ timeline, projects }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 7, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>Contractuel</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: COLOR }}>{fmtMga(selectedCard.contractuel)}</div>
+              <div style={{ fontSize: 16, fontWeight: 400, color: COLOR }}>{fmtMga(selectedCard.contractuel)}</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 7, textTransform: 'uppercase', color: '#00ab63', letterSpacing: '0.08em' }}>À temps</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#00ab63' }}>{fmtMga(selectedCard.aTemps)}</div>
+              <div style={{ fontSize: 16, fontWeight: 400, color: '#00ab63' }}>{fmtMga(selectedCard.aTemps)}</div>
               <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedCard.contractuel > 0 ? ((selectedCard.aTemps / selectedCard.contractuel) * 100).toFixed(0) : 0}%</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 7, textTransform: 'uppercase', color: '#e05c5c', letterSpacing: '0.08em' }}>En retard</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#e05c5c' }}>{fmtMga(selectedCard.enRetard)}</div>
+              <div style={{ fontSize: 16, fontWeight: 400, color: '#e05c5c' }}>{fmtMga(selectedCard.enRetard)}</div>
               <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedCard.contractuel > 0 ? ((selectedCard.enRetard / selectedCard.contractuel) * 100).toFixed(0) : 0}%</div>
             </div>
           </div>
@@ -427,11 +427,11 @@ export function ContractFlowChart({ timeline, projects }) {
               popupData.projets.map((p, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--card-border)' }}>
                   <div>
-                    <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text)' }}>{p.nom}</div>
+                    <div style={{ fontSize: 10, fontWeight: 400, color: 'var(--text)' }}>{p.nom}</div>
                     <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{p.nbClients} clients{p.nbEnRetard > 0 ? ` · ${p.nbEnRetard} en retard` : ''}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: COLOR }}>{fmtMga(p.contractuel)}</div>
+                    <div style={{ fontSize: 11, fontWeight: 400, color: COLOR }}>{fmtMga(p.contractuel)}</div>
                     {p.enRetard > 0 && <div style={{ fontSize: 8, color: '#e05c5c' }}>retard: {fmtMga(p.enRetard)}</div>}
                   </div>
                 </div>
@@ -443,7 +443,7 @@ export function ContractFlowChart({ timeline, projects }) {
                     <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.enRetard ? '#e05c5c' : '#00ab63', flexShrink: 0 }} />
                     <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: c.enRetard ? '#e05c5c' : COLOR }}>{fmtMga(c.contractuel)}</span>
+                  <span style={{ fontSize: 11, fontWeight: 400, color: c.enRetard ? '#e05c5c' : COLOR }}>{fmtMga(c.contractuel)}</span>
                 </div>
               ))
             )}
@@ -466,7 +466,7 @@ export function ContractFlowChart({ timeline, projects }) {
               onClick={() => setSelectedBar(isSelected ? null : bar)}
             >
               {bar.contractuel > 0 && (
-                <div style={{ fontSize: 7, fontWeight: 700, color: bar.enRetard > 0 ? '#e05c5c' : '#00ab63', marginBottom: 2, whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 7, fontWeight: 400, color: bar.enRetard > 0 ? '#e05c5c' : '#00ab63', marginBottom: 2, whiteSpace: 'nowrap' }}>
                   {fmtMga(bar.contractuel)}
                 </div>
               )}
@@ -490,7 +490,7 @@ export function ContractFlowChart({ timeline, projects }) {
       {/* Month labels */}
       <div style={{ display: 'flex', gap: 2, padding: '4px 2px 0' }}>
         {bars2026.map((bar, i) => (
-          <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text)' }}>
+          <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 9, fontWeight: 400, color: 'var(--text)' }}>
             {bar.label}
           </div>
         ))}
@@ -517,22 +517,22 @@ export function ContractFlowChart({ timeline, projects }) {
           boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{selectedBar.label} 2026</span>
+            <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--text)' }}>{selectedBar.label} 2026</span>
             <button onClick={() => setSelectedBar(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 14 }}>×</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 8, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>Contractuel</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: COLOR }}>{fmtMga(selectedBar.contractuel)}</div>
+              <div style={{ fontSize: 14, fontWeight: 400, color: COLOR }}>{fmtMga(selectedBar.contractuel)}</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 8, textTransform: 'uppercase', color: '#00ab63', letterSpacing: '0.08em' }}>À temps</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#00ab63' }}>{fmtMga(selectedBar.aTemps)}</div>
+              <div style={{ fontSize: 14, fontWeight: 400, color: '#00ab63' }}>{fmtMga(selectedBar.aTemps)}</div>
               <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedBar.contractuel > 0 ? ((selectedBar.aTemps / selectedBar.contractuel) * 100).toFixed(0) : 0}%</div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 8, textTransform: 'uppercase', color: '#e05c5c', letterSpacing: '0.08em' }}>En retard</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#e05c5c' }}>{fmtMga(selectedBar.enRetard)}</div>
+              <div style={{ fontSize: 14, fontWeight: 400, color: '#e05c5c' }}>{fmtMga(selectedBar.enRetard)}</div>
               <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{selectedBar.contractuel > 0 ? ((selectedBar.enRetard / selectedBar.contractuel) * 100).toFixed(0) : 0}%</div>
             </div>
           </div>
@@ -606,13 +606,13 @@ export function CashFlowChart({ monthlyData }) {
     <div style={{ width: '100%', margin: '0 auto', position: 'relative' }}>
       {/* Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+        <div style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
           Encaissements 2026
         </div>
         <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>
-          Réel: <span style={{ fontWeight: 700, color: '#00ab63' }}>{fmtMga(totalReel)}</span>
+          Réel: <span style={{ fontWeight: 400, color: '#00ab63' }}>{fmtMga(totalReel)}</span>
           <span style={{ margin: '0 6px', opacity: 1 }}>|</span>
-          Prévu: <span style={{ fontWeight: 700, color: '#3498db' }}>{fmtMga(totalPrevu)}</span>
+          Prévu: <span style={{ fontWeight: 400, color: '#3498db' }}>{fmtMga(totalPrevu)}</span>
         </div>
       </div>
 
@@ -632,7 +632,7 @@ export function CashFlowChart({ monthlyData }) {
             >
               {/* Value on top */}
               {hasData && (
-                <div style={{ fontSize: 7, fontWeight: 700, color: bar.reel > 0 ? '#00ab63' : '#3498db', marginBottom: 2, whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 7, fontWeight: 400, color: bar.reel > 0 ? '#00ab63' : '#3498db', marginBottom: 2, whiteSpace: 'nowrap' }}>
                   {bar.reel > 0 ? fmtMga(bar.reel) : fmtMga(bar.prevu)}
                 </div>
               )}
@@ -709,10 +709,10 @@ export function CashFlowChart({ monthlyData }) {
           >
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{popup.mois}</div>
+              <div style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)' }}>{popup.mois}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{
-                  fontSize: 18, fontWeight: 800,
+                  fontSize: 18, fontWeight: 400,
                   color: Number(pctReel) >= 100 ? '#00ab63' : Number(pctReel) >= 50 ? '#f39c12' : '#e05c5c',
                 }}>{pctReel}%</span>
                 <button onClick={() => setPopup(null)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--card-border)', borderRadius: 6, width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}>x</button>
@@ -731,8 +731,8 @@ export function CashFlowChart({ monthlyData }) {
                   opacity: popupFilter && popupFilter !== 'reel' ? 0.4 : 1,
                 }}
               >
-                <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#00ab63', fontWeight: 700, marginBottom: 2 }}>Encaissé</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#00ab63' }}>{fmtMga(popup.reel)}</div>
+                <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#00ab63', fontWeight: 400, marginBottom: 2 }}>Encaissé</div>
+                <div style={{ fontSize: 14, fontWeight: 400, color: '#00ab63' }}>{fmtMga(popup.reel)}</div>
                 <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{popup.clientsReel.length} client{popup.clientsReel.length > 1 ? 's' : ''}</div>
               </div>
               <div
@@ -745,8 +745,8 @@ export function CashFlowChart({ monthlyData }) {
                   opacity: popupFilter && popupFilter !== 'nonpaye' ? 0.4 : 1,
                 }}
               >
-                <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#e05c5c', fontWeight: 700, marginBottom: 2 }}>Non encaissé</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#e05c5c' }}>{fmtMga(Math.max(0, popup.prevu - popup.reel))}</div>
+                <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#e05c5c', fontWeight: 400, marginBottom: 2 }}>Non encaissé</div>
+                <div style={{ fontSize: 14, fontWeight: 400, color: '#e05c5c' }}>{fmtMga(Math.max(0, popup.prevu - popup.reel))}</div>
                 <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{nonPaye.length} client{nonPaye.length > 1 ? 's' : ''}</div>
               </div>
             </div>
@@ -759,13 +759,13 @@ export function CashFlowChart({ monthlyData }) {
             {/* Client lists — filtered by popupFilter */}
             {(!popupFilter || popupFilter === 'reel') && popup.clientsReel.length > 0 && (
               <>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#00ab63', marginBottom: 4 }}>
                   Encaissé ({popup.clientsReel.length})
                 </div>
                 {popup.clientsReel.map((c, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <span style={{ fontSize: 10, color: 'var(--text)' }}>{c.client}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#00ab63' }}>{fmtMga(c.montant)}</span>
+                    <span style={{ fontSize: 10, fontWeight: 400, color: '#00ab63' }}>{fmtMga(c.montant)}</span>
                   </div>
                 ))}
               </>
@@ -773,13 +773,13 @@ export function CashFlowChart({ monthlyData }) {
 
             {(!popupFilter || popupFilter === 'nonpaye') && nonPaye.length > 0 && (
               <>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e05c5c', marginTop: popupFilter ? 0 : 10, marginBottom: 4 }}>
+                <div style={{ fontSize: 9, fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e05c5c', marginTop: popupFilter ? 0 : 10, marginBottom: 4 }}>
                   Non encaissé ({nonPaye.length})
                 </div>
                 {nonPaye.map((c, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{c.client}</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, color: '#e05c5c' }}>{fmtMga(c.montant)}</span>
+                    <span style={{ fontSize: 10, fontWeight: 400, color: '#e05c5c' }}>{fmtMga(c.montant)}</span>
                   </div>
                 ))}
               </>
@@ -795,7 +795,7 @@ export function CashFlowChart({ monthlyData }) {
 export function ClientCount({ count, label }) {
   return (
     <div style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
-      <span style={{ fontWeight: 700, color: COLOR, fontSize: 14 }}>{count}</span>{' '}
+      <span style={{ fontWeight: 400, color: COLOR, fontSize: 14 }}>{count}</span>{' '}
       <span style={{ textTransform: 'uppercase', letterSpacing: '0.15em', fontSize: 9 }}>{label || (count > 1 ? 'clients' : 'client')}</span>
     </div>
   )

@@ -9,7 +9,7 @@ export default function Csi() {
 
       {/* Placeholder content */}
       <div className="flex flex-col items-center justify-center py-32 px-8 text-center">
-        <div className="text-5xl font-bold mb-4" style={{ color: ACCENT }}>
+        <div className="text-5xl mb-4" style={{ color: ACCENT }}>
           CSI
         </div>
         <p className="text-[var(--text-muted)] text-lg">

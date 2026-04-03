@@ -49,14 +49,14 @@ export default function Finance() {
           <div className="nav-back">
             <button
               onClick={() => navigate(backPath)}
-              className="section-back-btn text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg bg-transparent cursor-pointer transition-colors"
+              className="section-back-btn text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg bg-transparent cursor-pointer transition-colors"
               style={{ border: `1px solid ${COLOR}4D`, color: COLOR }}
             >
               {backLabel}
             </button>
           </div>
           <div
-            className="section-title-center text-sm font-extrabold tracking-wider uppercase"
+            className="section-title-center text-sm tracking-wider uppercase"
             style={{ color: COLOR, position: 'absolute', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', whiteSpace: 'nowrap' }}
           >
             {pageTitle}

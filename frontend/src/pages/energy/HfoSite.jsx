@@ -72,19 +72,19 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             ? <NeonDot status="ko" size={8} />
             : <span className="inline-block rounded-full w-2 h-2" style={{ background: 'var(--border)' }} />
           }
-          <span className="text-xs font-bold tracking-wider uppercase">{s.name}</span>
+          <span className="text-xs tracking-wider uppercase">{s.name}</span>
         </div>
         <div
           className={`glass-card flex flex-col items-center justify-center gap-2 min-h-[200px] opacity-60`}
           style={{}}
         >
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+          <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
             {isRecon ? 'En reparation' : 'En construction'}
           </span>
           <div className="text-[10px] text-[var(--text-dim)] text-center">
             {isRecon ? 'Mise en service Avril 2026' : 'Mise en service 2027'}
           </div>
-          <div className="text-[11px] text-[var(--text-muted)] font-semibold">
+          <div className="text-[11px] text-[var(--text-muted)]">
             {parseFloat(s.mw || 0).toFixed(1)} MW
           </div>
         </div>
@@ -97,8 +97,8 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
       {/* Site name above card */}
       <div className="flex items-center justify-center gap-2 h-[26px]">
         <NeonDot status={neonStatus} size={8} />
-        <span className="text-xs font-bold tracking-wider uppercase">{s.name}</span>
-        <span className="text-[10px] font-bold text-[#f37056] opacity-85">
+        <span className="text-xs tracking-wider uppercase">{s.name}</span>
+        <span className="text-[10px] text-[#f37056] opacity-85">
           {prodShare.toFixed(1)}%
         </span>
       </div>
@@ -110,22 +110,22 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
       >
         {/* KPI 1: Puissance dispo / Contrat */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
-          <div className="text-[8px] font-bold tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
+          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
             Puissance dispo / Contrat
           </div>
           <div className="flex items-center justify-between gap-1">
             <div className="text-center flex-1">
-              <div className="text-xl font-extrabold leading-none" style={{ color: puissColor }}>
+              <div className="text-xl leading-none" style={{ color: puissColor }}>
                 {parseFloat(s.mw).toFixed(1)}
                 <span className="text-[9px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
               </div>
               <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Dispo</div>
             </div>
             <div className="text-center flex-shrink-0 w-[38px]">
-              <div className="text-[13px] font-extrabold" style={{ color: puissColor }}>{puissPct}%</div>
+              <div className="text-[13px]" style={{ color: puissColor }}>{puissPct}%</div>
             </div>
             <div className="text-center flex-1">
-              <div className="text-xl font-extrabold leading-none text-[var(--text-muted)]">
+              <div className="text-xl leading-none text-[var(--text-muted)]">
                 {parseFloat(s.contrat).toFixed(1)}
                 <span className="text-[9px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
               </div>
@@ -136,22 +136,22 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
 
         {/* KPI 2: Production vs Prev */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
-          <div className="text-[8px] font-bold tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
+          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
             Production vs Previsionnel
           </div>
           <div className="flex items-center justify-between gap-1">
             <div className="text-center flex-1">
-              <div className="text-[13px] font-bold leading-none" style={{ color: allKO ? '#E05C5C' : 'var(--text)' }}>
+              <div className="text-[13px] leading-none" style={{ color: allKO ? '#E05C5C' : 'var(--text)' }}>
                 {Math.round(prodReal).toLocaleString()}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MWh</span>
               </div>
               <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Reel</div>
             </div>
             <div className="text-center flex-shrink-0 w-[44px]">
-              <div className="text-[14px] font-extrabold" style={{ color: prodColor }}>{prodPctStr}</div>
+              <div className="text-[14px]" style={{ color: prodColor }}>{prodPctStr}</div>
             </div>
             <div className="text-center flex-1">
-              <div className="text-[13px] font-bold leading-none text-[var(--text-muted)]">
+              <div className="text-[13px] leading-none text-[var(--text-muted)]">
                 {prodPrev > 0 ? Math.round(prodPrev).toLocaleString() : '—'}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">{prodPrev > 0 ? 'MWh' : ''}</span>
               </div>
@@ -162,11 +162,11 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
 
         {/* KPI 3: Moteurs a l'arret */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
-          <div className="text-[8px] font-bold tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
+          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
             Moteurs a l'arret
           </div>
           <div className="flex items-center justify-center gap-2.5">
-            <span className="text-[28px] font-extrabold leading-none tracking-tight" style={{ color: arretColor }}>
+            <span className="text-[28px] leading-none tracking-tight" style={{ color: arretColor }}>
               {arretCount}
             </span>
             <span className="text-[10px] text-[var(--text-dim)] leading-tight">
@@ -178,8 +178,8 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
         {/* KPI row: Fuel + Blackouts + Station Use */}
         <div className="flex gap-1.5 pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
           <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>FUEL HFO</div>
-            <div className="text-[13px] font-extrabold leading-none" style={{ color: hfoAutoColor }}>
+            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>FUEL HFO</div>
+            <div className="text-[13px] leading-none" style={{ color: hfoAutoColor }}>
               {hfoAuto !== null ? hfoAuto.toFixed(1) : '—'}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">jours autonomie</div>
@@ -188,15 +188,15 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
             )}
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>BLACKOUTS</div>
-            <div className="text-[13px] font-extrabold leading-none" style={{ color: boColor }}>
+            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>BLACKOUTS</div>
+            <div className="text-[13px] leading-none" style={{ color: boColor }}>
               {boCount}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">coupures</div>
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>CONSO STATION</div>
-            <div className="text-[13px] font-extrabold leading-none" style={{ color: stUseColor }}>
+            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>CONSO STATION</div>
+            <div className="text-[13px] leading-none" style={{ color: stUseColor }}>
               {stUsePct !== null ? stUsePct.toFixed(1) : '—'}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">% auxiliaires</div>
@@ -206,23 +206,23 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
         {/* SFOC + SLOC */}
         <div className="flex gap-1.5">
           <div className="flex-1 rounded-lg p-1.5 text-center min-h-[60px] flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SFOC</div>
-            <div className="text-[13px] font-extrabold leading-none" style={{ color: sfocColor }}>
+            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SFOC</div>
+            <div className="text-[13px] leading-none" style={{ color: sfocColor }}>
               {sfocVal !== null ? sfocVal.toFixed(1) : '—'}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">g/kWh</div>
-            <div className="text-[7px] font-semibold mt-0.5 opacity-80 min-h-[10px]" style={{ color: sfocColor }}>
+            <div className="text-[7px] mt-0.5 opacity-80 min-h-[10px]" style={{ color: sfocColor }}>
               {sfocVal !== null ? (sfocVal <= 250 ? `−${(250 - sfocVal).toFixed(1)} vs limite` : `+${(sfocVal - 250).toFixed(1)} vs limite`) : ''}
             </div>
             <div className="text-[7px] text-[var(--text-muted)] mt-0.5">limite 250</div>
           </div>
           <div className="flex-1 rounded-lg p-1.5 text-center min-h-[60px] flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] font-bold tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SLOC</div>
-            <div className="text-[13px] font-extrabold leading-none" style={{ color: slocColor }}>
+            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SLOC</div>
+            <div className="text-[13px] leading-none" style={{ color: slocColor }}>
               {slocVal !== null ? slocVal.toFixed(1) : '—'}
             </div>
             <div className="text-[7px] text-[var(--text-dim)] mt-0.5">g/kWh</div>
-            <div className="text-[7px] font-semibold mt-0.5 opacity-80 min-h-[10px]" style={{ color: slocColor }}>
+            <div className="text-[7px] mt-0.5 opacity-80 min-h-[10px]" style={{ color: slocColor }}>
               {slocVal !== null ? (slocVal <= 1.0 ? `−${(1.0 - slocVal).toFixed(1)} vs limite` : `+${(slocVal - 1.0).toFixed(1)} vs limite`) : ''}
             </div>
             <div className="text-[7px] text-[var(--text-muted)] mt-0.5">limite 1.00</div>

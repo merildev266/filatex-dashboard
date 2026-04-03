@@ -155,7 +155,7 @@ export default function ReportingOverview() {
 
       {/* ══ COLUMN 1: ENERGY ══ */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <h3 style={{ color: 'var(--text)', fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 2px', textAlign: 'center' }}>
+        <h3 style={{ color: 'var(--text)', fontSize: 14, fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 2px', textAlign: 'center' }}>
           Energy
         </h3>
 
@@ -216,7 +216,7 @@ export default function ReportingOverview() {
 
       {/* ══ COLUMN 2: INVESTMENTS ══ */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <h3 style={{ color: 'var(--text)', fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 2px', textAlign: 'center' }}>
+        <h3 style={{ color: 'var(--text)', fontSize: 14, fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 2px', textAlign: 'center' }}>
           Investments
         </h3>
 
@@ -238,7 +238,7 @@ export default function ReportingOverview() {
 
       {/* ══ COLUMN 3: PROPERTIES ══ */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <h3 style={{ color: 'var(--text)', fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 2px', textAlign: 'center' }}>
+        <h3 style={{ color: 'var(--text)', fontSize: 14, fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 2px', textAlign: 'center' }}>
           Properties
         </h3>
 

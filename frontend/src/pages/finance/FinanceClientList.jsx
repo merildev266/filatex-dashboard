@@ -27,7 +27,7 @@ function DetailRow({ label, value, color }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--card-border)' }}>
       <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{label}</span>
-      <span style={{ fontSize: 12, fontWeight: 600, color: color || 'var(--text)' }}>{value}</span>
+      <span style={{ fontSize: 12, fontWeight: 400, color: color || 'var(--text)' }}>{value}</span>
     </div>
   )
 }
@@ -46,13 +46,13 @@ function ClientCard({ client, isFlx }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{c.client}</span>
+            <span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)', lineHeight: 1.2 }}>{c.client}</span>
             <div style={{ display: 'flex', gap: 3 }}>
               {(c.montant2025 || 0) > 0 && (
-                <span style={{ fontSize: 7, padding: '1px 5px', borderRadius: 4, background: 'rgba(52,152,219,0.15)', color: '#3498db', fontWeight: 700, letterSpacing: '0.02em' }}>2025</span>
+                <span style={{ fontSize: 7, padding: '1px 5px', borderRadius: 4, background: 'rgba(52,152,219,0.15)', color: '#3498db', fontWeight: 400, letterSpacing: '0.02em' }}>2025</span>
               )}
               {(c.montant2026 || 0) > 0 && (
-                <span style={{ fontSize: 7, padding: '1px 5px', borderRadius: 4, background: 'rgba(26,188,156,0.15)', color: COLOR, fontWeight: 700, letterSpacing: '0.02em' }}>2026</span>
+                <span style={{ fontSize: 7, padding: '1px 5px', borderRadius: 4, background: 'rgba(26,188,156,0.15)', color: COLOR, fontWeight: 400, letterSpacing: '0.02em' }}>2026</span>
               )}
             </div>
           </div>
@@ -71,7 +71,7 @@ function ClientCard({ client, isFlx }) {
             )}
             {c.retardJours > 0 && (
               <span style={{
-                fontSize: 7, padding: '1px 6px', borderRadius: 4, fontWeight: 700,
+                fontSize: 7, padding: '1px 6px', borderRadius: 4, fontWeight: 400,
                 background: c.retardJours > 180 ? 'rgba(224,92,92,0.2)' : c.retardJours > 90 ? 'rgba(243,112,86,0.15)' : 'rgba(243,156,18,0.15)',
                 color: c.retardJours > 180 ? '#e05c5c' : c.retardJours > 90 ? '#f37056' : '#f39c12',
               }}>
@@ -105,7 +105,7 @@ function ClientCard({ client, isFlx }) {
       <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
         {c.observations && (
           <span style={{
-            fontSize: 8, padding: '2px 8px', borderRadius: 6, letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 600,
+            fontSize: 8, padding: '2px 8px', borderRadius: 6, letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 400,
             background: c.observations.includes('JURIDIQUE') ? 'rgba(224,92,92,0.15)' : c.observations.includes('PAYE') ? 'rgba(0,171,99,0.12)' : c.observations.includes('IRRECOUVRABLE') ? 'rgba(224,92,92,0.25)' : 'rgba(26,188,156,0.12)',
             color: c.observations.includes('JURIDIQUE') ? '#e05c5c' : c.observations.includes('PAYE') ? '#00ab63' : c.observations.includes('IRRECOUVRABLE') ? '#e05c5c' : COLOR,
           }}>
@@ -113,7 +113,7 @@ function ClientCard({ client, isFlx }) {
           </span>
         )}
         {c.acteur && (
-          <span style={{ fontSize: 8, padding: '2px 8px', borderRadius: 6, background: 'rgba(66,106,179,0.12)', color: '#426ab3', fontWeight: 600 }}>
+          <span style={{ fontSize: 8, padding: '2px 8px', borderRadius: 6, background: 'rgba(66,106,179,0.12)', color: '#426ab3', fontWeight: 400 }}>
             {c.acteur}
           </span>
         )}
@@ -130,7 +130,7 @@ function ClientCard({ client, isFlx }) {
           {!isFlx && <DetailRow label="Contentieux / Irrécouvrables" value={fmtMga(c.contentieux)} color="#e05c5c" />}
           <DetailRow label="Reste à collecter" value={fmtMga(c.resteACollecter)} color="#f39c12" />
           <div style={{ height: 8 }} />
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Plan d'appurement</div>
+          <div style={{ fontSize: 9, fontWeight: 400, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Plan d'appurement</div>
           <DetailRow label="Mars 2026" value={fmtMga(c.planMars)} />
           <DetailRow label="Avril 2026" value={fmtMga(c.planAvril)} />
           <DetailRow label="Mai 2026" value={fmtMga(c.planMai)} />
@@ -163,7 +163,7 @@ function CategoryTabs({ entity, active }) {
             key={tab.key}
             onClick={() => navigate(tab.path)}
             style={{
-              padding: '7px 20px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+              padding: '7px 20px', fontSize: 10, fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase',
               cursor: 'pointer', border: 'none', transition: 'all 0.2s',
               background: isActive ? COLOR : 'transparent',
               color: isActive ? '#fff' : 'var(--text-muted)',
@@ -194,7 +194,7 @@ function YearFilter({ active, onChange, counts }) {
             key={opt.key}
             onClick={() => onChange(isActive && opt.key !== 'all' ? 'all' : opt.key)}
             style={{
-              padding: '4px 12px', fontSize: 9, fontWeight: 600, letterSpacing: '0.06em',
+              padding: '4px 12px', fontSize: 9, fontWeight: 400, letterSpacing: '0.06em',
               borderRadius: 8, cursor: 'pointer', transition: 'all 0.2s',
               border: `1px solid ${isActive ? COLOR : 'var(--card-border)'}`,
               background: isActive ? `${COLOR}18` : 'transparent',
@@ -227,7 +227,7 @@ function SortControls({ active, onChange }) {
             key={opt.key}
             onClick={() => onChange(opt.key)}
             style={{
-              padding: '4px 10px', fontSize: 9, fontWeight: 600,
+              padding: '4px 10px', fontSize: 9, fontWeight: 400,
               borderRadius: 8, cursor: 'pointer', transition: 'all 0.2s',
               border: `1px solid ${isActive ? COLOR : 'var(--card-border)'}`,
               background: isActive ? `${COLOR}18` : 'transparent',
@@ -256,7 +256,7 @@ function ViewToggle({ active, onChange }) {
             key={tab.key}
             onClick={() => onChange(tab.key)}
             style={{
-              padding: '7px 18px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+              padding: '7px 18px', fontSize: 10, fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase',
               cursor: 'pointer', border: 'none', transition: 'all 0.2s',
               background: isActive ? '#9b59b6' : 'transparent',
               color: isActive ? '#fff' : 'var(--text-muted)',
@@ -283,7 +283,7 @@ function ProjectCard({ project, onClick }) {
     >
       {/* Header */}
       <div style={{ marginBottom: 8 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>{p.projet}</div>
+        <div style={{ fontSize: 13, fontWeight: 400, color: 'var(--text)', lineHeight: 1.2 }}>{p.projet}</div>
         <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>
           {p.nbClients} client{p.nbClients > 1 ? 's' : ''}
           {p.isGroup && ` · ${p.sousProjectes.length} sous-projets`}
@@ -309,7 +309,7 @@ function ProjectCard({ project, onClick }) {
         <div style={{ flex: 1, height: 5, borderRadius: 3, background: 'var(--card-border)', overflow: 'hidden' }}>
           <div style={{ width: `${pct}%`, height: '100%', background: '#00ab63', borderRadius: 3 }} />
         </div>
-        <span style={{ fontSize: 12, fontWeight: 800, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12', flexShrink: 0 }}>{pct}%</span>
+        <span style={{ fontSize: 12, fontWeight: 400, color: Number(pct) >= 50 ? '#00ab63' : '#f39c12', flexShrink: 0 }}>{pct}%</span>
       </div>
     </div>
   )
@@ -442,7 +442,7 @@ export default function FinanceClientList() {
           <span>{filtered.length} client{filtered.length > 1 ? 's' : ''} affiché{filtered.length > 1 ? 's' : ''}</span>
           <button
             onClick={() => { setKpiFilter(null); setYearFilter('all'); setNatureFilter(null); setSortMode('montant-desc'); setViewMode('client') }}
-            style={{ background: 'none', border: `1px solid ${COLOR}44`, borderRadius: 6, padding: '2px 8px', color: COLOR, fontSize: 9, cursor: 'pointer', fontWeight: 600, letterSpacing: '0.05em' }}
+            style={{ background: 'none', border: `1px solid ${COLOR}44`, borderRadius: 6, padding: '2px 8px', color: COLOR, fontSize: 9, cursor: 'pointer', fontWeight: 400, letterSpacing: '0.05em' }}
           >
             Réinitialiser
           </button>
