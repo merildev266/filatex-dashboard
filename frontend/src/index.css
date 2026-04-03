@@ -791,6 +791,14 @@ body::-webkit-scrollbar { display: none; }
 }
 .unified-card.clickable-energy:active{transform:translateY(-3px) scale(0.99);}
 
+/* Investments clickable cards */
+.unified-card.clickable-invest{cursor:pointer;}
+.unified-card.clickable-invest:hover{
+  transform:translateY(-6px);border-color:#f37056;background:#1e1210;
+  box-shadow:0 28px 80px rgba(243,112,86,0.22);
+}
+.unified-card.clickable-invest:active{transform:translateY(-3px) scale(0.99);}
+
 /* Energy page specific overrides */
 .inner-page-inner{min-height:calc(100vh - 70px);padding:clamp(10px,2vw,30px) clamp(16px,3vw,40px) 100px;display:flex;flex-direction:column;justify-content:flex-start;}
 .page-energy-wrap{gap:clamp(24px,4vw,60px);width:min(90%,1400px);margin:0 auto;}

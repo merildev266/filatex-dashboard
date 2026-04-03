@@ -47,21 +47,9 @@ function SummaryColumn({ title, kpis, onClick }) {
     <div className="e-col">
       <div className="e-col-title" style={{ color: ACCENT }}>{title}</div>
       <div
-        className="capex-section-card e-card inv-card"
+        className="unified-card clickable-invest e-card inv-card"
         onClick={onClick}
-        style={{ borderColor: `rgba(${ACCENT_RGB},0.35)`, cursor: 'pointer', flex: 1 }}
-        onMouseEnter={e => {
-          e.currentTarget.style.borderColor = `rgba(${ACCENT_RGB},0.7)`
-          e.currentTarget.style.background = '#1e1210'
-          e.currentTarget.style.boxShadow = `0 16px 40px rgba(${ACCENT_RGB},0.2)`
-          e.currentTarget.style.transform = 'translateY(-3px)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = `rgba(${ACCENT_RGB},0.35)`
-          e.currentTarget.style.background = ''
-          e.currentTarget.style.boxShadow = ''
-          e.currentTarget.style.transform = ''
-        }}
+        style={{ flex: 1, padding: 'clamp(10px,1.4vw,22px) clamp(14px,2vw,28px) clamp(8px,1.2vw,18px)' }}
       >
         {/* Projets */}
         <div className="e-sec">
@@ -147,11 +135,9 @@ function InvProjectCard({ project, onClick }) {
 
   return (
     <div
-      className="capex-section-card"
+      className="unified-card clickable-invest"
       onClick={onClick}
-      style={{ borderColor: `rgba(${ACCENT_RGB},0.2)`, cursor: 'pointer', padding: 16, transition: 'all 0.2s' }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = `rgba(${ACCENT_RGB},0.5)`; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 24px rgba(${ACCENT_RGB},0.15)` }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = `rgba(${ACCENT_RGB},0.2)`; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+      style={{ padding: 16 }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: 'clamp(14px,1.2vw,18px)', fontWeight: 800, color: 'var(--text)' }}>{project.nom}</div>
