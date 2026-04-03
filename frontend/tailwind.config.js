@@ -19,7 +19,7 @@ export default {
       },
       fontFamily: {
         sans: ['Aeonik', 'sans-serif'],
-        serif: ['Larken', 'Playfair Display', 'serif'],
+        serif: ['Aeonik', 'sans-serif'],
       },
     },
   },

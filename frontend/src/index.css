@@ -425,7 +425,7 @@ body::-webkit-scrollbar { display: none; }
 
 .card {
   position: relative;
-  background: var(--card);
+  background: #000000;
   border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 34px 24px;
@@ -439,6 +439,13 @@ body::-webkit-scrollbar { display: none; }
   justify-content: center;
   box-shadow: 0 8px 60px rgba(58,57,92,0.12), 0 4px 24px rgba(58,57,92,0.08), inset 0 1px 0 rgba(58,57,92,0.15);
 }
+.card-energy  { border-color: #00ab63; }
+.card-invest  { border-color: #f37056; }
+.card-props   { border-color: #FDB823; }
+.card-capex   { border-color: #5e4c9f; }
+.card-csi     { border-color: #0096c7; }
+.card-reporting { border-color: #426ab3; }
+.card-finance { border-color: #1abc9c; }
 .card-accent { display: none; }
 .card * { pointer-events: none; }
 .card:hover { transform: translateY(-10px); }
@@ -451,6 +458,16 @@ body::-webkit-scrollbar { display: none; }
 .card-csi:hover    { box-shadow: 0 28px 80px rgba(0,150,199,0.22); border-color: #0096c7; background: #0e1820; }
 .card-reporting:hover { box-shadow: 0 28px 80px rgba(66,106,179,0.22); border-color: #426ab3; background: #101624; }
 .card-finance:hover { box-shadow: 0 28px 80px rgba(26,188,156,0.22); border-color: #1abc9c; background: #0e1e1a; }
+
+/* Light mode: bleu glace cards + lighter hover bg */
+[data-theme="light"] .card { background: #e4f4fd; }
+[data-theme="light"] .card-energy:hover  { background: #d0f0e0; }
+[data-theme="light"] .card-invest:hover  { background: #fde8e0; }
+[data-theme="light"] .card-props:hover   { background: #fdf3d8; }
+[data-theme="light"] .card-capex:hover   { background: #e8e0f8; }
+[data-theme="light"] .card-csi:hover     { background: #d8eef8; }
+[data-theme="light"] .card-reporting:hover { background: #dce4f4; }
+[data-theme="light"] .card-finance:hover { background: #d0f0ea; }
 
 .card-logo-wrap {
   display: flex;
@@ -1292,7 +1309,7 @@ body::-webkit-scrollbar { display: none; }
   .home-values span { font-size: 7px !important; letter-spacing: 0.2em !important; }
   .home-values .home-val-sep { width: 10px !important; margin: 0 4px !important; }
   #home { height: calc(100dvh - 56px) !important; overflow: hidden !important; padding: 0 !important; }
-  #home-motif { opacity: 0.25 !important; }
+  #home-motif { opacity: 1 !important; }
   body, #root { overflow-x: hidden !important; }
   #home-footer { bottom: 60px !important; }
   .cards-grid { padding: 0 12px !important; gap: 12px !important; }

@@ -134,7 +134,7 @@ export default function FinanceEntity() {
                   style={{ cursor: 'pointer', padding: '28px 20px' }}
                 >
                   <div className="card-accent" />
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', fontFamily: "'Larken','Playfair Display',serif", fontStyle: 'italic', marginBottom: 4 }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', fontFamily: "'Aeonik',sans-serif", marginBottom: 4 }}>
                     {cat.label}
                   </div>
                   <ClientCount count={cat.count} />

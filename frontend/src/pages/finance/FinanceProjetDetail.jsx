@@ -62,7 +62,7 @@ export default function FinanceProjetDetail() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, paddingTop: 24, paddingBottom: 40 }}>
       {/* Header */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', fontFamily: "'Larken','Playfair Display',serif", fontStyle: 'italic' }}>{p.projet}</div>
+        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', fontFamily: "'Aeonik',sans-serif" }}>{p.projet}</div>
         <ClientCount count={p.nbClients} label={p.isGroup ? `clients · ${p.sousProjectes.length} sous-projets` : 'clients'} />
       </div>
 
