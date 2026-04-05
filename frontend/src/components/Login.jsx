@@ -65,17 +65,16 @@ export default function Login() {
   if (step === 'set_pin') {
     return (
       <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
-        {/* Scrolling motif — two images side by side for seamless horizontal loop */}
-        <div style={{
-          position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
-        }}>
+        {/* Motif — identique à l'accueil */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
           <div style={{
-            display: 'flex', height: '100%',
-            animation: 'loginMotifScroll 40s linear infinite',
-          }}>
-            <img src={MOTIF_SRC} alt="" style={{ height: '100%', width: 'auto', flexShrink: 0 }} />
-            <img src={MOTIF_SRC} alt="" style={{ height: '100%', width: 'auto', flexShrink: 0 }} />
-          </div>
+            width: '100%', height: '100%',
+            backgroundImage: `url(${MOTIF_SRC})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 1,
+          }} />
         </div>
         <form onSubmit={handleSetPin} className="w-[88%] max-w-[400px] text-center relative z-10">
           <div className="flex justify-center mb-2">
