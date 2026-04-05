@@ -447,9 +447,9 @@ body::-webkit-scrollbar { display: none; }
 /* Login inputs — same bg as .card */
 .login-card {
   background: #000000;
-  border: 1px solid var(--card-border);
+  border: 1px solid rgba(255,255,255,0.15);
 }
-[data-theme="light"] .login-card { background: #e4f4fd; }
+[data-theme="light"] .login-card { background: #e4f4fd; border-color: #3a395c; }
 
 .card {
   position: relative;
