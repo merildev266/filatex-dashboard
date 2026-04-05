@@ -80,7 +80,7 @@ export default function Login() {
             opacity: 1,
           }} />
         </div>
-        <form onSubmit={handleSetPin} className="w-[88%] max-w-[400px] text-center relative z-10">
+        <form onSubmit={handleSetPin} className="w-[88%] max-w-[400px] text-center relative z-10" style={{ marginTop: '-8vh' }}>
           <div className="flex justify-center mb-2">
             <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
           </div>
@@ -148,12 +148,12 @@ export default function Login() {
           opacity: 1,
         }} />
       </div>
-      <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10">
+      <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10" style={{ marginTop: '-8vh' }}>
         <div className="flex justify-center mb-2">
           <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
         </div>
         <div
-          className="text-[rgba(255,255,255,0.45)] uppercase mb-10"
+          className="login-label uppercase mb-10"
           style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 11, fontWeight: 400, letterSpacing: '0.35em' }}
         >
           Dashboard

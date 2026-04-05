@@ -450,6 +450,8 @@ body::-webkit-scrollbar { display: none; }
   border: 1px solid rgba(255,255,255,0.15);
 }
 [data-theme="light"] .login-card { background: #e4f4fd; border-color: #3a395c; }
+.login-label { color: rgba(255,255,255,0.6); }
+[data-theme="light"] .login-label { color: #3a395c; }
 /* Override browser autofill bg */
 .login-card:-webkit-autofill,
 .login-card:-webkit-autofill:hover,
