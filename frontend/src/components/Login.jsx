@@ -134,20 +134,17 @@ export default function Login() {
 
   return (
     <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
-      {/* Scrolling motif background */}
+      {/* Scrolling motif — two images side by side for seamless horizontal loop */}
       <div style={{
         position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
       }}>
         <div style={{
-          position: 'absolute', top: '-50%', left: '-50%',
-          width: '200%', height: '200%',
-          backgroundImage: `url(${MOTIF_SRC})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          opacity: 1,
-          animation: 'loginMotifScroll 80s linear infinite',
-        }} />
+          display: 'flex', height: '100%',
+          animation: 'loginMotifScroll 40s linear infinite',
+        }}>
+          <img src={MOTIF_SRC} alt="" style={{ height: '100%', width: 'auto', flexShrink: 0 }} />
+          <img src={MOTIF_SRC} alt="" style={{ height: '100%', width: 'auto', flexShrink: 0 }} />
+        </div>
       </div>
       <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10">
         <div className="flex justify-center mb-2">
