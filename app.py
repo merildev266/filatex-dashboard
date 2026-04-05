@@ -19,7 +19,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%dT%H:%M:%S",
 )
 
-app = Flask(__name__, static_folder=".", static_url_path="")
+app = Flask(__name__, static_folder=None)
 app.register_blueprint(energy_api)
 auth.init_db()
 auth.seed_pmo()
@@ -34,12 +34,14 @@ cache.start_background_refresh()
 BASE_ENR = os.path.join(
     os.path.expanduser("~"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "01_Energy", "Projet", "EnR"
 )
 BASE_INV = os.path.join(
     os.path.expanduser("~"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "03_ Investments", "Reporting"
 )
@@ -434,4 +436,4 @@ def admin_login_history():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5001)

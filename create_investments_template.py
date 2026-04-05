@@ -5,7 +5,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from datetime import datetime, timedelta, date
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-OUT = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\03_ Investments\Reporting\Weekly_Investments_Avancement_v2.xlsx"
+OUT = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Bureau\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\03_ Investments\Reporting\Weekly_Investments_Avancement_v2.xlsx"
 
 PROJECTS = [
     ("oasis",            "OASIS",                  "Imtiaz", "Externe"),

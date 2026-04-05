@@ -6,7 +6,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 import openpyxl
 
-BASE = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\01_Energy\Projet\EnR"
+BASE = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Bureau\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\01_Energy\Projet\EnR"
 AVANCEMENT_FILE = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Avancement.xlsx")
 PAIEMENTS_FILE = os.path.join(BASE, "Weekly_Report", "Weekly_EnR_Paiements.xlsx")
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reporting_data.js")

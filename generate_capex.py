@@ -5,6 +5,7 @@ from datetime import datetime
 CAPEX_PATH = os.path.join(
     os.path.expanduser("~"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "04_CAPEX",
     "CAPEX.xlsx",

@@ -2,7 +2,7 @@
 import openpyxl, sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-TPL = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\01_Energy\Projet\EnR\Weekly_Report\Weekly_EnR_Avancement.xlsx"
+TPL = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Bureau\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\01_Energy\Projet\EnR\Weekly_Report\Weekly_EnR_Avancement.xlsx"
 
 OLD_DATA = {
     "nosy-be-1":    {"phase":"Termine",       "av":100, "glis":168, "epc":"SQVISION",     "etudes":"100%", "const":"100% - MES 07/02/2026", "bloc":"Levee de reserves en attente", "actS1":"MES effectuee le 07/02/2026", "actS":"Paiement EPC solde"},

@@ -94,8 +94,6 @@ export default function EnergyOverview() {
   // Last day with data for all 4 sites (for J-1 display)
   const lastDayAll = useMemo(() => getLastDayAllSites(LIVE_SITES), [TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE])
 
-  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement des données Energy...</span></div>
-
   // Date display
   const dateLabel = useMemo(() => {
     const now = new Date()
@@ -213,6 +211,8 @@ export default function EnergyOverview() {
       grouped, delayCount,
     }
   }, [currentFilter])
+
+  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement des données Energy...</span></div>
 
   const pctContratColor = hfo.pctContrat >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
   const pctContratArrow = hfo.pctContrat >= 100 ? '▲ du contrat' : '▼ du contrat'

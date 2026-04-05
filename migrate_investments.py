@@ -2,8 +2,8 @@
 import openpyxl, sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-OLD = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\03_ Investments\Reporting\Avancement (1).xlsx"
-TPL = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\03_ Investments\Reporting\Weekly_Investments_Avancement_v2.xlsx"
+OLD = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Bureau\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\03_ Investments\Reporting\Avancement (1).xlsx"
+TPL = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\Bureau\Fichiers de DOSSIER DASHBOARD - Data_Dashbords\03_ Investments\Reporting\Weekly_Investments_Avancement_v2.xlsx"
 
 # Map old sheet names to new project IDs
 SHEET_TO_PID = {

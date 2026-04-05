@@ -16,6 +16,7 @@ SRC = r"C:\Users\Meril\OneDrive - GROUPE FILATEX\1. DATA Meril HIVANAKO\Bureau\W
 OUT_DIR = os.path.join(
     os.environ.get("USERPROFILE", r"C:\Users\Meril"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "01_Energy", "Projet", "EnR", "Weekly_Report",
 )

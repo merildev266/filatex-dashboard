@@ -19,6 +19,7 @@ import openpyxl
 ENR_DIR = os.path.join(
     os.environ.get("USERPROFILE", "C:/Users/Meril"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "01_Energy", "Production", "EnR",
 )

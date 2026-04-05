@@ -11,6 +11,7 @@ import os
 EXCEL_PATH = os.path.join(
     os.path.expanduser('~'),
     'OneDrive - GROUPE FILATEX',
+    'Bureau',
     'Fichiers de DOSSIER DASHBOARD - Data_Dashbords',
     '02_Properties', 'Reporting', 'COM_Reporting.xlsx'
 )
