@@ -2,16 +2,34 @@
 Flask application serving the Filatex PMO Dashboard.
 Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
+Energy API: dynamic Excel loading with TTL cache.
 """
+import logging
 import os, re, openpyxl
 from flask import Flask, jsonify, request, send_from_directory
 from data_loader import build_tamatave_data
 import auth
+import cache
+from api_energy import api as energy_api
 from functools import wraps
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+
 app = Flask(__name__, static_folder=".", static_url_path="")
+app.register_blueprint(energy_api)
 auth.init_db()
 auth.seed_pmo()
+
+# Start background cache refresh for energy data
+cache.register("hfo_sites", lambda: __import__('api_energy')._build_hfo_sites(), 900)
+cache.register("enr_sites", lambda: __import__('api_energy')._build_enr_sites(), 900)
+cache.register("hfo_projects", lambda: __import__('api_energy')._build_hfo_projects(), 900)
+cache.register("enr_projects", lambda: __import__('api_energy')._build_enr_projects(), 900)
+cache.start_background_refresh()
 
 BASE_ENR = os.path.join(
     os.path.expanduser("~"),

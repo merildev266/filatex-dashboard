@@ -414,6 +414,16 @@ def build_site_data(code, site_cfg):
     return site_data
 
 
+def build_enr_sites():
+    """Build and return ENR sites data dict (for API use). Returns {"ENR_SITES": [...]}."""
+    all_sites = []
+    for code, cfg in SITES.items():
+        data = build_site_data(code, cfg)
+        if data:
+            all_sites.append(data)
+    return {"ENR_SITES": all_sites}
+
+
 def generate():
     print("Generating EnR site data...")
     print(f"Source: {ENR_DIR}")

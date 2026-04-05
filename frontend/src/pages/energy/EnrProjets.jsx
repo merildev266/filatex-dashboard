@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { usePageTitle } from '../../context/PageTitleContext'
-import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
+import { useEnergyData } from '../../hooks/useEnergyData'
 
 const PHASE_LABELS = { termine: 'Termin\u00e9', construction: 'En construction', developpement: 'D\u00e9veloppement', planifie: 'Planifi\u00e9' }
 const PHASE_COLORS = { termine: '#00ab63', construction: '#FDB823', developpement: '#5aafaf', planifie: 'var(--text-dim)' }
@@ -33,6 +33,10 @@ export default function EnrProjets() {
   const [selectedProject, setSelectedProject] = useState(null)
   const [phaseFilter, setPhaseFilter] = useState(null)
   const { setPageTitle, clearTitle } = usePageTitle()
+  const { enrProjects: enrProjectsData, loading } = useEnergyData()
+  const ENR_PROJECTS_DATA = enrProjectsData?.ENR_PROJECTS_DATA || { projects: [] }
+
+  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement projets EnR...</span></div>
 
   useEffect(() => {
     if (selectedProject) {

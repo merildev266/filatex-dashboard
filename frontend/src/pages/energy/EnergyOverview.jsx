@@ -1,35 +1,23 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFilters } from '../../hooks/useFilters'
-import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
-import { ENR_SITES } from '../../data/enr_site_data'
-import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
-import { HFO_PROJECTS } from '../../data/hfo_projects'
-
-// Merge live data for overview
-const LIVE_SITES = {
-  tamatave: TAMATAVE_LIVE,
-  diego: DIEGO_LIVE,
-  majunga: MAJUNGA_LIVE,
-  tulear: TULEAR_LIVE,
-}
+import { useEnergyData } from '../../hooks/useEnergyData'
 
 const STATIC_SITES = {
   antsirabe: { name: 'Antsirabe', status: 'reconstruction', mw: 0, contrat: 7.5, groupes: [], kpi: {} },
   fihaonana: { name: 'Fihaonana', status: 'construction', mw: 0, contrat: 0, groupes: [], kpi: {} },
 }
 
-const ALL_SITES = { ...LIVE_SITES, ...STATIC_SITES }
 const SITE_ORDER = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe', 'fihaonana']
 const LIVE_IDS = ['tamatave', 'diego', 'majunga', 'tulear']
 
 const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
 
 /** Get the last day (1-based) where ALL 4 live sites have data */
-function getLastDayAllSites() {
+function getLastDayAllSites(liveSites) {
   let minDay = 31
   LIVE_IDS.forEach(id => {
-    const site = LIVE_SITES[id]
+    const site = liveSites[id]
     if (!site?.latestDate) return
     const d = new Date(site.latestDate)
     const day = d.getDate()
@@ -90,9 +78,23 @@ function getPhase(p) {
 export default function EnergyOverview() {
   const navigate = useNavigate()
   const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+  const { hfoSites, enrSites, hfoProjects, enrProjects, loading } = useEnergyData()
+
+  // Extract data from hook (same variable names as before)
+  const TAMATAVE_LIVE = hfoSites?.TAMATAVE_LIVE
+  const DIEGO_LIVE = hfoSites?.DIEGO_LIVE
+  const MAJUNGA_LIVE = hfoSites?.MAJUNGA_LIVE
+  const TULEAR_LIVE = hfoSites?.TULEAR_LIVE
+  const LIVE_SITES = { tamatave: TAMATAVE_LIVE, diego: DIEGO_LIVE, majunga: MAJUNGA_LIVE, tulear: TULEAR_LIVE }
+  const ALL_SITES = { ...LIVE_SITES, ...STATIC_SITES }
+  const ENR_SITES = enrSites?.ENR_SITES || []
+  const ENR_PROJECTS_DATA = enrProjects?.ENR_PROJECTS_DATA || { projects: [] }
+  const HFO_PROJECTS = hfoProjects?.HFO_PROJECTS || { projects: [] }
 
   // Last day with data for all 4 sites (for J-1 display)
-  const lastDayAll = useMemo(() => getLastDayAllSites(), [])
+  const lastDayAll = useMemo(() => getLastDayAllSites(LIVE_SITES), [TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE])
+
+  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement des données Energy...</span></div>
 
   // Date display
   const dateLabel = useMemo(() => {

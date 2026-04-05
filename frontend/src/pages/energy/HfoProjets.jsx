@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HFO_PROJECTS } from '../../data/hfo_projects'
+import { useEnergyData } from '../../hooks/useEnergyData'
 import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, HFO_CAT_LABELS, formatDateFR } from '../../utils/projects'
 
-function parseProjects() {
-  // HFO_PROJECTS is an object with .projects array, .total, .overhauls, etc.
+function parseProjects(HFO_PROJECTS) {
   const data = HFO_PROJECTS || {}
   const projects = (data.projects || []).map(p => ({ ...p }))
   return {
@@ -21,7 +20,11 @@ function parseProjects() {
 
 export default function HfoProjets() {
   const navigate = useNavigate()
-  const hfp = useMemo(() => parseProjects(), [])
+  const { hfoProjects: hfoProjectsData, loading } = useEnergyData()
+  const HFO_PROJECTS = hfoProjectsData?.HFO_PROJECTS || { projects: [] }
+  const hfp = useMemo(() => parseProjects(HFO_PROJECTS), [HFO_PROJECTS])
+
+  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement projets HFO...</span></div>
   const [filter, setFilter] = useState(null)
 
   const filtered = useMemo(() => {

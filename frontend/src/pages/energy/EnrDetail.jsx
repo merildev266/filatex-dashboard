@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { usePageTitle } from '../../context/PageTitleContext'
-import { ENR_SITES } from '../../data/enr_site_data'
+import { useEnergyData } from '../../hooks/useEnergyData'
 import { MONTH_NAMES } from '../../utils/projects'
 
 const ENR_COLORS = ['#00ab63', '#5aafaf', '#4a8fe7']
@@ -10,14 +10,14 @@ const ENR_MONTHS = { 1:'Janvier',2:'Février',3:'Mars',4:'Avril',5:'Mai',6:'Juin
 /* -- ENR filter state -- */
 function useEnrFilter() {
   const [filter, setFilter] = useState('month')
-  const [monthIndex, setMonthIndex] = useState(() => getEnrDataMonth() - 1)
+  const [monthIndex, setMonthIndex] = useState(() => new Date().getMonth())
   const [quarter, setQuarter] = useState(() => Math.floor(new Date().getMonth() / 3) + 1)
   const [year, setYear] = useState(() => new Date().getFullYear())
   return { filter, setFilter, monthIndex, setMonthIndex, quarter, setQuarter, year, setYear }
 }
 
-function getEnrDataMonth() {
-  const sites = ENR_SITES || []
+function getEnrDataMonth(sites) {
+  if (!sites || !sites.length) return new Date().getMonth() + 1
   let maxMonth = 1
   sites.forEach(s => {
     if (s.latestDate) {
@@ -87,9 +87,13 @@ export default function EnrDetail() {
   const filterState = useEnrFilter()
   const [selectedSite, setSelectedSite] = useState(null)
   const { setPageTitle, clearTitle } = usePageTitle()
-  const maxDataMonth = getEnrDataMonth()
+  const { enrSites: enrSitesData, loading } = useEnergyData()
 
-  const sites = ENR_SITES || []
+  const ENR_SITES = enrSitesData?.ENR_SITES || []
+  const sites = ENR_SITES
+  const maxDataMonth = getEnrDataMonth(sites)
+
+  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement EnR...</span></div>
 
   useEffect(() => {
     if (selectedSite !== null && sites[selectedSite]) {

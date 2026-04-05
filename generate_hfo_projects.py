@@ -41,9 +41,13 @@ def status_from_days(day_to_go, ecart):
     return "en_cours"
 
 
-def generate():
-    df = pd.read_excel(FILE, header=1)
+def build_hfo_projects():
+    """Build and return HFO projects data dict (for API use). Returns {"HFO_PROJECTS": {...}}."""
+    import os
+    if not os.path.exists(FILE):
+        return {"HFO_PROJECTS": {"total": 0, "overhauls": 0, "urgents": 0, "enCours": 0, "termines": 0, "sites": [], "bySite": {}, "projects": []}}
 
+    df = pd.read_excel(FILE, header=1)
     projects = []
     for _, row in df.iterrows():
         site = str(row.get("SITE", "")).strip()
@@ -61,29 +65,28 @@ def generate():
         if not site or site == "nan" or not projet or projet == "nan":
             continue
 
-        # Parse dates
         dl_init_str = None
         if pd.notna(dl_init):
             if isinstance(dl_init, str) and not dl_init[:4].isdigit():
-                dl_init_str = dl_init  # Keep text like "Projet en cours de validation"
+                dl_init_str = dl_init
             else:
                 try:
                     dl_init_str = pd.Timestamp(dl_init).strftime("%Y-%m-%d")
-                except:
+                except Exception:
                     dl_init_str = str(dl_init)
 
         dl_revu_str = None
         if pd.notna(dl_revu):
             try:
                 dl_revu_str = pd.Timestamp(dl_revu).strftime("%Y-%m-%d")
-            except:
+            except Exception:
                 dl_revu_str = str(dl_revu)
 
         date_exec_str = None
         if pd.notna(date_exec):
             try:
                 date_exec_str = pd.Timestamp(date_exec).strftime("%Y-%m-%d")
-            except:
+            except Exception:
                 date_exec_str = str(date_exec)
 
         moteur_str = str(moteur).strip() if pd.notna(moteur) else None
@@ -94,22 +97,15 @@ def generate():
         status = status_from_days(dtg_val, ecart_val)
 
         projects.append({
-            "site": site,
-            "projet": projet,
-            "moteur": moteur_str,
-            "categorie": cat,
-            "status": status,
-            "dlInit": dl_init_str,
-            "dlRevu": dl_revu_str,
-            "dateExec": date_exec_str,
-            "ecartJours": ecart_val,
-            "dayToGo": dtg_val,
+            "site": site, "projet": projet, "moteur": moteur_str,
+            "categorie": cat, "status": status,
+            "dlInit": dl_init_str, "dlRevu": dl_revu_str, "dateExec": date_exec_str,
+            "ecartJours": ecart_val, "dayToGo": dtg_val,
             "commentaire": commentaire if commentaire != "nan" else None,
             "action": action if action != "nan" else None,
             "resp": resp if resp != "nan" else None,
         })
 
-    # Summary stats
     sites = sorted(set(p["site"] for p in projects))
     by_site = {}
     for s in sites:
@@ -121,33 +117,27 @@ def generate():
             "enCours": sum(1 for p in sp if p["status"] == "en_cours"),
         }
 
-    total = len(projects)
-    overhauls = sum(1 for p in projects if p["categorie"] == "overhaul")
-    urgents = sum(1 for p in projects if p["status"] == "urgent")
-    en_cours = sum(1 for p in projects if p["status"] == "en_cours")
-    termines = sum(1 for p in projects if p["status"] == "termine")
-
     data = {
-        "total": total,
-        "overhauls": overhauls,
-        "urgents": urgents,
-        "enCours": en_cours,
-        "termines": termines,
-        "sites": sites,
-        "bySite": by_site,
-        "projects": projects,
+        "total": len(projects),
+        "overhauls": sum(1 for p in projects if p["categorie"] == "overhaul"),
+        "urgents": sum(1 for p in projects if p["status"] == "urgent"),
+        "enCours": sum(1 for p in projects if p["status"] == "en_cours"),
+        "termines": sum(1 for p in projects if p["status"] == "termine"),
+        "sites": sites, "bySite": by_site, "projects": projects,
     }
+    return {"HFO_PROJECTS": data}
+
+
+def generate():
+    result = build_hfo_projects()
+    data = result["HFO_PROJECTS"]
 
     js = f"// Auto-generated from HFO projects xlsx\nconst HFO_PROJECTS = {json.dumps(data, ensure_ascii=False, default=str)};\n"
-
     with open("hfo_projects.js", "w", encoding="utf-8") as f:
         f.write(js)
 
-    print(f"Generated hfo_projects.js ({len(js)} bytes)")
-    print(f"  {total} projects, {overhauls} overhauls, {urgents} urgent, {en_cours} en cours, {termines} terminés")
-    print(f"  Sites: {', '.join(sites)}")
-    for s, v in by_site.items():
-        print(f"    {s}: {v['total']} projets ({v['overhaul']} OH, {v['urgent']} urgent)")
+    print(f"Generated hfo_projects.js")
+    print(f"  {data['total']} projects, {data['urgents']} urgent, {data['enCours']} en cours, {data['termines']} terminés")
 
 
 if __name__ == "__main__":

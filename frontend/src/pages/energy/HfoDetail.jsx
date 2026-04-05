@@ -1,9 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useFilters } from '../../hooks/useFilters'
 import { usePageTitle } from '../../context/PageTitleContext'
+import { useEnergyData } from '../../hooks/useEnergyData'
 import HfoSite from './HfoSite'
-import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
-import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, formatDateFR, MONTH_SHORT } from '../../utils/projects'
 
 function mapFilter(f) {
@@ -47,13 +46,13 @@ const DEFAULT_SITES = {
 }
 
 // Merge live data
-function buildSiteData() {
+function buildSiteData(hfoSites) {
   const sites = { ...DEFAULT_SITES }
   const liveMap = {
-    tamatave: TAMATAVE_LIVE,
-    diego: DIEGO_LIVE,
-    majunga: MAJUNGA_LIVE,
-    tulear: TULEAR_LIVE,
+    tamatave: hfoSites?.TAMATAVE_LIVE,
+    diego: hfoSites?.DIEGO_LIVE,
+    majunga: hfoSites?.MAJUNGA_LIVE,
+    tulear: hfoSites?.TULEAR_LIVE,
   }
   for (const [key, live] of Object.entries(liveMap)) {
     if (live && sites[key]) {
@@ -113,8 +112,12 @@ function calcGenSfoc(g) {
 export default function HfoDetail() {
   const { currentFilter, setFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
   const { setPageTitle } = usePageTitle()
+  const { hfoSites, hfoProjects: hfoProjectsData, loading } = useEnergyData()
+  const HFO_PROJECTS = hfoProjectsData?.HFO_PROJECTS || { projects: [] }
   const [selectedSite, setSelectedSite] = useState(null)
   const [projectFilter, setProjectFilter] = useState(null) // { type: 'site'|'cat', key: string }
+
+  if (loading) return <div className="e-loading"><div className="e-spinner" /><span>Chargement HFO...</span></div>
 
   // Update banner title based on current view
   useEffect(() => {
@@ -126,7 +129,7 @@ export default function HfoDetail() {
     return () => setPageTitle(null)
   }, [selectedSite, setPageTitle])
 
-  const siteData = useMemo(() => buildSiteData(), [])
+  const siteData = useMemo(() => buildSiteData(hfoSites), [hfoSites])
 
   // Compute total production across active sites for share calculation
   const { totalProdAll, activeSites } = useMemo(() => {
