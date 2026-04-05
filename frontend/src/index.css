@@ -170,6 +170,7 @@ body::-webkit-scrollbar { display: none; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes scrollMotif { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes loginMotifScroll { from { transform: translate(0, 0); } to { transform: translate(-25%, -33.33%); } }
 @keyframes slideRight { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
 
 @keyframes neonPulse {
@@ -669,22 +670,24 @@ body::-webkit-scrollbar { display: none; }
   cursor: not-allowed;
 }
 
-/* Mobile sub-options — fixed, centered vertically, left of sidebar */
+/* Mobile sub-options — fixed, centered, above sidebar for easy tap access */
 .filter-sub-mobile {
   position: fixed;
-  right: 84px; /* sidebar 72px + 12px gap */
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3x4 for months */
-  gap: 6px;
-  padding: 10px;
-  background: rgba(8,11,24,0.97);
-  border: 1px solid rgba(0,171,99,0.2);
-  border-radius: 14px;
-  z-index: 960;
-  max-height: 90vh;
+  gap: 8px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid rgba(0,171,99,0.3);
+  border-radius: 16px;
+  z-index: 980;
+  max-height: 80vh;
+  max-width: 85vw;
   overflow-y: auto;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.6);
 }
 /* Quarters: 2x2 grid */
 .filter-sub-mobile.sub-quarters {

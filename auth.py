@@ -15,6 +15,9 @@ JWT_EXPIRATION_HOURS = 8
 
 ROLE_HIERARCHY = {"super_admin": 3, "admin": 2, "utilisateur": 1}
 
+# Comptes spéciaux : username = acronyme, pas prenom.nom
+SPECIAL_USERNAMES = {"pmo", "cpo", "dg"}
+
 
 class AuthError(Exception):
     pass
@@ -96,9 +99,11 @@ def can_manage(actor_role, target_role):
     return ROLE_HIERARCHY.get(actor_role, 0) > ROLE_HIERARCHY.get(target_role, 0)
 
 
-def create_user(first_name, last_name, email, display_name, role, sections):
-    """Create a user account without PIN — user sets PIN on first login."""
-    username = generate_username(first_name, last_name)
+def create_user(first_name, last_name, email, display_name, role, sections, username_override=None):
+    """Create a user account without PIN — user sets PIN on first login.
+    username_override: for special accounts (pmo, cpo, dg) that don't use prenom.nom.
+    """
+    username = username_override if username_override else generate_username(first_name, last_name)
     conn = _get_conn()
     try:
         cur = conn.execute(
@@ -380,10 +385,22 @@ def get_login_history(username=None, limit=100):
     return result
 
 
-def seed_pmo():
-    """Create the default super_admin account if no users exist."""
+def seed_defaults():
+    """Create default accounts if they don't exist: PMO, DG, CPO."""
     conn = _get_conn()
-    count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    existing = {r[0] for r in conn.execute("SELECT username FROM users").fetchall()}
     conn.close()
-    if count == 0:
-        create_user_with_pin("pmo", "2618", "PMO", "super_admin", ["*"])
+
+    defaults = [
+        # (username, pin, display_name, role, sections)
+        ("pmo", "2618", "PMO", "super_admin", ["*"]),
+        ("dg",  "2618", "DG",  "super_admin", ["*"]),
+        ("cpo", "2618", "CPO", "admin",       ["*"]),
+    ]
+    for username, pin, display_name, role, sections in defaults:
+        if username not in existing:
+            create_user_with_pin(username, pin, display_name, role, sections)
+
+
+# Keep backward compat alias
+seed_pmo = seed_defaults

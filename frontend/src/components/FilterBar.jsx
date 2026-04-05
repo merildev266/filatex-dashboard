@@ -57,7 +57,7 @@ export default function FilterBar({ current, onChange }) {
     return () => window.removeEventListener('scroll', close)
   }, [isOpen])
 
-  // Close sub-dropdown on outside click
+  // Close sub-dropdown on outside click (desktop + mobile)
   useEffect(() => {
     if (!subOpen) return
     const close = (e) => {
@@ -66,8 +66,8 @@ export default function FilterBar({ current, onChange }) {
       const inMobile = mobileSubRef.current && mobileSubRef.current.contains(e.target)
       if (!inDesktop && !inMobile) setSubOpen(null)
     }
-    document.addEventListener('mousedown', close)
-    return () => document.removeEventListener('mousedown', close)
+    document.addEventListener('pointerdown', close)
+    return () => document.removeEventListener('pointerdown', close)
   }, [subOpen])
 
   const handleSelect = (key) => {

@@ -10,6 +10,29 @@ import auth
 from functools import wraps
 
 app = Flask(__name__, static_folder=".", static_url_path="")
+
+# CORS for Vite dev server
+@app.after_request
+def add_cors(response):
+    origin = request.headers.get("Origin", "")
+    if origin.startswith("http://localhost:"):
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    return response
+
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        from flask import make_response
+        resp = make_response()
+        origin = request.headers.get("Origin", "")
+        if origin.startswith("http://localhost:"):
+            resp.headers["Access-Control-Allow-Origin"] = origin
+            resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+            resp.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        return resp
+
 auth.init_db()
 auth.seed_pmo()
 
@@ -92,6 +115,12 @@ def _find_latest_sheet(wb):
             if latest is None or num > latest:
                 latest = num
     return f"S{latest:02d}" if latest else None
+
+
+@app.route("/api/health")
+def api_health():
+    """Health check — used by frontend to detect if server is running."""
+    return jsonify({"ok": True, "version": "2.0"})
 
 
 @app.route("/")
@@ -328,10 +357,15 @@ def admin_create_user():
     # Only super_admin can create admin
     if new_role == "super_admin":
         return jsonify({"error": "Impossible de creer un super administrateur"}), 403
+    # Special accounts (pmo, cpo, dg) use explicit username
+    username_override = data.get("username_override", "").strip().lower() or None
+    if username_override and username_override not in auth.SPECIAL_USERNAMES:
+        return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
     try:
         user_id = auth.create_user(
             data["first_name"], data["last_name"], data.get("email", ""),
-            data["display_name"], data["role"], data["sections"]
+            data["display_name"], data["role"], data["sections"],
+            username_override=username_override,
         )
         return jsonify({"id": user_id}), 201
     except auth.AuthError as e:
