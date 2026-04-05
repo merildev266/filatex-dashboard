@@ -47,6 +47,7 @@ export default function FilterBar({ current, onChange }) {
   const [isOpen, setIsOpen] = useState(false)
   const [subOpen, setSubOpen] = useState(null) // 'M' | 'Q' | 'A' | null
   const subRef = useRef(null)
+  const mobileSubRef = useRef(null)
   const { selectedMonthIndex, selectedQuarter, selectedYear, setMonth, setQuarter, setYear } = useFilters()
 
   useEffect(() => {
@@ -60,7 +61,10 @@ export default function FilterBar({ current, onChange }) {
   useEffect(() => {
     if (!subOpen) return
     const close = (e) => {
-      if (subRef.current && !subRef.current.contains(e.target)) setSubOpen(null)
+      // Check both desktop ref and mobile portal ref
+      const inDesktop = subRef.current && subRef.current.contains(e.target)
+      const inMobile = mobileSubRef.current && mobileSubRef.current.contains(e.target)
+      if (!inDesktop && !inMobile) setSubOpen(null)
     }
     document.addEventListener('mousedown', close)
     return () => document.removeEventListener('mousedown', close)
@@ -182,8 +186,11 @@ export default function FilterBar({ current, onChange }) {
                 {/* Mobile sub-options — grid, positioned relative to this item */}
                 {subOpen === opt.key && opt.key !== 'J-1' && (
                   <div
+                    ref={mobileSubRef}
                     className={`filter-sub-mobile ${opt.key === 'Q' ? 'sub-quarters' : opt.key === 'A' ? 'sub-years' : ''}`}
                     onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
                   >
                     {renderSubDropdown(opt.key)}
                   </div>
