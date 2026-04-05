@@ -444,6 +444,13 @@ body::-webkit-scrollbar { display: none; }
   justify-self: center;
 }
 
+/* Login inputs — same bg as .card */
+.login-card {
+  background: #000000;
+  border: 1px solid var(--card-border);
+}
+[data-theme="light"] .login-card { background: #e4f4fd; }
+
 .card {
   position: relative;
   background: #000000;
