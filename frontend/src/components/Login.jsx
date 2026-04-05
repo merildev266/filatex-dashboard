@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
+import { useTheme } from '../context/ThemeContext'
 import GroupeFilatexLogo from './GroupeFilatexLogo'
+import ThemeToggle from './ThemeToggle'
 import { prefetchAllPages } from '../App'
 
-const MOTIF_SRC = import.meta.env.BASE_URL + 'logos/motif-dark.svg'
+const MOTIF_BASE = import.meta.env.BASE_URL + 'logos'
 
 const PIN_LENGTH = [4, 6]
 
@@ -18,6 +20,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const { login, setPin: apiSetPin } = useAuth()
   const navigate = useNavigate()
+  const { theme } = useTheme()
+  const motifSrc = theme === 'dark' ? `${MOTIF_BASE}/motif-dark.svg` : `${MOTIF_BASE}/motif-light.svg`
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -66,10 +70,10 @@ export default function Login() {
     return (
       <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
         {/* Motif — identique à l'accueil */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
           <div style={{
             width: '100%', height: '100%',
-            backgroundImage: `url(${MOTIF_SRC})`,
+            backgroundImage: `url(${motifSrc})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -133,17 +137,16 @@ export default function Login() {
 
   return (
     <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
-      {/* Scrolling motif — two images side by side for seamless horizontal loop */}
-      <div style={{
-        position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
-      }}>
+      {/* Motif — identique à l'accueil */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
         <div style={{
-          display: 'flex', height: '100%',
-          animation: 'loginMotifScroll 40s linear infinite',
-        }}>
-          <img src={MOTIF_SRC} alt="" style={{ height: '100%', width: 'auto', flexShrink: 0 }} />
-          <img src={MOTIF_SRC} alt="" style={{ height: '100%', width: 'auto', flexShrink: 0 }} />
-        </div>
+          width: '100%', height: '100%',
+          backgroundImage: `url(${motifSrc})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 1,
+        }} />
       </div>
       <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10">
         <div className="flex justify-center mb-2">
@@ -193,6 +196,10 @@ export default function Login() {
           <div className="mt-4 text-[#ff5a5a] text-sm">{error}</div>
         )}
       </form>
+      {/* Theme toggle — fixed bottom left like dashboard */}
+      <div style={{ position: 'fixed', bottom: 16, left: 16, zIndex: 100 }}>
+        <ThemeToggle />
+      </div>
     </div>
   )
 }
