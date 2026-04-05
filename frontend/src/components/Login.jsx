@@ -70,13 +70,14 @@ export default function Login() {
           position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
         }}>
           <div style={{
-            position: 'absolute', top: '-100%', left: '-50%',
-            width: '200%', height: '300%',
+            position: 'absolute', top: '-50%', left: '-50%',
+            width: '200%', height: '200%',
             backgroundImage: `url(${MOTIF_SRC})`,
-            backgroundSize: '600px',
-            backgroundRepeat: 'repeat',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             opacity: 1,
-            animation: 'loginMotifScroll 60s linear infinite',
+            animation: 'loginMotifScroll 80s linear infinite',
           }} />
         </div>
         <form onSubmit={handleSetPin} className="w-[88%] max-w-[400px] text-center relative z-10">
@@ -141,13 +142,14 @@ export default function Login() {
         position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
       }}>
         <div style={{
-          position: 'absolute', top: '-100%', left: '-50%',
-          width: '200%', height: '300%',
+          position: 'absolute', top: '-50%', left: '-50%',
+          width: '200%', height: '200%',
           backgroundImage: `url(${MOTIF_SRC})`,
-          backgroundSize: '600px',
-          backgroundRepeat: 'repeat',
-          opacity: 0.06,
-          animation: 'loginMotifScroll 60s linear infinite',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 1,
+          animation: 'loginMotifScroll 80s linear infinite',
         }} />
       </div>
       <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10">
