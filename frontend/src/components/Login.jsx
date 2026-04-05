@@ -75,7 +75,7 @@ export default function Login() {
             backgroundImage: `url(${MOTIF_SRC})`,
             backgroundSize: '600px',
             backgroundRepeat: 'repeat',
-            opacity: 0.06,
+            opacity: 1,
             animation: 'loginMotifScroll 60s linear infinite',
           }} />
         </div>
@@ -83,12 +83,6 @@ export default function Login() {
           <div className="flex justify-center mb-2">
             <GroupeFilatexLogo style={{ width: '280px', maxWidth: '80vw', height: 'auto' }} />
           </div>
-          <p
-            className="text-[rgba(255,255,255,0.5)] mb-1"
-            style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 'clamp(18px, 4.5vw, 24px)', fontWeight: 300 }}
-          >
-            Building the Future
-          </p>
           <div
             className="text-[rgba(255,255,255,0.45)] uppercase mb-6"
             style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 11, fontWeight: 400, letterSpacing: '0.35em' }}
@@ -157,16 +151,9 @@ export default function Login() {
         }} />
       </div>
       <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10">
-        {/* Logo + tagline */}
         <div className="flex justify-center mb-2">
           <GroupeFilatexLogo style={{ width: '280px', maxWidth: '80vw', height: 'auto' }} />
         </div>
-        <p
-          className="text-[rgba(255,255,255,0.5)] mb-1"
-          style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 'clamp(18px, 4.5vw, 24px)', fontWeight: 300 }}
-        >
-          Building the Future
-        </p>
         <div
           className="text-[rgba(255,255,255,0.45)] uppercase mb-10"
           style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 11, fontWeight: 400, letterSpacing: '0.35em' }}
