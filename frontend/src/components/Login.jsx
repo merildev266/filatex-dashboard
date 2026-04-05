@@ -82,7 +82,7 @@ export default function Login() {
         </div>
         <form onSubmit={handleSetPin} className="w-[88%] max-w-[400px] text-center relative z-10">
           <div className="flex justify-center mb-2">
-            <GroupeFilatexLogo style={{ width: '280px', maxWidth: '80vw', height: 'auto' }} />
+            <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
           </div>
           <div
             className="text-[rgba(255,255,255,0.45)] uppercase mb-6"
@@ -150,7 +150,7 @@ export default function Login() {
       </div>
       <form onSubmit={handleLogin} className="w-[88%] max-w-[400px] text-center relative z-10">
         <div className="flex justify-center mb-2">
-          <GroupeFilatexLogo style={{ width: '280px', maxWidth: '80vw', height: 'auto' }} />
+          <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
         </div>
         <div
           className="text-[rgba(255,255,255,0.45)] uppercase mb-10"
@@ -195,8 +195,8 @@ export default function Login() {
           <div className="mt-4 text-[#ff5a5a] text-sm">{error}</div>
         )}
       </form>
-      {/* Theme toggle — fixed bottom left like dashboard */}
-      <div style={{ position: 'fixed', bottom: 16, left: 16, zIndex: 100 }}>
+      {/* Theme toggle — fixed bottom right like dashboard */}
+      <div style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 100 }}>
         <ThemeToggle />
       </div>
     </div>
