@@ -104,7 +104,7 @@ export default function Login() {
             autoFocus
             className="w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
                        tracking-[0.5em] transition-colors mb-3"
-            style={{ background: '#0d1020', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "'Aeonik', sans-serif" }}
+            style={{ background: 'var(--card)', border: '1px solid var(--card-border)', fontFamily: "'Aeonik', sans-serif" }}
           />
           <input
             type="password"
@@ -116,14 +116,14 @@ export default function Login() {
             placeholder="Confirmer le PIN"
             className="w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
                        tracking-[0.5em] transition-colors mb-4"
-            style={{ background: '#0d1020', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "'Aeonik', sans-serif" }}
+            style={{ background: 'var(--card)', border: '1px solid var(--card-border)', fontFamily: "'Aeonik', sans-serif" }}
           />
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-2xl px-5 py-4 text-[var(--text)] text-sm uppercase tracking-wider
                        transition-colors cursor-pointer disabled:opacity-50"
-            style={{ background: '#0d1020', border: '1px solid rgba(255,255,255,0.1)', fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.2em' }}
+            style={{ background: 'var(--card)', border: '1px solid var(--card-border)', fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.2em' }}
           >
             {loading ? 'Enregistrement...' : 'Valider'}
           </button>
@@ -172,7 +172,7 @@ export default function Login() {
           autoComplete="username"
           className="w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
                      transition-colors mb-3"
-          style={{ background: '#0d1020', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "'Aeonik', sans-serif" }}
+          style={{ background: 'var(--card)', border: '1px solid var(--card-border)', fontFamily: "'Aeonik', sans-serif" }}
         />
         <input
           type="password"
@@ -185,14 +185,14 @@ export default function Login() {
           autoComplete="current-password"
           className="w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
                      tracking-[0.5em] transition-colors mb-4"
-          style={{ background: '#0d1020', border: '1px solid rgba(255,255,255,0.08)', fontFamily: "'Aeonik', sans-serif" }}
+          style={{ background: 'var(--card)', border: '1px solid var(--card-border)', fontFamily: "'Aeonik', sans-serif" }}
         />
         <button
           type="submit"
           disabled={loading}
           className="w-full rounded-2xl px-5 py-4 text-[var(--text)] text-sm uppercase tracking-wider
                      transition-colors cursor-pointer disabled:opacity-50"
-          style={{ background: '#0d1020', border: '1px solid rgba(255,255,255,0.1)', fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.2em' }}
+          style={{ background: 'var(--card)', border: '1px solid var(--card-border)', fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.2em' }}
         >
           {loading ? 'Connexion...' : 'Acceder'}
         </button>
