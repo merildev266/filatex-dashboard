@@ -483,10 +483,14 @@ body::-webkit-scrollbar { display: none; }
   max-width: 400px;
 }
 
-/* Mobile: logo descend de 7vh supplémentaires */
+/* Mobile: logo centré entre haut de page et haut des cartes */
 @media (max-width: 768px) {
-  .login-layout {
-    padding-top: 25vh;
+  .login-logo-block {
+    position: fixed;
+    top: 22%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
   }
 }
 
