@@ -472,27 +472,21 @@ body::-webkit-scrollbar { display: none; }
   padding-top: 6vh;
 }
 .login-logo-block {
-  flex-shrink: 0;
+  position: fixed;
+  top: 33%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
 }
 .login-form-block {
   position: fixed;
-  top: 50%;
+  bottom: 33%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 50%);
   width: 88%;
   max-width: 400px;
 }
 
-/* Mobile: logo centré entre haut de page et haut des cartes */
-@media (max-width: 768px) {
-  .login-logo-block {
-    position: fixed;
-    top: 22%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-  }
-}
 
 .card {
   position: relative;
