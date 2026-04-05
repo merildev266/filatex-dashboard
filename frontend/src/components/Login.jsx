@@ -80,9 +80,9 @@ export default function Login() {
             opacity: 1,
           }} />
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-between w-[88%] max-w-[400px]" style={{ height: '100vh', paddingTop: '6vh', paddingBottom: '6vh' }}>
+        <div className="relative z-10 flex flex-col items-center w-[88%] max-w-[400px] login-layout">
           {/* Logo block — top */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center login-logo-block">
             <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
             <div
               className="login-label uppercase mt-2"
@@ -92,8 +92,8 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Form block — bottom */}
-          <form onSubmit={handleSetPin} className="w-full text-center">
+          {/* Form block — vertically centered in remaining space */}
+          <form onSubmit={handleSetPin} className="w-full text-center login-form-block">
             <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6" style={{ fontFamily: "'Aeonik', sans-serif" }}>
               Definissez votre code PIN (4 ou 6 chiffres)
             </div>
@@ -153,9 +153,9 @@ export default function Login() {
           opacity: 1,
         }} />
       </div>
-      <div className="relative z-10 flex flex-col items-center justify-between w-[88%] max-w-[400px]" style={{ height: '100vh', paddingTop: '6vh', paddingBottom: '6vh' }}>
+      <div className="relative z-10 flex flex-col items-center w-[88%] max-w-[400px] login-layout">
         {/* Logo block — top */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center login-logo-block">
           <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
           <div
             className="login-label uppercase mt-2"
@@ -165,8 +165,8 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Form block — bottom */}
-        <form onSubmit={handleLogin} className="w-full text-center">
+        {/* Form block — vertically centered in remaining space */}
+        <form onSubmit={handleLogin} className="w-full text-center login-form-block">
           <input
             type="text"
             value={username}

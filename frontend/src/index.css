@@ -466,6 +466,26 @@ body::-webkit-scrollbar { display: none; }
   -webkit-text-fill-color: #3a395c !important;
 }
 
+/* Login page layout */
+.login-layout {
+  height: 100vh;
+  padding-top: 6vh;
+}
+.login-logo-block {
+  flex-shrink: 0;
+}
+.login-form-block {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Mobile: logo descend de 12vh */
+@media (max-width: 768px) {
+  .login-layout {
+    padding-top: 18vh;
+  }
+}
+
 .card {
   position: relative;
   background: #000000;
