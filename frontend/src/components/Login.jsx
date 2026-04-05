@@ -73,9 +73,8 @@ export default function Login() {
             position: 'absolute', top: '-50%', left: '-50%',
             width: '200%', height: '200%',
             backgroundImage: `url(${MOTIF_SRC})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
+            backgroundSize: '400px',
+            backgroundRepeat: 'repeat',
             opacity: 1,
             animation: 'loginMotifScroll 80s linear infinite',
           }} />
