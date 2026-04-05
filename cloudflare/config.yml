@@ -1,0 +1,14 @@
+# Cloudflare Tunnel configuration for Filatex Dashboard
+# Documentation: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
+
+# Tunnel UUID — will be filled after running: cloudflared tunnel create filatex-dashboard
+tunnel: TUNNEL_ID_HERE
+credentials-file: /home/user/.cloudflared/TUNNEL_ID_HERE.json
+
+ingress:
+  # Route all traffic to the local Flask server
+  - service: http://localhost:5000
+
+# Optional: enable logging
+# loglevel: info
+# logfile: /home/user/filatex-dashboard/cloudflare/tunnel.log
