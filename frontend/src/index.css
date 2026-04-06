@@ -563,13 +563,13 @@ body::-webkit-scrollbar { display: none; }
 
 /* Light mode: bleu glace cards + lighter hover bg */
 [data-theme="light"] .card { background: #e4f4fd; }
-[data-theme="light"] .card-energy:hover  { background: #d0f0e0; }
-[data-theme="light"] .card-invest:hover  { background: #fde8e0; }
-[data-theme="light"] .card-props:hover   { background: #fdf3d8; }
-[data-theme="light"] .card-capex:hover   { background: #e8e0f8; }
-[data-theme="light"] .card-csi:hover     { background: #d8eef8; }
-[data-theme="light"] .card-reporting:hover { background: #dce4f4; }
-[data-theme="light"] .card-finance:hover { background: #d0f0ea; }
+[data-theme="light"] .card-energy:hover  { background: #d0f0e0; box-shadow: 0 28px 80px rgba(0,171,99,0.15); }
+[data-theme="light"] .card-invest:hover  { background: #fde8e0; box-shadow: 0 28px 80px rgba(243,112,86,0.15); }
+[data-theme="light"] .card-props:hover   { background: #fdf3d8; box-shadow: 0 28px 80px rgba(253,184,35,0.12); }
+[data-theme="light"] .card-capex:hover   { background: #e8e0f8; box-shadow: 0 28px 80px rgba(94,76,159,0.15); }
+[data-theme="light"] .card-csi:hover     { background: #d8eef8; box-shadow: 0 28px 80px rgba(0,150,199,0.15); }
+[data-theme="light"] .card-reporting:hover { background: #dce4f4; box-shadow: 0 28px 80px rgba(66,106,179,0.15); }
+[data-theme="light"] .card-finance:hover { background: #d0f0ea; box-shadow: 0 28px 80px rgba(26,188,156,0.15); }
 
 .card-logo-wrap {
   display: flex;
