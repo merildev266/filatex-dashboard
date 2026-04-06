@@ -22,7 +22,7 @@ def generate():
             print(f"  {site_key}: No data found")
             continue
 
-        all_js += f"const {js_var} = {json.dumps(data, default=str)};\n"
+        all_js += f"export const {js_var} = {json.dumps(data, default=str)};\n"
 
         running = sum(1 for g in data["groupes"] if g["statut"] == "ok")
         print(f"  {site_key}: status={data['status']}, MW={data['mw']}, "
