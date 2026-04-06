@@ -3,7 +3,7 @@ Flask application serving the Filatex PMO Dashboard.
 Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
 """
-import os, re, openpyxl
+import os, re, subprocess, threading, time, openpyxl
 from flask import Flask, jsonify, request, send_from_directory
 from data_loader import build_tamatave_data
 import auth
@@ -259,6 +259,92 @@ def serve_react(path):
     if os.path.exists(os.path.join(dist_dir, path)):
         return send_from_directory(dist_dir, path)
     return send_from_directory(dist_dir, "index.html")
+
+
+# --- Data refresh ---
+
+# Track refresh state so we don't run multiple times concurrently
+_refresh_lock = threading.Lock()
+_refresh_status = {"running": False, "last_run": None, "last_error": None}
+
+GENERATE_SCRIPTS = [
+    "generate_data.py",
+    "generate_enr_data.py",
+    "generate_enr_projects.py",
+    "generate_hfo_projects.py",
+    "generate_capex.py",
+    "generate_reporting.py",
+    "generate_com_reporting.py",
+]
+
+
+import shutil
+
+# Map generated files at root → frontend/src/data/ destination
+_JS_COPY_MAP = {
+    "site_data.js": "frontend/src/data/site_data.js",
+    "enr_site_data.js": "frontend/src/data/enr_site_data.js",
+    "enr_projects_data.js": "frontend/src/data/enr_projects_data.js",
+    "hfo_projects.js": "frontend/src/data/hfo_projects.js",
+    "capex_generated.js": "frontend/src/data/capex_data.js",
+    "reporting_data.js": "frontend/src/data/reporting_data.js",
+}
+
+
+def _run_refresh():
+    """Run all generate_*.py scripts sequentially, then copy JS to frontend."""
+    root = os.path.dirname(os.path.abspath(__file__))
+    errors = []
+    for script in GENERATE_SCRIPTS:
+        path = os.path.join(root, script)
+        if not os.path.exists(path):
+            continue
+        try:
+            result = subprocess.run(
+                ["python", path],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            if result.returncode != 0:
+                errors.append(f"{script}: {result.stderr[:200]}")
+        except Exception as e:
+            errors.append(f"{script}: {e}")
+
+    # Copy generated JS files into frontend/src/data/
+    for src_name, dst_rel in _JS_COPY_MAP.items():
+        src = os.path.join(root, src_name)
+        dst = os.path.join(root, dst_rel)
+        if os.path.exists(src):
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(src, dst)
+
+    with _refresh_lock:
+        _refresh_status["running"] = False
+        _refresh_status["last_run"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        _refresh_status["last_error"] = "; ".join(errors) if errors else None
+
+
+@app.route("/api/refresh-data", methods=["POST"])
+@require_auth
+def api_refresh_data():
+    """Trigger regeneration of all *_data.js files from Excel sources."""
+    with _refresh_lock:
+        if _refresh_status["running"]:
+            return jsonify({"ok": True, "status": "already_running"})
+        _refresh_status["running"] = True
+    # Run in background thread so the login isn't blocked
+    threading.Thread(target=_run_refresh, daemon=True).start()
+    return jsonify({"ok": True, "status": "started"})
+
+
+@app.route("/api/refresh-data/status")
+@require_auth
+def api_refresh_status():
+    """Check status of data refresh."""
+    with _refresh_lock:
+        return jsonify(_refresh_status)
 
 
 # --- Auth endpoints ---
