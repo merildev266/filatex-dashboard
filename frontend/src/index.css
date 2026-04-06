@@ -509,6 +509,22 @@ body::-webkit-scrollbar { display: none; }
   }
 }
 
+/* Refresh button — next to theme toggle on desktop, centered above BottomNav on mobile */
+.refresh-btn-wrapper {
+  position: fixed;
+  bottom: 16px;
+  right: 56px;
+  z-index: 100;
+}
+@media (max-width: 768px) {
+  .refresh-btn-wrapper {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 64px;
+  }
+}
+
 .card {
   position: relative;
   background: #000000;

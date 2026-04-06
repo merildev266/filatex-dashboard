@@ -75,8 +75,8 @@ export default function Layout() {
       </div>
       <Outlet />
       <BottomNav />
-      {/* Refresh + Theme toggle — bottom right desktop, bottom left mobile */}
-      <div className="theme-toggle-wrapper" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {/* Refresh button — centered bottom on mobile, next to theme toggle on desktop */}
+      <div className="refresh-btn-wrapper">
         <button
           onClick={handleRefresh}
           disabled={refreshing}
@@ -98,6 +98,9 @@ export default function Layout() {
             <path d="M13.65 2.35A7.96 7.96 0 008 0a8 8 0 108 8h-2a6 6 0 11-1.76-4.24L10 6h6V0l-2.35 2.35z" fill="var(--text-dim)" />
           </svg>
         </button>
+      </div>
+      {/* Theme toggle */}
+      <div className="theme-toggle-wrapper">
         <ThemeToggle />
       </div>
     </div>
