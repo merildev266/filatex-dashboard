@@ -93,6 +93,15 @@ export function AuthProvider({ children }) {
     return fetch(`${API_BASE}${url}`, { ...options, headers })
   }, [state.token])
 
+  const refreshData = useCallback(async (token) => {
+    try {
+      await fetch(`${API_BASE}/api/refresh-data`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token || state.token}` },
+      })
+    } catch { /* server offline — ignore */ }
+  }, [state.token])
+
   const value = useMemo(() => ({
     isAuthenticated: state.isAuthenticated,
     user: state.user,
@@ -102,7 +111,8 @@ export function AuthProvider({ children }) {
     logout,
     hasAccess,
     authFetch,
-  }), [state, login, setPin, logout, hasAccess, authFetch])
+    refreshData,
+  }), [state, login, setPin, logout, hasAccess, authFetch, refreshData])
 
   return (
     <AuthContext.Provider value={value}>

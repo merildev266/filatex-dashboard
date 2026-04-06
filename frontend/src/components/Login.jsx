@@ -18,7 +18,7 @@ export default function Login() {
   const [confirmPin, setConfirmPin] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login, setPin: apiSetPin } = useAuth()
+  const { login, setPin: apiSetPin, refreshData } = useAuth()
   const navigate = useNavigate()
   const { theme } = useTheme()
   const motifSrc = theme === 'dark' ? `${MOTIF_BASE}/motif-dark.svg` : `${MOTIF_BASE}/motif-light.svg`
@@ -40,6 +40,8 @@ export default function Login() {
       setPin('')
       return
     }
+    // Trigger data refresh from Excel in background (non-blocking)
+    refreshData(result.token)
     prefetchAllPages()
     navigate('/')
   }
@@ -62,6 +64,7 @@ export default function Login() {
       setError(result.error)
       return
     }
+    refreshData()
     prefetchAllPages()
     navigate('/')
   }
