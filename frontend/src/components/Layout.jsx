@@ -61,8 +61,8 @@ export default function Layout() {
       </div>
       <Outlet />
       <BottomNav />
-      {/* Theme toggle — fixed bottom right */}
-      <div style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 100 }}>
+      {/* Theme toggle — bottom right desktop, bottom left mobile */}
+      <div className="theme-toggle-wrapper">
         <ThemeToggle />
       </div>
     </div>

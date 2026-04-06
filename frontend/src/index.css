@@ -494,6 +494,19 @@ body::-webkit-scrollbar { display: none; }
   }
 }
 
+/* Theme toggle — Layout (toutes pages sauf accueil) */
+.theme-toggle-wrapper {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 100;
+}
+@media (max-width: 768px) {
+  .theme-toggle-wrapper {
+    right: auto;
+    left: 16px;
+  }
+}
 
 .card {
   position: relative;
