@@ -131,11 +131,11 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
             Planifié
           </span>
           <span className="legend-item">
-            <span style={{ display:'inline-block', width:14, height:0, borderTop:'2px dashed #E05C5C', marginRight:4, verticalAlign:'middle' }} />
+            <span style={{ display:'inline-block', width:14, height:0, borderTop:'1px solid #00ab63', marginRight:4, verticalAlign:'middle' }} />
             Contrat
           </span>
           <span className="legend-item">
-            <span style={{ display:'inline-block', width:12, height:2, borderRadius:1, background:'#f37056', marginRight:4, verticalAlign:'middle' }} />
+            <span style={{ display:'inline-block', width:12, height:2, borderRadius:1, background:'#E05C5C', marginRight:4, verticalAlign:'middle' }} />
             Peak
           </span>
         </span>
@@ -182,9 +182,8 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
               <line
                 x1={padL} y1={y.toFixed(1)}
                 x2={W - padR} y2={y.toFixed(1)}
-                stroke="#E05C5C"
-                strokeWidth="1.5"
-                strokeDasharray="6,3"
+                stroke="#00ab63"
+                strokeWidth="1"
               />
               {/* Value label on Y axis */}
               <text
@@ -192,7 +191,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
                 textAnchor="end"
                 fontSize="8"
                 fontWeight="600"
-                fill="#E05C5C"
+                fill="#00ab63"
               >
                 {contratVal.toFixed(1)}
               </text>
@@ -272,7 +271,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           <path
             d={peakPath}
             fill="none"
-            stroke="#f37056"
+            stroke="#E05C5C"
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
@@ -280,7 +279,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
         {/* Peak Load dots */}
         {peakPoints.map((pt, idx) => (
           <g key={idx}>
-            <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r="2.5" fill="#080b18" stroke="#f37056" strokeWidth="1.2" />
+            <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r="2.5" fill="#080b18" stroke="#E05C5C" strokeWidth="1.2" />
           </g>
         ))}
 
