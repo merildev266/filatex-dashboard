@@ -435,8 +435,8 @@ def find_hfo_sheets(sheet_names):
         if m:
             results.append((int(m.group(1)), sn))
             continue
-        # Pattern 2: DD.MM.YYYY date format
-        m = re.match(r'^(\d{1,2})\.\d{2}\.\d{4}$', rest)
+        # Pattern 2: DD.MM.YYYY or DD.M.YYYY date format (Majunga)
+        m = re.match(r'^(\d{1,2})\.\d{1,2}\.\d{4}\s*$', rest)
         if m:
             results.append((int(m.group(1)), sn))
             continue
@@ -513,30 +513,36 @@ def parse_hfo_detail(xls, cfg):
         return {}
     use_time = hfo_cfg.get("time_format", False)
 
-    # ── Map DG columns from header row ──
+    # ── Map DG columns from header row (search nearby rows if needed) ──
     header_row = hfo_cfg["dg_header_row"]
-    if header_row >= len(df):
-        return {}
+    dr = hfo_cfg["data_start_row"]
 
     dg_col_map = {}  # "DG1" → column index
-    for col_idx in range(df.shape[1]):
-        val = df.iloc[header_row, col_idx]
-        if pd.notna(val):
-            s = str(val).strip().upper()
-            # Match DG1, DG2, ..., DG13 (ignore TOTAL, CUMMINS, etc.)
-            if s.startswith("DG") and len(s) <= 5:
-                try:
-                    dg_num = int(s[2:])
-                    dg_id = f"DG{dg_num}"
-                    dg_col_map[dg_id] = col_idx
-                except ValueError:
-                    pass
+    search_rows = [header_row] + [header_row + d for d in range(-5, 6) if d != 0]
+    for try_row in search_rows:
+        if try_row < 0 or try_row >= len(df):
+            continue
+        for col_idx in range(df.shape[1]):
+            val = df.iloc[try_row, col_idx]
+            if pd.notna(val):
+                s = str(val).strip().upper()
+                # Match DG1, DG2, ..., DG13 (ignore TOTAL, CUMMINS, etc.)
+                if s.startswith("DG") and len(s) <= 5:
+                    try:
+                        dg_num = int(s[2:])
+                        dg_id = f"DG{dg_num}"
+                        dg_col_map[dg_id] = col_idx
+                    except ValueError:
+                        pass
+        if dg_col_map:
+            # Adjust data_start offset by the same delta
+            row_delta = try_row - header_row
+            if row_delta != 0:
+                dr = dr + row_delta
+            break
 
     if not dg_col_map:
         return {}
-
-    # ── Data rows (offsets from data_start_row) ──
-    dr = hfo_cfg["data_start_row"]
     has_condition = hfo_cfg.get("has_condition_row", True)
 
     # Use configurable row_offsets if provided, else defaults
@@ -703,18 +709,31 @@ def collect_daily_dg_metrics(xls, cfg):
 
         # Build DG col map once from first valid sheet
         if not dg_col_map:
-            for col_idx in range(df.shape[1]):
-                val = df.iloc[dg_header_row, col_idx] if dg_header_row < len(df) else None
-                if pd.notna(val):
-                    s = str(val).strip().upper()
-                    if s.startswith("DG") and len(s) <= 5:
-                        try:
-                            dg_num = int(s[2:])
-                            dg_id = f"DG{dg_num}"
-                            dg_col_map[dg_id] = col_idx
-                            result[dg_id] = {m: [0.0] * 31 for m in DAILY_EXTRACT_METRICS}
-                        except ValueError:
-                            pass
+            # Try configured row first, then search nearby rows (+/- 5)
+            search_rows = [dg_header_row] + [dg_header_row + d for d in range(-5, 6) if d != 0]
+            found_row = None
+            for try_row in search_rows:
+                if try_row < 0 or try_row >= len(df):
+                    continue
+                for col_idx in range(df.shape[1]):
+                    val = df.iloc[try_row, col_idx] if try_row < len(df) else None
+                    if pd.notna(val):
+                        s = str(val).strip().upper()
+                        if s.startswith("DG") and len(s) <= 5:
+                            try:
+                                dg_num = int(s[2:])
+                                dg_id = f"DG{dg_num}"
+                                dg_col_map[dg_id] = col_idx
+                                result[dg_id] = {m: [0.0] * 31 for m in DAILY_EXTRACT_METRICS}
+                                found_row = try_row
+                            except ValueError:
+                                pass
+                if dg_col_map:
+                    # Adjust data_start offset by the same delta
+                    row_delta = found_row - dg_header_row
+                    if row_delta != 0:
+                        data_start = data_start + row_delta
+                    break
             if not dg_col_map:
                 return {}, 0
 
