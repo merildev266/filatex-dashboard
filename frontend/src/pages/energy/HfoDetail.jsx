@@ -121,21 +121,24 @@ function fmtEngineName(g) {
 
 export default function HfoDetail() {
   const { currentFilter, setFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
-  const { setPageTitle } = usePageTitle()
+  const { setPageTitle, setBackOverride } = usePageTitle()
   const [selectedSite, setSelectedSite] = useState(null)
   const [projectFilter, setProjectFilter] = useState(null) // { type: 'site'|'cat', key: string }
 
-  // Update banner title based on current view
+  // Update banner title + back button based on current view
   useEffect(() => {
     if (selectedSite === 'vestop') {
       setPageTitle('VESTOP')
+      setBackOverride({ label: 'HFO', onClick: () => setSelectedSite(null) })
     } else if (selectedSite) {
       setPageTitle(selectedSite.charAt(0).toUpperCase() + selectedSite.slice(1))
+      setBackOverride({ label: 'HFO', onClick: () => setSelectedSite(null) })
     } else {
-      setPageTitle(null) // fallback to default "HFO"
+      setPageTitle(null)
+      setBackOverride(null)
     }
-    return () => setPageTitle(null)
-  }, [selectedSite, setPageTitle])
+    return () => { setPageTitle(null); setBackOverride(null) }
+  }, [selectedSite, setPageTitle, setBackOverride])
 
   const siteData = useMemo(() => buildSiteData(), [])
 
@@ -573,17 +576,20 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
     return months
   }, [s])
 
-  // Update banner when generator is selected
+  // Update banner + back button when generator is selected
+  const { setBackOverride } = usePageTitle()
   useEffect(() => {
+    const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
     if (selectedGenerator != null) {
       const g = (s.groupes || [])[selectedGenerator]
-      const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
       setPageTitle(`${siteName} — ${g ? fmtEngineName(g) : ''}`)
+      setBackOverride({ label: siteName, onClick: () => setSelectedGenerator(null) })
     } else {
-      const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
       setPageTitle(siteName)
+      // Restore "HFO" back button when returning from generator detail
+      setBackOverride({ label: 'HFO', onClick: () => onClose() })
     }
-  }, [selectedGenerator, siteId, s, setPageTitle])
+  }, [selectedGenerator, siteId, s, setPageTitle, setBackOverride])
 
   // If a generator is selected, show its detail panel
   // selectedGenerator is now an index (not id) to handle Majunga's duplicate "Vestop" ids

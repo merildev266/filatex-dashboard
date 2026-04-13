@@ -14,7 +14,7 @@ import { usePageTitle } from '../context/PageTitleContext'
 export default function SectionLayout({ name, color, basePath, headerRight, pageNames }) {
   const navigate = useNavigate()
   const location = useLocation()
-  const { pageTitle } = usePageTitle()
+  const { pageTitle, backOverride } = usePageTitle()
   const isRoot = location.pathname === basePath
 
   // Dynamic page title: child components can override via usePageTitle
@@ -28,8 +28,9 @@ export default function SectionLayout({ name, color, basePath, headerRight, page
     return name
   })()
 
-  const backLabel = isRoot ? 'Accueil' : name
-  const handleBack = () => isRoot ? navigate('/') : navigate(basePath)
+  // Back button: child components can override via setBackOverride({ label, onClick })
+  const backLabel = backOverride?.label || (isRoot ? 'Accueil' : name)
+  const handleBack = backOverride?.onClick || (() => isRoot ? navigate('/') : navigate(basePath))
 
   return (
     <div data-section={basePath.replace('/', '')} style={{ background: 'var(--dark)', minHeight: '100dvh' }}>
