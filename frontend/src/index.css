@@ -945,14 +945,12 @@ body::-webkit-scrollbar { display: none; }
 [data-theme="light"] .props-kpi-card,
 [data-theme="light"] .com-obj-card,
 [data-theme="light"] .gd-arret-banner,
-[data-theme="light"] .gd-chart-card,
 [data-theme="light"] .gd-kpi-card,
-[data-theme="light"] .gd-metric-card,
 [data-theme="light"] .hfo-kpi-card,
 [data-theme="light"] .puiss-hebdo-chart { background:#e4f4fd; }
 
 /* ── Section pole border colors on all cards ── */
-[data-section="energy"] .unified-card, [data-section="energy"] .s1-card, [data-section="energy"] .capex-section-card, [data-section="energy"] .glass-card, [data-section="energy"] .gd-arret-banner, [data-section="energy"] .gd-chart-card, [data-section="energy"] .enrp-kbox, [data-section="energy"] .enrp-card, [data-section="energy"] .gd-kpi-card, [data-section="energy"] .gd-metric-card, [data-section="energy"] .hfo-kpi-card, [data-section="energy"] .puiss-hebdo-chart { border-color: #00ab63; }
+[data-section="energy"] .unified-card, [data-section="energy"] .s1-card, [data-section="energy"] .capex-section-card, [data-section="energy"] .glass-card, [data-section="energy"] .gd-arret-banner, [data-section="energy"] .enrp-kbox, [data-section="energy"] .enrp-card, [data-section="energy"] .gd-kpi-card, [data-section="energy"] .hfo-kpi-card, [data-section="energy"] .puiss-hebdo-chart { border-color: #00ab63; }
 [data-section="investments"] .unified-card, [data-section="investments"] .s1-card, [data-section="investments"] .capex-section-card { border-color: #f37056; }
 [data-section="properties"] .unified-card, [data-section="properties"] .s1-card, [data-section="properties"] .props-kpi-card, [data-section="properties"] .com-obj-card { border-color: #FDB823; }
 [data-section="finance"] .unified-card, [data-section="finance"] .s1-card, [data-section="finance"] .card-finance { border-color: #1abc9c; }
@@ -1120,9 +1118,6 @@ body::-webkit-scrollbar { display: none; }
 .gd-arret-condition{
   font-size:10px;color:var(--text-muted);
 }
-.gd-arret-reason{
-  font-size:9px;color:var(--text-dim);margin-top:3px;
-}
 
 /* ────────────────────────────────────────────────────────────
    HFO unified KPI grid (HfoKpiGrid) — used at every HFO level
@@ -1185,11 +1180,6 @@ body::-webkit-scrollbar { display: none; }
   letter-spacing:0.02em;
 }
 .hfo-kpi-sep{color:var(--text-dim);margin:0 2px;}
-.hfo-kpi-contrat-split{
-  display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;
-}
-.hfo-kpi-prov-enelec{color:rgba(0,171,99,0.85);}
-.hfo-kpi-prov-vestop{color:#5aafaf;}
 
 /* ────────────────────────────────────────────────────────────
    Puissance hebdomadaire chart
@@ -1221,57 +1211,6 @@ body::-webkit-scrollbar { display: none; }
 }
 .puiss-hebdo-legend .swatch-peak{background:#f37056;}
 
-/* Chart card */
-.gd-chart-card{
-  background:#000000;border:1px solid var(--card-border);
-  border-radius:20px;padding:clamp(10px,1.4vw,16px);
-  margin-bottom:14px;
-  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
-  position:relative;z-index:1;
-}
-.gd-chart-title{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:8px;font-size:clamp(9px,0.8vw,11px);color:var(--text-muted);
-}
-.gd-chart-peak{
-  font-size:clamp(9px,0.8vw,11px);color:var(--text-muted);
-}
-.gd-chart-peak strong{font-weight:400;}
-
-/* Metric cards (combustible, huile) */
-.gd-metrics-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;
-}
-.gd-metrics-grid-4{grid-template-columns:repeat(4,1fr);}
-@media(max-width:767px){
-  .gd-metrics-grid{grid-template-columns:repeat(2,1fr);}
-  .gd-metrics-grid-4{grid-template-columns:repeat(2,1fr);}
-}
-.gd-metric-card{
-  background:#000000;border:1px solid var(--card-border);border-radius:20px;
-  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
-  padding:clamp(10px,1.4vw,16px);
-  display:flex;flex-direction:column;
-  position:relative;z-index:1;
-}
-.gd-metric-top{
-  display:flex;justify-content:space-between;align-items:center;margin-bottom:clamp(6px,0.8vw,10px);
-}
-.gd-metric-label{
-  font-size:clamp(7px,0.7vw,9px);text-transform:uppercase;letter-spacing:0.15em;
-}
-.gd-metric-icon{font-size:clamp(14px,1.5vw,18px);opacity:1;}
-.gd-metric-value{
-  font-size:clamp(20px,2.4vw,28px);font-weight:400;color:var(--text);
-  line-height:1;letter-spacing:-0.5px;
-}
-.gd-metric-unit{
-  font-size:clamp(10px,1vw,13px);font-weight:400;color:var(--text-muted);margin-left:3px;
-}
-.gd-metric-sub{
-  font-size:clamp(8px,0.7vw,10px);color:var(--text-dim);margin-top:clamp(4px,0.5vw,7px);
-  letter-spacing:0.02em;
-}
 
 @layer components {
   .glass-card {
@@ -1679,8 +1618,6 @@ body::-webkit-scrollbar { display: none; }
   /* ── Generator detail ── */
   .gd-kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
   .gd-kpi-value { font-size: 20px; }
-  .gd-metrics-grid { grid-template-columns: 1fr !important; }
-  .gd-metrics-grid-4 { grid-template-columns: repeat(2,1fr) !important; }
 
   /* ── Site navigation ── */
   .site-nav-strip { gap: 4px; }

@@ -8,9 +8,7 @@ import PuissanceHebdoChart from './PuissanceHebdoChart'
 import ProductionChart from './ProductionChart'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, FIHAONANA_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
-import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, formatDateFR, MONTH_SHORT } from '../../utils/projects'
-
-const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
+import { MOIS_FR, getKpiForSite } from '../../utils/hfoHelpers'
 
 /** Aggregate puissanceHebdo across multiple sites (weeks must be aligned). */
 function aggregatePuissanceHebdo(sites) {
@@ -39,14 +37,6 @@ function aggregatePuissanceHebdo(sites) {
     contrat:  sum('contrat'),
     peakLoad: sum('peakLoad', true),
   }
-}
-
-function mapFilter(f) {
-  return { 'J-1': '24h', 'M': 'month', 'Q': 'quarter', 'A': 'year' }[f] || 'month'
-}
-
-function isCurrentMonth(monthIndex) {
-  return monthIndex === new Date().getMonth()
 }
 
 // Default site data (same structure as energy.js siteData)
@@ -100,37 +90,6 @@ function buildSiteData() {
   return sites
 }
 
-/** Get KPI for a given filter + selected period */
-function getKpiForSite(site, filter, selectedMonthIndex, selectedQuarter) {
-  if (!site || !site.kpi) return {}
-  if (filter === 'J-1') return site.kpi['24h'] || {}
-  if (filter === 'A') return site.kpi['year'] || {}
-  if (filter === 'M') {
-    const monthKey = `month_${selectedMonthIndex + 1}`
-    return site.kpi[monthKey] || site.kpi['month'] || {}
-  }
-  if (filter === 'Q') {
-    const startM = (selectedQuarter - 1) * 3
-    let prod = 0, prodObj = 0, heures = 0, sfocW = 0, slocW = 0
-    for (let m = startM; m < startM + 3; m++) {
-      const mk = `month_${m + 1}`
-      const k = site.kpi[mk] || {}
-      prod += k.prod || 0
-      prodObj += k.prodObj || 0
-      heures += k.heures || 0
-      if (k.sfoc && k.prod) sfocW += k.sfoc * k.prod
-      if (k.sloc && k.prod) slocW += k.sloc * k.prod
-    }
-    return {
-      prod, prodObj, heures,
-      dispo: prodObj > 0 ? (prod / prodObj * 100) : 0,
-      sfoc: prod > 0 ? sfocW / prod : 0,
-      sloc: prod > 0 ? slocW / prod : 0,
-    }
-  }
-  return site.kpi['month'] || {}
-}
-
 // Format generator ID: "ADG1" -> "ADG 1"
 function fmtGId(id) {
   return id ? id.replace(/(\D+)(\d+)/, '$1 $2') : id
@@ -155,17 +114,6 @@ function fmtEngineName(g) {
   return fmtGId(g.id)
 }
 
-// Generator SFOC calculation (simplified — uses 24h data for now)
-function calcGenSfoc(g) {
-  const HFO_D = 0.96
-  const pKwh = g.energieProd || 0
-  const hfoL = g.consoHFO || 0
-  if (pKwh > 0 && hfoL > 0) {
-    return Math.round((hfoL * HFO_D) / pKwh * 1000 * 10) / 10
-  }
-  return null
-}
-
 export default function HfoDetail() {
   const { currentFilter, setFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
   const { setPageTitle } = usePageTitle()
@@ -187,17 +135,15 @@ export default function HfoDetail() {
   const siteData = useMemo(() => buildSiteData(), [])
 
   // Compute total production across active sites for share calculation
-  const { totalProdAll, activeSites } = useMemo(() => {
-    let total = 0
+  const { activeSites } = useMemo(() => {
     const active = []
     SITE_ORDER.forEach(id => {
       const s = siteData[id]
       if (s.status === 'construction' || s.status === 'reconstruction') return
       const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter)
-      total += (k && k.prod) || 0
       active.push({ id, site: s, kpi: k })
     })
-    return { totalProdAll: total, activeSites: active }
+    return { activeSites: active }
   }, [siteData, currentFilter, selectedMonthIndex, selectedQuarter])
 
   // Consolidated KPIs — aggregated across all active sites
@@ -208,8 +154,6 @@ export default function HfoDetail() {
     // VESTOP: use global authoritative total from HFO_GLOBAL (23.5 MW)
     const globalSumVestop = activeSites.reduce((s, a) => s + (a.site.contracts?.vestop || 0), 0)
     const tContratVestop = HFO_GLOBAL?.vestopTotalContract ?? globalSumVestop
-    // True dispo = sum of dispoTotal (availableMw from Situation)
-    const tDispo = activeSites.reduce((s, a) => s + (a.site.dispoTotal || 0), 0)
     // Per-provider dispo — iterate groupes and filter by provider
     let tDispoEnelec = 0
     let tDispoVestop = 0
@@ -257,7 +201,7 @@ export default function HfoDetail() {
       tRunning += gs.filter(g => g.statut === 'ok').length
     })
     return {
-      tProd, tContratEnelec, tContratVestop, tDispo, tDispoEnelec, tDispoVestop, tPeak,
+      tProd, tContratEnelec, tContratVestop, tDispoEnelec, tDispoVestop, tPeak,
       avgSfoc, avgSloc, tBlackouts, tRunning, tEngines,
     }
   }, [activeSites])
@@ -589,7 +533,6 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
   const sKpi = useMemo(() => getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter), [s, currentFilter, selectedMonthIndex, selectedQuarter])
   const sRunning = useMemo(() => (s.groupes || []).filter(g => g.statut === 'ok').length, [s])
   const sTotal = (s.groupes || []).length
-  const sNominal = useMemo(() => (s.groupes || []).reduce((acc, g) => acc + (+g.nominal || 0), 0), [s])
   // Per-provider dispo for site-level HfoKpiGrid
   const sDispo = useMemo(() => {
     let enelec = 0, vestop = 0
@@ -697,7 +640,6 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           {/* Unified site KPI grid */}
           <HfoKpiGrid
             variant="site"
-            nominal={sNominal}
             contratEnelec={s.contracts?.enelec || 0}
             contratVestop={s.contracts?.vestop || 0}
             dispoEnelec={sDispo.enelec}

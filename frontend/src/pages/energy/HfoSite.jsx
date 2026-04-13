@@ -15,7 +15,7 @@ export default function HfoSite({ site, kpi = {}, prodShare = 0, onClick }) {
   // VESTOP helps cover the Peak but does NOT count toward ENELEC contract.
   const contracts = s.contracts || {}
   const contratEnelec = contracts.enelec || s.contrat || 0
-  const contratVestop = contracts.vestop || contracts.vestopDispo || 0
+  const contratVestop = contracts.vestop || 0
   const hasEnelecHere = contratEnelec > 0
   const hasVestopHere = contratVestop > 0
   const isMixedSite = hasEnelecHere && hasVestopHere
