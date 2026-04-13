@@ -8,7 +8,12 @@ import PuissanceHebdoChart from './PuissanceHebdoChart'
 import ProductionChart from './ProductionChart'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, FIHAONANA_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
+import { ENR_SITES } from '../../data/enr_site_data'
 import { MOIS_FR, getKpiForSite } from '../../utils/hfoHelpers'
+import { getFilteredEnrSite } from '../../utils/enrHelpers'
+
+// Map HFO site IDs to ENR site codes
+const ENR_MAP = { tamatave: 'TMM', diego: 'DIE', majunga: 'MJN' }
 
 /** Aggregate puissanceHebdo across multiple sites (weeks must be aligned). */
 function aggregatePuissanceHebdo(sites) {
@@ -295,12 +300,15 @@ export default function HfoDetail() {
         {['tamatave', 'diego', 'tulear', 'majunga', 'antsirabe'].map(id => {
           const site = siteData[id]
           const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter)
+          const enrCode = ENR_MAP[id]
+          const enrSite = enrCode && (ENR_SITES || []).find(s => s.code === enrCode)
+          const enrProd = enrSite ? getFilteredEnrSite(enrSite, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear).prodKwh / 1000 : null
           return (
             <HfoSite
               key={id}
               site={site}
               kpi={kpi}
-              prodShare={0}
+              enrProd={enrProd}
               onClick={() => setSelectedSite(id)}
             />
           )
@@ -318,7 +326,7 @@ export default function HfoDetail() {
               key={id}
               site={site}
               kpi={kpi}
-              prodShare={0}
+              enrProd={null}
               onClick={() => setSelectedSite(id)}
             />
           )

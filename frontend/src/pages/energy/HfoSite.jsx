@@ -8,7 +8,7 @@ import NeonDot from '../../components/NeonDot'
  *  prodShare — percentage share of total production (0-100) — placeholder for now
  *  onClick   — click handler
  */
-export default function HfoSite({ site, kpi = {}, prodShare = 0, onClick }) {
+export default function HfoSite({ site, kpi = {}, enrProd = null, onClick }) {
   const s = site
 
   // Site-level Puissance row: Peak | % | Dispo | % | Contrat
@@ -220,9 +220,28 @@ export default function HfoSite({ site, kpi = {}, prodShare = 0, onClick }) {
           </div>
         </div>
 
-        {/* KPI 3: Production | Moteurs a l'arret */}
-        <div>
-          <div className="grid grid-cols-2 gap-2">
+        {/* KPI 3: Production (HFO | EnR si dispo, sinon centré) */}
+        <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.12)' }}>
+          {enrProd != null ? (
+            /* Site avec EnR : HFO à gauche | EnR à droite */
+            <div className="grid grid-cols-2 gap-2">
+              <div className="text-center">
+                <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>Prod. HFO</div>
+                <div className="text-lg leading-none text-[var(--text)]">
+                  {kpi?.prod != null ? Math.round(kpi.prod).toString() : '—'}
+                  <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MWh</span>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: '#00ab63' }}>Prod. EnR</div>
+                <div className="text-lg leading-none" style={{ color: '#00ab63' }}>
+                  {Math.round(enrProd).toString()}
+                  <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MWh</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Site sans EnR : production centrée */
             <div className="text-center">
               <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>Production</div>
               <div className="text-lg leading-none text-[var(--text)]">
@@ -230,14 +249,27 @@ export default function HfoSite({ site, kpi = {}, prodShare = 0, onClick }) {
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MWh</span>
               </div>
             </div>
+          )}
+        </div>
+
+        {/* KPI 4: Moteurs — En marche | séparateur | À l'arrêt */}
+        <div>
+          <div className="text-[8px] tracking-widest uppercase text-center mb-1.5" style={{ color: labelColor }}>
+            Moteurs ({totalMoteurs})
+          </div>
+          <div className="flex items-center justify-center gap-3">
             <div className="text-center">
-              <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>Moteurs a l'arret</div>
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="text-lg leading-none" style={{ color: arretColor }}>
-                  {arretCount}
-                </span>
-                <span className="text-[9px] text-[var(--text-dim)]">/ {totalMoteurs}</span>
+              <div className="text-lg leading-none" style={{ color: '#00ab63' }}>
+                {totalMoteurs - arretCount}
               </div>
+              <div className="text-[7px] text-[var(--text-dim)] mt-0.5">En marche</div>
+            </div>
+            <div className="text-[10px] text-[var(--text-dim)]">|</div>
+            <div className="text-center">
+              <div className="text-lg leading-none" style={{ color: arretColor }}>
+                {arretCount}
+              </div>
+              <div className="text-[7px] text-[var(--text-dim)] mt-0.5">A l'arret</div>
             </div>
           </div>
         </div>
