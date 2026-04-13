@@ -74,17 +74,22 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     ? peakPoints.map((p, idx) => `${idx === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
     : ''
 
-  // Week tick labels — adaptive stride
-  const stride = Math.max(1, Math.ceil(n / 8))
-  const xLabels = []
-  for (let i = 0; i < n; i += stride) {
-    const wk = weeks[i] || ''
-    const m = /^\d{4}-(\d{2})-S(\d+)/.exec(wk)
-    const lab = m
-      ? `${['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][parseInt(m[1], 10) - 1]} S${m[2]}`
-      : wk
-    xLabels.push({ i, lab })
+  // Group weeks by month for separators + labels
+  const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
+  const monthGroups = [] // { monthLabel, startIdx, endIdx }
+  let prevMonth = null
+  for (let i = 0; i < n; i++) {
+    const m = /^\d{4}-(\d{2})/.exec(weeks[i] || '')
+    const monthNum = m ? parseInt(m[1], 10) : null
+    if (monthNum !== prevMonth && monthNum != null) {
+      if (monthGroups.length > 0) monthGroups[monthGroups.length - 1].endIdx = i - 1
+      monthGroups.push({ monthLabel: MOIS_SHORT[monthNum - 1] || `M${monthNum}`, startIdx: i, endIdx: n - 1 })
+      prevMonth = monthNum
+    }
   }
+
+  // Value label stride — show value every ~4 bars
+  const stride = Math.max(1, Math.ceil(n / 12))
 
   // Determine current week index (approximate)
   const now = new Date()
@@ -115,7 +120,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
             </span>
           )}
           <span className="legend-item">
-            <span style={{ display:'inline-block', width:10, height:10, borderRadius:2, background:'rgba(255,255,255,0.06)', border:'1px dashed rgba(255,255,255,0.4)', marginRight:4, verticalAlign:'middle' }} />
+            <span style={{ display:'inline-block', width:14, height:0, borderTop:'2px dashed #5e4c9f', marginRight:4, verticalAlign:'middle' }} />
             Contrat
           </span>
           <span className="legend-item">
@@ -153,7 +158,38 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
         {/* Y unit */}
         <text x={padL - 6} y={padT - 3} textAnchor="end" fontSize="7" fill="rgba(138,146,171,0.5)">MW</text>
 
-        {/* Bars: Ghost contrat behind + Solid ENELEC/VESTOP in front */}
+        {/* Contrat — horizontal reference line + Y-axis label */}
+        {(() => {
+          // Find the dominant contrat value (most common)
+          const cVals = contrat.map(c => +c || 0).filter(c => c > 0)
+          if (cVals.length === 0) return null
+          const contratVal = cVals[Math.floor(cVals.length / 2)] // median
+          const y = yFor(contratVal)
+          return (
+            <g>
+              {/* Dashed horizontal line across full chart */}
+              <line
+                x1={padL} y1={y.toFixed(1)}
+                x2={W - padR} y2={y.toFixed(1)}
+                stroke="#5e4c9f"
+                strokeWidth="1.5"
+                strokeDasharray="6,3"
+              />
+              {/* Value label on Y axis */}
+              <text
+                x={padL - 6} y={y + 3}
+                textAnchor="end"
+                fontSize="8"
+                fontWeight="600"
+                fill="#5e4c9f"
+              >
+                {contratVal.toFixed(1)}
+              </text>
+            </g>
+          )
+        })()}
+
+        {/* Bars: Solid ENELEC/VESTOP */}
         {weeks.map((_, i) => {
           const e = +enelec[i]  || 0
           const v = +vestop[i]  || 0
@@ -177,29 +213,16 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           const yVestop = v > 0 ? yFor(total) : yEnelec
           const hVestop = v > 0 ? (yEnelec - yVestop) : 0
 
-          // Color intensity: current week = full, past = slightly dimmed, future = very dim
-          const enelecFill = isCurrent ? '#00ab63' : isPast ? 'rgba(0,171,99,0.65)' : 'rgba(0,171,99,0.35)'
-          const vestopFill = isCurrent ? '#5aafaf' : isPast ? 'rgba(90,175,175,0.65)' : 'rgba(90,175,175,0.35)'
+          // Color: full opacity, no transparency
+          const enelecFill = '#00ab63'
+          const vestopFill = '#5aafaf'
 
           // Status indicator: total vs contrat
           const isUnder = total > 0 && c > 0 && total < c
 
           return (
             <g key={i}>
-              {/* Ghost contrat bar */}
-              {c > 0 && (
-                <rect
-                  x={x.toFixed(1)}
-                  y={yContrat.toFixed(1)}
-                  width={barW.toFixed(1)}
-                  height={Math.max(0, hContrat).toFixed(1)}
-                  rx="2"
-                  fill="rgba(255,255,255,0.05)"
-                  stroke="rgba(255,255,255,0.18)"
-                  strokeWidth="0.7"
-                  strokeDasharray="3,2"
-                />
-              )}
+              {/* Contrat reference line segment (drawn per bar slot) */}
               {/* ENELEC solid bar */}
               {e > 0 && (
                 <rect
@@ -230,23 +253,12 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
                   textAnchor="middle"
                   fontSize="6.5"
                   fontWeight="400"
-                  fill={isUnder ? '#E05C5C' : isCurrent ? '#00ab63' : 'rgba(0,171,99,0.7)'}
+                  fill={isUnder ? '#E05C5C' : '#00ab63'}
                 >
                   {total.toFixed(1)}
                 </text>
               )}
-              {/* Delta indicator if under contrat */}
-              {isUnder && !isFuture && i % stride === 0 && (
-                <text
-                  x={(x + barW / 2).toFixed(1)}
-                  y={(padT + chartH + 10).toFixed(1)}
-                  textAnchor="middle"
-                  fontSize="6"
-                  fill="#E05C5C"
-                >
-                  ▼
-                </text>
-              )}
+              {/* No delta indicators — the contrat line reference is enough */}
             </g>
           )
         })}
@@ -280,20 +292,39 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           </g>
         ))}
 
-        {/* X axis labels */}
-        {xLabels.map(({ i, lab }) => (
-          <text
-            key={i}
-            x={(xFor(i) + barW / 2).toFixed(1)}
-            y={H - 5}
-            textAnchor="middle"
-            fontSize="7.5"
-            fontWeight={i === currentWeekIdx ? '700' : '400'}
-            fill={i === currentWeekIdx ? 'var(--text)' : 'rgba(138,146,171,0.7)'}
-          >
-            {lab}
-          </text>
-        ))}
+        {/* Month separators (vertical lines) + month labels */}
+        {monthGroups.map((mg, idx) => {
+          const xStart = padL + mg.startIdx * slot
+          const xEnd = padL + (mg.endIdx + 1) * slot
+          const xCenter = (xStart + xEnd) / 2
+          const currentMonthNum = new Date().getMonth() + 1
+          const mMatch = /^\d{4}-(\d{2})/.exec(weeks[mg.startIdx] || '')
+          const isCurrMonth = mMatch && parseInt(mMatch[1], 10) === currentMonthNum
+          return (
+            <g key={`month-${idx}`}>
+              {/* Vertical separator at start of month (skip first) */}
+              {idx > 0 && (
+                <line
+                  x1={xStart.toFixed(1)} y1={padT}
+                  x2={xStart.toFixed(1)} y2={(padT + chartH + 4).toFixed(1)}
+                  stroke="rgba(138,146,171,0.45)"
+                  strokeWidth="1"
+                />
+              )}
+              {/* Month label centered under the group */}
+              <text
+                x={xCenter.toFixed(1)}
+                y={H - 5}
+                textAnchor="middle"
+                fontSize="8"
+                fontWeight={isCurrMonth ? '700' : '400'}
+                fill={isCurrMonth ? 'var(--text)' : 'rgba(138,146,171,0.7)'}
+              >
+                {mg.monthLabel}
+              </text>
+            </g>
+          )
+        })}
       </svg>
     </div>
   )
