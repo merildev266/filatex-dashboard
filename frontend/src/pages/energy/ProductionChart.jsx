@@ -26,7 +26,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
   if (maxY === 0) maxY = 10
   maxY = Math.ceil(maxY * 1.2)
 
-  const padL = 42
+  const padL = 48
   const padR = 12
   const padT = 12
   const padB = 28
@@ -90,7 +90,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
         ))}
 
         {/* Y unit */}
-        <text x={padL - 6} y={padT - 3} textAnchor="end" fontSize="7" fill="#ffffff">MWh</text>
+        <text x={padL - 6} y={padT - 6} textAnchor="end" fontSize="7" fill="#ffffff">MWh</text>
 
         {/* Prévisionnel — horizontal reference line + Y-axis label */}
         {(() => {

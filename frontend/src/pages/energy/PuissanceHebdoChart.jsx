@@ -39,7 +39,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
   maxY = Math.ceil(maxY * 1.2) // 20% headroom for labels
 
   // Layout
-  const padL = 42
+  const padL = 48
   const padR = 12
   const padT = 14
   const padB = 28
@@ -59,20 +59,6 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     v: maxY * f,
     y: padT + chartH - f * chartH,
   }))
-
-  // Peak Load path (smooth line connecting weekly peaks)
-  const peakPoints = []
-  for (let i = 0; i < n; i++) {
-    const v = peakLoad[i]
-    if (v != null && +v > 0) {
-      const x = xFor(i) + barW / 2
-      const y = yFor(+v)
-      peakPoints.push({ x, y, v: +v, i })
-    }
-  }
-  const peakPath = peakPoints.length > 1
-    ? peakPoints.map((p, idx) => `${idx === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
-    : ''
 
   // Group weeks by month for separators + labels
   const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
@@ -161,13 +147,13 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
               fontSize="8"
               fill="#ffffff"
             >
-              {t.v.toFixed(1)}
+              {Math.round(t.v)}
             </text>
           </g>
         ))}
 
-        {/* Y unit */}
-        <text x={padL - 6} y={padT - 3} textAnchor="end" fontSize="7" fill="#ffffff">MW</text>
+        {/* Y unit — positioned above axis, offset to not overlap tick values */}
+        <text x={padL - 6} y={padT - 6} textAnchor="end" fontSize="7" fill="#ffffff">MW</text>
 
         {/* Contrat — horizontal reference line + Y-axis label */}
         {(() => {
@@ -193,7 +179,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
                 fontWeight="600"
                 fill="#00ab63"
               >
-                {contratVal.toFixed(1)}
+                {Math.round(contratVal)}
               </text>
             </g>
           )
@@ -266,22 +252,33 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           )
         })}
 
-        {/* Peak Load line (prominent) */}
-        {peakPath && (
-          <path
-            d={peakPath}
-            fill="none"
-            stroke="#E05C5C"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-        )}
-        {/* Peak Load dots */}
-        {peakPoints.map((pt, idx) => (
-          <g key={idx}>
-            <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r="2.5" fill="#080b18" stroke="#E05C5C" strokeWidth="1.2" />
-          </g>
-        ))}
+        {/* Peak Load — horizontal line + Y-axis label */}
+        {(() => {
+          const pVals = peakLoad.map(p => +p || 0).filter(p => p > 0)
+          if (pVals.length === 0) return null
+          // Use the latest peak value (most recent non-zero)
+          const peakVal = pVals[pVals.length - 1]
+          const y = yFor(peakVal)
+          return (
+            <g>
+              <line
+                x1={padL} y1={y.toFixed(1)}
+                x2={W - padR} y2={y.toFixed(1)}
+                stroke="#E05C5C"
+                strokeWidth="1"
+              />
+              <text
+                x={padL - 6} y={y + 3}
+                textAnchor="end"
+                fontSize="8"
+                fontWeight="600"
+                fill="#E05C5C"
+              >
+                {Math.round(peakVal)}
+              </text>
+            </g>
+          )
+        })()}
 
         {/* Month separators (vertical lines) + month labels */}
         {monthGroups.map((mg, idx) => {
