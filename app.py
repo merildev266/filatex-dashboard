@@ -268,10 +268,9 @@ _refresh_lock = threading.Lock()
 _refresh_status = {"running": False, "last_run": None, "last_error": None}
 
 GENERATE_SCRIPTS = [
-    "generate_data.py",
-    "generate_enr_data.py",
-    "generate_enr_projects.py",
-    "generate_hfo_projects.py",
+    "generate_data.py",          # HFO + ENR production (calls both)
+    "generate_enr_projects.py",  # ENR projects
+    "generate_hfo_projects.py",  # HFO projects
     "generate_capex.py",
     "generate_reporting.py",
     "generate_com_reporting.py",

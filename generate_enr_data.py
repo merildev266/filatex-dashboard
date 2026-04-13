@@ -19,26 +19,27 @@ import openpyxl
 ENR_DIR = os.path.join(
     os.environ.get("USERPROFILE", "C:/Users/Meril"),
     "OneDrive - GROUPE FILATEX",
+    "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
-    "01_Energy", "Production", "EnR",
+    "01_Energy", "1.Production", "2.EnR",
 )
 
 SITES = {
-    "DIE": {
-        "name": "Diego",
-        "entity": "Diego Green Power",
-        "centrale": "Centrale Solaire d'Ankorikahely",
-        "loc": "Ankorikahely, Diego",
-        "capacityKwc": 2400,
-        "file": "DIE_rapport_de_production.xlsx",
-    },
     "TMM": {
         "name": "Tamatave",
         "entity": "Toamasina Green Power",
         "centrale": "Centrale Solaire de la Verrerie",
         "loc": "La Verrerie, Tamatave",
         "capacityKwc": 2000,
-        "file": "TMM_rapport de production.xlsx",
+        "file": "1.Tamatave_EnR_2026.xlsx",
+    },
+    "DIE": {
+        "name": "Diego",
+        "entity": "Diego Green Power",
+        "centrale": "Centrale Solaire d'Ankorikahely",
+        "loc": "Ankorikahely, Diego",
+        "capacityKwc": 2400,
+        "file": "2.Diego_EnR_2026.xlsx",
     },
     "MJN": {
         "name": "Majunga",
@@ -46,7 +47,7 @@ SITES = {
         "centrale": "Centrale Solaire d'Andranotakatra",
         "loc": "Andranotakatra, Majunga",
         "capacityKwc": 1200,
-        "file": "MJN_rapport de production.xlsx",
+        "file": "3.Majunga_EnR_2026.xlsx",
     },
 }
 
@@ -437,16 +438,18 @@ def generate():
         else:
             print(f"  {code}: No data")
 
-    # Output JS
+    # Output JS — ES export format like HFO site_data.js
     js = "// Auto-generated from EnR production Excel files\n"
     js += f"// Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
-    js += f"const ENR_SITES = {json.dumps(all_sites, ensure_ascii=False)};\n"
+    js += f"export const ENR_SITES = {json.dumps(all_sites, ensure_ascii=False)};\n"
 
-    outpath = os.path.join(os.path.dirname(__file__), "enr_site_data.js")
-    with open(outpath, "w", encoding="utf-8") as f:
-        f.write(js)
-
-    print(f"\nGenerated enr_site_data.js ({len(js)} bytes, {len(all_sites)} sites)")
+    targets = [
+        os.path.join(os.path.dirname(__file__), "frontend", "src", "data", "enr_site_data.js"),
+    ]
+    for tgt in targets:
+        with open(tgt, "w", encoding="utf-8") as f:
+            f.write(js)
+        print(f"\nWrote {tgt} ({len(js)} bytes, {len(all_sites)} sites)")
 
 
 if __name__ == "__main__":
