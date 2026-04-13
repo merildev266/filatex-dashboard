@@ -605,17 +605,6 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
 
   return (
     <div className="site-detail-panel">
-      {/* Header: back button + site name */}
-      <div className="flex items-center gap-3 mb-4">
-        <button
-          onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
-        >
-          &#8592;
-        </button>
-        <h2 className="text-base uppercase tracking-wider">{s.name}</h2>
-      </div>
-
       {/* Site navigation strip */}
       <div className="site-nav-strip">
         {NAVIGABLE_SITES.map(id => (
@@ -888,21 +877,7 @@ function GeneratorDetailPanel({
 
   return (
     <div className="site-detail-panel gd-panel">
-      {/* Header: back + generator title */}
-      <div className="flex items-center gap-3 mb-1">
-        <button
-          onClick={onClose}
-          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
-        >
-          &#8592;
-        </button>
-        <div>
-          <h2 className="text-base uppercase tracking-wider m-0">{fmtEngineName(g)}</h2>
-          <div className="text-[10px] text-[var(--text-muted)] mt-0.5">
-            {g.model || ''} &middot; {s.name} &middot; {nominal} MW
-          </div>
-        </div>
-      </div>
+      {/* No header needed — site name + generator name are in the banner */}
 
       {/* Generator nav strip */}
       <div className="gd-gen-nav">
