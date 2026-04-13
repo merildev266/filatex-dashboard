@@ -82,7 +82,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
               x={padL - 6} y={t.y + 3}
               textAnchor="end"
               fontSize="8"
-              fill="rgba(138,146,171,0.6)"
+              fill="#ffffff"
             >
               {t.v >= 1000 ? (t.v / 1000).toFixed(1) + 'k' : t.v.toFixed(0)}
             </text>
@@ -90,7 +90,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
         ))}
 
         {/* Y unit */}
-        <text x={padL - 6} y={padT - 3} textAnchor="end" fontSize="7" fill="rgba(138,146,171,0.5)">MWh</text>
+        <text x={padL - 6} y={padT - 3} textAnchor="end" fontSize="7" fill="#ffffff">MWh</text>
 
         {/* Prévisionnel — horizontal reference line + Y-axis label */}
         {(() => {
@@ -145,20 +145,17 @@ export default function ProductionChart({ months = [], title = 'Production mensu
                   fill="#00ab63"
                 />
               )}
-              {/* Value on top of bar */}
-              {hasProd && (
-                <text
-                  x={(x + barW / 2).toFixed(1)}
-                  y={(yProd - 4).toFixed(1)}
-                  textAnchor="middle"
-                  fontSize="7"
-                  fontWeight="400"
-                  fill="#00ab63"
-                >
-                  {d.prod >= 1000 ? (d.prod / 1000).toFixed(1) + 'k' : Math.round(d.prod)}
-                </text>
-              )}
-              {/* No delta indicators — the line reference is enough */}
+              {/* Invisible hover zone with tooltip */}
+              <rect
+                x={(padL + i * slot).toFixed(1)}
+                y={padT.toFixed(1)}
+                width={slot.toFixed(1)}
+                height={chartH.toFixed(1)}
+                fill="transparent"
+                style={{ cursor: 'pointer' }}
+              >
+                <title>{`${MOIS_SHORT[i]}\nPrévisionnel: ${d.prodObj > 0 ? Math.round(d.prodObj) + ' MWh' : '—'}\nRéalisé HFO: ${d.prod > 0 ? Math.round(d.prod) + ' MWh' : '—'}`}</title>
+              </rect>
             </g>
           )
         })}
@@ -172,7 +169,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
             textAnchor="middle"
             fontSize="8"
             fontWeight={i === currentMonth ? '700' : '400'}
-            fill={i === currentMonth ? 'var(--text)' : 'rgba(138,146,171,0.7)'}
+            fill="#ffffff"
           >
             {m}
           </text>
