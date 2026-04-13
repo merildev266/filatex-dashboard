@@ -52,12 +52,13 @@ export default function ProductionChart({ months = [], title = 'Production mensu
 
   const currentMonth = new Date().getMonth()
 
+  const chartRef = useRef(null)
   const handleBarHover = (e, i) => {
-    if (!svgRef.current) return
-    const rect = svgRef.current.getBoundingClientRect()
+    if (!chartRef.current) return
+    const rect = chartRef.current.getBoundingClientRect()
     setTooltip({
-      x: e.clientX - rect.left + 12,
-      y: e.clientY - rect.top - 10,
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
       month: MOIS_SHORT[i],
       prod: data[i].prod,
       prodObj: data[i].prodObj,
@@ -65,7 +66,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
   }
 
   return (
-    <div className="puiss-hebdo-chart" style={{ position: 'relative' }}>
+    <div ref={chartRef} className="puiss-hebdo-chart" style={{ position: 'relative' }}>
       <div className="puiss-hebdo-header">
         <span className="puiss-hebdo-title">{title}</span>
         <span className="puiss-hebdo-legend">
@@ -139,17 +140,12 @@ export default function ProductionChart({ months = [], title = 'Production mensu
                   x={(x + gapBars).toFixed(1)} y={yProd.toFixed(1)}
                   width={(barW - gapBars * 2).toFixed(1)} height={Math.max(0, hProd).toFixed(1)}
                   rx="2" fill="#00ab63"
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={(ev) => handleBarHover(ev, i)}
+                  onMouseMove={(ev) => handleBarHover(ev, i)}
+                  onMouseLeave={() => setTooltip(null)}
                 />
               )}
-              {/* Hover zone */}
-              <rect
-                x={(padL + i * slot).toFixed(1)} y={padT.toFixed(1)}
-                width={slot.toFixed(1)} height={chartH.toFixed(1)}
-                fill="transparent" style={{ cursor: 'pointer' }}
-                onMouseEnter={(ev) => handleBarHover(ev, i)}
-                onMouseMove={(ev) => handleBarHover(ev, i)}
-                onMouseLeave={() => setTooltip(null)}
-              />
             </g>
           )
         })}
@@ -170,13 +166,15 @@ export default function ProductionChart({ months = [], title = 'Production mensu
         ))}
       </svg>
 
-      {/* Custom tooltip */}
+      {/* Custom tooltip — centered above cursor */}
       {tooltip && (
         <div
           style={{
             position: 'absolute',
             left: tooltip.x,
             top: tooltip.y,
+            transform: 'translate(-50%, -100%)',
+            marginTop: -12,
             background: '#0d1117',
             border: '1px solid rgba(138,146,171,0.3)',
             borderRadius: 10,
