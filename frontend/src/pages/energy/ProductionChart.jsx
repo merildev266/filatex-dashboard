@@ -1,6 +1,7 @@
+import { useState, useRef } from 'react'
+
 /**
  * ProductionChart — Monthly production (MWh) chart
- * Réalisé = solid green bars | Prévisionnel = ghost bars behind
  *
  * Props:
  *   months   Array<{ prod:number, prodObj?:number }>  length 12
@@ -11,6 +12,9 @@ const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct
 
 export default function ProductionChart({ months = [], title = 'Production mensuelle', height = 200 }) {
   if (!Array.isArray(months) || months.length === 0) return null
+
+  const [tooltip, setTooltip] = useState(null)
+  const svgRef = useRef(null)
 
   const n = months.length
   const data = months.map(m => ({
@@ -48,8 +52,20 @@ export default function ProductionChart({ months = [], title = 'Production mensu
 
   const currentMonth = new Date().getMonth()
 
+  const handleBarHover = (e, i) => {
+    if (!svgRef.current) return
+    const rect = svgRef.current.getBoundingClientRect()
+    setTooltip({
+      x: e.clientX - rect.left + 12,
+      y: e.clientY - rect.top - 10,
+      month: MOIS_SHORT[i],
+      prod: data[i].prod,
+      prodObj: data[i].prodObj,
+    })
+  }
+
   return (
-    <div className="puiss-hebdo-chart">
+    <div className="puiss-hebdo-chart" style={{ position: 'relative' }}>
       <div className="puiss-hebdo-header">
         <span className="puiss-hebdo-title">{title}</span>
         <span className="puiss-hebdo-legend">
@@ -65,9 +81,11 @@ export default function ProductionChart({ months = [], title = 'Production mensu
       </div>
 
       <svg
+        ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
         style={{ width: '100%', height, display: 'block' }}
+        onMouseLeave={() => setTooltip(null)}
       >
         {/* Y grid lines + labels */}
         {ticks.map((t, i) => (
@@ -89,73 +107,49 @@ export default function ProductionChart({ months = [], title = 'Production mensu
           </g>
         ))}
 
-        {/* Y unit */}
         <text x={padL - 6} y={padT - 6} textAnchor="end" fontSize="7" fill="#ffffff">MWh</text>
 
-        {/* Prévisionnel — horizontal reference line + Y-axis label */}
+        {/* Prévisionnel line */}
         {(() => {
           const objVals = data.map(d => d.prodObj).filter(v => v > 0)
           if (objVals.length === 0) return null
-          const objVal = objVals[Math.floor(objVals.length / 2)] // median
+          const objVal = objVals[Math.floor(objVals.length / 2)]
           const y = yFor(objVal)
           return (
             <g>
-              <line
-                x1={padL} y1={y.toFixed(1)}
-                x2={W - padR} y2={y.toFixed(1)}
-                stroke="#5e4c9f"
-                strokeWidth="1.5"
-                strokeDasharray="6,3"
-              />
-              <text
-                x={padL - 6} y={y + 3}
-                textAnchor="end"
-                fontSize="8"
-                fontWeight="600"
-                fill="#5e4c9f"
-              >
+              <line x1={padL} y1={y.toFixed(1)} x2={W - padR} y2={y.toFixed(1)} stroke="#5e4c9f" strokeWidth="1.5" strokeDasharray="6,3" />
+              <text x={padL - 6} y={y + 3} textAnchor="end" fontSize="8" fontWeight="600" fill="#5e4c9f">
                 {objVal >= 1000 ? (objVal / 1000).toFixed(1) + 'k' : objVal.toFixed(0)}
               </text>
             </g>
           )
         })()}
 
-        {/* Réalisé bars (solid green) */}
+        {/* Réalisé bars */}
         {data.map((d, i) => {
           const x = xFor(i)
           const hasProd = d.prod > 0
-          const hasObj = d.prodObj > 0
-          const isCurrent = i === currentMonth
-          const isFuture = i > currentMonth
-
-          // Réalisé bar
           const yProd = hasProd ? yFor(d.prod) : padT + chartH
           const hProd = padT + chartH - yProd
 
           return (
             <g key={i}>
-              {/* Réalisé solid bar */}
               {hasProd && (
                 <rect
-                  x={(x + gapBars).toFixed(1)}
-                  y={yProd.toFixed(1)}
-                  width={(barW - gapBars * 2).toFixed(1)}
-                  height={Math.max(0, hProd).toFixed(1)}
-                  rx="2"
-                  fill="#00ab63"
+                  x={(x + gapBars).toFixed(1)} y={yProd.toFixed(1)}
+                  width={(barW - gapBars * 2).toFixed(1)} height={Math.max(0, hProd).toFixed(1)}
+                  rx="2" fill="#00ab63"
                 />
               )}
-              {/* Invisible hover zone with tooltip */}
+              {/* Hover zone */}
               <rect
-                x={(padL + i * slot).toFixed(1)}
-                y={padT.toFixed(1)}
-                width={slot.toFixed(1)}
-                height={chartH.toFixed(1)}
-                fill="transparent"
-                style={{ cursor: 'pointer' }}
-              >
-                <title>{`${MOIS_SHORT[i]}\nPrévisionnel: ${d.prodObj > 0 ? Math.round(d.prodObj) + ' MWh' : '—'}\nRéalisé HFO: ${d.prod > 0 ? Math.round(d.prod) + ' MWh' : '—'}`}</title>
-              </rect>
+                x={(padL + i * slot).toFixed(1)} y={padT.toFixed(1)}
+                width={slot.toFixed(1)} height={chartH.toFixed(1)}
+                fill="transparent" style={{ cursor: 'pointer' }}
+                onMouseEnter={(ev) => handleBarHover(ev, i)}
+                onMouseMove={(ev) => handleBarHover(ev, i)}
+                onMouseLeave={() => setTooltip(null)}
+              />
             </g>
           )
         })}
@@ -175,6 +169,39 @@ export default function ProductionChart({ months = [], title = 'Production mensu
           </text>
         ))}
       </svg>
+
+      {/* Custom tooltip */}
+      {tooltip && (
+        <div
+          style={{
+            position: 'absolute',
+            left: tooltip.x,
+            top: tooltip.y,
+            background: '#0d1117',
+            border: '1px solid rgba(138,146,171,0.3)',
+            borderRadius: 10,
+            padding: '10px 14px',
+            pointerEvents: 'none',
+            zIndex: 50,
+            minWidth: 150,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          }}
+        >
+          <div style={{ fontSize: 11, fontWeight: 600, color: '#ffffff', marginBottom: 8, borderBottom: '1px solid rgba(138,146,171,0.2)', paddingBottom: 6 }}>
+            {tooltip.month}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+              <span style={{ color: 'rgba(138,146,171,0.8)' }}>Prévisionnel</span>
+              <span style={{ color: '#5e4c9f', fontWeight: 600 }}>{tooltip.prodObj > 0 ? Math.round(tooltip.prodObj) + ' MWh' : '—'}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+              <span style={{ color: 'rgba(138,146,171,0.8)' }}>Réalisé HFO</span>
+              <span style={{ color: '#00ab63', fontWeight: 600 }}>{tooltip.prod > 0 ? Math.round(tooltip.prod) + ' MWh' : '—'}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

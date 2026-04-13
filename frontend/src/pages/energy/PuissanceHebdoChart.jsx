@@ -1,11 +1,7 @@
+import { useState, useRef } from 'react'
+
 /**
  * PuissanceHebdoChart — Weekly power availability chart
- *
- * Visuals:
- *   - Ghost bars (dashed outline): Contrat — the "prévisionnel" reference
- *   - Solid stacked bars in front: ENELEC (green) + VESTOP (teal) — the "réalisé"
- *   - Line + dots: Peak Load (red-orange)
- *   - Color coding: green = good (dispo >= contrat), red = under
  *
  * Props:
  *   data    { weeks[], enelec[], vestop[], contrat[], peakLoad[] }
@@ -15,6 +11,9 @@
 export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomadaire', height = 200 }) {
   if (!data || !data.weeks || data.weeks.length === 0) return null
 
+  const [tooltip, setTooltip] = useState(null)
+  const svgRef = useRef(null)
+
   const weeks    = data.weeks || []
   const enelec   = data.enelec || []
   const vestop   = data.vestop || []
@@ -23,7 +22,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
 
   const n = weeks.length
 
-  // Compute Y scale — max of (enelec+vestop), contrat, peakLoad
+  // Compute Y scale
   let maxY = 0
   for (let i = 0; i < n; i++) {
     const e = +enelec[i]   || 0
@@ -36,7 +35,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     if (p > maxY) maxY = p
   }
   if (maxY === 0) maxY = 10
-  maxY = Math.ceil(maxY * 1.2) // 20% headroom for labels
+  maxY = Math.ceil(maxY * 1.2)
 
   // Layout
   const padL = 48
@@ -54,15 +53,14 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
   const xFor = (i) => padL + i * slot + (slot - barW) / 2
   const yFor = (v) => padT + chartH - (v / maxY) * chartH
 
-  // Y grid ticks (0, 25%, 50%, 75%, 100%)
   const ticks = [0, 0.25, 0.5, 0.75, 1].map(f => ({
     v: maxY * f,
     y: padT + chartH - f * chartH,
   }))
 
-  // Group weeks by month for separators + labels
+  // Group weeks by month
   const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
-  const monthGroups = [] // { monthLabel, startIdx, endIdx }
+  const monthGroups = []
   let prevMonth = null
   for (let i = 0; i < n; i++) {
     const m = /^\d{4}-(\d{2})/.exec(weeks[i] || '')
@@ -74,10 +72,7 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     }
   }
 
-  // Value label stride — show value every ~4 bars
-  const stride = Math.max(1, Math.ceil(n / 12))
-
-  // Determine current week index — match by month + week-in-month
+  // Current week detection
   const now = new Date()
   const curMonth = String(now.getMonth() + 1).padStart(2, '0')
   const curWeekInMonth = Math.ceil(now.getDate() / 7)
@@ -86,7 +81,6 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
   for (let i = 0; i < n; i++) {
     if (weeks[i] === curKey) { currentWeekIdx = i; break }
   }
-  // Fallback: find the last week of the current month if exact match not found
   if (currentWeekIdx === -1) {
     const curMonthPrefix = `${now.getFullYear()}-${curMonth}-`
     for (let i = n - 1; i >= 0; i--) {
@@ -94,11 +88,32 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     }
   }
 
-  // Check if site has VESTOP data at all
   const hasVestop = vestop.some(v => +v > 0)
 
+  // Tooltip handler
+  const handleBarHover = (e, i) => {
+    if (!svgRef.current) return
+    const rect = svgRef.current.getBoundingClientRect()
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    const ev = +enelec[i] || 0
+    const vv = +vestop[i] || 0
+    const cv = +contrat[i] || 0
+    const pv = +peakLoad[i] || 0
+    const isFuture = currentWeekIdx >= 0 && i > currentWeekIdx
+    // Parse week label
+    const wm = /^\d{4}-(\d{2})-S(\d+)/.exec(weeks[i] || '')
+    const weekLabel = wm ? `${MOIS_SHORT[parseInt(wm[1], 10) - 1]} S${wm[2]}` : weeks[i]
+    setTooltip({
+      x: mouseX, y: mouseY,
+      weekLabel,
+      isFuture,
+      contrat: cv, enelec: ev, vestop: vv, total: ev + vv, peak: pv,
+    })
+  }
+
   return (
-    <div className="puiss-hebdo-chart">
+    <div className="puiss-hebdo-chart" style={{ position: 'relative' }}>
       <div className="puiss-hebdo-header">
         <span className="puiss-hebdo-title">{title}</span>
         <span className="puiss-hebdo-legend">
@@ -128,9 +143,11 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
       </div>
 
       <svg
+        ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
         style={{ width: '100%', height, display: 'block' }}
+        onMouseLeave={() => setTooltip(null)}
       >
         {/* Y grid lines + labels */}
         {ticks.map((t, i) => (
@@ -152,135 +169,87 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           </g>
         ))}
 
-        {/* Y unit — positioned above axis, offset to not overlap tick values */}
         <text x={padL - 6} y={padT - 6} textAnchor="end" fontSize="7" fill="#ffffff">MW</text>
 
-        {/* Contrat — horizontal reference line + Y-axis label */}
+        {/* Contrat line */}
         {(() => {
-          // Find the dominant contrat value (most common)
           const cVals = contrat.map(c => +c || 0).filter(c => c > 0)
           if (cVals.length === 0) return null
-          const contratVal = cVals[Math.floor(cVals.length / 2)] // median
+          const contratVal = cVals[Math.floor(cVals.length / 2)]
           const y = yFor(contratVal)
           return (
             <g>
-              {/* Dashed horizontal line across full chart */}
-              <line
-                x1={padL} y1={y.toFixed(1)}
-                x2={W - padR} y2={y.toFixed(1)}
-                stroke="#00ab63"
-                strokeWidth="1"
-              />
-              {/* Value label on Y axis */}
-              <text
-                x={padL - 6} y={y + 3}
-                textAnchor="end"
-                fontSize="8"
-                fontWeight="600"
-                fill="#00ab63"
-              >
+              <line x1={padL} y1={y.toFixed(1)} x2={W - padR} y2={y.toFixed(1)} stroke="#00ab63" strokeWidth="1" />
+              <text x={padL - 6} y={y + 3} textAnchor="end" fontSize="8" fontWeight="600" fill="#00ab63">
                 {Math.round(contratVal)}
               </text>
             </g>
           )
         })()}
 
-        {/* Bars: Solid ENELEC/VESTOP */}
+        {/* Bars */}
         {weeks.map((_, i) => {
           const e = +enelec[i]  || 0
           const v = +vestop[i]  || 0
           const c = +contrat[i] || 0
           const total = e + v
           const x = xFor(i)
-
-          const isCurrent = i === currentWeekIdx
-          const isPast = currentWeekIdx >= 0 && i < currentWeekIdx
           const isFuture = currentWeekIdx >= 0 && i > currentWeekIdx
 
-          // Ghost bar for Contrat (prévisionnel) — full width, behind
-          const yContrat = c > 0 ? yFor(c) : padT + chartH
-          const hContrat = padT + chartH - yContrat
-
-          // Solid ENELEC bar (slightly narrower, in front)
           const yEnelec = e > 0 ? yFor(e) : padT + chartH
           const hEnelec = padT + chartH - yEnelec
-
-          // VESTOP stacked on top of ENELEC
           const yVestop = v > 0 ? yFor(total) : yEnelec
           const hVestop = v > 0 ? (yEnelec - yVestop) : 0
 
-          // Réalisé = vert/teal solide | Planifié (futur) = violet solide
           const enelecFill = isFuture ? '#5e4c9f' : '#00ab63'
           const vestopFill = isFuture ? '#7b6bb5' : '#5aafaf'
 
           return (
             <g key={i}>
-              {/* ENELEC bar */}
               {e > 0 && (
                 <rect
-                  x={(x + gapBars).toFixed(1)}
-                  y={yEnelec.toFixed(1)}
-                  width={(barW - gapBars * 2).toFixed(1)}
-                  height={Math.max(0, hEnelec).toFixed(1)}
-                  rx="2"
-                  fill={enelecFill}
+                  x={(x + gapBars).toFixed(1)} y={yEnelec.toFixed(1)}
+                  width={(barW - gapBars * 2).toFixed(1)} height={Math.max(0, hEnelec).toFixed(1)}
+                  rx="2" fill={enelecFill}
                 />
               )}
-              {/* VESTOP bar */}
               {v > 0 && (
                 <rect
-                  x={(x + gapBars).toFixed(1)}
-                  y={yVestop.toFixed(1)}
-                  width={(barW - gapBars * 2).toFixed(1)}
-                  height={Math.max(0, hVestop).toFixed(1)}
-                  rx="2"
-                  fill={vestopFill}
+                  x={(x + gapBars).toFixed(1)} y={yVestop.toFixed(1)}
+                  width={(barW - gapBars * 2).toFixed(1)} height={Math.max(0, hVestop).toFixed(1)}
+                  rx="2" fill={vestopFill}
                 />
               )}
-              {/* Invisible hover zone with tooltip */}
+              {/* Hover zone */}
               <rect
-                x={(padL + i * slot).toFixed(1)}
-                y={padT.toFixed(1)}
-                width={slot.toFixed(1)}
-                height={chartH.toFixed(1)}
-                fill="transparent"
-                style={{ cursor: 'pointer' }}
-              >
-                <title>{`${isFuture ? '(Prévisionnel)' : '(Réalisé)'}\nContrat: ${c.toFixed(1)} MW\nENELEC: ${e.toFixed(1)} MW\nVESTOP: ${v.toFixed(1)} MW\nTotal dispo: ${total.toFixed(1)} MW`}</title>
-              </rect>
+                x={(padL + i * slot).toFixed(1)} y={padT.toFixed(1)}
+                width={slot.toFixed(1)} height={chartH.toFixed(1)}
+                fill="transparent" style={{ cursor: 'pointer' }}
+                onMouseEnter={(ev) => handleBarHover(ev, i)}
+                onMouseMove={(ev) => handleBarHover(ev, i)}
+                onMouseLeave={() => setTooltip(null)}
+              />
             </g>
           )
         })}
 
-        {/* Peak Load — horizontal line + Y-axis label */}
+        {/* Peak Load line */}
         {(() => {
           const pVals = peakLoad.map(p => +p || 0).filter(p => p > 0)
           if (pVals.length === 0) return null
-          // Use the latest peak value (most recent non-zero)
           const peakVal = pVals[pVals.length - 1]
           const y = yFor(peakVal)
           return (
             <g>
-              <line
-                x1={padL} y1={y.toFixed(1)}
-                x2={W - padR} y2={y.toFixed(1)}
-                stroke="#E05C5C"
-                strokeWidth="1"
-              />
-              <text
-                x={padL - 6} y={y + 3}
-                textAnchor="end"
-                fontSize="8"
-                fontWeight="600"
-                fill="#E05C5C"
-              >
+              <line x1={padL} y1={y.toFixed(1)} x2={W - padR} y2={y.toFixed(1)} stroke="#E05C5C" strokeWidth="1" />
+              <text x={padL - 6} y={y + 3} textAnchor="end" fontSize="8" fontWeight="600" fill="#E05C5C">
                 {Math.round(peakVal)}
               </text>
             </g>
           )
         })()}
 
-        {/* Month separators (vertical lines) + month labels */}
+        {/* Month separators + labels */}
         {monthGroups.map((mg, idx) => {
           const xStart = padL + mg.startIdx * slot
           const xEnd = padL + (mg.endIdx + 1) * slot
@@ -290,21 +259,16 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           const isCurrMonth = mMatch && parseInt(mMatch[1], 10) === currentMonthNum
           return (
             <g key={`month-${idx}`}>
-              {/* Vertical separator at start of month (skip first) */}
               {idx > 0 && (
                 <line
                   x1={xStart.toFixed(1)} y1={padT}
                   x2={xStart.toFixed(1)} y2={(padT + chartH + 4).toFixed(1)}
-                  stroke="rgba(138,146,171,0.45)"
-                  strokeWidth="1"
+                  stroke="rgba(138,146,171,0.45)" strokeWidth="1"
                 />
               )}
-              {/* Month label centered under the group */}
               <text
-                x={xCenter.toFixed(1)}
-                y={H - 5}
-                textAnchor="middle"
-                fontSize="8"
+                x={xCenter.toFixed(1)} y={H - 5}
+                textAnchor="middle" fontSize="8"
                 fontWeight={isCurrMonth ? '700' : '400'}
                 fill="#ffffff"
               >
@@ -314,6 +278,58 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           )
         })}
       </svg>
+
+      {/* Custom tooltip */}
+      {tooltip && (
+        <div
+          style={{
+            position: 'absolute',
+            left: tooltip.x + 12,
+            top: tooltip.y - 10,
+            background: '#0d1117',
+            border: '1px solid rgba(138,146,171,0.3)',
+            borderRadius: 10,
+            padding: '10px 14px',
+            pointerEvents: 'none',
+            zIndex: 50,
+            minWidth: 160,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          }}
+        >
+          <div style={{ fontSize: 11, fontWeight: 600, color: '#ffffff', marginBottom: 8, borderBottom: '1px solid rgba(138,146,171,0.2)', paddingBottom: 6 }}>
+            {tooltip.weekLabel}
+            <span style={{ fontSize: 9, fontWeight: 400, color: tooltip.isFuture ? '#5e4c9f' : '#00ab63', marginLeft: 6 }}>
+              {tooltip.isFuture ? 'Planifié' : 'Réalisé'}
+            </span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+              <span style={{ color: 'rgba(138,146,171,0.8)' }}>Contrat</span>
+              <span style={{ color: '#00ab63', fontWeight: 600 }}>{tooltip.contrat.toFixed(1)} MW</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+              <span style={{ color: 'rgba(138,146,171,0.8)' }}>ENELEC</span>
+              <span style={{ color: tooltip.isFuture ? '#5e4c9f' : '#00ab63', fontWeight: 600 }}>{tooltip.enelec.toFixed(1)} MW</span>
+            </div>
+            {tooltip.vestop > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+                <span style={{ color: 'rgba(138,146,171,0.8)' }}>VESTOP</span>
+                <span style={{ color: tooltip.isFuture ? '#7b6bb5' : '#5aafaf', fontWeight: 600 }}>{tooltip.vestop.toFixed(1)} MW</span>
+              </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, borderTop: '1px solid rgba(138,146,171,0.15)', paddingTop: 4, marginTop: 2 }}>
+              <span style={{ color: '#ffffff', fontWeight: 500 }}>Total dispo</span>
+              <span style={{ color: '#ffffff', fontWeight: 700 }}>{tooltip.total.toFixed(1)} MW</span>
+            </div>
+            {tooltip.peak > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+                <span style={{ color: 'rgba(138,146,171,0.8)' }}>Peak Load</span>
+                <span style={{ color: '#E05C5C', fontWeight: 600 }}>{tooltip.peak.toFixed(1)} MW</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
