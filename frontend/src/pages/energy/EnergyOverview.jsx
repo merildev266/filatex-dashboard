@@ -6,6 +6,7 @@ import { ENR_SITES } from '../../data/enr_site_data'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { MOIS_FR, getKpiForSite } from '../../utils/hfoHelpers'
+import { getFilteredEnrSite } from '../../utils/enrHelpers'
 
 // Merge live data for overview
 const LIVE_SITES = {
@@ -149,21 +150,24 @@ export default function EnergyOverview() {
     }
   }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
 
-  // ENR aggregates
+  // ENR aggregates (filtered by time period)
   const enr = useMemo(() => {
     const sites = ENR_SITES || []
     const projects = ENR_PROJECTS_DATA?.projects || []
 
-    // Production aggregates
-    let totalCapKwc = 0, totalAvgKwh = 0, totalProdKwh = 0
-    sites.forEach(s => {
+    // Filter-aware production aggregates
+    let totalCapKwc = 0, totalProdKwh = 0, totalAvgDailyKwh = 0, totalDays = 0
+    const siteFiltered = sites.map(s => {
       totalCapKwc += s.capacityKwc || 0
-      totalAvgKwh += s.avgDailyKwh || 0
-      totalProdKwh += s.totalProdKwh || 0
+      const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+      totalProdKwh += fd.prodKwh
+      totalAvgDailyKwh += fd.avgDailyKwh
+      totalDays += fd.days
+      return fd
     })
     const totalCapMw = totalCapKwc / 1000
-    const enrMwhJ = totalAvgKwh / 1000
-    const ratioKwhKwc = totalCapKwc > 0 ? (totalAvgKwh / totalCapKwc).toFixed(2) : '\u2014'
+    const enrMwhJ = totalAvgDailyKwh / 1000
+    const ratioKwhKwc = totalCapKwc > 0 ? (totalAvgDailyKwh / totalCapKwc).toFixed(2) : '\u2014'
     const cumulMwh = Math.round(totalProdKwh / 1000)
 
     // Mix calculation (avg daily)
@@ -171,14 +175,13 @@ export default function EnergyOverview() {
     SITE_ORDER.forEach(id => {
       const s = ALL_SITES[id]
       if (!s || s.status === 'construction' || s.status === 'reconstruction') return
-      const k = getKpiForSite(s, 'M')
-      if (k.prod) {
-        const now = new Date()
-        totalHfoAvgDaily += k.prod / now.getDate()
+      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+      if (k.prod && totalDays > 0) {
+        totalHfoAvgDaily += k.prod / totalDays
       }
     })
-    const totalDaily = totalHfoAvgDaily + (totalAvgKwh / 1000)
-    const mixPct = totalDaily > 0 ? ((totalAvgKwh / 1000) / totalDaily * 100) : 0
+    const totalDaily = totalHfoAvgDaily + enrMwhJ
+    const mixPct = totalDaily > 0 ? (enrMwhJ / totalDaily * 100) : 0
 
     // Project aggregates
     let totalMwcPipeline = 0, totalCapex = 0
@@ -192,13 +195,13 @@ export default function EnergyOverview() {
 
     return {
       totalCapMw, enrMwhJ, ratioKwhKwc, cumulMwh,
-      sites, sitesCount: sites.length,
+      sites, siteFiltered, sitesCount: sites.length,
       mixPct,
       projectCount: projects.length,
       totalMwcPipeline, totalCapex,
       grouped, delayCount,
     }
-  }, [currentFilter])
+  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
 
   return (
     <div>
@@ -382,7 +385,7 @@ export default function EnergyOverview() {
                 <div className="e-big" style={{ color: '#00ab63' }}>
                   {enr.cumulMwh.toLocaleString()} <span className="e-big-unit" style={{ color: 'var(--text-dim)' }}>MWh</span>
                 </div>
-                <div className="e-sub">Depuis janvier</div>
+                <div className="e-sub">{dateLabel}</div>
               </div>
               <div className="e-kpi-center">
                 <div className="e-pct" style={{ color: '#00ab63' }}>{enr.mixPct.toFixed(2)}%</div>
@@ -404,6 +407,7 @@ export default function EnergyOverview() {
               {enr.sites.map((s, i) => {
                 const colors = ['#00ab63', '#5aafaf', '#4a8fe7']
                 const col = colors[i % colors.length]
+                const fd = enr.siteFiltered[i]
                 return (
                   <div key={s.code || i} style={{
                     flex: 1,
@@ -413,7 +417,7 @@ export default function EnergyOverview() {
                     padding: '4px 6px',
                   }}>
                     <div style={{ fontSize: 'clamp(10px,1vw,15px)', fontWeight: 400, color: col }}>
-                      {(s.avgDailyKwh / 1000).toFixed(1)}
+                      {(fd.avgDailyKwh / 1000).toFixed(1)}
                     </div>
                     <div style={{ fontSize: 'clamp(6px,0.5vw,8px)', color: `${col}80` }}>
                       MWh/j
