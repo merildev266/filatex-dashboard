@@ -40,23 +40,24 @@ SITES = {
     "antsirabe": "ANTSIRABE_LIVE",
 }
 
-# Empty time-series skeleton — every engine gets one so the frontend can
-# safely read time-series fields even though they're not used anymore.
-_EMPTY_SERIES_FIELDS = (
-    "dailyProd", "dailyHours", "dailyHFO", "dailyLFO",
-    "dailyOilConso", "dailyOilTopUp", "dailyMaxLoad",
-    "dailyConsLVMV", "dailyStandby", "dailyArretForce", "dailyArretPlanifie",
-    "monthlyProd", "monthlyHours", "monthlyHFO", "monthlyLFO",
-    "monthlyOilConso", "monthlyOilTopUp", "monthlyMaxLoad",
-    "monthlyConsLVMV", "monthlyStandby", "monthlyArretForce", "monthlyArretPlanifie",
-    "hourlyLoad",
-)
+
+def _compute_jour_arret(engine):
+    """Compute days since engine stopped (from stopDate to today)."""
+    sd = engine.get("stopDate")
+    if not sd or engine.get("statutNorm") == "ok":
+        return 0
+    from datetime import date
+    try:
+        d = date.fromisoformat(str(sd)[:10])
+        return max(0, (date.today() - d).days)
+    except (ValueError, TypeError):
+        return 0
 
 
 def _build_groupes_from_situation(situation_list):
     """Convert situation moteurs entries into the `groupes` shape expected
     by the frontend. Every engine has a provider, nominal, attendu and
-    availableMw from Situation, plus empty time-series fields."""
+    availableMw from Situation."""
     groupes = []
     for e in situation_list:
         g = {
@@ -70,9 +71,9 @@ def _build_groupes_from_situation(situation_list):
             "condition":   e.get("statut", ""),
             "provider":    e.get("provider"),
             "fuel":        e.get("fuel"),
+            "contradictory": False,
+            "jourArret":   _compute_jour_arret(e),
         }
-        for f in _EMPTY_SERIES_FIELDS:
-            g[f] = []
         groupes.append(g)
     return groupes
 
@@ -86,8 +87,6 @@ def _build_contracts(site_key):
         "enelec": round(enelec, 2),
         "vestop": round(vestop, 2),
         "total":  round(enelec + vestop, 2),
-        # legacy alias for any code path still reading vestopDispo
-        "vestopDispo": round(vestop, 2),
     }
 
 

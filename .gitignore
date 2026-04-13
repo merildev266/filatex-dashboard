@@ -24,5 +24,14 @@ Thumbs.db
 recolor.py
 recolor2.py
 
+# Temp files
+*_tmp.*
+*_tmp.txt
+daily_*.xlsx
+global_tmp.xlsx
+prev_*.xlsx
+previsionnel_*.xlsx
+liste_moteur_tmp.xlsx
+
 # Claude worktrees
 .claude/worktrees/

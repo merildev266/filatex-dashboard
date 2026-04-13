@@ -23,14 +23,6 @@ BASE_DIR = os.path.join(
 # SITE CONFIGURATIONS
 # ══════════════════════════════════════════════════════════════
 
-INFOS_HFO_DIR = os.path.join(
-    os.path.expanduser("~"),
-    "OneDrive - GROUPE FILATEX",
-    "1. DATA Meril HIVANAKO",
-    "Bureau",
-    "Infos HFO",
-)
-
 SITE_CONFIG = {
     "tamatave": {
         "name": "Tamatave",

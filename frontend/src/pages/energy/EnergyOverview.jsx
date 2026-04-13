@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFilters } from '../../hooks/useFilters'
-import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, HFO_GLOBAL } from '../../data/site_data'
+import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, FIHAONANA_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { ENR_SITES } from '../../data/enr_site_data'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
+import { MOIS_FR, getKpiForSite } from '../../utils/hfoHelpers'
 
 // Merge live data for overview
 const LIVE_SITES = {
@@ -13,17 +14,12 @@ const LIVE_SITES = {
   majunga: MAJUNGA_LIVE,
   tulear: TULEAR_LIVE,
   antsirabe: ANTSIRABE_LIVE,
+  fihaonana: FIHAONANA_LIVE,
 }
 
-const STATIC_SITES = {
-  fihaonana: { name: 'Fihaonana', status: 'construction', mw: 0, contrat: 0, groupes: [], kpi: {} },
-}
-
-const ALL_SITES = { ...LIVE_SITES, ...STATIC_SITES }
+const ALL_SITES = { ...LIVE_SITES }
 const SITE_ORDER = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe', 'fihaonana']
 const LIVE_IDS = ['tamatave', 'diego', 'majunga', 'tulear']
-
-const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
 
 /** Get the last day (1-based) where ALL 4 live sites have data */
 function getLastDayAllSites() {
@@ -36,39 +32,6 @@ function getLastDayAllSites() {
     if (day < minDay) minDay = day
   })
   return minDay
-}
-
-/** Get KPI for a given filter + selected period */
-function getKpiForSite(site, filter, selectedMonthIndex, selectedQuarter, selectedYear) {
-  if (!site || !site.kpi) return {}
-  if (filter === 'J-1') return site.kpi['24h'] || {}
-  if (filter === 'A') return site.kpi['year'] || {}
-  if (filter === 'M') {
-    // Use month_N (1-based) for the selected month
-    const monthKey = `month_${selectedMonthIndex + 1}`
-    return site.kpi[monthKey] || site.kpi['month'] || {}
-  }
-  if (filter === 'Q') {
-    // Aggregate months in the quarter
-    const startM = (selectedQuarter - 1) * 3 // 0-based
-    let prod = 0, prodObj = 0, heures = 0, sfocW = 0, slocW = 0
-    for (let m = startM; m < startM + 3; m++) {
-      const mk = `month_${m + 1}`
-      const k = site.kpi[mk] || {}
-      prod += k.prod || 0
-      prodObj += k.prodObj || 0
-      heures += k.heures || 0
-      if (k.sfoc && k.prod) sfocW += k.sfoc * k.prod
-      if (k.sloc && k.prod) slocW += k.sloc * k.prod
-    }
-    return {
-      prod, prodObj, heures,
-      dispo: prod > 0 ? (prod / prodObj * 100) : 0,
-      sfoc: prod > 0 ? sfocW / prod : 0,
-      sloc: prod > 0 ? slocW / prod : 0,
-    }
-  }
-  return site.kpi['month'] || {}
 }
 
 function getPhase(p) {
@@ -166,14 +129,6 @@ export default function EnergyOverview() {
     const avgSfoc = totalProd > 0 ? (sfocWeighted / totalProd) : 0
     const avgSloc = totalProd > 0 ? (slocWeighted / totalProd) : 0
 
-    // Lost MWh estimate
-    const lostPerDay = Math.round(arretMW * 24)
-    const dayOfMonth = new Date().getDate()
-    const daysElapsed = currentFilter === 'A' ? dayOfMonth + selectedMonthIndex * 30
-      : currentFilter === 'Q' ? dayOfMonth + 91
-      : dayOfMonth
-    const lostToDate = lostPerDay * daysElapsed
-
     // Period label
     const periodLabel = currentFilter === 'A' ? String(selectedYear)
       : currentFilter === 'Q' ? 'Q' + selectedQuarter
@@ -187,7 +142,7 @@ export default function EnergyOverview() {
       totalProd, totalProdObj, pctProd,
       avgSfoc, avgSloc,
       maxPeak, totalBlackouts,
-      totalMoteurs, totalArret, lostToDate, periodLabel,
+      totalMoteurs, totalArret, periodLabel,
       urgents: HFO_PROJECTS?.urgents || 0,
       enCours: HFO_PROJECTS?.enCours || 0,
       projectCount: HFO_PROJECTS?.total || 0,
@@ -244,12 +199,6 @@ export default function EnergyOverview() {
       grouped, delayCount,
     }
   }, [currentFilter])
-
-  const pctContratColor = hfo.pctContrat >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
-  const pctContratArrow = hfo.pctContrat >= 100 ? '▲ du contrat' : '▼ du contrat'
-  const pctProdColor = hfo.pctProd >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
-  const pctProdArrow = hfo.pctProd >= 100 ? '▲ vs prévu' : '▼ vs prévu'
-  const arretColor = hfo.totalArret === 0 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)'
 
   return (
     <div>
