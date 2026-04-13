@@ -54,10 +54,37 @@ def _compute_jour_arret(engine):
         return 0
 
 
-def _build_groupes_from_situation(situation_list):
+def _build_groupes_from_situation(situation_list, build_groupes=None):
     """Convert situation moteurs entries into the `groupes` shape expected
     by the frontend. Every engine has a provider, nominal, attendu and
-    availableMw from Situation."""
+    availableMw from Situation.
+
+    If build_groupes is provided (from build_site_data), merge per-DG
+    time-series arrays (dailyMaxLoad, dailyProd, monthlyMaxLoad,
+    monthlyProd, etc.) into the situation-based objects."""
+    # Build a lookup of time-series data from build_site_data groupes
+    # Situation IDs are like "ADG 1", "DDG 3", data_loader IDs are "DG1", "DG3"
+    # Match by extracting the DG number from both
+    import re as _re
+    ts_lookup = {}
+    if build_groupes:
+        for bg in build_groupes:
+            bg_id = bg.get("id", "")
+            ts_lookup[bg_id] = bg
+            # Also index by DG number for cross-format matching
+            m = _re.search(r"(\d+)", bg_id)
+            if m:
+                ts_lookup[f"_num_{m.group(1)}"] = bg
+
+    # Keys to copy from build_site_data groupes (time-series arrays)
+    _TS_KEYS = [
+        "dailyProd", "dailyHours", "dailyHFO", "dailyLFO",
+        "dailyOilConso", "dailyOilTopUp", "dailyMaxLoad", "dailyConsLVMV",
+        "dailyStandby", "dailyArretForce", "dailyArretPlanifie",
+        "monthlyProd", "monthlyHours", "monthlyHFO", "monthlyLFO",
+        "monthlyOilConso", "monthlyOilTopUp", "monthlyMaxLoad", "monthlyConsLVMV",
+    ]
+
     groupes = []
     for e in situation_list:
         g = {
@@ -74,6 +101,20 @@ def _build_groupes_from_situation(situation_list):
             "contradictory": False,
             "jourArret":   _compute_jour_arret(e),
         }
+
+        # Merge time-series from build_site_data if DG id matches
+        dg_id = g["id"] or ""
+        ts = ts_lookup.get(dg_id)
+        if not ts:
+            # Try matching by DG number (e.g. "ADG 1" → number "1" → "DG1")
+            m = _re.search(r"(\d+)", dg_id)
+            if m:
+                ts = ts_lookup.get(f"_num_{m.group(1)}")
+        if ts:
+            for key in _TS_KEYS:
+                if key in ts and ts[key]:
+                    g[key] = ts[key]
+
         groupes.append(g)
     return groupes
 
@@ -171,9 +212,11 @@ def generate():
                 continue
 
         # ── Replace groupes with the full Situation moteurs list (all providers) ──
+        # Merge per-DG time-series from build_site_data into situation groupes
         situation = global_data["situation"].get(site_key, [])
         if situation:
-            site["groupes"] = _build_groupes_from_situation(situation)
+            build_groupes = site.get("groupes", [])
+            site["groupes"] = _build_groupes_from_situation(situation, build_groupes)
 
         # ── Enrich with Global ──
         site["situationMoteurs"] = situation

@@ -6,6 +6,7 @@ import HfoVestopCard from './HfoVestopCard'
 import HfoKpiGrid from './HfoKpiGrid'
 import PuissanceHebdoChart from './PuissanceHebdoChart'
 import ProductionChart from './ProductionChart'
+import GeneratorChart from './GeneratorChart'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, FIHAONANA_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { ENR_SITES } from '../../data/enr_site_data'
@@ -848,6 +849,7 @@ function GeneratorDetailPanel({
   onClose, onNavigateGen,
 }) {
   const s = siteData[siteId]
+  const { currentFilter, selectedMonthIndex, selectedQuarter } = useFilters()
 
   const isContra = g.contradictory === true
   const isKO = g.statut === 'ko' && !isContra
@@ -964,14 +966,31 @@ function GeneratorDetailPanel({
           </div>
           <div className="gd-kpi-sub">Live — Situation moteurs</div>
         </div>
-        <div className="gd-kpi-card">
-          <div className="gd-kpi-label" style={{ color: lc }}>Production réelle</div>
-          <div className="gd-kpi-value hfo-kpi-na">
-            N/A<span className="gd-kpi-unit">MWh</span>
-          </div>
-          <div className="gd-kpi-sub">Données par moteur à venir</div>
-        </div>
+        {(() => {
+          const mp = g.monthlyProd || []
+          const totalProd = mp.reduce((s, v) => s + (v || 0), 0) / 1000  // kWh → MWh
+          const hasProd = totalProd > 0
+          return (
+            <div className="gd-kpi-card">
+              <div className="gd-kpi-label" style={{ color: lc }}>Production réelle</div>
+              <div className={`gd-kpi-value${hasProd ? '' : ' hfo-kpi-na'}`} style={hasProd ? { color: 'var(--energy)' } : undefined}>
+                {hasProd ? Math.round(totalProd).toLocaleString('fr-FR') : 'N/A'}
+                <span className="gd-kpi-unit">MWh</span>
+              </div>
+              <div className="gd-kpi-sub">{hasProd ? 'Cumul annuel' : 'Pas de données'}</div>
+            </div>
+          )
+        })()}
       </div>
+
+      {/* Section — Chart Puissance & Production */}
+      <GeneratorChart
+        generator={g}
+        filter={currentFilter}
+        monthIndex={selectedMonthIndex}
+        quarter={selectedQuarter}
+        height={200}
+      />
 
       {/* Section — Informations générateur */}
       <div className="gd-section-title">Informations générateur</div>
