@@ -4,69 +4,82 @@ import NeonDot from '../../components/NeonDot'
  * HfoSite — Individual HFO site card showing key KPIs.
  *
  * Props:
- *  site      — site data object (name, status, mw, contrat, groupes[], kpi{}, fuelStock, blackoutStats, stationUse)
- *  kpi       — resolved KPI object for current filter ({prod, prodObj, dispo, sfoc, sloc, heures})
- *  prodShare — percentage share of total production (0-100)
+ *  site      — site data object (name, status, groupes[], contracts{enelec,vestopDispo,total})
+ *  prodShare — percentage share of total production (0-100) — placeholder for now
  *  onClick   — click handler
  */
-export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
+export default function HfoSite({ site, kpi = {}, prodShare = 0, onClick }) {
   const s = site
-  const k = kpi || {}
 
-  // Puissance dispo vs Contrat
-  const puissPct = s.contrat > 0 ? Math.round((s.mw / s.contrat) * 100) : 0
-  const puissColor = puissPct >= 95 ? '#00ab63' : puissPct >= 80 ? '#f37056' : '#E05C5C'
+  // Site-level Puissance row: Peak | % | Dispo | % | Contrat
+  // VESTOP helps cover the Peak but does NOT count toward ENELEC contract.
+  const contracts = s.contracts || {}
+  const contratEnelec = contracts.enelec || s.contrat || 0
+  const contratVestop = contracts.vestop || contracts.vestopDispo || 0
+  const hasEnelecHere = contratEnelec > 0
+  const hasVestopHere = contratVestop > 0
+  const isMixedSite = hasEnelecHere && hasVestopHere
+  const isPureVestopSite = hasVestopHere && !hasEnelecHere
 
-  // Production vs Prev
-  const prodReal = k.prod || 0
-  const prodPrev = k.prodObj || 0
-  const prodDelta = prodPrev > 0 ? ((prodReal / prodPrev) - 1) * 100 : null
-  const prodColor = prodDelta === null ? 'rgba(255,255,255,0.3)' : prodDelta >= 0 ? '#00ab63' : '#E05C5C'
-  const prodSign = prodDelta !== null && prodDelta > 0 ? '+' : ''
-  const prodPctStr = prodDelta !== null ? `${prodSign}${prodDelta.toFixed(1)}%` : '—'
+  // Per-provider dispo from Global file (Situation moteurs)
+  let dispoEnelec = 0
+  let dispoVestop = 0
+  for (const g of (s.groupes || [])) {
+    const prov = (g.provider || '').toLowerCase()
+    if (g.statut !== 'ok' || g.availableMw == null) continue
+    const v = +g.availableMw
+    if (Number.isNaN(v)) continue
+    if (prov === 'enelec') dispoEnelec += v
+    else if (prov === 'vestop') dispoVestop += v
+  }
+  dispoEnelec = Math.round(dispoEnelec * 10) / 10
+  dispoVestop = Math.round(dispoVestop * 10) / 10
+  const dispoTotal = Math.round((dispoEnelec + dispoVestop) * 10) / 10
+
+  // Peak Load (from HEBDO sheet in Global file)
+  const peakLoad = s.peakLoadLatest
+
+  // Percentages — Dispo shown as % of each reference (Peak = 100%, Contrat = 100%)
+  //  - Peak %     : total dispo (ENELEC+VESTOP) / peak  — VESTOP helps couvrir le peak
+  //  - Contrat %  : ENELEC dispo / ENELEC contrat       — VESTOP n'influence pas le contrat
+  const pctDispoPeak = (peakLoad != null && peakLoad > 0)
+    ? Math.round((dispoTotal / peakLoad) * 100)
+    : null
+  const pctDispoContrat = contratEnelec > 0
+    ? Math.round((dispoEnelec / contratEnelec) * 100)
+    : 0
+
+  // Color rules — green si dispo couvre la référence, rouge sinon
+  const colorFor = (pct) => pct == null ? '#8a92ab'
+    : pct >= 100 ? '#00ab63'
+    : pct >= 80 ? '#f37056'
+    : '#E05C5C'
+  const peakColor = colorFor(pctDispoPeak)
+  const covColor  = colorFor(pctDispoContrat)
 
   // Moteurs a l'arret
   const arretCount = s.groupes ? s.groupes.filter(g => g.statut !== 'ok').length : 0
   const totalMoteurs = s.groupes ? s.groupes.length : 0
   const arretColor = arretCount === 0 ? '#00ab63' : arretCount <= 2 ? '#f37056' : '#E05C5C'
 
-  // Neon status: green if dispo >= 100% contrat, red otherwise
-  const isOk = s.contrat > 0 && puissPct >= 100
+  // Neon status: green if provider dispo covers provider contract, red otherwise
+  const pctPureVestop = contratVestop > 0 ? Math.round((dispoVestop / contratVestop) * 100) : 0
+  const isOk = isPureVestopSite
+    ? pctPureVestop >= 100
+    : (contratEnelec > 0 && pctDispoContrat >= 100)
   const neonStatus = isOk ? 'ok' : 'ko'
 
   // Construction / Reconstruction special states
   const isConstruction = s.status === 'construction' || s.status === 'reconstruction'
 
-  // Fuel autonomy
-  const fs = s.fuelStock || {}
-  const hfoAuto = fs.hfoAutonomyDays != null ? fs.hfoAutonomyDays : null
-  const hfoAutoColor = hfoAuto === null ? 'rgba(255,255,255,0.3)' : hfoAuto <= 3 ? '#E05C5C' : hfoAuto <= 10 ? '#f37056' : '#00ab63'
-
-  // Blackouts
-  const bs = s.blackoutStats || {}
-  const boCount = bs.count || 0
-  const boColor = boCount === 0 ? '#00ab63' : boCount <= 10 ? '#f37056' : '#E05C5C'
-
-  // Station Use
-  const su = s.stationUse || {}
-  const stUsePct = su.avgStationUsePct != null ? su.avgStationUsePct : null
-  const stUseColor = stUsePct === null ? 'rgba(255,255,255,0.3)' : stUsePct <= 5 ? '#00ab63' : stUsePct <= 8 ? '#f37056' : '#E05C5C'
-
-  // SFOC/SLOC
-  const sfocVal = k.sfoc != null && k.sfoc > 0 ? k.sfoc : null
-  const sfocColor = sfocVal === null ? 'rgba(255,255,255,0.3)' : sfocVal <= 250 ? '#00ab63' : '#E05C5C'
-  const slocVal = k.sloc != null && k.sloc > 0 ? k.sloc : null
-  const slocColor = slocVal === null ? 'rgba(255,255,255,0.3)' : slocVal <= 1.0 ? '#00ab63' : '#E05C5C'
-
   const allKO = s.groupes && s.groupes.length > 0 && s.groupes.every(g => g.statut === 'ko')
   const borderCls = allKO ? 'border-[rgba(224,92,92,0.25)]' : 'border-[rgba(138,146,171,0.2)]'
   const labelColor = allKO ? 'rgba(224,92,92,0.6)' : 'rgba(138,146,171,0.65)'
-  const bgKpi = allKO ? 'rgba(224,92,92,0.08)' : 'rgba(138,146,171,0.1)'
 
   if (isConstruction) {
     const isRecon = s.status === 'reconstruction'
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 h-full">
         <div className="flex items-center justify-center gap-2 h-[26px]">
           {isRecon
             ? <NeonDot status="ko" size={8} />
@@ -75,7 +88,7 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
           <span className="text-xs tracking-wider uppercase">{s.name}</span>
         </div>
         <div
-          className={`glass-card flex flex-col items-center justify-center gap-2 min-h-[200px] opacity-60`}
+          className={`glass-card flex-1 flex flex-col items-center justify-center gap-2 min-h-[200px] opacity-60`}
           style={{}}
         >
           <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
@@ -93,139 +106,139 @@ export default function HfoSite({ site, kpi, prodShare = 0, onClick }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 h-full">
       {/* Site name above card */}
       <div className="flex items-center justify-center gap-2 h-[26px]">
         <NeonDot status={neonStatus} size={8} />
         <span className="text-xs tracking-wider uppercase">{s.name}</span>
-        <span className="text-[10px] text-[#f37056] opacity-85">
-          {prodShare.toFixed(1)}%
-        </span>
       </div>
 
       {/* Site card */}
       <div
         onClick={onClick}
-        className={`glass-card clickable-energy p-4 ${borderCls}`}
+        className={`glass-card clickable-energy p-4 flex-1 flex flex-col ${borderCls}`}
       >
-        {/* KPI 1: Puissance dispo / Contrat */}
+        {/* KPI 1: Puissance — Ligne 1 = Peak (libre), Ligne 2 = Contrat (alignée avec SLOC/SFOC et Production/Moteurs en 2 colonnes) */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
           <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
-            Puissance dispo / Contrat
+            Puissance
           </div>
-          <div className="flex items-center justify-between gap-1">
-            <div className="text-center flex-1">
-              <div className="text-xl leading-none" style={{ color: puissColor }}>
-                {parseFloat(s.mw).toFixed(1)}
-                <span className="text-[9px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
+
+          {/* ═══ Ligne 1 : Peak — ENELEC + VESTOP (mixte) | % | Peak ═══ */}
+          <div className="relative grid grid-cols-2 gap-2 items-center">
+            {/* Col gauche : Dispo — valeur unique (total ENELEC+VESTOP pour les sites mixtes) */}
+            <div className="text-center">
+              {isMixedSite ? (
+                <div>
+                  <div className="text-lg leading-none" style={{ color: peakColor }}>
+                    {parseFloat(dispoTotal).toFixed(1)}
+                    <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
+                  </div>
+                  <div className="text-[8px] text-[var(--text-dim)] mt-0.5 tracking-widest uppercase">ENELEC + VESTOP</div>
+                </div>
+              ) : isPureVestopSite ? (
+                <div>
+                  <div className="text-lg leading-none" style={{ color: peakColor }}>
+                    {parseFloat(dispoVestop).toFixed(1)}
+                    <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
+                  </div>
+                  <div className="text-[8px] mt-0.5 tracking-widest uppercase" style={{ color: '#5aafaf' }}>VESTOP</div>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-lg leading-none" style={{ color: peakColor }}>
+                    {parseFloat(dispoEnelec).toFixed(1)}
+                    <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
+                  </div>
+                  <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Disponible</div>
+                </div>
+              )}
+            </div>
+            {/* Col droite : Peak */}
+            <div className="text-center">
+              <div className="text-lg leading-none text-[var(--text)]">
+                {peakLoad != null ? parseFloat(peakLoad).toFixed(1) : '—'}
+                <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
               </div>
-              <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Dispo</div>
+              <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Peak</div>
             </div>
-            <div className="text-center flex-shrink-0 w-[38px]">
-              <div className="text-[13px]" style={{ color: puissColor }}>{puissPct}%</div>
+            {/* % au milieu — absolument positionné entre les 2 colonnes */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] leading-none px-1" style={{ color: peakColor }}>
+              {pctDispoPeak != null ? `${pctDispoPeak}%` : '—'}
             </div>
-            <div className="text-center flex-1">
-              <div className="text-xl leading-none text-[var(--text-muted)]">
-                {parseFloat(s.contrat).toFixed(1)}
-                <span className="text-[9px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
+          </div>
+
+          {/* Séparateur entre les deux lignes */}
+          <div className="h-px my-1.5" style={{ background: allKO ? 'rgba(224,92,92,0.15)' : 'rgba(138,146,171,0.12)' }} />
+
+          {/* ═══ Ligne 2 : Contrat — Dispo (ENELEC ou VESTOP) | % | Contrat ═══ */}
+          <div className="relative grid grid-cols-2 gap-2 items-center">
+            {/* Col gauche : Dispo ENELEC (ou VESTOP pour site pur VESTOP) */}
+            <div className="text-center">
+              <div className="text-lg leading-none" style={{ color: isPureVestopSite ? colorFor(contratVestop > 0 ? Math.round((dispoVestop / contratVestop) * 100) : null) : covColor }}>
+                {parseFloat(isPureVestopSite ? dispoVestop : dispoEnelec).toFixed(1)}
+                <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
+              </div>
+              <div className="text-[8px] mt-0.5 tracking-widest uppercase" style={{ color: isPureVestopSite ? '#5aafaf' : 'var(--text-dim)' }}>
+                {isPureVestopSite ? 'VESTOP' : (isMixedSite ? 'ENELEC' : 'Disponible')}
+              </div>
+            </div>
+            {/* Col droite : Contrat */}
+            <div className="text-center">
+              <div className="text-lg leading-none text-[var(--text-muted)]">
+                {(isPureVestopSite ? contratVestop : contratEnelec).toFixed(1)}
+                <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
               </div>
               <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Contrat</div>
             </div>
+            {/* % au milieu — absolument positionné entre les 2 colonnes */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] leading-none px-1" style={{ color: isPureVestopSite ? colorFor(contratVestop > 0 ? Math.round((dispoVestop / contratVestop) * 100) : null) : covColor }}>
+              {isPureVestopSite
+                ? (contratVestop > 0 ? `${Math.round((dispoVestop / contratVestop) * 100)}%` : '—')
+                : (contratEnelec > 0 ? `${pctDispoContrat}%` : '—')}
+            </div>
           </div>
         </div>
 
-        {/* KPI 2: Production vs Prev */}
+        {/* KPI 2: SLOC | SFOC */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
-          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
-            Production vs Previsionnel
+          <div className="grid grid-cols-2 gap-2">
+            <div className="text-center">
+              <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>SLOC</div>
+              <div className="text-lg leading-none text-[var(--text)]">
+                {kpi?.sloc != null ? parseFloat(kpi.sloc).toFixed(2) : '—'}
+                <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">g/kWh</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>SFOC</div>
+              <div className="text-lg leading-none text-[var(--text)]">
+                {kpi?.sfoc != null ? Math.round(kpi.sfoc).toString() : '—'}
+                <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">g/kWh</span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center justify-between gap-1">
-            <div className="text-center flex-1">
-              <div className="text-[13px] leading-none" style={{ color: allKO ? '#E05C5C' : 'var(--text)' }}>
-                {Math.round(prodReal).toLocaleString()}
+        </div>
+
+        {/* KPI 3: Production | Moteurs a l'arret */}
+        <div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="text-center">
+              <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>Production</div>
+              <div className="text-lg leading-none text-[var(--text)]">
+                {kpi?.prod != null ? Math.round(kpi.prod).toString() : '—'}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MWh</span>
               </div>
-              <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Reel</div>
             </div>
-            <div className="text-center flex-shrink-0 w-[44px]">
-              <div className="text-[14px]" style={{ color: prodColor }}>{prodPctStr}</div>
-            </div>
-            <div className="text-center flex-1">
-              <div className="text-[13px] leading-none text-[var(--text-muted)]">
-                {prodPrev > 0 ? Math.round(prodPrev).toLocaleString() : '—'}
-                <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">{prodPrev > 0 ? 'MWh' : ''}</span>
+            <div className="text-center">
+              <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>Moteurs a l'arret</div>
+              <div className="flex items-baseline justify-center gap-1">
+                <span className="text-lg leading-none" style={{ color: arretColor }}>
+                  {arretCount}
+                </span>
+                <span className="text-[9px] text-[var(--text-dim)]">/ {totalMoteurs}</span>
               </div>
-              <div className="text-[8px] text-[var(--text-dim)] mt-0.5">Prevu</div>
             </div>
-          </div>
-        </div>
-
-        {/* KPI 3: Moteurs a l'arret */}
-        <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
-          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
-            Moteurs a l'arret
-          </div>
-          <div className="flex items-center justify-center gap-2.5">
-            <span className="text-[28px] leading-none tracking-tight" style={{ color: arretColor }}>
-              {arretCount}
-            </span>
-            <span className="text-[10px] text-[var(--text-dim)] leading-tight">
-              / {totalMoteurs}<br />moteurs
-            </span>
-          </div>
-        </div>
-
-        {/* KPI row: Fuel + Blackouts + Station Use */}
-        <div className="flex gap-1.5 pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
-          <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>FUEL HFO</div>
-            <div className="text-[13px] leading-none" style={{ color: hfoAutoColor }}>
-              {hfoAuto !== null ? hfoAuto.toFixed(1) : '—'}
-            </div>
-            <div className="text-[7px] text-[var(--text-dim)] mt-0.5">jours autonomie</div>
-            {fs.latestHfoStock != null && (
-              <div className="text-[7px] text-[var(--text-muted)] mt-0.5">{Math.round(fs.latestHfoStock).toLocaleString()} L</div>
-            )}
-          </div>
-          <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>BLACKOUTS</div>
-            <div className="text-[13px] leading-none" style={{ color: boColor }}>
-              {boCount}
-            </div>
-            <div className="text-[7px] text-[var(--text-dim)] mt-0.5">coupures</div>
-          </div>
-          <div className="flex-1 rounded-lg p-1.5 text-center flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>CONSO STATION</div>
-            <div className="text-[13px] leading-none" style={{ color: stUseColor }}>
-              {stUsePct !== null ? stUsePct.toFixed(1) : '—'}
-            </div>
-            <div className="text-[7px] text-[var(--text-dim)] mt-0.5">% auxiliaires</div>
-          </div>
-        </div>
-
-        {/* SFOC + SLOC */}
-        <div className="flex gap-1.5">
-          <div className="flex-1 rounded-lg p-1.5 text-center min-h-[60px] flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SFOC</div>
-            <div className="text-[13px] leading-none" style={{ color: sfocColor }}>
-              {sfocVal !== null ? sfocVal.toFixed(1) : '—'}
-            </div>
-            <div className="text-[7px] text-[var(--text-dim)] mt-0.5">g/kWh</div>
-            <div className="text-[7px] mt-0.5 opacity-80 min-h-[10px]" style={{ color: sfocColor }}>
-              {sfocVal !== null ? (sfocVal <= 250 ? `−${(250 - sfocVal).toFixed(1)} vs limite` : `+${(sfocVal - 250).toFixed(1)} vs limite`) : ''}
-            </div>
-            <div className="text-[7px] text-[var(--text-muted)] mt-0.5">limite 250</div>
-          </div>
-          <div className="flex-1 rounded-lg p-1.5 text-center min-h-[60px] flex flex-col justify-center" style={{ background: bgKpi }}>
-            <div className="text-[7px] tracking-wider uppercase mb-0.5" style={{ color: labelColor }}>SLOC</div>
-            <div className="text-[13px] leading-none" style={{ color: slocColor }}>
-              {slocVal !== null ? slocVal.toFixed(1) : '—'}
-            </div>
-            <div className="text-[7px] text-[var(--text-dim)] mt-0.5">g/kWh</div>
-            <div className="text-[7px] mt-0.5 opacity-80 min-h-[10px]" style={{ color: slocColor }}>
-              {slocVal !== null ? (slocVal <= 1.0 ? `−${(1.0 - slocVal).toFixed(1)} vs limite` : `+${(slocVal - 1.0).toFixed(1)} vs limite`) : ''}
-            </div>
-            <div className="text-[7px] text-[var(--text-muted)] mt-0.5">limite 1.00</div>
           </div>
         </div>
       </div>

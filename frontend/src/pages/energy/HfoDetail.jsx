@@ -2,9 +2,44 @@ import { useState, useMemo, useEffect } from 'react'
 import { useFilters } from '../../hooks/useFilters'
 import { usePageTitle } from '../../context/PageTitleContext'
 import HfoSite from './HfoSite'
-import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
+import HfoVestopCard from './HfoVestopCard'
+import HfoKpiGrid from './HfoKpiGrid'
+import PuissanceHebdoChart from './PuissanceHebdoChart'
+import ProductionChart from './ProductionChart'
+import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, FIHAONANA_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { HFO_STATUS_LABELS, HFO_STATUS_COLORS, formatDateFR, MONTH_SHORT } from '../../utils/projects'
+
+const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
+
+/** Aggregate puissanceHebdo across multiple sites (weeks must be aligned). */
+function aggregatePuissanceHebdo(sites) {
+  const first = sites.find(s => s?.puissanceHebdo?.weeks?.length)
+  if (!first) return null
+  const weeks = first.puissanceHebdo.weeks
+  const n = weeks.length
+  const sum = (field, useNull = false) => {
+    const out = new Array(n).fill(useNull ? null : 0)
+    sites.forEach(s => {
+      const arr = s?.puissanceHebdo?.[field]
+      if (!arr) return
+      for (let i = 0; i < n; i++) {
+        const v = arr[i]
+        if (v == null) continue
+        if (out[i] == null) out[i] = 0
+        out[i] += +v
+      }
+    })
+    return out
+  }
+  return {
+    weeks,
+    enelec:   sum('enelec'),
+    vestop:   sum('vestop'),
+    contrat:  sum('contrat'),
+    peakLoad: sum('peakLoad', true),
+  }
+}
 
 function mapFilter(f) {
   return { 'J-1': '24h', 'M': 'month', 'Q': 'quarter', 'A': 'year' }[f] || 'month'
@@ -16,8 +51,8 @@ function isCurrentMonth(monthIndex) {
 
 // Default site data (same structure as energy.js siteData)
 // We merge live data from site_data.js exports
-const SITE_ORDER = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe', 'fihaonana']
-const NAVIGABLE_SITES = ['tamatave', 'tulear', 'diego', 'majunga']
+const SITE_ORDER = ['tamatave', 'diego', 'tulear', 'majunga', 'antsirabe', 'fihaonana']
+const NAVIGABLE_SITES = ['tamatave', 'tulear', 'diego', 'majunga', 'antsirabe']
 
 const DEFAULT_SITES = {
   tamatave: {
@@ -37,7 +72,7 @@ const DEFAULT_SITES = {
     groupes: [], kpi: { '24h': {}, month: {}, year: {} },
   },
   antsirabe: {
-    name: 'Antsirabe', status: 'reconstruction', mw: 0, contrat: 7.5,
+    name: 'Antsirabe', status: 'warn', mw: 0, contrat: 7.5,
     groupes: [], kpi: {},
   },
   fihaonana: {
@@ -54,6 +89,8 @@ function buildSiteData() {
     diego: DIEGO_LIVE,
     majunga: MAJUNGA_LIVE,
     tulear: TULEAR_LIVE,
+    antsirabe: ANTSIRABE_LIVE,
+    fihaonana: FIHAONANA_LIVE,
   }
   for (const [key, live] of Object.entries(liveMap)) {
     if (live && sites[key]) {
@@ -99,6 +136,25 @@ function fmtGId(id) {
   return id ? id.replace(/(\D+)(\d+)/, '$1 $2') : id
 }
 
+/**
+ * VESTOP engines do not follow the ADG/MDG/BDG naming scheme — the DG wants to
+ * see them referenced by manufacturer (DEUTZ, MAN, Rolls Royce) in every view
+ * (VESTOP detail, Tamatave, Majunga). For non-VESTOP engines we fall back to
+ * `fmtGId`. The engine object is expected to carry `provider` and `model`
+ * (which is the concatenated "Make Model" produced by generate_hfo_data.py).
+ */
+function fmtEngineName(g) {
+  if (!g) return ''
+  const provider = (g.provider || '').toLowerCase()
+  if (provider === 'vestop') {
+    const m = (g.model || '').toUpperCase()
+    if (m.includes('DEUTZ') || m.includes('DUETZ')) return 'DEUTZ'
+    if (m.includes('MAN')) return 'MAN'
+    if (m.startsWith('RR') || m.includes('ROLLS')) return 'Rolls Royce'
+  }
+  return fmtGId(g.id)
+}
+
 // Generator SFOC calculation (simplified — uses 24h data for now)
 function calcGenSfoc(g) {
   const HFO_D = 0.96
@@ -118,7 +174,9 @@ export default function HfoDetail() {
 
   // Update banner title based on current view
   useEffect(() => {
-    if (selectedSite) {
+    if (selectedSite === 'vestop') {
+      setPageTitle('VESTOP')
+    } else if (selectedSite) {
       setPageTitle(selectedSite.charAt(0).toUpperCase() + selectedSite.slice(1))
     } else {
       setPageTitle(null) // fallback to default "HFO"
@@ -142,17 +200,92 @@ export default function HfoDetail() {
     return { totalProdAll: total, activeSites: active }
   }, [siteData, currentFilter, selectedMonthIndex, selectedQuarter])
 
-  // Consolidated KPIs — matches original renderConsolidated()
+  // Consolidated KPIs — aggregated across all active sites
   const consolidated = useMemo(() => {
     const kpis = activeSites.map(a => a.kpi)
     const tProd = kpis.reduce((s, k) => s + (k.prod || 0), 0)
-    const tMw = parseFloat(activeSites.reduce((s, a) => s + (a.site.mw || 0), 0).toFixed(1))
-    // Weighted average SFOC/SLOC by production
-    const aSfoc = tProd > 0 ? kpis.reduce((s, k) => s + (k.sfoc || 0) * (k.prod || 0), 0) / tProd : 0
-    const aSloc = tProd > 0 ? kpis.reduce((s, k) => s + (k.sloc || 0) * (k.prod || 0), 0) / tProd : 0
-
-    return { tProd, tMw, aSfoc, aSloc }
+    const tContratEnelec = activeSites.reduce((s, a) => s + (a.site.contracts?.enelec || 0), 0)
+    // VESTOP: use global authoritative total from HFO_GLOBAL (23.5 MW)
+    const globalSumVestop = activeSites.reduce((s, a) => s + (a.site.contracts?.vestop || 0), 0)
+    const tContratVestop = HFO_GLOBAL?.vestopTotalContract ?? globalSumVestop
+    // True dispo = sum of dispoTotal (availableMw from Situation)
+    const tDispo = activeSites.reduce((s, a) => s + (a.site.dispoTotal || 0), 0)
+    // Per-provider dispo — iterate groupes and filter by provider
+    let tDispoEnelec = 0
+    let tDispoVestop = 0
+    activeSites.forEach(a => {
+      for (const g of (a.site.groupes || [])) {
+        if (g.statut !== 'ok' || g.availableMw == null) continue
+        const v = +g.availableMw
+        if (Number.isNaN(v)) continue
+        const prov = (g.provider || '').toLowerCase()
+        if (prov === 'enelec') tDispoEnelec += v
+        else if (prov === 'vestop') tDispoVestop += v
+      }
+    })
+    tDispoEnelec = Math.round(tDispoEnelec * 10) / 10
+    tDispoVestop = Math.round(tDispoVestop * 10) / 10
+    // Peak load = max across sites (using latest weekly peak)
+    const tPeak = activeSites.reduce((m, a) => {
+      const p = a.site.peakLoadLatest
+      return p != null && p > m ? p : m
+    }, 0)
+    // Weighted SFOC / SLOC
+    let sfocW = 0, slocW = 0, prodSum = 0
+    kpis.forEach(k => {
+      if (k && k.prod) {
+        prodSum += k.prod
+        if (k.sfoc) sfocW += k.sfoc * k.prod
+        if (k.sloc) slocW += k.sloc * k.prod
+      }
+    })
+    const avgSfoc = prodSum > 0 ? sfocW / prodSum : null
+    const avgSloc = prodSum > 0 ? slocW / prodSum : null
+    // Blackouts — sum of month stats across sites if available
+    let tBlackouts = null
+    activeSites.forEach(a => {
+      const bs = a.site.blackoutStats
+      if (bs && bs.count != null) {
+        tBlackouts = (tBlackouts || 0) + bs.count
+      }
+    })
+    // Running vs total engines
+    let tRunning = 0, tEngines = 0
+    activeSites.forEach(a => {
+      const gs = a.site.groupes || []
+      tEngines += gs.length
+      tRunning += gs.filter(g => g.statut === 'ok').length
+    })
+    return {
+      tProd, tContratEnelec, tContratVestop, tDispo, tDispoEnelec, tDispoVestop, tPeak,
+      avgSfoc, avgSloc, tBlackouts, tRunning, tEngines,
+    }
   }, [activeSites])
+
+  // Aggregated puissance hebdo across all active sites
+  const consolidatedHebdo = useMemo(
+    () => aggregatePuissanceHebdo(activeSites.map(a => a.site)),
+    [activeSites]
+  )
+
+  // Aggregated monthly production (month_1..month_12)
+  const consolidatedMonths = useMemo(() => {
+    const months = new Array(12).fill(null).map(() => ({ prod: 0, prodObj: 0 }))
+    activeSites.forEach(a => {
+      const kpi = a.site.kpi || {}
+      for (let m = 1; m <= 12; m++) {
+        const k = kpi[`month_${m}`]
+        if (!k) continue
+        months[m - 1].prod += k.prod || 0
+        months[m - 1].prodObj += k.prodObj || 0
+      }
+    })
+    return months
+  }, [activeSites])
+
+  const periodLabel = currentFilter === 'A' ? String(selectedYear)
+    : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
+    : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
 
   // HFO Projects panel
   const hfp = HFO_PROJECTS
@@ -168,6 +301,17 @@ export default function HfoDetail() {
 
   // Site detail panel
   const selectedSiteData = selectedSite ? siteData[selectedSite] : null
+
+  // Special case : VESTOP virtual site — dedicated detail panel
+  if (selectedSite === 'vestop') {
+    return (
+      <VestopDetailPanel
+        siteData={siteData}
+        totalContract={HFO_GLOBAL?.vestopTotalContract || 0}
+        onClose={() => setSelectedSite(null)}
+      />
+    )
+  }
 
   // If a site is selected, show full site detail instead of the main view
   if (selectedSite && selectedSiteData) {
@@ -185,49 +329,52 @@ export default function HfoDetail() {
 
   return (
     <div>
-      {/* Title */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-base tracking-wide uppercase" style={{ letterSpacing: '0.12em' }}>
-          Consolide HFO
-        </h2>
-      </div>
+      {/* Consolidated KPIs — unified grid */}
+      <HfoKpiGrid
+        variant="hfo"
+        contratEnelec={consolidated.tContratEnelec}
+        contratVestop={consolidated.tContratVestop}
+        dispoEnelec={consolidated.tDispoEnelec}
+        dispoVestop={consolidated.tDispoVestop}
+        running={consolidated.tRunning}
+        totalEngines={consolidated.tEngines}
+        production={consolidated.tProd || null}
+        productionSub={periodLabel}
+        sfoc={consolidated.avgSfoc}
+        sloc={consolidated.avgSloc}
+        blackouts={consolidated.tBlackouts}
+        blackoutsSub={periodLabel}
+      />
 
-      {/* Consolidated KPIs — 4 s1-card style boxes matching original renderConsolidated */}
-      <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
-        <div className="s1-card">
-          <div className="s1-card-label">Production totale</div>
-          <div className="s1-card-value">{consolidated.tProd.toFixed(1)}</div>
-          <div className="s1-card-unit-line">MWh</div>
-        </div>
-        <div className="s1-card">
-          <div className="s1-card-label">Puissance installee</div>
-          <div className="s1-card-value">{consolidated.tMw.toFixed(1)}</div>
-          <div className="s1-card-unit-line">MW</div>
-        </div>
-        <div className="s1-card">
-          <div className="s1-card-label">SFOC moyen</div>
-          <div className="s1-card-value">{consolidated.aSfoc.toFixed(1)}</div>
-          <div className="s1-card-unit-line">g/kWh</div>
-        </div>
-        <div className="s1-card">
-          <div className="s1-card-label">SLOC moyen</div>
-          <div className="s1-card-value">{consolidated.aSloc.toFixed(1)}</div>
-          <div className="s1-card-unit-line">g/kWh</div>
-        </div>
-      </div>
-
-      {/* Sites grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {SITE_ORDER.map(id => {
+      {/* Sites grid — ordre : Tamatave, Diego, Tulear, Majunga, Antsirabe, Vestop, Fihaonana */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 items-stretch">
+        {['tamatave', 'diego', 'tulear', 'majunga', 'antsirabe'].map(id => {
           const site = siteData[id]
           const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter)
-          const share = totalProdAll > 0 ? ((kpi.prod || 0) / totalProdAll * 100) : 0
           return (
             <HfoSite
               key={id}
               site={site}
               kpi={kpi}
-              prodShare={share}
+              prodShare={0}
+              onClick={() => setSelectedSite(id)}
+            />
+          )
+        })}
+        <HfoVestopCard
+          siteData={siteData}
+          totalContract={HFO_GLOBAL?.vestopTotalContract || 0}
+          onClick={() => setSelectedSite('vestop')}
+        />
+        {['fihaonana'].map(id => {
+          const site = siteData[id]
+          const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter)
+          return (
+            <HfoSite
+              key={id}
+              site={site}
+              kpi={kpi}
+              prodShare={0}
               onClick={() => setSelectedSite(id)}
             />
           )
@@ -240,6 +387,197 @@ export default function HfoDetail() {
 }
 
 
+/**
+ * VestopDetailPanel — Virtual "VESTOP" detail page
+ *
+ * Shows every VESTOP generator hosted across the HFO sites
+ * (Tamatave, Majunga, Antsirabe, Fihaonana) with its site affectation
+ * and only its puissance disponible (per DG request).
+ */
+function VestopDetailPanel({ siteData, totalContract = 0, onClose }) {
+  const VESTOP_SITES = ['tamatave', 'majunga', 'antsirabe', 'fihaonana']
+
+  // Collect every VESTOP engine across the VESTOP-hosting sites
+  const vestopEngines = useMemo(() => {
+    const out = []
+    VESTOP_SITES.forEach(siteId => {
+      const s = siteData[siteId]
+      if (!s || !Array.isArray(s.groupes)) return
+      s.groupes.forEach(g => {
+        if ((g.provider || '').toLowerCase() !== 'vestop') return
+        out.push({ ...g, siteId, siteName: s.name || siteId })
+      })
+    })
+    return out
+  }, [siteData])
+
+  // Totals (dispo only — per DG request)
+  const totals = useMemo(() => {
+    let dispo = 0
+    let running = 0
+    vestopEngines.forEach(g => {
+      if (g.statut === 'ok' && g.availableMw != null) {
+        const v = +g.availableMw
+        if (!Number.isNaN(v)) dispo += v
+      }
+      if (g.statut === 'ok') running += 1
+    })
+    return {
+      dispo: Math.round(dispo * 10) / 10,
+      running,
+      total: vestopEngines.length,
+    }
+  }, [vestopEngines])
+
+  const pct = totalContract > 0 ? Math.round((totals.dispo / totalContract) * 100) : 0
+  const colorFor = (p) => p == null ? '#8a92ab'
+    : p >= 100 ? 'var(--energy)'
+    : p >= 80 ? '#f0a030'
+    : 'var(--red)'
+  const headColor = colorFor(totalContract > 0 ? pct : null)
+
+  // Group engines by site for the "affectation" view
+  const bySite = useMemo(() => {
+    const map = new Map()
+    vestopEngines.forEach(g => {
+      if (!map.has(g.siteId)) map.set(g.siteId, { siteName: g.siteName, engines: [] })
+      map.get(g.siteId).engines.push(g)
+    })
+    return Array.from(map.entries()).map(([siteId, v]) => ({ siteId, ...v }))
+  }, [vestopEngines])
+
+  return (
+    <div className="site-detail-panel">
+      {/* Header: back button + VESTOP title */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          onClick={onClose}
+          className="text-[var(--text-muted)] hover:text-[var(--text)] text-lg bg-transparent border-none cursor-pointer"
+        >
+          &#8592;
+        </button>
+        <h2 className="text-base uppercase tracking-wider" style={{ color: '#5aafaf' }}>VESTOP</h2>
+        <span className="text-[11px] text-[var(--text-muted)]">
+          — Parc mutualisé sur {bySite.length} site{bySite.length > 1 ? 's' : ''}
+        </span>
+      </div>
+
+      {/* Top KPI strip — uniquement puissance disponible */}
+      <div className="hfo-kpi-grid mb-6">
+        <div className="hfo-kpi-section">
+          <div className="hfo-kpi-section-label">Puissance disponible</div>
+          <div className="hfo-kpi-cards n-1">
+            <div className="hfo-kpi-card" style={{ borderColor: 'rgba(90,175,175,0.28)' }}>
+              <div className="hfo-kpi-label" style={{ color: 'rgba(90,175,175,0.7)' }}>VESTOP</div>
+              <div className="hfo-kpi-provider-row">
+                <div className="hfo-kpi-prov-col">
+                  <div className="hfo-kpi-value-sm" style={{ color: headColor }}>
+                    {totals.dispo.toFixed(1)}
+                    <span className="hfo-kpi-unit">MW</span>
+                  </div>
+                  <div className="hfo-kpi-sub">Disponible</div>
+                </div>
+                <div className="hfo-kpi-prov-pct" style={{ color: headColor }}>
+                  {totalContract > 0 ? `${pct}%` : '—'}
+                </div>
+                <div className="hfo-kpi-prov-col">
+                  <div className="hfo-kpi-value-sm">
+                    {totalContract.toFixed(1)}
+                    <span className="hfo-kpi-unit">MW</span>
+                  </div>
+                  <div className="hfo-kpi-sub">Contrat</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Generateurs VESTOP — groupés par site d'affectation */}
+      <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-3">
+        Generateurs VESTOP ({vestopEngines.length}) — {totals.running} en marche
+      </div>
+
+      {bySite.length === 0 && (
+        <div className="text-[12px] text-[var(--text-muted)] italic">
+          Aucun generateur VESTOP operationnel pour le moment.
+        </div>
+      )}
+
+      {bySite.map(group => (
+        <div key={group.siteId} className="mb-6">
+          {/* Site affectation header */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: '#5aafaf' }} />
+            <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+              Affectation · {group.siteName}
+            </span>
+            <span className="text-[9px] text-[var(--text-dim)]">
+              ({group.engines.length} moteur{group.engines.length > 1 ? 's' : ''})
+            </span>
+          </div>
+
+          {/* Engine cards — only "puissance disponible" */}
+          <div className="gen-cards-row">
+            {group.engines.map((g, gi) => {
+              const isContra = g.contradictory === true
+              const dotColor = isContra ? '#7b5fbf'
+                : g.statut === 'ok' ? 'var(--energy)'
+                : g.statut === 'warn' ? '#f0a030'
+                : 'var(--red)'
+              const statusLabel = isContra ? 'A verifier'
+                : g.statut === 'ok' ? 'En marche'
+                : g.statut === 'warn' ? 'Maintenance'
+                : 'Arret'
+              const daysLabel = (g.jourArret > 0 && !isContra) ? ` · ${g.jourArret}j` : ''
+              const available = (g.statut === 'ok' && g.availableMw != null)
+                ? parseFloat(g.availableMw).toFixed(1)
+                : null
+              const displayName = fmtEngineName(g)
+
+              return (
+                <div key={`${group.siteId}-${g.id}-${gi}`} className="gen-card-wrapper">
+                  {/* Generator ID with status dot */}
+                  <div className="gen-card-title" style={{ color: isContra ? '#7b5fbf' : 'var(--text)' }}>
+                    <span
+                      className="gen-status-dot"
+                      style={{
+                        backgroundColor: dotColor,
+                        boxShadow: `0 0 4px ${dotColor}, 0 0 8px ${dotColor}`,
+                      }}
+                    />
+                    {displayName}
+                  </div>
+                  {/* Card body — uniquement puissance disponible */}
+                  <div
+                    className="s1-card gen-card-body"
+                    style={{ borderColor: 'rgba(90,175,175,0.22)' }}
+                  >
+                    <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">
+                      Puissance disponible
+                    </div>
+                    <div className="text-[18px] leading-none" style={{ color: available != null ? 'var(--energy)' : 'var(--text-dim)' }}>
+                      {available != null ? available : '—'}
+                      <span className="text-[9px] text-[var(--text-muted)] font-normal ml-0.5">MW</span>
+                    </div>
+                    <div className="text-[8px] mt-1.5" style={{ color: dotColor }}>
+                      {statusLabel}{daysLabel}
+                    </div>
+                    <div className="text-[7px] mt-1.5 uppercase tracking-wider" style={{ color: '#5aafaf' }}>
+                      {group.siteName}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+
 /** Full site detail panel — replaces main view when a site is selected */
 function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, onNavigate }) {
   const { selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
@@ -247,67 +585,72 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
   const [selectedGenerator, setSelectedGenerator] = useState(null)
   const s = siteData[siteId]
 
+  // Site KPIs for unified grid
+  const sKpi = useMemo(() => getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter), [s, currentFilter, selectedMonthIndex, selectedQuarter])
+  const sRunning = useMemo(() => (s.groupes || []).filter(g => g.statut === 'ok').length, [s])
+  const sTotal = (s.groupes || []).length
+  const sNominal = useMemo(() => (s.groupes || []).reduce((acc, g) => acc + (+g.nominal || 0), 0), [s])
+  // Per-provider dispo for site-level HfoKpiGrid
+  const sDispo = useMemo(() => {
+    let enelec = 0, vestop = 0
+    for (const g of (s.groupes || [])) {
+      if (g.statut !== 'ok' || g.availableMw == null) continue
+      const v = +g.availableMw
+      if (Number.isNaN(v)) continue
+      const prov = (g.provider || '').toLowerCase()
+      if (prov === 'enelec') enelec += v
+      else if (prov === 'vestop') vestop += v
+    }
+    return {
+      enelec: Math.round(enelec * 10) / 10,
+      vestop: Math.round(vestop * 10) / 10,
+    }
+  }, [s])
+  const sBlackouts = (s.blackoutStats && s.blackoutStats.count != null) ? s.blackoutStats.count : null
+  const sPeriodLabel = currentFilter === 'A' ? String(selectedYear)
+    : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
+    : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
+  const sMonths = useMemo(() => {
+    const months = new Array(12).fill(null).map(() => ({ prod: 0, prodObj: 0 }))
+    const kpi = s.kpi || {}
+    for (let m = 1; m <= 12; m++) {
+      const k = kpi[`month_${m}`]
+      if (!k) continue
+      months[m - 1].prod = k.prod || 0
+      months[m - 1].prodObj = k.prodObj || 0
+    }
+    return months
+  }, [s])
+
   // Update banner when generator is selected
   useEffect(() => {
-    if (selectedGenerator) {
+    if (selectedGenerator != null) {
+      const g = (s.groupes || [])[selectedGenerator]
       const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
-      setPageTitle(`${siteName} — ${selectedGenerator}`)
+      setPageTitle(`${siteName} — ${g ? fmtEngineName(g) : ''}`)
     } else {
       const siteName = siteId.charAt(0).toUpperCase() + siteId.slice(1)
       setPageTitle(siteName)
     }
-  }, [selectedGenerator, siteId, setPageTitle])
-  const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter)
+  }, [selectedGenerator, siteId, s, setPageTitle])
 
   // If a generator is selected, show its detail panel
-  const selGen = selectedGenerator ? s.groupes?.find(g => g.id === selectedGenerator) : null
+  // selectedGenerator is now an index (not id) to handle Majunga's duplicate "Vestop" ids
+  const selGen = selectedGenerator != null ? (s.groupes || [])[selectedGenerator] : null
   if (selGen) {
     return (
       <GeneratorDetailPanel
         siteId={siteId}
         siteData={siteData}
         generator={selGen}
-        currentFilter={currentFilter}
-        setFilter={setFilter}
-        selectedMonthIndex={selectedMonthIndex}
-        selectedQuarter={selectedQuarter}
-        selectedYear={selectedYear}
+        generatorIndex={selectedGenerator}
         onClose={() => setSelectedGenerator(null)}
-        onNavigateGen={(gId) => setSelectedGenerator(gId)}
+        onNavigateGen={(gIdx) => setSelectedGenerator(gIdx)}
       />
     )
   }
 
   const isConstruction = s.status === 'construction' || s.status === 'reconstruction'
-
-  // Fuel stock data
-  const fs = s.fuelStock || {}
-  const hfoStock = fs.latestHfoStock
-  const hfoAuto = fs.hfoAutonomyDays
-  const hfoAutoColor = hfoAuto == null ? 'var(--text-dim)' : hfoAuto <= 3 ? 'var(--red)' : hfoAuto <= 10 ? '#f37056' : 'var(--energy)'
-
-  // Station use
-  const su = s.stationUse || {}
-  const grossMwh = su.totalGrossMwh
-  const netMwh = su.totalNetMwh
-  const stUsePct = su.avgStationUsePct
-  const stUseColor = stUsePct == null ? 'var(--text-dim)' : stUsePct <= 5 ? 'var(--energy)' : stUsePct <= 8 ? '#f37056' : 'var(--red)'
-
-  // Solar
-  const sol = s.solar || null
-  const solarAvg = sol ? sol.avgDailyKwh : null
-  const solarTotal = sol ? sol.totalKwh : null
-
-  // Oil stock
-  const oil = s.oilStock || {}
-  const oilStock = oil.stock
-  const oilAuto = oil.autonomy_days
-  const oilAutoColor = oilAuto == null ? 'var(--text-dim)' : oilAuto <= 5 ? 'var(--red)' : oilAuto <= 15 ? '#f37056' : 'var(--energy)'
-
-  // Blackouts
-  const bs = s.blackoutStats || {}
-  const boCount = bs.count || 0
-  const boColor = boCount === 0 ? 'var(--energy)' : boCount <= 10 ? '#f37056' : 'var(--red)'
 
   return (
     <div className="site-detail-panel">
@@ -351,89 +694,35 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
 
       {!isConstruction && (
         <>
-          {/* Section 1 — Donnees generales */}
-          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-2">
-            Donnees generales
-          </div>
-          <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
-            <div className="s1-card">
-              <div className="s1-card-label">Contrat</div>
-              <div className="s1-card-value">{s.contrat}</div>
-              <div className="s1-card-unit-line">MW</div>
-            </div>
-            <div className="s1-card">
-              <div className="s1-card-label">Production</div>
-              <div className="s1-card-value">{k.prod != null ? parseFloat(k.prod).toFixed(1) : '—'}</div>
-              <div className="s1-card-unit-line">MWh</div>
-            </div>
-            <div className="s1-card">
-              <div className="s1-card-label">SFOC</div>
-              <div className="s1-card-value" style={{ color: k.sfoc != null && k.sfoc <= 250 ? 'var(--energy)' : k.sfoc != null ? 'var(--red)' : 'var(--text)' }}>
-                {k.sfoc != null ? parseFloat(k.sfoc).toFixed(1) : '—'}
-              </div>
-              <div className="s1-card-unit-line">g/kWh</div>
-            </div>
-            <div className="s1-card">
-              <div className="s1-card-label">SLOC</div>
-              <div className="s1-card-value" style={{ color: k.sloc != null && k.sloc <= 1.0 ? 'var(--energy)' : k.sloc != null ? 'var(--red)' : 'var(--text)' }}>
-                {k.sloc != null ? parseFloat(k.sloc).toFixed(2) : '—'}
-              </div>
-              <div className="s1-card-unit-line">g/kWh</div>
-            </div>
-          </div>
+          {/* Unified site KPI grid */}
+          <HfoKpiGrid
+            variant="site"
+            nominal={sNominal}
+            contratEnelec={s.contracts?.enelec || 0}
+            contratVestop={s.contracts?.vestop || 0}
+            dispoEnelec={sDispo.enelec}
+            dispoVestop={sDispo.vestop}
+            running={sRunning}
+            totalEngines={sTotal}
+            production={sKpi?.prod || null}
+            productionSub={sPeriodLabel}
+            sfoc={sKpi?.sfoc}
+            sloc={sKpi?.sloc}
+            blackouts={sBlackouts}
+            blackoutsSub={sPeriodLabel}
+          />
 
-          {/* Section 1b — KPIs operationnels */}
-          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2">
-            KPIs operationnels
-          </div>
-          <div className="detail-s1-top grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-6">
-            {/* Stock HFO */}
-            <div className="s1-card">
-              <div className="s1-card-label">Stock HFO</div>
-              <div className="s1-card-value" style={{ color: hfoAutoColor }}>
-                {hfoStock != null ? Math.round(hfoStock).toLocaleString() : '—'}
-              </div>
-              <div className="s1-card-unit-line">Litres</div>
-              <div className="text-[10px] mt-1" style={{ color: hfoAutoColor }}>
-                {hfoAuto != null ? `${hfoAuto.toFixed(1)} jours autonomie` : 'Donnees non dispo'}
-              </div>
-            </div>
-            {/* Conso Station */}
-            <div className="s1-card">
-              <div className="s1-card-label">Conso Station</div>
-              <div className="s1-card-value" style={{ color: stUseColor }}>
-                {stUsePct != null ? stUsePct.toFixed(1) : '—'}
-              </div>
-              <div className="s1-card-unit-line">% auxiliaires</div>
-              <div className="text-[9px] text-[var(--text-muted)] mt-1">
-                {grossMwh != null ? `Brut ${Math.round(grossMwh).toLocaleString()} / Net ${Math.round(netMwh).toLocaleString()} MWh` : ''}
-              </div>
-            </div>
-            {/* Solaire (conditionally shown) */}
-            {sol && (
-              <div className="s1-card">
-                <div className="s1-card-label">Solaire</div>
-                <div className="s1-card-value" style={{ color: 'var(--energy)' }}>
-                  {solarAvg != null ? Math.round(solarAvg).toLocaleString() : '—'}
-                </div>
-                <div className="s1-card-unit-line">kWh/jour moy.</div>
-                <div className="text-[9px] text-[var(--text-muted)] mt-1">
-                  {solarTotal != null ? `Total ${Math.round(solarTotal).toLocaleString()} kWh` : ''}
-                </div>
-              </div>
-            )}
-            {/* Stock Huile */}
-            <div className="s1-card">
-              <div className="s1-card-label">Stock Huile</div>
-              <div className="s1-card-value" style={{ color: oilAutoColor }}>
-                {oilStock != null ? Math.round(oilStock).toLocaleString() : '—'}
-              </div>
-              <div className="s1-card-unit-line">Litres</div>
-              <div className="text-[10px] mt-1" style={{ color: oilAutoColor }}>
-                {oilAuto != null ? `${oilAuto.toFixed(1)} jours autonomie` : ''}
-              </div>
-            </div>
-          </div>
+          {/* Charts — puissance hebdo + production mensuelle */}
+          {s.puissanceHebdo && s.puissanceHebdo.weeks?.length > 0 && (
+            <PuissanceHebdoChart
+              data={s.puissanceHebdo}
+              title={`Puissance disponible hebdomadaire — ${s.name}`}
+            />
+          )}
+          <ProductionChart
+            months={sMonths}
+            title={`Production mensuelle — ${s.name}`}
+          />
 
           {/* Section 2 — Generateurs */}
           {s.groupes && s.groupes.length > 0 && (
@@ -442,30 +731,19 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
                 Generateurs ({s.groupes.length})
               </div>
               <div className="gen-cards-row">
-                {s.groupes.map(g => {
+                {s.groupes.map((g, gi) => {
                   const isContra = g.contradictory === true
                   const dotColor = isContra ? '#7b5fbf' : g.statut === 'ok' ? 'var(--energy)' : g.statut === 'warn' ? '#f0a030' : 'var(--red)'
                   const statusLabel = isContra ? 'A verifier' : g.statut === 'ok' ? 'En marche' : g.statut === 'warn' ? 'Maintenance' : 'Arret'
                   const daysLabel = (g.jourArret > 0 && !isContra) ? ` · ${g.jourArret}j` : ''
 
-                  // SFOC per generator
-                  const gSfoc = calcGenSfoc(g)
-                  const sfocStr = gSfoc != null ? gSfoc.toFixed(0) : '—'
-                  const sfocColor = gSfoc != null ? (gSfoc <= 250 ? 'var(--energy)' : 'var(--red)') : 'var(--text-dim)'
-
-                  // SLOC
-                  const gSlocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '—'
-
-                  // Border color
-                  const borderColor = isContra ? 'rgba(160,90,255,0.3)'
-                    : g.statut === 'ok' ? 'rgba(0,171,99,0.2)'
-                    : g.statut === 'warn' ? 'rgba(240,160,48,0.2)'
-                    : 'rgba(243,112,86,0.2)'
-
-                  const mw = parseFloat(g.mw).toFixed(1)
+                  const nominal = g.nominal != null ? parseFloat(g.nominal).toFixed(1) : parseFloat(g.mw || 0).toFixed(1)
+                  const attendu = g.attendu != null ? parseFloat(g.attendu).toFixed(1) : null
+                  const available = g.availableMw != null ? parseFloat(g.availableMw).toFixed(1) : null
+                  const displayName = fmtEngineName(g)
 
                   return (
-                    <div key={g.id} className="gen-card-wrapper">
+                    <div key={`${g.id}-${gi}`} className="gen-card-wrapper">
                       {/* Generator ID with status dot */}
                       <div className="gen-card-title" style={{ color: isContra ? '#7b5fbf' : 'var(--text)' }}>
                         <span
@@ -475,31 +753,38 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
                             boxShadow: `0 0 4px ${dotColor}, 0 0 8px ${dotColor}`,
                           }}
                         />
-                        {fmtGId(g.id)}
+                        {displayName}
                       </div>
                       {/* Card body */}
                       <div
                         className="s1-card gen-card-body"
                         style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedGenerator(g.id)}
+                        onClick={() => setSelectedGenerator(gi)}
                       >
-                        <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">Puissance</div>
+                        <div className="text-[7px] uppercase tracking-[0.15em] text-[var(--text-dim)] mb-1">Nominal</div>
                         <div className="text-[16px] text-[var(--text)] leading-none">
-                          {mw}<span className="text-[9px] text-[var(--text-muted)] font-normal ml-0.5">MW</span>
+                          {nominal}<span className="text-[9px] text-[var(--text-muted)] font-normal ml-0.5">MW</span>
                         </div>
                         <div className="text-[8px] mt-1.5" style={{ color: dotColor }}>
                           {statusLabel}{daysLabel}
                         </div>
                         <div className="flex justify-center gap-2 mt-1.5">
                           <div className="text-center">
-                            <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">SFOC</div>
-                            <div className="text-[12px]" style={{ color: sfocColor }}>{sfocStr}</div>
+                            <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">Attendu</div>
+                            <div className="text-[11px] text-[var(--text-muted)]">{attendu != null ? attendu : '—'}</div>
                           </div>
                           <div className="text-center">
-                            <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">SLOC</div>
-                            <div className="text-[12px] text-[var(--text)]">{gSlocVal}</div>
+                            <div className="text-[7px] uppercase tracking-[0.1em] text-[var(--text-dim)]">Dispo</div>
+                            <div className="text-[11px]" style={{ color: available != null ? 'var(--energy)' : 'var(--text-dim)' }}>
+                              {available != null ? available : '—'}
+                            </div>
                           </div>
                         </div>
+                        {g.provider && g.provider !== 'enelec' && (
+                          <div className="text-[7px] mt-1 uppercase tracking-wider" style={{ color: g.provider === 'vestop' ? '#5aafaf' : '#f0a030' }}>
+                            {g.provider}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )
@@ -508,43 +793,103 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
             </>
           )}
 
-          {/* Section 3 — Blackouts */}
-          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-6">
-            Blackouts
-          </div>
-          <div className="s1-card mb-6" style={{ maxWidth: 200 }}>
-            <div className="s1-card-label">Coupures</div>
-            <div className="s1-card-value" style={{ color: boColor }}>{boCount}</div>
-            <div className="s1-card-unit-line">blackouts</div>
-          </div>
+          {/* Section — Planning HEBDO (52 semaines) */}
+          {s.planning && s.planning.engines && s.planning.engines.length > 0 && (
+            <>
+              <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-6">
+                Planning hebdomadaire ({(s.planning.weeks || []).length} semaines)
+              </div>
+              <div className="rounded-xl overflow-x-auto mb-6" style={{ background: 'rgba(138,146,171,0.06)', border: '1px solid rgba(138,146,171,0.15)' }}>
+                <table className="w-full text-[9px] border-collapse" style={{ minWidth: 780 }}>
+                  <thead>
+                    <tr>
+                      <th className="sticky left-0 text-left p-2 text-[var(--text-dim)] uppercase tracking-wider text-[8px]" style={{ background: 'rgba(20,24,40,0.95)' }}>Moteur</th>
+                      {(s.planning.weeks || []).map((w, i) => (
+                        <th key={i} className="p-0.5 text-[7px] text-[var(--text-dim)] text-center font-normal" style={{ minWidth: 14 }}>
+                          {typeof w === 'string' ? w.replace(/^S/, '') : (i + 1)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {s.planning.engines.map(eng => (
+                      <tr key={eng.id} className="border-t border-[rgba(138,146,171,0.1)]">
+                        <td className="sticky left-0 p-2 text-[10px] text-[var(--text)] whitespace-nowrap" style={{ background: 'rgba(20,24,40,0.95)' }}>
+                          {fmtGId(eng.id)}
+                        </td>
+                        {(eng.weeks || []).map((status, i) => {
+                          const color =
+                            status === 'indisponible' ? '#f0a030' :
+                            status === 'maintenance'  ? '#4a8fd6' :
+                            'transparent'
+                          const title =
+                            status === 'indisponible' ? `S${i + 1} — Indisponible` :
+                            status === 'maintenance'  ? `S${i + 1} — Maintenance` :
+                            `S${i + 1}`
+                          return (
+                            <td key={i} className="p-0.5" title={title}>
+                              <div className="h-3 rounded-sm" style={{ background: color, border: status ? 'none' : '1px dashed rgba(138,146,171,0.15)' }} />
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex gap-4 text-[9px] text-[var(--text-dim)] -mt-4 mb-6">
+                <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: '#f0a030' }} />Indisponible</span>
+                <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: '#4a8fd6' }} />Maintenance</span>
+              </div>
+            </>
+          )}
 
-          {/* Section 4 — Fuel Stock detail */}
-          <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2">
-            Stock Fuel
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-6">
-            <div className="s1-card">
-              <div className="s1-card-label">HFO</div>
-              <div className="s1-card-value" style={{ color: hfoAutoColor }}>
-                {hfoStock != null ? Math.round(hfoStock).toLocaleString() : '—'}
+          {/* Section — Overhauls a venir */}
+          {s.overhauls && s.overhauls.length > 0 && (
+            <>
+              <div className="text-[9px] tracking-widest uppercase text-[var(--text-dim)] mb-2 mt-6">
+                Overhauls ({s.overhauls.length})
               </div>
-              <div className="s1-card-unit-line">Litres</div>
-            </div>
-            {fs.latestLfoStock != null && (
-              <div className="s1-card">
-                <div className="s1-card-label">LFO</div>
-                <div className="s1-card-value">{Math.round(fs.latestLfoStock).toLocaleString()}</div>
-                <div className="s1-card-unit-line">Litres</div>
+              <div className="rounded-xl overflow-x-auto mb-6" style={{ background: 'rgba(138,146,171,0.06)', border: '1px solid rgba(138,146,171,0.15)' }}>
+                <table className="w-full text-[11px] border-collapse">
+                  <thead>
+                    <tr className="text-[var(--text-dim)] uppercase tracking-wider text-[8px]">
+                      <th className="text-left p-2">Moteur</th>
+                      <th className="text-left p-2">Societe</th>
+                      <th className="text-left p-2">Pieces dispo</th>
+                      <th className="text-left p-2">OVH prevu</th>
+                      <th className="text-left p-2">OVH revise</th>
+                      <th className="text-left p-2">Glissement</th>
+                      <th className="text-left p-2">Situation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {s.overhauls.map((o, i) => {
+                      const gliss = o.glissementJours
+                      const glissColor = gliss == null ? 'var(--text-dim)' : gliss > 0 ? '#E05C5C' : '#00ab63'
+                      return (
+                        <tr key={i} className="border-t border-[rgba(138,146,171,0.1)]">
+                          <td className="p-2 text-[var(--text)]">{fmtGId(o.engine)}</td>
+                          <td className="p-2 text-[var(--text-muted)]">{o.society || '—'}</td>
+                          <td className="p-2 text-[var(--text-muted)]">
+                            {o.piecesDispo != null ? `${Math.round(o.piecesDispo)}` : '—'}
+                            {o.piecesEnAttente != null && o.piecesEnAttente > 0 ? ` / ${Math.round(o.piecesEnAttente)} att.` : ''}
+                          </td>
+                          <td className="p-2 text-[var(--text-muted)]">{o.dateOvhInitDebut || '—'}</td>
+                          <td className="p-2 text-[var(--text-muted)]">{o.dateOvhRevuDebut || '—'}</td>
+                          <td className="p-2" style={{ color: glissColor }}>
+                            {gliss != null ? (gliss > 0 ? `+${Math.round(gliss)}j` : `${Math.round(gliss)}j`) : '—'}
+                          </td>
+                          <td className="p-2 text-[var(--text-muted)]">{o.situation || '—'}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
               </div>
-            )}
-            <div className="s1-card">
-              <div className="s1-card-label">Autonomie HFO</div>
-              <div className="s1-card-value" style={{ color: hfoAutoColor }}>
-                {hfoAuto != null ? hfoAuto.toFixed(1) : '—'}
-              </div>
-              <div className="s1-card-unit-line">jours</div>
-            </div>
-          </div>
+            </>
+          )}
+
         </>
       )}
     </div>
@@ -552,19 +897,16 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
 }
 
 
-/** Generator detail panel — shows full detail for a single generator */
+/** Generator detail panel — shows key KPIs for a single engine (new contracts model) */
 function GeneratorDetailPanel({
-  siteId, siteData, generator: g, currentFilter, setFilter,
-  selectedMonthIndex, selectedQuarter, selectedYear,
+  siteId, siteData, generator: g, generatorIndex,
   onClose, onNavigateGen,
 }) {
   const s = siteData[siteId]
-  const f = mapFilter(currentFilter)
 
   const isContra = g.contradictory === true
   const isKO = g.statut === 'ko' && !isContra
 
-  // Status mapping — matches original exactly
   const statMap = {
     ok:    { label: 'En marche',    bg: 'rgba(0,171,99,0.12)',    color: 'var(--text)' },
     warn:  { label: 'Maintenance',  bg: 'rgba(245,166,35,0.12)',  color: 'var(--text)' },
@@ -573,286 +915,26 @@ function GeneratorDetailPanel({
   }
   const st = isContra ? statMap.check : (statMap[g.statut] || statMap.ko)
 
-  // Card border/label/bg colors
-  const bc = undefined
   const lc = isContra ? 'rgba(160,90,255,0.65)' : isKO ? 'rgba(224,92,92,0.65)' : 'rgba(138,146,171,0.65)'
-  const bg = undefined
 
-  // ── Section 1 — Heures de marche (filter-aware, matches original thresholds) ──
-  let s1_hVal, s1_hUnit = 'h', s1_sbSub, s1_hColor, s1_afVal, s1_afSub, s1_apVal, s1_apSub, s1_hLabel
+  // ── Power values ──
+  const nominal   = g.nominal   != null ? parseFloat(g.nominal).toFixed(1)   : parseFloat(g.mw || 0).toFixed(1)
+  const available = g.availableMw != null ? parseFloat(g.availableMw).toFixed(1) : null
 
-  if (f === '24h') {
-    s1_hLabel = 'Marche J-1'
-    s1_hVal = parseFloat(g.hToday || 0).toFixed(1)
-    s1_sbSub = 'Standby : ' + parseFloat(g.hStandby || 0).toFixed(1) + ' h'
-    s1_hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)'
-    s1_afVal = parseFloat(g.arretForce || 0).toFixed(1); s1_afSub = 'Dernieres 24h'
-    s1_apVal = parseFloat(g.arretPlanifie || 0).toFixed(1); s1_apSub = 'Dernieres 24h'
-  } else if (f === 'month') {
-    const _cm = isCurrentMonth(selectedMonthIndex)
-    const mLabel = _cm ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
-    s1_hLabel = 'Marche ' + mLabel
-    let totalH, totalSb, totalAf, totalAp, jours
-    if (_cm) {
-      const dh = g.dailyHours || []; totalH = dh.reduce((a, b) => a + b, 0)
-      const ds = g.dailyStandby || []; totalSb = ds.reduce((a, b) => a + b, 0)
-      const daf = g.dailyArretForce || []; totalAf = daf.reduce((a, b) => a + b, 0)
-      const dap = g.dailyArretPlanifie || []; totalAp = dap.reduce((a, b) => a + b, 0)
-      jours = dh.filter(v => v > 0).length
-    } else {
-      const mi = selectedMonthIndex
-      totalH = (g.monthlyHours || [])[mi] || 0
-      totalSb = (g.monthlyStandby || [])[mi] || 0
-      totalAf = (g.monthlyArretForce || [])[mi] || 0
-      totalAp = (g.monthlyArretPlanifie || [])[mi] || 0
-      jours = totalH > 0 ? Math.round(totalH / 24) : 0
-    }
-    s1_hVal = totalH.toFixed(1)
-    s1_sbSub = jours + ' jours en marche · Standby : ' + totalSb.toFixed(1) + ' h'
-    s1_hColor = jours > 20 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
-    s1_afVal = totalAf.toFixed(1); s1_afSub = 'Total arrets forces ' + mLabel
-    s1_apVal = totalAp.toFixed(1); s1_apSub = 'Maintenance preventive ' + mLabel
-  } else if (f === 'quarter') {
-    s1_hLabel = 'Marche Q' + selectedQuarter
-    const startM = (selectedQuarter - 1) * 3
-    const mh = g.monthlyHours || []
-    let totalH = 0, totalAf = 0, totalAp = 0
-    for (let mi = startM; mi < startM + 3 && mi < mh.length; mi++) {
-      totalH += mh[mi] || 0
-      totalAf += (g.monthlyArretForce || [])[mi] || 0
-      totalAp += (g.monthlyArretPlanifie || [])[mi] || 0
-    }
-    const jours = totalH > 0 ? Math.round(totalH / 24) : 0
-    s1_hVal = totalH.toFixed(1)
-    s1_sbSub = jours + ' jours en marche'
-    s1_hColor = jours > 60 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
-    s1_afVal = totalAf.toFixed(1); s1_afSub = 'Total arrets forces Q' + selectedQuarter
-    s1_apVal = totalAp.toFixed(1); s1_apSub = 'Maintenance preventive Q' + selectedQuarter
-  } else {
-    // year
-    s1_hLabel = 'Marche ' + selectedYear
-    const mh = g.monthlyHours || []; const totalH = mh.reduce((a, b) => a + b, 0)
-    const moisActifs = mh.filter(v => v > 0).length
-    s1_hVal = totalH.toFixed(1)
-    s1_sbSub = moisActifs + ' mois en marche sur 12'
-    s1_hColor = moisActifs > 6 ? 'var(--energy)' : moisActifs > 0 ? 'var(--orange)' : 'var(--red)'
-    s1_afVal = parseFloat(g.arretForce || 0).toFixed(1); s1_afSub = 'Non planifie (dernieres 24h)'
-    s1_apVal = parseFloat(g.arretPlanifie || 0).toFixed(1); s1_apSub = 'Maintenance preventive (dernieres 24h)'
-  }
+  // ── Generator info ──
+  const providerLabel = g.provider
+    ? g.provider.toUpperCase()
+    : null
+  const providerColor = g.provider === 'vestop' ? '#5aafaf' : g.provider === 'lfo' ? '#f0a030' : 'var(--energy)'
 
-  const kpiRow1 = [
-    { label: 'Heures cumulees', value: g.h > 0 ? parseFloat(g.h).toFixed(1) : '0', unit: 'h', sub: 'Total depuis mise en service', color: null },
-    { label: s1_hLabel, value: s1_hVal, unit: s1_hUnit, sub: s1_sbSub, color: s1_hColor },
-    { label: 'Arret force', value: s1_afVal, unit: 'h', sub: s1_afSub, color: parseFloat(s1_afVal) > 0 ? 'var(--red)' : null },
-    { label: 'Arret planifie', value: s1_apVal, unit: 'h', sub: s1_apSub, color: parseFloat(s1_apVal) > 0 ? 'var(--orange)' : null },
-  ]
+  // ── Planning HEBDO for this engine (filtered from site.planning.engines) ──
+  const planningEngine = (s.planning && s.planning.engines)
+    ? s.planning.engines.find(e => e.id === g.id)
+    : null
+  const planningWeeks = (s.planning && s.planning.weeks) || []
 
-  // ── Section 2 — Production & Energie (chart + KPIs, fully filter-aware) ──
-
-  // Chart data — filter-aware
-  let chartData, chartLabels, chartTitle, chartUnit
-  if (f === '24h') {
-    chartData = g.hourlyLoad || Array(24).fill(0)
-    chartLabels = chartData.map((_, i) => i + 'h')
-    chartTitle = 'Charge horaire — J-1'
-    chartUnit = 'kW'
-  } else if (f === 'month') {
-    const _cmChart = isCurrentMonth(selectedMonthIndex)
-    if (_cmChart) {
-      const raw = g.dailyProd || Array(31).fill(0)
-      let lastDay = raw.length
-      while (lastDay > 0 && raw[lastDay - 1] === 0) lastDay--
-      if (lastDay === 0) lastDay = new Date().getDate()
-      chartData = raw.slice(0, Math.max(lastDay, 1))
-      chartLabels = chartData.map((_, i) => String(i + 1))
-    } else {
-      const monthTotal = (g.monthlyProd || [])[selectedMonthIndex] || 0
-      chartData = [monthTotal]
-      chartLabels = [MONTH_SHORT[selectedMonthIndex]]
-    }
-    const mName = _cmChart ? 'Ce mois' : MONTH_SHORT[selectedMonthIndex]
-    chartTitle = 'Production journaliere — ' + mName
-    chartUnit = 'kWh'
-  } else if (f === 'quarter') {
-    const startMC = (selectedQuarter - 1) * 3
-    const qMonths = (g.monthlyProd || Array(12).fill(0)).slice(startMC, startMC + 3)
-    chartData = qMonths
-    chartLabels = [MONTH_SHORT[startMC], MONTH_SHORT[startMC + 1], MONTH_SHORT[startMC + 2]]
-    chartTitle = 'Production mensuelle — Q' + selectedQuarter
-    chartUnit = 'kWh'
-  } else {
-    chartData = g.monthlyProd || Array(12).fill(0)
-    chartLabels = ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec']
-    chartTitle = 'Production mensuelle — ' + selectedYear
-    chartUnit = 'kWh'
-  }
-
-  const barCount = chartData.length
-  const maxChartVal = Math.max(...chartData, 1)
-  const totalChartVal = chartData.reduce((a, b) => a + b, 0)
-
-  // SVG bar chart dimensions
-  const W = 960, H = 120, PAD_L = 48, PAD_R = 10, PAD_T = 10, PAD_B = 28
-  const chartW = W - PAD_L - PAD_R
-  const chartH = H - PAD_T - PAD_B
-  const barGap = Math.floor(chartW / barCount)
-  const barW = Math.max(2, barGap - (barCount > 24 ? 1 : 2))
-  const labelFreq = barCount <= 12 ? 1 : barCount <= 24 ? 4 : 5
-
-  const prodColor = isKO ? 'var(--red)' : 'var(--energy)'
-  const peakVal = Math.max(...chartData)
-  const peakFmt = peakVal >= 1000 ? (peakVal / 1000).toFixed(1) + ' MWh' : peakVal.toFixed(1) + ' ' + chartUnit
-  const totalFmt = totalChartVal >= 1000 ? (totalChartVal / 1000).toFixed(1) + ' MWh' : totalChartVal.toFixed(1) + ' ' + chartUnit
-
-  // Production KPIs — fully filter-aware (matches original: energie, charge max, conso LV/MV, heures)
-  let prodVal, prodUnit, prodSub, hVal, hUnit2, hSub, hColor
-  let loadVal, loadUnit, loadSub, lvmvVal, lvmvUnit, lvmvSub
-
-  if (f === '24h') {
-    const dProd = g.energieProd || 0
-    prodVal = dProd > 1000 ? (dProd / 1000).toFixed(1) : dProd.toFixed(1)
-    prodUnit = dProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production J-1'
-    hVal = parseFloat(g.hToday || 0).toFixed(1); hUnit2 = 'h'; hSub = 'Heures de marche J-1'
-    hColor = parseFloat(g.hToday) > 12 ? 'var(--energy)' : parseFloat(g.hToday) > 0 ? 'var(--orange)' : 'var(--red)'
-    loadVal = parseFloat(g.maxLoad || 0).toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge J-1'
-    lvmvVal = parseFloat(g.consLVMV || 0) > 0 ? parseFloat(g.consLVMV).toFixed(1) : '—'
-    lvmvUnit = parseFloat(g.consLVMV || 0) > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires J-1'
-  } else if (f === 'month') {
-    const _cm2 = isCurrentMonth(selectedMonthIndex)
-    const _mLbl = _cm2 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
-    let mProd, jours
-    if (_cm2) {
-      const dp = g.dailyProd || []; mProd = dp.reduce((a, b) => a + b, 0)
-      jours = dp.filter(v => v > 0).length
-    } else {
-      mProd = (g.monthlyProd || [])[selectedMonthIndex] || 0
-      jours = mProd > 0 ? Math.ceil((g.monthlyHours || [])[selectedMonthIndex] / 24) || 0 : 0
-    }
-    prodVal = mProd > 1000 ? (mProd / 1000).toFixed(1) : mProd.toFixed(1)
-    prodUnit = mProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + _mLbl
-    hVal = jours; hUnit2 = 'jours'; hSub = 'Jours de production'
-    hColor = jours > 20 ? 'var(--energy)' : jours > 0 ? 'var(--orange)' : 'var(--red)'
-    let mxLoad
-    if (_cm2) { const dml = g.dailyMaxLoad || []; mxLoad = Math.max(...dml, 0) }
-    else { mxLoad = (g.monthlyMaxLoad || [])[selectedMonthIndex] || 0 }
-    loadVal = mxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + _mLbl
-    let mLvmv
-    if (_cm2) { const dlv = g.dailyConsLVMV || []; mLvmv = dlv.reduce((a, b) => a + b, 0) }
-    else { mLvmv = (g.monthlyConsLVMV || [])[selectedMonthIndex] || 0 }
-    lvmvVal = mLvmv > 0 ? mLvmv.toFixed(1) : '—'; lvmvUnit = mLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + _mLbl
-  } else if (f === 'quarter') {
-    const startM = (selectedQuarter - 1) * 3
-    let qProd = 0, qJours = 0, qMaxLoad = 0, qLvmv = 0
-    for (let mi = startM; mi < startM + 3; mi++) {
-      qProd += (g.monthlyProd || [])[mi] || 0
-      qJours += ((g.monthlyHours || [])[mi] || 0) > 0 ? Math.ceil((g.monthlyHours || [])[mi] / 24) : 0
-      const ml = (g.monthlyMaxLoad || [])[mi] || 0; if (ml > qMaxLoad) qMaxLoad = ml
-      qLvmv += (g.monthlyConsLVMV || [])[mi] || 0
-    }
-    const qLbl = 'Q' + selectedQuarter
-    prodVal = qProd > 1000 ? (qProd / 1000).toFixed(1) : qProd.toFixed(1)
-    prodUnit = qProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + qLbl
-    hVal = qJours; hUnit2 = 'jours'; hSub = 'Jours de production'
-    hColor = qJours > 60 ? 'var(--energy)' : qJours > 0 ? 'var(--orange)' : 'var(--red)'
-    loadVal = qMaxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + qLbl
-    lvmvVal = qLvmv > 0 ? qLvmv.toFixed(1) : '—'; lvmvUnit = qLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + qLbl
-  } else {
-    const mp = g.monthlyProd || []; const yProd = mp.reduce((a, b) => a + b, 0)
-    const mois = mp.filter(v => v > 0).length
-    prodVal = yProd > 1000 ? (yProd / 1000).toFixed(1) : yProd.toFixed(1)
-    prodUnit = yProd > 1000 ? 'MWh' : 'kWh'; prodSub = 'Production ' + selectedYear
-    hVal = mois; hUnit2 = 'mois'; hSub = 'Mois de production sur 12'
-    hColor = mois > 6 ? 'var(--energy)' : mois > 0 ? 'var(--orange)' : 'var(--red)'
-    const yml = g.monthlyMaxLoad || []; const mxLoad = Math.max(...yml, 0)
-    loadVal = mxLoad.toFixed(1); loadUnit = 'kW'; loadSub = 'Pic de charge ' + selectedYear
-    const ylv = g.monthlyConsLVMV || []; const yLvmv = ylv.reduce((a, b) => a + b, 0)
-    lvmvVal = yLvmv > 0 ? yLvmv.toFixed(1) : '—'; lvmvUnit = yLvmv > 0 ? 'kWh' : ''; lvmvSub = 'Services auxiliaires ' + selectedYear
-  }
-
-  const prodRow = [
-    { label: 'Energie produite', value: prodVal, unit: prodUnit, sub: prodSub, color: isKO ? 'var(--red)' : null },
-    { label: 'Charge max', value: loadVal, unit: loadUnit, sub: loadSub, color: isKO ? 'var(--red)' : null },
-    { label: 'Conso LV/MV', value: lvmvVal, unit: lvmvUnit, sub: lvmvSub, color: null },
-    { label: 'Heures de marche', value: hVal, unit: hUnit2, sub: hSub, color: hColor },
-  ]
-
-  // ── Section 3 — Combustible (filter-aware) ──
-  let fHFO, fLFO, fuelPeriod
-  if (f === '24h') {
-    fHFO = g.consoHFO || 0
-    fLFO = g.consoLFO || 0
-    fuelPeriod = 'J-1'
-  } else if (f === 'month') {
-    const _cm4 = isCurrentMonth(selectedMonthIndex)
-    if (_cm4) {
-      const dhfo = g.dailyHFO || []; fHFO = dhfo.reduce((a, b) => a + b, 0)
-      const dlfo = g.dailyLFO || []; fLFO = dlfo.reduce((a, b) => a + b, 0)
-    } else {
-      fHFO = (g.monthlyHFO || [])[selectedMonthIndex] || 0
-      fLFO = (g.monthlyLFO || [])[selectedMonthIndex] || 0
-    }
-    fuelPeriod = _cm4 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
-  } else if (f === 'quarter') {
-    const startM = (selectedQuarter - 1) * 3; fHFO = 0; fLFO = 0
-    for (let mi = startM; mi < startM + 3; mi++) {
-      fHFO += (g.monthlyHFO || [])[mi] || 0
-      fLFO += (g.monthlyLFO || [])[mi] || 0
-    }
-    fuelPeriod = 'Q' + selectedQuarter
-  } else {
-    const mhfo = g.monthlyHFO || []; fHFO = mhfo.reduce((a, b) => a + b, 0)
-    const mlfo = g.monthlyLFO || []; fLFO = mlfo.reduce((a, b) => a + b, 0)
-    fuelPeriod = String(selectedYear)
-  }
-
-  const fuelMetrics = [
-    { label: 'Conso HFO', icon: '\u{1F6E2}\uFE0F', value: fHFO > 0 ? parseFloat(fHFO).toFixed(1) : '\u2014', unit: fHFO > 0 ? 'L' : '', sub: 'Heavy Fuel Oil \u00B7 ' + fuelPeriod },
-    { label: 'Conso LFO', icon: '\u26FD', value: fLFO > 0 ? parseFloat(fLFO).toFixed(1) : '0', unit: 'L', sub: 'Light Fuel Oil \u00B7 ' + fuelPeriod },
-    { label: 'Temp. Fuel', icon: '\u{1F321}\uFE0F', value: g.fuelOilTemp > 0 ? parseFloat(g.fuelOilTemp).toFixed(1) : '\u2014', unit: g.fuelOilTemp > 0 ? '\u00B0C' : '', sub: 'Temperature fuel oil',
-      color: g.fuelOilTemp > 100 ? 'var(--red)' : g.fuelOilTemp > 90 ? 'var(--orange)' : (g.fuelOilTemp > 0 ? 'var(--energy)' : null) },
-  ]
-
-  // ── Section 4 — Huile moteur (filter-aware) ──
-  let fOilC, fOilT, oilPeriod
-  if (f === '24h') {
-    fOilC = g.oilConso || 0
-    fOilT = g.oilTopUp || 0
-    oilPeriod = 'J-1'
-  } else if (f === 'month') {
-    const _cm5 = isCurrentMonth(selectedMonthIndex)
-    if (_cm5) {
-      const doc = g.dailyOilConso || []; fOilC = doc.reduce((a, b) => a + b, 0)
-      const dot = g.dailyOilTopUp || []; fOilT = dot.reduce((a, b) => a + b, 0)
-    } else {
-      fOilC = (g.monthlyOilConso || [])[selectedMonthIndex] || 0
-      fOilT = (g.monthlyOilTopUp || [])[selectedMonthIndex] || 0
-    }
-    oilPeriod = _cm5 ? 'ce mois' : MONTH_SHORT[selectedMonthIndex]
-  } else if (f === 'quarter') {
-    const startM = (selectedQuarter - 1) * 3; fOilC = 0; fOilT = 0
-    for (let mi = startM; mi < startM + 3; mi++) {
-      fOilC += (g.monthlyOilConso || [])[mi] || 0
-      fOilT += (g.monthlyOilTopUp || [])[mi] || 0
-    }
-    oilPeriod = 'Q' + selectedQuarter
-  } else {
-    const moc = g.monthlyOilConso || []; fOilC = moc.reduce((a, b) => a + b, 0)
-    const mot = g.monthlyOilTopUp || []; fOilT = mot.reduce((a, b) => a + b, 0)
-    oilPeriod = String(selectedYear)
-  }
-
-  const slocVal = g.sloc != null ? parseFloat(g.sloc).toFixed(2) : '\u2014'
-  const slocColor = g.sloc != null ? (parseFloat(g.sloc) <= 1.0 ? 'var(--energy)' : 'var(--red)') : null
-  const oilStock = s.oilStock ? s.oilStock.stock : null
-
-  const oilMetrics = [
-    { label: 'Conso huile', icon: '\u{1F6E2}\uFE0F', value: fOilC > 0 ? fOilC.toFixed(1) : '\u2014', unit: fOilC > 0 ? 'L' : '', sub: 'Conso \u00B7 ' + oilPeriod },
-    { label: 'Top-up huile', icon: '\u2795', value: fOilT > 0 ? parseFloat(fOilT).toFixed(1) : '0', unit: 'L', sub: 'Top-up \u00B7 ' + oilPeriod,
-      color: fOilT > 50 ? 'var(--orange)' : null },
-    { label: 'SLOC', icon: '\u{1F4CA}', value: slocVal, unit: 'g/kWh', sub: 'Specific Lube Oil Consumption',
-      color: slocColor },
-    { label: 'Stock huile', icon: '\u{1F4E6}', value: oilStock != null ? parseFloat(oilStock).toFixed(0) : '\u2014', unit: oilStock != null ? 'L' : '', sub: 'Stock site ' + s.name },
-  ]
+  // ── Overhauls for this engine (filtered from site.overhauls) ──
+  const engineOverhauls = (s.overhauls || []).filter(o => o.engine === g.id)
 
   return (
     <div className="site-detail-panel gd-panel">
@@ -865,23 +947,23 @@ function GeneratorDetailPanel({
           &#8592;
         </button>
         <div>
-          <h2 className="text-base uppercase tracking-wider m-0">{fmtGId(g.id)}</h2>
+          <h2 className="text-base uppercase tracking-wider m-0">{fmtEngineName(g)}</h2>
           <div className="text-[10px] text-[var(--text-muted)] mt-0.5">
-            {g.model || ''} &middot; {s.name} &middot; {g.mw} MW
+            {g.model || ''} &middot; {s.name} &middot; {nominal} MW
           </div>
         </div>
       </div>
 
       {/* Generator nav strip */}
       <div className="gd-gen-nav">
-        {s.groupes.map(gr => {
+        {s.groupes.map((gr, gi) => {
           const dotColor = gr.contradictory ? '#7b5fbf' : gr.statut === 'ok' ? 'var(--energy)' : gr.statut === 'warn' ? '#f0a030' : 'var(--red)'
-          const active = gr.id === g.id
+          const active = gi === generatorIndex
           return (
             <button
-              key={gr.id}
+              key={`${gr.id}-${gi}`}
               className={`gd-gen-nav-btn ${active ? 'active' : ''}`}
-              onClick={() => onNavigateGen(gr.id)}
+              onClick={() => onNavigateGen(gi)}
             >
               <span
                 className="gen-status-dot"
@@ -890,7 +972,7 @@ function GeneratorDetailPanel({
                   boxShadow: `0 0 4px ${dotColor}, 0 0 8px ${dotColor}`,
                 }}
               />
-              {fmtGId(gr.id)}
+              {fmtEngineName(gr)}
             </button>
           )
         })}
@@ -928,146 +1010,161 @@ function GeneratorDetailPanel({
           <div>
             <div className="gd-arret-label">Arret en cours</div>
             <div className="gd-arret-condition">
-              {g.condition === 'Maintenance' ? 'Maintenance planifiee' : 'Panne / Breakdown'}
-            </div>
-            <div className="gd-arret-reason">{g.maint}</div>
-          </div>
-          <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-            <div style={{ fontSize: 8, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 4 }}>
-              Arret force
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 400, color: '#e05c5c' }}>
-              {parseFloat(g.arretForce || 0).toFixed(1)}
-              <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)', marginLeft: 3 }}>h</span>
-            </div>
-            <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 6 }}>
-              Arret planifie : {parseFloat(g.arretPlanifie || 0).toFixed(1)} h
+              {g.condition || 'Panne / Breakdown'}
             </div>
           </div>
         </div>
       )}
 
-      {/* Section 1 — Heures de marche & Exploitation */}
-      <div className="gd-section-title">Heures de marche & Exploitation</div>
+      {/* Section — Puissance + Production */}
+      <div className="gd-section-title">Puissance & production</div>
       <div className="gd-kpi-grid">
-        {kpiRow1.map((c, i) => (
-          <div key={i} className="gd-kpi-card" style={{ background: bg, borderColor: bc }}>
-            <div className="gd-kpi-label" style={{ color: lc }}>{c.label}</div>
-            <div
-              className="gd-kpi-value"
-              style={{
-                ...(c.color ? { color: c.color } : {}),
-                ...(String(c.value).length > 5 ? { fontSize: 20 } : {}),
-              }}
-            >
-              {c.value}
-              {c.unit && <span className="gd-kpi-unit">{c.unit}</span>}
-            </div>
-            <div className="gd-kpi-sub">{c.sub}</div>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Puissance nominale</div>
+          <div className="gd-kpi-value">
+            {nominal}<span className="gd-kpi-unit">MW</span>
           </div>
-        ))}
-      </div>
-
-      {/* Section 2 — Production & Energie */}
-      <div className="gd-section-title">Production & Energie</div>
-
-      {/* SVG bar chart */}
-      <div className="gd-chart-card">
-        <div className="gd-chart-title">
-          <span>{chartTitle}</span>
-          <span className="gd-chart-peak">
-            Pic : <strong style={{ color: prodColor }}>{peakFmt}</strong> &middot; Total : <strong style={{ color: prodColor }}>{totalFmt}</strong>
-          </span>
+          <div className="gd-kpi-sub">Plaque moteur</div>
         </div>
-        <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: 'auto' }}>
-          {/* Grid lines at 25%, 50%, 75%, 100% */}
-          {[0.25, 0.5, 0.75, 1.0].map(pct => {
-            const y = PAD_T + chartH * (1 - pct)
-            const v = Math.round(maxChartVal * pct)
-            const lbl = v >= 1000000 ? (v / 1000000).toFixed(1) + 'M' : v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
-            return (
-              <g key={pct}>
-                <line x1={PAD_L} y1={y} x2={W - PAD_R} y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-                <text x={PAD_L - 4} y={y + 4} textAnchor="end" fontSize="8" fill="rgba(255,255,255,0.2)">{lbl}</text>
-              </g>
-            )
-          })}
-          {/* Bars */}
-          {chartData.map((val, i) => {
-            const x = PAD_L + i * barGap
-            const barH = val > 0 ? Math.max(2, (val / maxChartVal) * chartH) : 0
-            const y = PAD_T + chartH - barH
-            const barColor = val === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(174,193,205,0.75)'
-            return (
-              <g key={i}>
-                <rect x={x} y={y} width={barW} height={Math.max(barH, 0)} rx="2" fill={barColor} />
-                {val > 0 && <rect x={x} y={y} width={barW} height="2" rx="1" fill="rgba(174,193,205,0.9)" />}
-                {i % labelFreq === 0 && (
-                  <text x={x + barW / 2} y={H - 8} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.3)">
-                    {chartLabels[i]}
-                  </text>
-                )}
-              </g>
-            )
-          })}
-        </svg>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Puissance disponible</div>
+          <div className="gd-kpi-value" style={{ color: available != null ? (isKO ? 'var(--red)' : 'var(--energy)') : 'var(--text-dim)' }}>
+            {available != null ? available : '—'}<span className="gd-kpi-unit">MW</span>
+          </div>
+          <div className="gd-kpi-sub">Live — Situation moteurs</div>
+        </div>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Production réelle</div>
+          <div className="gd-kpi-value hfo-kpi-na">
+            N/A<span className="gd-kpi-unit">MWh</span>
+          </div>
+          <div className="gd-kpi-sub">Données par moteur à venir</div>
+        </div>
       </div>
 
-      {/* Production KPIs */}
+      {/* Section — Informations générateur */}
+      <div className="gd-section-title">Informations générateur</div>
       <div className="gd-kpi-grid">
-        {prodRow.map((c, i) => (
-          <div key={i} className="gd-kpi-card" style={{ background: bg, borderColor: bc }}>
-            <div className="gd-kpi-label" style={{ color: lc }}>{c.label}</div>
-            <div
-              className="gd-kpi-value"
-              style={{
-                ...(c.color ? { color: c.color } : {}),
-                ...(String(c.value).length > 5 ? { fontSize: 20 } : {}),
-              }}
-            >
-              {c.value}
-              {c.unit && <span className="gd-kpi-unit">{c.unit}</span>}
-            </div>
-            <div className="gd-kpi-sub">{c.sub}</div>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Modèle</div>
+          <div className="gd-kpi-value" style={{ fontSize: 'clamp(13px,1.6vw,18px)' }}>
+            {g.model || '—'}
           </div>
-        ))}
+          <div className="gd-kpi-sub">Constructeur</div>
+        </div>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Provider</div>
+          <div className="gd-kpi-value" style={{ color: providerColor, fontSize: 'clamp(15px,1.8vw,20px)' }}>
+            {providerLabel || '—'}
+          </div>
+          <div className="gd-kpi-sub">Fournisseur</div>
+        </div>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Carburant</div>
+          <div className="gd-kpi-value" style={{ fontSize: 'clamp(15px,1.8vw,20px)' }}>
+            {g.fuel || '—'}
+          </div>
+          <div className="gd-kpi-sub">Type</div>
+        </div>
+        <div className="gd-kpi-card">
+          <div className="gd-kpi-label" style={{ color: lc }}>Condition</div>
+          <div className="gd-kpi-value" style={{ color: isKO ? 'var(--red)' : g.statut === 'warn' ? '#f0a030' : 'var(--energy)', fontSize: 'clamp(13px,1.5vw,17px)' }}>
+            {g.condition || st.label}
+          </div>
+          <div className="gd-kpi-sub">
+            {g.jourArret > 0 ? `${g.jourArret} jours d'arrêt` : 'Etat actuel'}
+          </div>
+        </div>
       </div>
 
-      {/* Section 3 — Combustible */}
-      <div className="gd-section-title">Combustible</div>
-      <div className="gd-metrics-grid">
-        {fuelMetrics.map((m, i) => (
-          <div key={i} className="gd-metric-card" style={{ background: bg, borderColor: bc }}>
-            <div className="gd-metric-top">
-              <div className="gd-metric-label" style={{ color: lc }}>{m.label}</div>
-              <div className="gd-metric-icon">{m.icon}</div>
-            </div>
-            <div className="gd-metric-value" style={m.color ? { color: m.color } : {}}>
-              {m.value}
-              {m.unit && <span className="gd-metric-unit">{m.unit}</span>}
-            </div>
-            <div className="gd-metric-sub">{m.sub}</div>
+      {/* Section — Planning HEBDO pour ce moteur */}
+      {planningEngine && planningWeeks.length > 0 && (
+        <>
+          <div className="gd-section-title">Planning hebdomadaire ({planningWeeks.length} semaines)</div>
+          <div className="rounded-xl overflow-x-auto mb-6" style={{ background: 'rgba(138,146,171,0.06)', border: '1px solid rgba(138,146,171,0.15)' }}>
+            <table className="w-full text-[9px] border-collapse" style={{ minWidth: 780 }}>
+              <thead>
+                <tr>
+                  <th className="sticky left-0 text-left p-2 text-[var(--text-dim)] uppercase tracking-wider text-[8px]" style={{ background: 'rgba(20,24,40,0.95)' }}>Semaine</th>
+                  {planningWeeks.map((w, i) => (
+                    <th key={i} className="p-0.5 text-[7px] text-[var(--text-dim)] text-center font-normal" style={{ minWidth: 14 }}>
+                      {typeof w === 'string' ? w.replace(/^S/, '') : (i + 1)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t border-[rgba(138,146,171,0.1)]">
+                  <td className="sticky left-0 p-2 text-[10px] text-[var(--text)] whitespace-nowrap" style={{ background: 'rgba(20,24,40,0.95)' }}>
+                    {fmtGId(g.id)}
+                  </td>
+                  {(planningEngine.weeks || []).map((status, i) => {
+                    const color =
+                      status === 'indisponible' ? '#f0a030' :
+                      status === 'maintenance'  ? '#4a8fd6' :
+                      'transparent'
+                    const title =
+                      status === 'indisponible' ? `S${i + 1} — Indisponible` :
+                      status === 'maintenance'  ? `S${i + 1} — Maintenance` :
+                      `S${i + 1}`
+                    return (
+                      <td key={i} className="p-0.5" title={title}>
+                        <div className="h-3 rounded-sm" style={{ background: color, border: status ? 'none' : '1px dashed rgba(138,146,171,0.15)' }} />
+                      </td>
+                    )
+                  })}
+                </tr>
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
+          <div className="flex gap-4 text-[9px] text-[var(--text-dim)] -mt-4 mb-6">
+            <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: '#f0a030' }} />Indisponible</span>
+            <span className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: '#4a8fd6' }} />Maintenance</span>
+          </div>
+        </>
+      )}
 
-      {/* Section 4 — Huile moteur */}
-      <div className="gd-section-title">Huile moteur</div>
-      <div className="gd-metrics-grid gd-metrics-grid-4">
-        {oilMetrics.map((m, i) => (
-          <div key={i} className="gd-metric-card" style={{ background: bg, borderColor: bc }}>
-            <div className="gd-metric-top">
-              <div className="gd-metric-label" style={{ color: lc }}>{m.label}</div>
-              <div className="gd-metric-icon">{m.icon}</div>
-            </div>
-            <div className="gd-metric-value" style={m.color ? { color: m.color } : {}}>
-              {m.value}
-              {m.unit && <span className="gd-metric-unit">{m.unit}</span>}
-            </div>
-            <div className="gd-metric-sub">{m.sub}</div>
+      {/* Section — Overhauls pour ce moteur */}
+      {engineOverhauls.length > 0 && (
+        <>
+          <div className="gd-section-title">Overhauls ({engineOverhauls.length})</div>
+          <div className="rounded-xl overflow-x-auto mb-6" style={{ background: 'rgba(138,146,171,0.06)', border: '1px solid rgba(138,146,171,0.15)' }}>
+            <table className="w-full text-[11px] border-collapse">
+              <thead>
+                <tr className="text-[var(--text-dim)] uppercase tracking-wider text-[8px]">
+                  <th className="text-left p-2">Societe</th>
+                  <th className="text-left p-2">Pieces dispo</th>
+                  <th className="text-left p-2">OVH prevu</th>
+                  <th className="text-left p-2">OVH revise</th>
+                  <th className="text-left p-2">Glissement</th>
+                  <th className="text-left p-2">Situation</th>
+                </tr>
+              </thead>
+              <tbody>
+                {engineOverhauls.map((o, i) => {
+                  const gliss = o.glissementJours
+                  const glissColor = gliss == null ? 'var(--text-dim)' : gliss > 0 ? '#E05C5C' : '#00ab63'
+                  return (
+                    <tr key={i} className="border-t border-[rgba(138,146,171,0.1)]">
+                      <td className="p-2 text-[var(--text-muted)]">{o.society || '—'}</td>
+                      <td className="p-2 text-[var(--text-muted)]">
+                        {o.piecesDispo != null ? `${Math.round(o.piecesDispo)}` : '—'}
+                        {o.piecesEnAttente != null && o.piecesEnAttente > 0 ? ` / ${Math.round(o.piecesEnAttente)} att.` : ''}
+                      </td>
+                      <td className="p-2 text-[var(--text-muted)]">{o.dateOvhInitDebut || '—'}</td>
+                      <td className="p-2 text-[var(--text-muted)]">{o.dateOvhRevuDebut || '—'}</td>
+                      <td className="p-2" style={{ color: glissColor }}>
+                        {gliss != null ? (gliss > 0 ? `+${Math.round(gliss)}j` : `${Math.round(gliss)}j`) : '—'}
+                      </td>
+                      <td className="p-2 text-[var(--text-muted)]">{o.situation || '—'}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   )
 }

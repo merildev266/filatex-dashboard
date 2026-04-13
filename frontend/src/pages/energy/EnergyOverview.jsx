@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFilters } from '../../hooks/useFilters'
-import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE } from '../../data/site_data'
+import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { ENR_SITES } from '../../data/enr_site_data'
 import { ENR_PROJECTS_DATA } from '../../data/enr_projects_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
@@ -12,10 +12,10 @@ const LIVE_SITES = {
   diego: DIEGO_LIVE,
   majunga: MAJUNGA_LIVE,
   tulear: TULEAR_LIVE,
+  antsirabe: ANTSIRABE_LIVE,
 }
 
 const STATIC_SITES = {
-  antsirabe: { name: 'Antsirabe', status: 'reconstruction', mw: 0, contrat: 7.5, groupes: [], kpi: {} },
   fihaonana: { name: 'Fihaonana', status: 'construction', mw: 0, contrat: 0, groupes: [], kpi: {} },
 }
 
@@ -110,19 +110,36 @@ export default function EnergyOverview() {
 
   // HFO aggregates
   const hfo = useMemo(() => {
-    let totalMW = 0, totalContrat = 0, totalProd = 0, totalProdObj = 0
+    let totalDispo = 0, totalContratEnelec = 0, totalContratVestop = 0
+    let totalDispoEnelec = 0, totalDispoVestop = 0
+    let totalNominalEnelec = 0, totalNominalVestop = 0
+    let totalProd = 0, totalProdObj = 0
     let totalMoteurs = 0, totalArret = 0, arretMW = 0
     let sfocWeighted = 0, slocWeighted = 0
+    let totalBlackouts = null
+    let maxPeak = 0
 
     SITE_ORDER.forEach(id => {
       const s = ALL_SITES[id]
       if (!s || s.status === 'construction' || s.status === 'reconstruction') return
-      totalMW += s.mw || 0
-      totalContrat += s.contrat || 0
+      totalDispo += s.dispoTotal != null ? s.dispoTotal : (s.mw || 0)
+      totalContratEnelec += s.contracts?.enelec || 0
+      totalContratVestop += s.contracts?.vestop || 0
+      if (s.peakLoadLatest != null && s.peakLoadLatest > maxPeak) maxPeak = s.peakLoadLatest
       if (s.groupes) {
         totalMoteurs += s.groupes.length
         s.groupes.forEach(g => {
           if (g.statut !== 'ok') { totalArret++; arretMW += g.mw || 0 }
+          const prov = (g.provider || '').toLowerCase()
+          // Nominal par provider = somme des nominal (ou mw) de tous les moteurs
+          const nom = +g.nominal || +g.mw || 0
+          if (prov === 'enelec') totalNominalEnelec += nom
+          else if (prov === 'vestop') totalNominalVestop += nom
+          // Dispo par provider = somme des availableMw des moteurs en marche
+          if (g.statut === 'ok' && g.availableMw != null) {
+            if (prov === 'enelec') totalDispoEnelec += +g.availableMw
+            else if (prov === 'vestop') totalDispoVestop += +g.availableMw
+          }
         })
       }
       const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
@@ -130,9 +147,21 @@ export default function EnergyOverview() {
       totalProdObj += k.prodObj || 0
       if (k.sfoc && k.prod) sfocWeighted += k.sfoc * k.prod
       if (k.sloc && k.prod) slocWeighted += k.sloc * k.prod
+      if (s.blackoutStats && s.blackoutStats.count != null) {
+        totalBlackouts = (totalBlackouts || 0) + s.blackoutStats.count
+      }
     })
 
-    const pctContrat = totalContrat > 0 ? ((totalMW / totalContrat) * 100) : 0
+    // VESTOP : le contrat total est fixé dans hfo_config.VESTOP_TOTAL_CONTRACT (23.5 MW).
+    // La somme par site (SITE_CONTRACTS.vestop) exclut les sites en construction et ne
+    // reflète pas le contrat global — on utilise donc la constante comme source de vérité.
+    const vestopContratGlobal = HFO_GLOBAL?.vestopTotalContract ?? totalContratVestop
+    totalContratVestop = vestopContratGlobal
+
+    const totalContrat = totalContratEnelec + totalContratVestop
+    const pctContrat = totalContrat > 0 ? ((totalDispo / totalContrat) * 100) : 0
+    const pctEnelec = totalContratEnelec > 0 ? ((totalDispoEnelec / totalContratEnelec) * 100) : 0
+    const pctVestop = totalContratVestop > 0 ? ((totalDispoVestop / totalContratVestop) * 100) : 0
     const pctProd = totalProdObj > 0 ? ((totalProd / totalProdObj) * 100) : 0
     const avgSfoc = totalProd > 0 ? (sfocWeighted / totalProd) : 0
     const avgSloc = totalProd > 0 ? (slocWeighted / totalProd) : 0
@@ -151,9 +180,13 @@ export default function EnergyOverview() {
       : MOIS_FR[selectedMonthIndex]
 
     return {
-      totalMW, totalContrat, pctContrat,
+      totalMW: totalDispo,
+      totalContrat, totalContratEnelec, totalContratVestop, pctContrat,
+      totalDispoEnelec, totalDispoVestop, pctEnelec, pctVestop,
+      totalNominalEnelec, totalNominalVestop,
       totalProd, totalProdObj, pctProd,
       avgSfoc, avgSloc,
+      maxPeak, totalBlackouts,
       totalMoteurs, totalArret, lostToDate, periodLabel,
       urgents: HFO_PROJECTS?.urgents || 0,
       enCours: HFO_PROJECTS?.enCours || 0,
@@ -233,89 +266,103 @@ export default function EnergyOverview() {
           className="capex-section-card e-card unified-card clickable-energy"
           onClick={() => navigate('/energy/hfo')}
         >
-          {/* Puissance dispo vs Contractuel */}
+          {/* Row 1: Puissance ENELEC — Contrat | Disponible + % | Nominal */}
           <div className="e-sec">
-            <div className="e-sec-label">Puissance dispo vs Contractuel</div>
+            <div className="e-sec-label" style={{ color: 'rgba(0,171,99,0.95)' }}>Puissance ENELEC</div>
             <div className="e-kpi-row">
               <div className="e-kpi-left">
                 <div className="e-big">
-                  {hfo.totalMW.toFixed(1)} <span className="e-big-unit">MW</span>
+                  {hfo.totalContratEnelec.toFixed(1)} <span className="e-big-unit">MW</span>
+                </div>
+                <div className="e-sub">Contrat</div>
+              </div>
+              <div className="e-kpi-center e-kpi-center-wide">
+                <div className="e-big">
+                  {hfo.totalDispoEnelec.toFixed(1)} <span className="e-big-unit">MW</span>
                 </div>
                 <div className="e-sub">Disponible</div>
-              </div>
-              <div className="e-kpi-center">
-                <div className="e-pct" style={{ color: pctContratColor }}>{hfo.pctContrat.toFixed(0)}%</div>
-                <div className="e-pct-arrow" style={{ color: pctContratColor }}>{pctContratArrow}</div>
+                <div className="e-pct-arrow e-pct-below" style={{ color: hfo.pctEnelec >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)' }}>
+                  {hfo.pctEnelec.toFixed(0)}% du contrat
+                </div>
               </div>
               <div className="e-kpi-right">
                 <div className="e-big">
-                  {hfo.totalContrat.toFixed(0)} <span className="e-big-unit">MW</span>
+                  {hfo.totalNominalEnelec.toFixed(1)} <span className="e-big-unit">MW</span>
                 </div>
-                <div className="e-sub">Contractuel</div>
+                <div className="e-sub">Nominal</div>
               </div>
             </div>
           </div>
 
-          {/* Production a date vs Previsionnelle */}
+          {/* Row 2: Puissance VESTOP — Contrat | Disponible + % | Nominal */}
           <div className="e-sec">
-            <div className="e-sec-label">Production à date vs Prévisionnelle</div>
+            <div className="e-sec-label" style={{ color: '#5aafaf' }}>Puissance VESTOP</div>
             <div className="e-kpi-row">
               <div className="e-kpi-left">
                 <div className="e-big">
-                  {Math.round(hfo.totalProd).toLocaleString()} <span className="e-big-unit">MWh</span>
+                  {hfo.totalContratVestop.toFixed(1)} <span className="e-big-unit">MW</span>
                 </div>
-                <div className="e-sub">Réel</div>
+                <div className="e-sub">Contrat</div>
               </div>
-              <div className="e-kpi-center">
-                <div className="e-pct" style={{ color: pctProdColor }}>{hfo.pctProd.toFixed(0)}%</div>
-                <div className="e-pct-arrow" style={{ color: pctProdColor }}>{pctProdArrow}</div>
+              <div className="e-kpi-center e-kpi-center-wide">
+                <div className="e-big">
+                  {hfo.totalDispoVestop.toFixed(1)} <span className="e-big-unit">MW</span>
+                </div>
+                <div className="e-sub">Disponible</div>
+                <div className="e-pct-arrow e-pct-below" style={{ color: hfo.pctVestop >= 100 ? 'rgba(0,171,99,0.9)' : 'rgba(243,112,86,0.9)' }}>
+                  {hfo.pctVestop.toFixed(0)}% du contrat
+                </div>
               </div>
               <div className="e-kpi-right">
                 <div className="e-big">
-                  {Math.round(hfo.totalProdObj).toLocaleString()} <span className="e-big-unit">MWh</span>
+                  {hfo.totalNominalVestop.toFixed(1)} <span className="e-big-unit">MW</span>
                 </div>
-                <div className="e-sub">Prévisionnel</div>
+                <div className="e-sub">Nominal</div>
               </div>
             </div>
           </div>
 
-          {/* SFOC / SLOC */}
+          {/* Row 2: Moteurs en marche (G) | Production réelle (C) | Moteurs à l'arrêt (D) */}
           <div className="e-sec">
-            <div className="e-sec-label">SFOC · SLOC (pondérés par production)</div>
+            <div className="e-sec-label">Production · Moteurs</div>
             <div className="e-kpi-row">
               <div className="e-kpi-left">
-                <div className="e-big">
-                  {hfo.avgSfoc > 0 ? hfo.avgSfoc.toFixed(1) : '\u2014'} <span className="e-big-unit">g/kWh</span>
+                <div className="e-big" style={{ color: 'var(--energy)' }}>
+                  {hfo.totalMoteurs - hfo.totalArret}
                 </div>
-                <div className="e-sub">SFOC moyen</div>
+                <div className="e-sub">En marche</div>
+              </div>
+              <div className="e-kpi-center e-kpi-center-wide">
+                <div className="e-big" style={{ color: hfo.totalProd > 0 ? 'var(--text)' : 'var(--text-muted)' }}>
+                  {hfo.totalProd > 0 ? Math.round(hfo.totalProd).toLocaleString() : 'N/A'} <span className="e-big-unit">MWh</span>
+                </div>
+                <div className="e-sub">Production · {hfo.periodLabel}</div>
+              </div>
+              <div className="e-kpi-right">
+                <div className="e-big" style={{ color: hfo.totalArret === 0 ? 'var(--energy)' : 'rgba(243,112,86,0.95)' }}>
+                  {hfo.totalArret}
+                </div>
+                <div className="e-sub">À l'arrêt</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3: SFOC (G) | SLOC (D) */}
+          <div className="e-sec">
+            <div className="e-sec-label">Consommations spécifiques</div>
+            <div className="e-kpi-row">
+              <div className="e-kpi-left">
+                <div className="e-big" style={{ color: hfo.avgSfoc > 0 ? 'var(--text)' : 'var(--text-muted)' }}>
+                  {hfo.avgSfoc > 0 ? Math.round(hfo.avgSfoc) : 'N/A'} <span className="e-big-unit">g/kWh</span>
+                </div>
+                <div className="e-sub">SFOC · {hfo.periodLabel}</div>
               </div>
               <div className="e-kpi-center"><div className="e-kpi-sep"></div></div>
               <div className="e-kpi-right">
-                <div className="e-big">
-                  {hfo.avgSloc > 0 ? hfo.avgSloc.toFixed(1) : '\u2014'} <span className="e-big-unit">g/kWh</span>
+                <div className="e-big" style={{ color: hfo.avgSloc > 0 ? 'var(--text)' : 'var(--text-muted)' }}>
+                  {hfo.avgSloc > 0 ? hfo.avgSloc.toFixed(2) : 'N/A'} <span className="e-big-unit">g/kWh</span>
                 </div>
-                <div className="e-sub">SLOC moyen</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Moteurs a l'arret */}
-          <div className="e-sec">
-            <div className="e-sec-label">Moteurs à l'arrêt</div>
-            <div className="e-kpi-row">
-              <div className="e-kpi-left">
-                <div className="e-arret-num" style={{ color: arretColor }}>{hfo.totalArret}</div>
-                <div className="e-arret-sub">/ {hfo.totalMoteurs} moteurs</div>
-              </div>
-              <div className="e-kpi-center"><div className="e-kpi-sep"></div></div>
-              <div className="e-kpi-right">
-                <div className="e-mid" style={{ color: 'var(--text-secondary)' }}>
-                  {hfo.totalArret > 0 ? '\u2212' + hfo.lostToDate.toLocaleString() : '0'}{' '}
-                  <span className="e-mid-unit" style={{ color: 'var(--text-dim)' }}>MWh</span>
-                </div>
-                <div className="e-arret-sub2" style={{ fontSize: 'clamp(7px,0.6vw,10px)', color: 'var(--text-dim)', marginTop: '1px' }}>
-                  manque · {hfo.periodLabel}
-                </div>
+                <div className="e-sub">SLOC · {hfo.periodLabel}</div>
               </div>
             </div>
           </div>

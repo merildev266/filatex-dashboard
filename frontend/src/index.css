@@ -909,10 +909,19 @@ body::-webkit-scrollbar { display: none; }
 .e-card .e-pct{font-size:clamp(10px,1vw,15px);font-weight:400;}
 .e-card .e-pct-arrow{font-size:clamp(6px,0.5vw,8px);}
 .e-card-mini{flex:0 0 auto !important;height:auto !important;min-height:0 !important;overflow:visible !important;padding:clamp(8px,1vw,14px) clamp(10px,1.5vw,20px) !important;}
-.e-kpi-row{display:flex;align-items:center;}
+.e-kpi-row{display:flex;align-items:center;gap:clamp(4px,0.6vw,10px);}
 .e-kpi-left,.e-kpi-right{flex:1;text-align:center;}
 .e-kpi-center{flex:0 0 clamp(50px,6vw,80px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.e-kpi-center-wide{flex:1.15 0 auto;}
 .e-kpi-sep{width:1px;height:30px;background:var(--border);}
+.e-pct-below{margin-top:clamp(1px,0.25vw,3px);letter-spacing:0.03em;font-weight:500;}
+/* Right column stacked (ENELEC / VESTOP dispo/contrat) */
+.e-kpi-stack{display:flex;flex-direction:column;gap:clamp(2px,0.35vw,5px);justify-content:center;}
+.e-split-row{display:flex;align-items:baseline;justify-content:space-between;gap:clamp(3px,0.4vw,6px);padding:0 clamp(2px,0.35vw,6px);}
+.e-split-label{font-size:clamp(6px,0.55vw,9px);font-weight:500;letter-spacing:0.1em;text-transform:uppercase;}
+.e-split-val{font-size:clamp(11px,1.1vw,17px);color:var(--text);font-weight:400;letter-spacing:-0.3px;}
+.e-split-sep{color:var(--text-dim);margin:0 1px;font-weight:300;}
+.e-split-unit{font-size:clamp(6px,0.55vw,9px);color:var(--text-muted);margin-left:2px;}
 
 /* ══ UNIFIED CARD SYSTEM ══ */
 .unified-card{
@@ -938,10 +947,12 @@ body::-webkit-scrollbar { display: none; }
 [data-theme="light"] .gd-arret-banner,
 [data-theme="light"] .gd-chart-card,
 [data-theme="light"] .gd-kpi-card,
-[data-theme="light"] .gd-metric-card { background:#e4f4fd; }
+[data-theme="light"] .gd-metric-card,
+[data-theme="light"] .hfo-kpi-card,
+[data-theme="light"] .puiss-hebdo-chart { background:#e4f4fd; }
 
 /* ── Section pole border colors on all cards ── */
-[data-section="energy"] .unified-card, [data-section="energy"] .s1-card, [data-section="energy"] .capex-section-card, [data-section="energy"] .glass-card, [data-section="energy"] .gd-arret-banner, [data-section="energy"] .gd-chart-card, [data-section="energy"] .enrp-kbox, [data-section="energy"] .enrp-card, [data-section="energy"] .gd-kpi-card, [data-section="energy"] .gd-metric-card { border-color: #00ab63; }
+[data-section="energy"] .unified-card, [data-section="energy"] .s1-card, [data-section="energy"] .capex-section-card, [data-section="energy"] .glass-card, [data-section="energy"] .gd-arret-banner, [data-section="energy"] .gd-chart-card, [data-section="energy"] .enrp-kbox, [data-section="energy"] .enrp-card, [data-section="energy"] .gd-kpi-card, [data-section="energy"] .gd-metric-card, [data-section="energy"] .hfo-kpi-card, [data-section="energy"] .puiss-hebdo-chart { border-color: #00ab63; }
 [data-section="investments"] .unified-card, [data-section="investments"] .s1-card, [data-section="investments"] .capex-section-card { border-color: #f37056; }
 [data-section="properties"] .unified-card, [data-section="properties"] .s1-card, [data-section="properties"] .props-kpi-card, [data-section="properties"] .com-obj-card { border-color: #FDB823; }
 [data-section="finance"] .unified-card, [data-section="finance"] .s1-card, [data-section="finance"] .card-finance { border-color: #1abc9c; }
@@ -1112,6 +1123,103 @@ body::-webkit-scrollbar { display: none; }
 .gd-arret-reason{
   font-size:9px;color:var(--text-dim);margin-top:3px;
 }
+
+/* ────────────────────────────────────────────────────────────
+   HFO unified KPI grid (HfoKpiGrid) — used at every HFO level
+   ──────────────────────────────────────────────────────────── */
+.hfo-kpi-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.hfo-kpi-section{display:flex;flex-direction:column;gap:8px;}
+.hfo-kpi-section-label{
+  font-size:9px;font-weight:400;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+.hfo-kpi-cards{display:grid;gap:10px;}
+.hfo-kpi-cards.n-1{grid-template-columns:1fr;}
+.hfo-kpi-cards.n-2{grid-template-columns:repeat(2,1fr);}
+.hfo-kpi-cards.n-3{grid-template-columns:repeat(3,1fr);}
+.hfo-kpi-cards.n-4{grid-template-columns:repeat(4,1fr);}
+.hfo-kpi-cards.n-5{grid-template-columns:repeat(5,1fr);}
+@media(max-width:767px){
+  .hfo-kpi-cards.n-3,
+  .hfo-kpi-cards.n-4,
+  .hfo-kpi-cards.n-5{grid-template-columns:repeat(2,1fr);}
+}
+
+/* Provider row (Contrat | % | Disponible) inside a Puissance card */
+.hfo-kpi-provider-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:clamp(6px,1vw,14px);width:100%;
+}
+.hfo-kpi-prov-col{
+  flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(2px,0.4vw,4px);
+}
+.hfo-kpi-prov-pct{
+  flex:0 0 auto;min-width:clamp(38px,4vw,56px);text-align:center;
+  font-size:clamp(12px,1.1vw,16px);font-weight:500;letter-spacing:-0.3px;
+}
+.hfo-kpi-value-sm{
+  font-size:clamp(16px,2vw,22px);font-weight:400;color:var(--text);
+  line-height:1;letter-spacing:-0.5px;display:flex;align-items:baseline;justify-content:center;gap:3px;
+}
+.hfo-kpi-card{
+  background:#000000;border:1px solid var(--card-border);border-radius:16px;
+  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
+  padding:clamp(10px,1.4vw,14px) clamp(8px,1.2vw,14px);text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;z-index:1;min-height:74px;
+}
+.hfo-kpi-label{
+  font-size:clamp(7px,0.7vw,9px);text-transform:uppercase;letter-spacing:0.2em;
+  color:var(--text-dim);margin-bottom:clamp(4px,0.6vw,6px);
+}
+.hfo-kpi-value{
+  font-size:clamp(18px,2.4vw,26px);font-weight:400;color:var(--text);
+  line-height:1;letter-spacing:-0.5px;display:flex;align-items:baseline;justify-content:center;gap:3px;
+}
+.hfo-kpi-value.hfo-kpi-na{color:var(--text-muted);}
+.hfo-kpi-unit{
+  font-size:clamp(8px,0.9vw,11px);font-weight:400;color:var(--text-muted);margin-left:2px;
+}
+.hfo-kpi-sub{
+  font-size:clamp(7px,0.65vw,9px);color:var(--text-dim);margin-top:clamp(3px,0.5vw,5px);
+  letter-spacing:0.02em;
+}
+.hfo-kpi-sep{color:var(--text-dim);margin:0 2px;}
+.hfo-kpi-contrat-split{
+  display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;
+}
+.hfo-kpi-prov-enelec{color:rgba(0,171,99,0.85);}
+.hfo-kpi-prov-vestop{color:#5aafaf;}
+
+/* ────────────────────────────────────────────────────────────
+   Puissance hebdomadaire chart
+   ──────────────────────────────────────────────────────────── */
+.puiss-hebdo-chart{
+  background:#000000;border:1px solid var(--card-border);
+  border-radius:16px;padding:clamp(10px,1.2vw,14px);
+  margin-bottom:16px;
+  box-shadow:0 8px 60px rgba(58,57,92,0.12),0 4px 24px rgba(58,57,92,0.08),inset 0 1px 0 rgba(58,57,92,0.15);
+  position:relative;z-index:1;
+}
+.puiss-hebdo-header{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  margin-bottom:8px;
+}
+.puiss-hebdo-title{
+  font-size:clamp(9px,0.8vw,11px);color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:0.15em;
+}
+.puiss-hebdo-legend{
+  display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:var(--text-dim);
+}
+.puiss-hebdo-legend .legend-item{display:inline-flex;align-items:center;gap:4px;}
+.puiss-hebdo-legend .swatch{display:inline-block;width:9px;height:9px;border-radius:2px;}
+.puiss-hebdo-legend .swatch-enelec{background:rgba(0,171,99,0.55);}
+.puiss-hebdo-legend .swatch-vestop{background:rgba(90,175,175,0.75);}
+.puiss-hebdo-legend .swatch-contrat{
+  background:transparent;border-top:1.5px dashed rgba(255,255,255,0.55);height:0;width:12px;border-radius:0;
+}
+.puiss-hebdo-legend .swatch-peak{background:#f37056;}
 
 /* Chart card */
 .gd-chart-card{

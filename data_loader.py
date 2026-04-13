@@ -15,8 +15,8 @@ BASE_DIR = os.path.join(
     "Bureau",
     "Fichiers de DOSSIER DASHBOARD - Data_Dashbords",
     "01_Energy",
-    "Production",
-    "HFO",
+    "1.Production",
+    "1.HFO&LFO",
 )
 
 # ══════════════════════════════════════════════════════════════
@@ -34,7 +34,7 @@ INFOS_HFO_DIR = os.path.join(
 SITE_CONFIG = {
     "tamatave": {
         "name": "Tamatave",
-        "data_dir": os.path.join(BASE_DIR, "Tamatave"),
+        "data_dir": os.path.join(BASE_DIR, "1.Tamatave"),
         "file_pattern": "Tamatave_2026_*.xlsx",
         "contrat": 32,
         "mw_per_dg": 1.85,
@@ -108,7 +108,7 @@ SITE_CONFIG = {
     },
     "diego": {
         "name": "Diego",
-        "data_dir": os.path.join(BASE_DIR, "Diego"),
+        "data_dir": os.path.join(BASE_DIR, "2.Diego"),
         "file_pattern": "Diego_2026_*.xlsx",
         "contrat": 18.5,
         "mw_per_dg": 1.2,
@@ -181,7 +181,7 @@ SITE_CONFIG = {
     },
     "majunga": {
         "name": "Majunga",
-        "data_dir": os.path.join(BASE_DIR, "Majunga"),
+        "data_dir": os.path.join(BASE_DIR, "4.Majunga"),
         "file_pattern": "Majunga_2026_*.xlsx",
         "contrat": 16.3,
         "mw_per_dg": 2.0,
@@ -254,7 +254,7 @@ SITE_CONFIG = {
     },
     "tulear": {
         "name": "Tuléar",
-        "data_dir": os.path.join(BASE_DIR, "Tulear"),
+        "data_dir": os.path.join(BASE_DIR, "3.Tulear"),
         "file_pattern": "Tulear_2026_*.xlsx",
         "contrat": 9.9,
         "mw_per_dg": 3.5,  # average (DGs have different MW)

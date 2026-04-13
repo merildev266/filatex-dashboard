@@ -39,7 +39,16 @@
       "Bash(cp index_reference.html legacy/)",
       "Bash(cp -r js legacy/)",
       "Bash(cp -r css legacy/)",
-      "Bash(node generate_docx.mjs)"
+      "Bash(node generate_docx.mjs)",
+      "Bash(python -c ':*)",
+      "Bash(cp \"C:/Users/Meril/OneDrive - GROUPE FILATEX/1. DATA Meril HIVANAKO/Bureau/DAILY INFO MAJ 09 04 2026 .xlsx\" /tmp/daily_info.xlsx)",
+      "Read(//tmp/**)",
+      "Bash(python)",
+      "Bash(cp \"C:/Users/Meril/OneDrive - GROUPE FILATEX/Bureau/Fichiers de DOSSIER DASHBOARD - Data_Dashbords/01_Energy/1.Production/1.HFO&LFO/0.Global/Daily_Report_Global.xlsx\" ./daily_global.xlsx)",
+      "Bash(cp \"C:/Users/Meril/OneDrive - GROUPE FILATEX/Bureau/Fichiers de DOSSIER DASHBOARD - Data_Dashbords/01_Energy/1.Production/1.HFO&LFO/6.Previsionnel/Previsionnel_26.xlsx\" ./previsionnel_26.xlsx)",
+      "Bash(cp \"C:/Users/Meril/OneDrive - GROUPE FILATEX/Bureau/Fichiers de DOSSIER DASHBOARD - Data_Dashbords/01_Energy/1.Production/1.HFO&LFO/6.Previsionnel/Previsionel_HFO_2026.xlsx\" ./prev_hfo_2026.xlsx)",
+      "Bash(cp \"C:/Users/Meril/OneDrive - GROUPE FILATEX/Bureau/Fichiers de DOSSIER DASHBOARD - Data_Dashbords/01_Energy/1.Production/1.HFO&LFO/1.Tamatave/Tamatave_SFOC_2026_03.xlsx\" ./tmv_sfoc.xlsx)",
+      "Bash(cp \"C:/Users/Meril/OneDrive - GROUPE FILATEX/Bureau/Fichiers de DOSSIER DASHBOARD - Data_Dashbords/01_Energy/1.Production/1.HFO&LFO/4.Majunga/Majunga_LubeOil_2026_03.xlsx\" ./maj_lube.xlsx)"
     ]
   }
 }
