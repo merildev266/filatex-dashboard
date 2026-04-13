@@ -48,8 +48,8 @@ export default function HfoVestopCard({ siteData = {}, totalContract = 0, onClic
   const color = colorFor(pct)
   const neonStatus = totalContrat > 0 && pct >= 100 ? 'ok' : 'ko'
 
-  const labelColor = 'rgba(90,175,175,0.7)'
-  const borderColor = 'rgba(90,175,175,0.22)'
+  const borderCls = neonStatus === 'ko' ? 'border-[rgba(224,92,92,0.25)]' : 'border-[rgba(138,146,171,0.2)]'
+  const sepColor = neonStatus === 'ko' ? 'rgba(224,92,92,0.15)' : 'rgba(138,146,171,0.12)'
 
   return (
     <div className="flex flex-col gap-2 h-full">
@@ -59,15 +59,15 @@ export default function HfoVestopCard({ siteData = {}, totalContract = 0, onClic
         <span className="text-xs tracking-wider uppercase" style={{ color: '#5aafaf' }}>VESTOP</span>
       </div>
 
-      {/* Card */}
+      {/* Card — même bordure verte que les autres cartes */}
       <div
         onClick={onClick}
-        className={`glass-card p-4 flex-1 flex flex-col ${onClick ? 'clickable-energy' : ''}`}
-        style={{ borderColor: 'rgba(90,175,175,0.28)', cursor: onClick ? 'pointer' : 'default' }}
+        className={`glass-card clickable-energy p-4 flex-1 flex flex-col ${borderCls}`}
+        style={{ cursor: onClick ? 'pointer' : 'default' }}
       >
         {/* ═══ Ligne 1 : Puissance — Dispo | % | Contrat ═══ */}
-        <div className="pb-2.5 border-b mb-2.5" style={{ borderColor }}>
-          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: labelColor }}>
+        <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: sepColor }}>
+          <div className="text-[8px] tracking-widest uppercase text-center mb-2" style={{ color: 'var(--text-dim)' }}>
             Puissance
           </div>
           <div className="relative grid grid-cols-2 gap-2 items-center">
@@ -77,7 +77,7 @@ export default function HfoVestopCard({ siteData = {}, totalContract = 0, onClic
                 {totalDispo.toFixed(1)}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
               </div>
-              <div className="text-[8px] mt-0.5 tracking-widest uppercase" style={{ color: '#5aafaf' }}>VESTOP</div>
+              <div className="text-[8px] mt-0.5 tracking-widest uppercase" style={{ color: '#5aafaf' }}>Disponible</div>
             </div>
             {/* Col droite : Contrat total */}
             <div className="text-center">
@@ -94,27 +94,23 @@ export default function HfoVestopCard({ siteData = {}, totalContract = 0, onClic
           </div>
         </div>
 
-        {/* ═══ Lignes 2..N : une ligne par ville, alignée sur les colonnes de la ligne 1 ═══ */}
+        {/* ═══ Lignes 2..N : une ligne par ville — uniquement puissance disponible ═══ */}
         <div className="flex-1 flex flex-col justify-around gap-2">
           {rows.map(r => {
             const rPct = r.contrat > 0 ? Math.round((r.dispo / r.contrat) * 100) : 0
             const rColor = colorFor(rPct)
             return (
               <div key={r.id} className="grid grid-cols-2 gap-2 items-center">
-                {/* Col gauche (alignée avec Dispo) : nom de la ville */}
+                {/* Col gauche : nom de la ville */}
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-widest" style={{ color: labelColor }}>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--text-dim)]">
                     {r.name}
                   </div>
                 </div>
-                {/* Col droite (alignée avec Contrat) : puissance dispo / contrat */}
+                {/* Col droite : uniquement puissance disponible */}
                 <div className="text-center tabular-nums leading-none">
                   <span className="text-base" style={{ color: rColor }}>
                     {r.dispo.toFixed(1)}
-                  </span>
-                  <span className="text-[9px] text-[var(--text-dim)] mx-1">/</span>
-                  <span className="text-base text-[var(--text-muted)]">
-                    {r.contrat.toFixed(1)}
                   </span>
                   <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">MW</span>
                 </div>
