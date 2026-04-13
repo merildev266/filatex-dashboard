@@ -58,7 +58,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
             Réalisé
           </span>
           <span className="legend-item">
-            <span style={{ display:'inline-block', width:10, height:10, borderRadius:2, background:'rgba(255,255,255,0.12)', border:'1px dashed rgba(255,255,255,0.4)', marginRight:5, verticalAlign:'middle' }} />
+            <span style={{ display:'inline-block', width:14, height:0, borderTop:'2px dashed #5e4c9f', marginRight:5, verticalAlign:'middle' }} />
             Prévisionnel
           </span>
         </span>
@@ -92,7 +92,35 @@ export default function ProductionChart({ months = [], title = 'Production mensu
         {/* Y unit */}
         <text x={padL - 6} y={padT - 3} textAnchor="end" fontSize="7" fill="rgba(138,146,171,0.5)">MWh</text>
 
-        {/* Bars: Prévisionnel (ghost behind) + Réalisé (solid front) */}
+        {/* Prévisionnel — horizontal reference line + Y-axis label */}
+        {(() => {
+          const objVals = data.map(d => d.prodObj).filter(v => v > 0)
+          if (objVals.length === 0) return null
+          const objVal = objVals[Math.floor(objVals.length / 2)] // median
+          const y = yFor(objVal)
+          return (
+            <g>
+              <line
+                x1={padL} y1={y.toFixed(1)}
+                x2={W - padR} y2={y.toFixed(1)}
+                stroke="#5e4c9f"
+                strokeWidth="1.5"
+                strokeDasharray="6,3"
+              />
+              <text
+                x={padL - 6} y={y + 3}
+                textAnchor="end"
+                fontSize="8"
+                fontWeight="600"
+                fill="#5e4c9f"
+              >
+                {objVal >= 1000 ? (objVal / 1000).toFixed(1) + 'k' : objVal.toFixed(0)}
+              </text>
+            </g>
+          )
+        })()}
+
+        {/* Réalisé bars (solid green) */}
         {data.map((d, i) => {
           const x = xFor(i)
           const hasProd = d.prod > 0
@@ -100,30 +128,12 @@ export default function ProductionChart({ months = [], title = 'Production mensu
           const isCurrent = i === currentMonth
           const isFuture = i > currentMonth
 
-          // Prévisionnel ghost bar (full width, behind)
-          const yObj = hasObj ? yFor(d.prodObj) : padT + chartH
-          const hObj = padT + chartH - yObj
-
-          // Réalisé bar (slightly narrower, in front)
+          // Réalisé bar
           const yProd = hasProd ? yFor(d.prod) : padT + chartH
           const hProd = padT + chartH - yProd
 
           return (
             <g key={i}>
-              {/* Prévisionnel ghost bar */}
-              {hasObj && (
-                <rect
-                  x={x.toFixed(1)}
-                  y={yObj.toFixed(1)}
-                  width={barW.toFixed(1)}
-                  height={Math.max(0, hObj).toFixed(1)}
-                  rx="2"
-                  fill="rgba(255,255,255,0.06)"
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth="0.8"
-                  strokeDasharray="3,2"
-                />
-              )}
               {/* Réalisé solid bar */}
               {hasProd && (
                 <rect
@@ -132,10 +142,10 @@ export default function ProductionChart({ months = [], title = 'Production mensu
                   width={(barW - gapBars * 2).toFixed(1)}
                   height={Math.max(0, hProd).toFixed(1)}
                   rx="2"
-                  fill={isCurrent ? '#00ab63' : 'rgba(0,171,99,0.7)'}
+                  fill="#00ab63"
                 />
               )}
-              {/* Value on top of bar if there's data */}
+              {/* Value on top of bar */}
               {hasProd && (
                 <text
                   x={(x + barW / 2).toFixed(1)}
@@ -143,23 +153,12 @@ export default function ProductionChart({ months = [], title = 'Production mensu
                   textAnchor="middle"
                   fontSize="7"
                   fontWeight="400"
-                  fill={isCurrent ? '#00ab63' : 'rgba(0,171,99,0.8)'}
+                  fill="#00ab63"
                 >
                   {d.prod >= 1000 ? (d.prod / 1000).toFixed(1) + 'k' : Math.round(d.prod)}
                 </text>
               )}
-              {/* Delta indicator: red arrow down if under obj, green check if above */}
-              {hasProd && hasObj && !isFuture && (
-                <text
-                  x={(x + barW / 2).toFixed(1)}
-                  y={(padT + chartH + 11).toFixed(1)}
-                  textAnchor="middle"
-                  fontSize="7"
-                  fill={d.prod >= d.prodObj ? '#00ab63' : '#E05C5C'}
-                >
-                  {d.prod >= d.prodObj ? '▲' : '▼'}
-                </text>
-              )}
+              {/* No delta indicators — the line reference is enough */}
             </g>
           )
         })}
