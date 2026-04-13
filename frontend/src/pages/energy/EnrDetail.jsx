@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { usePageTitle } from '../../context/PageTitleContext'
+import { useFilters } from '../../hooks/useFilters'
 import { ENR_SITES } from '../../data/enr_site_data'
 import { MONTH_NAMES } from '../../utils/projects'
 
@@ -7,34 +8,13 @@ const ENR_COLORS = ['#00ab63', '#5aafaf', '#4a8fe7']
 const ENR_RGBS = ['0,171,99', '90,175,175', '74,143,231']
 const ENR_MONTHS = { 1:'Janvier',2:'Février',3:'Mars',4:'Avril',5:'Mai',6:'Juin',7:'Juillet',8:'Août',9:'Septembre',10:'Octobre',11:'Novembre',12:'Décembre' }
 
-/* -- ENR filter state -- */
-function useEnrFilter() {
-  const [filter, setFilter] = useState('month')
-  const [monthIndex, setMonthIndex] = useState(() => getEnrDataMonth() - 1)
-  const [quarter, setQuarter] = useState(() => Math.floor(new Date().getMonth() / 3) + 1)
-  const [year, setYear] = useState(() => new Date().getFullYear())
-  return { filter, setFilter, monthIndex, setMonthIndex, quarter, setQuarter, year, setYear }
-}
-
-function getEnrDataMonth() {
-  const sites = ENR_SITES || []
-  let maxMonth = 1
-  sites.forEach(s => {
-    if (s.latestDate) {
-      const m = parseInt(s.latestDate.split('-')[1])
-      if (m > maxMonth) maxMonth = m
-    }
-  })
-  return maxMonth
-}
-
-/* -- Filtered site data -- */
-function getFilteredSiteData(site, filterState) {
+/* -- Filtered site data (uses global filter keys: J-1/M/Q/A) -- */
+function getFilteredSiteData(site, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear) {
   const result = { prodKwh: 0, deliveredKwh: 0, consumedKwh: 0, peakKw: 0, avgDailyKwh: 0, days: 0, label: '' }
 
-  if (filterState.filter === 'month') {
-    const mi = filterState.monthIndex
-    const monthStr = new Date().getFullYear() + '-' + String(mi + 1).padStart(2, '0')
+  if (currentFilter === 'M' || currentFilter === 'J-1') {
+    const mi = selectedMonthIndex
+    const monthStr = selectedYear + '-' + String(mi + 1).padStart(2, '0')
     for (let i = 0; i < site.monthly.length; i++) {
       if (site.monthly[i].month === monthStr) {
         const m = site.monthly[i]
@@ -44,50 +24,50 @@ function getFilteredSiteData(site, filterState) {
         result.peakKw = m.maxPeakKw
         result.avgDailyKwh = m.avgDailyProdKwh
         result.days = m.daysWithData
-        result.label = MONTH_NAMES[mi] + ' ' + new Date().getFullYear()
+        result.label = MONTH_NAMES[mi] + ' ' + selectedYear
         break
       }
     }
     return result
   }
 
-  if (filterState.filter === 'quarter') {
-    const startMonth = (filterState.quarter - 1) * 3 + 1
+  if (currentFilter === 'Q') {
+    const startMonth = (selectedQuarter - 1) * 3 + 1
     const endMonth = startMonth + 2
     let totalProd = 0, totalDel = 0, totalCon = 0, maxPeak = 0, totalDays = 0
     site.monthly.forEach(m => {
       const mNum = parseInt(m.month.split('-')[1])
-      if (mNum >= startMonth && mNum <= endMonth) {
+      const mYear = parseInt(m.month.split('-')[0])
+      if (mYear === selectedYear && mNum >= startMonth && mNum <= endMonth) {
         totalProd += m.totalProdKwh; totalDel += m.totalDeliveredKwh; totalCon += m.totalConsumedKwh
         if (m.maxPeakKw > maxPeak) maxPeak = m.maxPeakKw; totalDays += m.daysWithData
       }
     })
     result.prodKwh = totalProd; result.deliveredKwh = totalDel; result.consumedKwh = totalCon
     result.peakKw = maxPeak; result.avgDailyKwh = totalDays > 0 ? totalProd / totalDays : 0
-    result.days = totalDays; result.label = 'Q' + filterState.quarter + ' ' + new Date().getFullYear()
+    result.days = totalDays; result.label = 'Q' + selectedQuarter + ' ' + selectedYear
     return result
   }
 
-  // year
+  // A (year)
   let totalProd = 0, totalDel = 0, totalCon = 0, maxPeak = 0, totalDays = 0
   site.monthly.forEach(m => {
     const mYear = parseInt(m.month.split('-')[0])
-    if (mYear === filterState.year) {
+    if (mYear === selectedYear) {
       totalProd += m.totalProdKwh; totalDel += m.totalDeliveredKwh; totalCon += m.totalConsumedKwh
       if (m.maxPeakKw > maxPeak) maxPeak = m.maxPeakKw; totalDays += m.daysWithData
     }
   })
   result.prodKwh = totalProd; result.deliveredKwh = totalDel; result.consumedKwh = totalCon
   result.peakKw = maxPeak; result.avgDailyKwh = totalDays > 0 ? totalProd / totalDays : 0
-  result.days = totalDays; result.label = String(filterState.year)
+  result.days = totalDays; result.label = String(selectedYear)
   return result
 }
 
 export default function EnrDetail() {
-  const filterState = useEnrFilter()
+  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
   const [selectedSite, setSelectedSite] = useState(null)
   const { setPageTitle, clearTitle } = usePageTitle()
-  const maxDataMonth = getEnrDataMonth()
 
   const sites = ENR_SITES || []
 
@@ -105,40 +85,18 @@ export default function EnrDetail() {
   const { totalProdKwh, totalAvgDaily, totalCapMw, siteFiltered } = useMemo(() => {
     let tp = 0, ta = 0, tc = 0
     const sf = sites.map(s => {
-      const fd = getFilteredSiteData(s, filterState)
+      const fd = getFilteredSiteData(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
       tp += fd.prodKwh; ta += fd.avgDailyKwh; tc += s.capacityMw
       return fd
     })
     return { totalProdKwh: tp, totalAvgDaily: ta, totalCapMw: tc, siteFiltered: sf }
-  }, [sites, filterState.filter, filterState.monthIndex, filterState.quarter, filterState.year])
+  }, [sites, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
 
-  const filterLabel = filterState.filter === 'month'
-    ? MONTH_NAMES[filterState.monthIndex] + ' ' + new Date().getFullYear()
-    : filterState.filter === 'quarter'
-      ? 'Q' + filterState.quarter + ' ' + new Date().getFullYear()
-      : String(filterState.year)
-
-  /* -- Filter bar -- */
-  const filterBar = (
-    <div style={{ display: 'flex', gap: 4, background: 'var(--card)', borderRadius: 8, padding: 4, width: 'fit-content' }}>
-      {[
-        { key: 'month', label: filterState.filter === 'month' ? MONTH_NAMES[filterState.monthIndex]?.slice(0, 3) : 'M', onClick: () => { filterState.setFilter('month'); filterState.setMonthIndex(maxDataMonth - 1) } },
-        { key: 'quarter', label: filterState.filter === 'quarter' ? 'Q' + filterState.quarter : 'Q', onClick: () => filterState.setFilter('quarter') },
-        { key: 'year', label: filterState.filter === 'year' ? String(filterState.year) : 'A', onClick: () => filterState.setFilter('year') },
-      ].map(f => (
-        <button
-          key={f.key}
-          onClick={f.onClick}
-          style={{
-            padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 400, cursor: 'pointer',
-            border: 'none', transition: 'all 0.2s',
-            background: filterState.filter === f.key ? 'rgba(0,171,99,0.3)' : 'transparent',
-            color: filterState.filter === f.key ? 'var(--text)' : 'var(--text-muted)',
-          }}
-        >{f.label}</button>
-      ))}
-    </div>
-  )
+  const filterLabel = (currentFilter === 'M' || currentFilter === 'J-1')
+    ? MONTH_NAMES[selectedMonthIndex] + ' ' + selectedYear
+    : currentFilter === 'Q'
+      ? 'Q' + selectedQuarter + ' ' + selectedYear
+      : String(selectedYear)
 
   /* ═══ SITE DETAIL VIEW (full page, like HFO) ═══ */
   if (selectedSite !== null && sites[selectedSite]) {
@@ -146,7 +104,7 @@ export default function EnrDetail() {
     const si = selectedSite
     const col = ENR_COLORS[si % ENR_COLORS.length]
     const rgb = ENR_RGBS[si % ENR_RGBS.length]
-    const fd = getFilteredSiteData(s, filterState)
+    const fd = getFilteredSiteData(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
 
     return (
       <div style={{ padding: '0 20px 40px' }}>
@@ -214,9 +172,9 @@ export default function EnrDetail() {
         <div style={{ fontSize: 9, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 14 }}>{filterLabel}</div>
 
         {/* MONTH VIEW — sparkline + sub-KPIs */}
-        {filterState.filter === 'month' && (() => {
-          const mi = filterState.monthIndex
-          const monthStr = new Date().getFullYear() + '-' + String(mi + 1).padStart(2, '0')
+        {(currentFilter === 'M' || currentFilter === 'J-1') && (() => {
+          const mi = selectedMonthIndex
+          const monthStr = selectedYear + '-' + String(mi + 1).padStart(2, '0')
           const monthData = s.monthly.find(m => m.month === monthStr)
           if (!monthData || !monthData.dailyProd.length) {
             return <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-dim)', fontSize: 13 }}>Pas de données pour ce mois</div>
@@ -256,15 +214,15 @@ export default function EnrDetail() {
         })()}
 
         {/* YEAR VIEW — monthly cards grid */}
-        {(filterState.filter === 'quarter' || filterState.filter === 'year') && (() => {
+        {(currentFilter === 'Q' || currentFilter === 'A') && (() => {
           const filteredMonths = s.monthly.filter(m => {
             const mNum = parseInt(m.month.split('-')[1])
             const mYear = parseInt(m.month.split('-')[0])
-            if (filterState.filter === 'quarter') {
-              const start = (filterState.quarter - 1) * 3 + 1
-              return mYear === new Date().getFullYear() && mNum >= start && mNum <= start + 2
+            if (currentFilter === 'Q') {
+              const start = (selectedQuarter - 1) * 3 + 1
+              return mYear === selectedYear && mNum >= start && mNum <= start + 2
             }
-            return mYear === filterState.year
+            return mYear === selectedYear
           })
           if (!filteredMonths.length) return <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-dim)', fontSize: 13 }}>Pas de données</div>
           return (
