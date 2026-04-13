@@ -199,13 +199,22 @@ export default function HfoKpiGrid({
             )}
           </div>
           <div className="hfo-kpi-card">
-            <div className="hfo-kpi-label">Moteurs</div>
-            <div className="hfo-kpi-value">
-              <span style={{ color: 'var(--energy)' }}>{running}</span>
-              <span className="hfo-kpi-sep"> / </span>
-              <span style={{ color: arretColor }}>{arret}</span>
+            <div className="hfo-kpi-label">Moteurs ({totalEngines})</div>
+            <div className="hfo-kpi-provider-row">
+              <div className="hfo-kpi-prov-col">
+                <div className="hfo-kpi-value-sm" style={{ color: 'var(--energy)' }}>
+                  {running}
+                </div>
+                <div className="hfo-kpi-sub">En marche</div>
+              </div>
+              <div className="hfo-kpi-prov-pct" style={{ color: 'var(--text-dim)', fontSize: '10px' }}>|</div>
+              <div className="hfo-kpi-prov-col">
+                <div className="hfo-kpi-value-sm" style={{ color: arretColor }}>
+                  {arret}
+                </div>
+                <div className="hfo-kpi-sub">À l'arrêt</div>
+              </div>
             </div>
-            <div className="hfo-kpi-sub">Marche / Arrêt ({totalEngines})</div>
           </div>
         </div>
       </div>
