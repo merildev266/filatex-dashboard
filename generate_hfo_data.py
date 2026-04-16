@@ -232,6 +232,9 @@ def generate():
         puissance_hebdo = _build_puissance_hebdo(site["planning"])
         site["puissanceHebdo"] = puissance_hebdo
 
+        # ── Puissance previsionnelle journalière (daily MW from Détails PP) ──
+        site["puissancePrevDaily"] = global_data.get("detailsDaily", {}).get(site_key, {})
+
         # ── Computed aggregates ──
         site["dispoTotal"] = _dispo_sum(site["groupes"])
         site["peakLoadLatest"] = _peak_load_latest(puissance_hebdo)
@@ -255,6 +258,7 @@ def generate():
         "contracts": fihaonana_contracts,
         "groupes": [],
         "puissanceHebdo": _build_puissance_hebdo(global_data["hebdo"].get("fihaonana")),
+        "puissancePrevDaily": global_data.get("detailsDaily", {}).get("fihaonana", {}),
         "planning": global_data["hebdo"].get("fihaonana", {}),
         "overhauls": _site_overhauls(global_data["overhaul"], "fihaonana"),
         "dispoTotal": 0,

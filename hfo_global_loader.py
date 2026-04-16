@@ -14,7 +14,7 @@ Call ``load_global()`` to get a single dict containing everything.
 """
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 from openpyxl import load_workbook
@@ -494,6 +494,189 @@ def load_hebdo_planning(xlsx_path):
 
 
 # ══════════════════════════════════════════════════════════════
+# Per-site "Détails PP XXX" sheets — DAILY planning
+# ══════════════════════════════════════════════════════════════
+# Each site has its own sheet with daily planning resolution (31 values per
+# month, not 5 weekly values). The TOTAL ENELEC / TOTAL VESTOP / TOTAL SITE
+# rows give the per-provider and per-site totals per day.
+
+# Maps site_key -> sheet name (sheet names have 'é' but some Python envs
+# return a cp1252-ish rendering — match by normalized prefix).
+DETAILS_PP_SITES = {
+    "tamatave":  "TMV",
+    "majunga":   "MJN",
+    "tulear":    "TUL",
+    "antsirabe": "ABE",
+    "diego":     "DIE",
+    "fihaonana": "FIH",
+}
+
+# Label patterns (case-insensitive, matched against trimmed col A text).
+_RE_TOTAL_ENELEC = re.compile(r"^total\s+enelec\b", re.I)
+_RE_TOTAL_VESTOP = re.compile(r"^total\s+vestop\b", re.I)
+_RE_TOTAL_SITE   = re.compile(r"^total\s+site\b", re.I)
+_RE_TOTAL_PLAIN  = re.compile(r"^total\s*$", re.I)  # Diego uses bare "TOTAL"
+# Tamatave has a single VESTOP engine labeled "DEUTZ _ Vestop" (no TOTAL VESTOP row).
+_RE_DEUTZ_VESTOP = re.compile(r"^deutz.*\bvestop\b", re.I)
+
+
+def _find_details_sheet(wb, suffix):
+    """Find a 'Détails PP XXX' sheet by suffix (TMV/MJN/TUL/ABE/DIE/FIH).
+    Tolerates encoding variations of 'é' in the sheet name."""
+    suffix_u = suffix.upper()
+    for name in wb.sheetnames:
+        nu = name.upper()
+        if nu.endswith(f" {suffix_u}") and "PP" in nu:
+            return wb[name]
+    return None
+
+
+def _f_detail(v):
+    """Parse a numeric cell value from the detail sheet. '-' and empty → None."""
+    if v is None:
+        return None
+    if isinstance(v, str):
+        s = v.strip()
+        if s == "" or s == "-":
+            return None
+    return _f(v)
+
+
+def load_details_pp(xlsx_path=None):
+    """Parse the per-site 'Détails PP XXX' sheets to extract DAILY planning
+    totals (ENELEC, VESTOP, TOTAL SITE) for every day of 2026.
+
+    Returns:
+        { site_key: { "YYYY-MM": {
+            "days":   [1,2,...N],
+            "enelec": [daily N values],
+            "vestop": [daily N values],
+            "total":  [daily N values],  # TOTAL SITE row
+        }}}
+    """
+    path = xlsx_path or cfg.GLOBAL_FILE
+    wb = load_workbook(path, data_only=True)
+    out = {}
+
+    for site_key, suffix in DETAILS_PP_SITES.items():
+        ws = _find_details_sheet(wb, suffix)
+        if ws is None:
+            continue
+
+        # Build (year, month, day) -> col map. The sheet labels each week block
+        # with a single month header (row 3) that applies to the whole S1..S5
+        # block, but individual days in the first/last week can spill into the
+        # previous/next month. Rebuild the date timeline by scanning day numbers
+        # in order and advancing a running datetime one day at a time.
+        day_cols = {}  # (y, m, d) -> col
+        cur_date = None  # datetime anchor for the current cell
+        for c in range(1, ws.max_column + 1):
+            dv = ws.cell(5, c).value
+            if not (isinstance(dv, (int, float)) and 1 <= dv <= 31):
+                continue
+            day = int(dv)
+            if cur_date is None:
+                # Anchor on the first day we see. Find the nearest preceding
+                # month header in row 3 and decide whether this day belongs to
+                # that month or the previous one (if the number is already
+                # near the end of the month, e.g. 29/30/31).
+                anchor_month = None
+                for cc in range(c, 0, -1):
+                    mv = ws.cell(3, cc).value
+                    if isinstance(mv, datetime):
+                        anchor_month = mv
+                        break
+                if anchor_month is None:
+                    continue
+                y, m = anchor_month.year, anchor_month.month
+                if day >= 20:
+                    # Spill-over from the previous month.
+                    if m == 1:
+                        y -= 1; m = 12
+                    else:
+                        m -= 1
+                try:
+                    cur_date = datetime(y, m, day)
+                except ValueError:
+                    continue
+            else:
+                next_date = cur_date + timedelta(days=1)
+                if next_date.day != day:
+                    # Desync (shouldn't happen with clean sheets) — skip.
+                    continue
+                cur_date = next_date
+            day_cols[(cur_date.year, cur_date.month, cur_date.day)] = c
+
+        # Find label rows by scanning col A then col B in the top block (rows 6..30).
+        # For the total-site row, prefer "TOTAL SITE"; fall back to bare "TOTAL"
+        # (Diego's sheet only says "TOTAL" above the second label block).
+        row_enelec = row_vestop = row_total = row_total_plain = None
+        for r in range(5, 30):
+            for col in (1, 2, 3):
+                lbl = _s(ws.cell(r, col).value)
+                if not lbl:
+                    continue
+                if row_enelec is None and _RE_TOTAL_ENELEC.match(lbl):
+                    row_enelec = r
+                if row_vestop is None and (_RE_TOTAL_VESTOP.match(lbl) or _RE_DEUTZ_VESTOP.match(lbl)):
+                    row_vestop = r
+                if row_total is None and _RE_TOTAL_SITE.match(lbl):
+                    row_total = r
+                if row_total_plain is None and _RE_TOTAL_PLAIN.match(lbl):
+                    row_total_plain = r
+        if row_total is None:
+            row_total = row_total_plain
+
+        # Extract daily values per month
+        per_month = {}
+        # Group days by (year, month)
+        by_ym = {}
+        for (y, m, d), c in day_cols.items():
+            by_ym.setdefault((y, m), []).append((d, c))
+
+        # Where to put the Cummins/LFO remainder (TOTAL SITE − ENELEC − VESTOP):
+        # sites with an ENELEC contract bundle Cummins under enelec, VESTOP-only
+        # sites (Antsirabe, Fihaonana) bundle it under vestop.
+        contract = cfg.SITE_CONTRACTS.get(site_key, {}) or {}
+        route_extra_to = "enelec" if (contract.get("enelec") or 0) > 0 else "vestop"
+
+        for (y, m), day_col_list in sorted(by_ym.items()):
+            day_col_list.sort()  # ascending by day
+            days   = [d for (d, _c) in day_col_list]
+            enelec = [_f_detail(ws.cell(row_enelec, c).value) if row_enelec else None for (_d, c) in day_col_list]
+            vestop = [_f_detail(ws.cell(row_vestop, c).value) if row_vestop else None for (_d, c) in day_col_list]
+            total  = [_f_detail(ws.cell(row_total,  c).value) if row_total  else None for (_d, c) in day_col_list]
+            # Normalize None → 0 so the frontend can draw stacked bars cleanly.
+            enelec = [(v if v is not None else 0.0) for v in enelec]
+            vestop = [(v if v is not None else 0.0) for v in vestop]
+            total  = [(v if v is not None else 0.0) for v in total]
+
+            # If TOTAL SITE > ENELEC + VESTOP the remainder is Cummins/LFO.
+            # Route it to the site's primary provider so stacked bars always
+            # reach the TOTAL SITE height (the "total site" line the user asked
+            # us to respect).
+            for i in range(len(days)):
+                extra = total[i] - (enelec[i] + vestop[i])
+                if extra > 1e-6:
+                    if route_extra_to == "enelec":
+                        enelec[i] += extra
+                    else:
+                        vestop[i] += extra
+
+            ym_key = f"{y:04d}-{m:02d}"
+            per_month[ym_key] = {
+                "days": days,
+                "enelec": enelec,
+                "vestop": vestop,
+                "total":  total,
+            }
+
+        out[site_key] = per_month
+
+    return out
+
+
+# ══════════════════════════════════════════════════════════════
 # Top-level orchestrator
 # ══════════════════════════════════════════════════════════════
 
@@ -504,10 +687,11 @@ def load_global(xlsx_path=None):
         raise FileNotFoundError(f"Daily_Report_Global.xlsx not found: {path}")
 
     return {
-        "overhaul":   load_overhaul(path),
-        "recap":      load_recap(path),
-        "situation":  load_situation_moteurs(path),
-        "hebdo":      load_hebdo_planning(path),
+        "overhaul":     load_overhaul(path),
+        "recap":        load_recap(path),
+        "situation":    load_situation_moteurs(path),
+        "hebdo":        load_hebdo_planning(path),
+        "detailsDaily": load_details_pp(path),
     }
 
 

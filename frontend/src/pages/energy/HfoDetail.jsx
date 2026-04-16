@@ -611,17 +611,26 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
         lastRealizedDay = daysInMonth
       }
 
-      // Planned bars (prévisionnel) — fill days beyond the realized window
-      // using the weekly HEBDO values for that week-of-month.
+      // Planned bars (prévisionnel) — fill days beyond the realized window.
+      // Prefer the per-site daily Détails PP data (puissancePrevDaily) which
+      // has real day-by-day values with a TOTAL SITE row; fall back to the
+      // coarser HEBDO weekly values when the daily data is missing.
+      const mm = String(targetMonth).padStart(2, '0')
+      const ymKey = `${year}-${mm}`
+      const prevDaily = (s.puissancePrevDaily && s.puissancePrevDaily[ymKey]) || null
       const weekByKey = new Map()
       ph.weeks.forEach((w, i) => weekByKey.set(w, i))
-      const mm = String(targetMonth).padStart(2, '0')
       for (let d = 1; d <= daysInMonth; d++) {
         if (d <= lastRealizedDay) continue
-        const wkIdx = weekByKey.get(`${year}-${mm}-S${Math.ceil(d / 7)}`)
-        if (wkIdx == null) continue
-        enelecDaily[d - 1] = +ph.enelec?.[wkIdx] || 0
-        vestopDaily[d - 1] = +ph.vestop?.[wkIdx] || 0
+        if (prevDaily && prevDaily.enelec && prevDaily.vestop && prevDaily.enelec[d - 1] != null) {
+          enelecDaily[d - 1] = +prevDaily.enelec[d - 1] || 0
+          vestopDaily[d - 1] = +prevDaily.vestop[d - 1] || 0
+        } else {
+          const wkIdx = weekByKey.get(`${year}-${mm}-S${Math.ceil(d / 7)}`)
+          if (wkIdx == null) continue
+          enelecDaily[d - 1] = +ph.enelec?.[wkIdx] || 0
+          vestopDaily[d - 1] = +ph.vestop?.[wkIdx] || 0
+        }
       }
 
       // Contract reference — highest weekly contrat seen in the target month
