@@ -565,6 +565,42 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
   const sPeriodLabel = currentFilter === 'A' ? String(selectedYear)
     : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
     : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
+  // Filter puissance hebdo data based on current filter:
+  //   A → all 52 weeks
+  //   Q → ~13 weeks of selected quarter
+  //   M / J-1 → ~4-5 weeks of selected month
+  const sPuissanceHebdo = useMemo(() => {
+    const ph = s.puissanceHebdo
+    if (!ph || !Array.isArray(ph.weeks) || ph.weeks.length === 0) return ph
+    if (currentFilter === 'A') return ph
+
+    const targetMonths = new Set()
+    if (currentFilter === 'M' || currentFilter === 'J-1') {
+      targetMonths.add((selectedMonthIndex || 0) + 1)
+    } else if (currentFilter === 'Q') {
+      const q = selectedQuarter || 1
+      for (let m = (q - 1) * 3 + 1; m <= q * 3; m++) targetMonths.add(m)
+    } else {
+      return ph
+    }
+
+    const keepIdx = []
+    ph.weeks.forEach((w, i) => {
+      const m = /^\d{4}-(\d{2})/.exec(w || '')
+      if (m && targetMonths.has(parseInt(m[1], 10))) keepIdx.push(i)
+    })
+    if (keepIdx.length === 0) return ph
+    const pick = (arr) => Array.isArray(arr) ? keepIdx.map(i => arr[i]) : arr
+    return {
+      ...ph,
+      weeks:    pick(ph.weeks),
+      enelec:   pick(ph.enelec),
+      vestop:   pick(ph.vestop),
+      contrat:  pick(ph.contrat),
+      peakLoad: pick(ph.peakLoad),
+    }
+  }, [s, currentFilter, selectedMonthIndex, selectedQuarter])
+
   // Build chart data based on current filter:
   //   A           → 12 monthly bars
   //   Q           → 3 monthly bars (selected quarter)
@@ -711,10 +747,10 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           />
 
           {/* Charts — puissance hebdo + production mensuelle */}
-          {s.puissanceHebdo && s.puissanceHebdo.weeks?.length > 0 && (
+          {sPuissanceHebdo && sPuissanceHebdo.weeks?.length > 0 && (
             <PuissanceHebdoChart
-              data={s.puissanceHebdo}
-              title={`Puissance disponible hebdomadaire — ${s.name}`}
+              data={sPuissanceHebdo}
+              title={`Puissance disponible hebdomadaire — ${s.name}${currentFilter === 'M' || currentFilter === 'J-1' ? ` — ${MOIS_FR[selectedMonthIndex || 0]} ${selectedYear || 2026}` : currentFilter === 'Q' ? ` — Q${selectedQuarter} ${selectedYear || 2026}` : ''}`}
             />
           )}
           <ProductionChart
