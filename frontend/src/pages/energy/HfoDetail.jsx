@@ -582,6 +582,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
         const daysInMonth = new Date(year, targetMonth, 0).getDate()
         const enelecDaily = new Array(daysInMonth).fill(0)
         const vestopDaily = new Array(daysInMonth).fill(0)
+        // Realized days — sum per-DG dailyMaxLoad
         for (const g of (s.groupes || [])) {
           const dml = g.dailyMaxLoad || []
           const prov = (g.provider || '').toLowerCase()
@@ -590,6 +591,24 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
             if (prov === 'vestop') vestopDaily[d] += mw
             else enelecDaily[d] += mw
           }
+        }
+        // Forecast days — for days without realized data (typically > today),
+        // reuse the weekly planned values from puissanceHebdo for that week.
+        // Week-of-month = ceil(day / 7), matching the existing "YYYY-MM-S{k}" keys.
+        const weekByKey = new Map()
+        ph.weeks.forEach((w, i) => weekByKey.set(w, i))
+        const today = new Date()
+        const isCurrentCalMonth = targetMonth === today.getMonth() + 1 && year === today.getFullYear()
+        const todayDay = isCurrentCalMonth ? today.getDate() : 0  // 0 means all days potentially future
+        const mm = String(targetMonth).padStart(2, '0')
+        for (let d = 1; d <= daysInMonth; d++) {
+          const hasRealized = enelecDaily[d - 1] > 0 || vestopDaily[d - 1] > 0
+          if (hasRealized) continue
+          if (todayDay && d <= todayDay) continue  // past day with no load → leave 0
+          const wkIdx = weekByKey.get(`${year}-${mm}-S${Math.ceil(d / 7)}`)
+          if (wkIdx == null) continue
+          enelecDaily[d - 1] = +ph.enelec?.[wkIdx] || 0
+          vestopDaily[d - 1] = +ph.vestop?.[wkIdx] || 0
         }
         // Contract reference: pull the most recent non-zero weekly contrat for this month
         let contratRef = 0
