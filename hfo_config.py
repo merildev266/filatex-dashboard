@@ -75,7 +75,7 @@ SITE_CONTRACTS = {
 # OBJECTIVES (from Previsionnel_26 headers)
 # ══════════════════════════════════════════════════════════════
 
-OBJ_SFOC = 230.0  # g/kWh
+OBJ_SFOC = 250.0  # g/kWh
 OBJ_SLOC = 1.0    # g/kWh
 
 
@@ -102,10 +102,10 @@ PLANNING_STATUS_BY_COLOR = {
 
 SHEET_OVERHAUL       = "OVERHAUL"
 SHEET_RECAP          = "RECAP"
-SHEET_SITUATION      = "Situation moteur"
-SHEET_HEBDO          = "Détail PP HEBDO"
+SHEET_SITUATION      = "Situation Moteurs"
+SHEET_HEBDO          = "Détails PP HEBDO"
 SHEET_DETAIL_TMV     = "Détails PP TMV"
-SHEET_DETAIL_DIEGO   = "Détails PP Diégo"  # note: accent on "é"go
+SHEET_DETAIL_DIEGO   = "Détails PP DIE"
 SHEET_DETAIL_MJN     = "Détails PP MJN"
 SHEET_DETAIL_TUL     = "Détails PP TUL"
 SHEET_DETAIL_ABE     = "Détails PP ABE"

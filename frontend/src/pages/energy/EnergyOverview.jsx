@@ -299,19 +299,19 @@ export default function EnergyOverview() {
             </div>
           </div>
 
-          {/* Row 3: SFOC (G) | SLOC (D) */}
+          {/* Row 3: SFOC (G) | SLOC (D) — vert si sous objectif (250/1), rouge si dessus */}
           <div className="e-sec">
             <div className="e-sec-label">Consommations spécifiques</div>
             <div className="e-kpi-row">
               <div className="e-kpi-left">
-                <div className="e-big" style={{ color: hfo.avgSfoc > 0 ? 'var(--text)' : 'var(--text-muted)' }}>
+                <div className="e-big" style={{ color: hfo.avgSfoc > 0 ? (hfo.avgSfoc <= 250 ? 'var(--energy)' : 'var(--red)') : 'var(--text-muted)' }}>
                   {hfo.avgSfoc > 0 ? Math.round(hfo.avgSfoc) : 'N/A'} <span className="e-big-unit">g/kWh</span>
                 </div>
                 <div className="e-sub">SFOC · {hfo.periodLabel}</div>
               </div>
               <div className="e-kpi-center"><div className="e-kpi-sep"></div></div>
               <div className="e-kpi-right">
-                <div className="e-big" style={{ color: hfo.avgSloc > 0 ? 'var(--text)' : 'var(--text-muted)' }}>
+                <div className="e-big" style={{ color: hfo.avgSloc > 0 ? (hfo.avgSloc <= 1 ? 'var(--energy)' : 'var(--red)') : 'var(--text-muted)' }}>
                   {hfo.avgSloc > 0 ? hfo.avgSloc.toFixed(2) : 'N/A'} <span className="e-big-unit">g/kWh</span>
                 </div>
                 <div className="e-sub">SLOC · {hfo.periodLabel}</div>

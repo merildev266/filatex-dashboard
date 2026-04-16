@@ -703,6 +703,11 @@ def collect_daily_dg_metrics(xls, cfg):
     dg_col_map = {}
     num_days = 0
 
+    # Load table config (for computing energieProd from hourly kW table — row 85+)
+    load_start = hfo_cfg.get("load_data_start_row")
+    load_end = hfo_cfg.get("load_data_end_row")
+    load_dg_row = hfo_cfg.get("load_dg_header_row")
+
     hfo_sheets = find_hfo_sheets(xls.sheet_names)
     for day, sn in hfo_sheets:
         df = pd.read_excel(xls, sheet_name=sn, header=None)
@@ -751,6 +756,37 @@ def collect_daily_dg_metrics(xls, cfg):
 
         num_days = max(num_days, day)
 
+        # Build per-DG load-table column map for THIS sheet (row 85 — may have
+        # different column layout than the per-DG metrics header at row 35).
+        load_dg_col_map = {}
+        if load_dg_row is not None and load_dg_row < len(df):
+            for col_idx in range(df.shape[1]):
+                val = df.iloc[load_dg_row, col_idx]
+                if pd.notna(val):
+                    s = str(val).strip().upper()
+                    if s.startswith("DG") and len(s) <= 5:
+                        try:
+                            dg_num = int(s[2:])
+                            load_dg_col_map[f"DG{dg_num}"] = col_idx
+                        except ValueError:
+                            pass
+
+        # Precompute per-DG daily energy (kWh) by summing 24 hourly load (kW) values
+        # from the load table (row 85+). This is the authoritative production source.
+        load_energy_per_dg = {}
+        if load_dg_col_map and load_start is not None and load_end is not None:
+            for dg_id, col_idx in load_dg_col_map.items():
+                if col_idx >= df.shape[1]:
+                    continue
+                total_kwh = 0.0
+                for row_idx in range(load_start, min(load_end + 1, len(df))):
+                    time_val = df.iloc[row_idx, 0]
+                    s_val = str(time_val).strip().lower() if pd.notna(time_val) else ''
+                    if s_val in ('max', 'maximum', 'total'):
+                        continue
+                    total_kwh += safe_float(df.iloc[row_idx, col_idx])
+                load_energy_per_dg[dg_id] = total_kwh
+
         for metric in DAILY_EXTRACT_METRICS:
             offset = row_offsets.get(metric)
             if offset is None:
@@ -761,11 +797,15 @@ def collect_daily_dg_metrics(xls, cfg):
             for dg_id, col_idx in dg_col_map.items():
                 if col_idx >= df.shape[1]:
                     continue
-                raw = df.iloc[metric_row, col_idx]
-                if metric in DAILY_TIME_FIELDS and use_time:
-                    val = time_to_hours(raw)
+                # Production: use load table sum (row 85+) as authoritative source
+                if metric == 'energieProd' and dg_id in load_energy_per_dg:
+                    val = load_energy_per_dg[dg_id]
                 else:
-                    val = safe_float(raw)
+                    raw = df.iloc[metric_row, col_idx]
+                    if metric in DAILY_TIME_FIELDS and use_time:
+                        val = time_to_hours(raw)
+                    else:
+                        val = safe_float(raw)
                 result[dg_id][metric][day - 1] = round(val, 1)
 
     return result, num_days
@@ -1314,33 +1354,35 @@ def build_site_data(site_key):
     num_eng = cfg["num_engines"]
 
     # --- Fill missing Daily Data from per-DG HFO specific data sheets ---
-    # When a month's Daily Data sheet is empty (e.g. formulas not computed),
-    # reconstruct daily totals by summing per-DG metrics from HFO sheets.
+    # Day-level reconstruction: for each missing day (or day with 0 production),
+    # reconstruct from HFO specific data per-DG metrics (production taken from
+    # the load table at row 85+, per user directive).
     if monthly_dg_metrics:
-        # Determine which months already have data in daily_df
-        months_with_data = set()
+        # Build a set of (month, day) tuples that already have valid production
+        days_with_data = set()
         if not daily_df.empty and "_file_month" in daily_df.columns:
-            for m in daily_df["_file_month"].dropna().unique():
-                # Check if month actually has production data
-                m_rows = daily_df[daily_df["_file_month"] == m]
-                if m_rows.iloc[:, dd["gross_mwh"]].apply(safe_float).sum() > 0:
-                    months_with_data.add(int(m))
+            for _, row in daily_df.iterrows():
+                m = row.get("_file_month")
+                dt = row.iloc[dd["date"]]
+                gross = safe_float(row.iloc[dd["gross_mwh"]])
+                if m is not None and isinstance(dt, (datetime, pd.Timestamp)) and gross > 0:
+                    days_with_data.add((int(m), pd.Timestamp(dt).day))
 
+        import calendar
+        synth_rows = []
         for month_num, dg_data in monthly_dg_metrics.items():
-            if month_num in months_with_data:
-                continue  # Already have valid data for this month
-
-            # Determine number of days in this month (2026)
-            import calendar
             num_days = calendar.monthrange(2026, month_num)[1]
-
-            synth_rows = []
+            reconstructed_days = []
             for day_idx in range(num_days):
+                day_num = day_idx + 1
+                if (month_num, day_num) in days_with_data:
+                    continue  # Daily Data already has this day
+
                 # Sum across all DGs for each metric
                 gross = sum(dg_data.get(dg, {}).get("energieProd", [0.0]*31)[day_idx]
                             for dg in dg_data)
                 if gross <= 0:
-                    continue  # Skip days with no production
+                    continue  # Skip days with no production in per-DG data either
 
                 station = sum(dg_data.get(dg, {}).get("consLVMV", [0.0]*31)[day_idx]
                               for dg in dg_data)
@@ -1361,8 +1403,7 @@ def build_site_data(site_key):
                            for dg in dg_data)
                 sfoc = round(hfo * 1000 / net, 1) if net > 0 else 0
 
-                # Build row with same column layout as daily_df
-                row_date = datetime(2026, month_num, day_idx + 1)
+                row_date = datetime(2026, month_num, day_num)
                 row_data = {dd["date"]: row_date}
                 row_data[dd["gross_mwh"]] = round(gross, 1)
                 row_data[dd["net_mwh"]] = round(net, 1)
@@ -1377,14 +1418,16 @@ def build_site_data(site_key):
                 row_data[dd["sfoc_gm"]] = sfoc
                 row_data["_file_month"] = month_num
                 synth_rows.append(row_data)
+                reconstructed_days.append(day_num)
 
-            if synth_rows:
-                synth_df = pd.DataFrame(synth_rows)
-                # Ensure same number of columns by reindexing
-                if not daily_df.empty:
-                    synth_df = synth_df.reindex(columns=daily_df.columns)
-                daily_df = pd.concat([daily_df, synth_df], ignore_index=True)
-                print(f"  [INFO] Reconstructed {len(synth_rows)} daily rows for month {month_num} from per-DG data")
+            if reconstructed_days:
+                print(f"  [INFO] Month {month_num}: reconstructed {len(reconstructed_days)} day(s) from per-DG data: {reconstructed_days}")
+
+        if synth_rows:
+            synth_df = pd.DataFrame(synth_rows)
+            if not daily_df.empty:
+                synth_df = synth_df.reindex(columns=daily_df.columns)
+            daily_df = pd.concat([daily_df, synth_df], ignore_index=True)
 
         # Re-sort by date
         if not daily_df.empty:

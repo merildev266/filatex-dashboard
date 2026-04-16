@@ -25,6 +25,8 @@
  *   variant         'hfo'|'site'|'generator'
  *   siteScope       boolean    — true si les KPIs prod/sfoc/sloc/blackout
  *                                viennent du SITE (utilisé au niveau Générateur)
+ *   objSfoc         number     — seuil SFOC (défaut 250 g/kWh) : vert si sous, rouge si dessus
+ *   objSloc         number     — seuil SLOC (défaut 1 g/kWh) : vert si sous, rouge si dessus
  */
 export default function HfoKpiGrid({
   contratEnelec = 0,
@@ -41,6 +43,8 @@ export default function HfoKpiGrid({
   blackoutsSub = 'Mois courant',
   variant = 'hfo',
   siteScope = false,
+  objSfoc = 250,
+  objSloc = 1,
 }) {
   const arret = Math.max(0, (totalEngines || 0) - (running || 0))
 
@@ -64,6 +68,10 @@ export default function HfoKpiGrid({
   const sfocStr  = fmt(sfoc, 0)
   const slocStr  = fmt(sloc, 2)
   const boStr    = blackouts != null ? String(blackouts) : null
+
+  // Color: green if below objective, red if above (lower = better)
+  const sfocColor = sfoc == null ? undefined : (+sfoc <= objSfoc ? 'var(--energy)' : 'var(--red)')
+  const slocColor = sloc == null ? undefined : (+sloc <= objSloc ? 'var(--energy)' : 'var(--red)')
 
   const siteTag = siteScope ? ' (site)' : ''
 
@@ -150,7 +158,7 @@ export default function HfoKpiGrid({
             <div className="hfo-kpi-label">SFOC</div>
             {sfocStr != null ? (
               <>
-                <div className="hfo-kpi-value">
+                <div className="hfo-kpi-value" style={{ color: sfocColor }}>
                   {sfocStr}<span className="hfo-kpi-unit">g/kWh</span>
                 </div>
                 <div className="hfo-kpi-sub">{productionSub}{siteTag}</div>
@@ -168,7 +176,7 @@ export default function HfoKpiGrid({
             <div className="hfo-kpi-label">SLOC</div>
             {slocStr != null ? (
               <>
-                <div className="hfo-kpi-value">
+                <div className="hfo-kpi-value" style={{ color: slocColor }}>
                   {slocStr}<span className="hfo-kpi-unit">g/kWh</span>
                 </div>
                 <div className="hfo-kpi-sub">{productionSub}{siteTag}</div>

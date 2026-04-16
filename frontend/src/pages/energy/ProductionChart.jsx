@@ -1,16 +1,18 @@
 import { useState, useRef } from 'react'
 
 /**
- * ProductionChart — Monthly production (MWh) chart
+ * ProductionChart — Production (MWh) chart
  *
  * Props:
- *   months   Array<{ prod:number, prodObj?:number }>  length 12
+ *   months   Array<{ prod:number, prodObj?:number }>  arbitrary length
+ *   labels   Array<string>   (optional) custom labels — defaults to MOIS_SHORT
+ *   isDaily  boolean         (optional) true when bars represent days
  *   title    string
  *   height   px (default 200)
  */
 const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
 
-export default function ProductionChart({ months = [], title = 'Production mensuelle', height = 200 }) {
+export default function ProductionChart({ months = [], labels, isDaily = false, title = 'Production mensuelle', height = 200 }) {
   if (!Array.isArray(months) || months.length === 0) return null
 
   const [tooltip, setTooltip] = useState(null)
@@ -21,6 +23,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
     prod:    +(m?.prod || 0),
     prodObj: +(m?.prodObj || 0),
   }))
+  const xLabels = Array.isArray(labels) && labels.length === n ? labels : MOIS_SHORT.slice(0, n)
 
   let maxY = 0
   data.forEach(d => {
@@ -50,7 +53,8 @@ export default function ProductionChart({ months = [], title = 'Production mensu
     y: padT + chartH - f * chartH,
   }))
 
-  const currentMonth = new Date().getMonth()
+  const today = new Date()
+  const currentIndex = isDaily ? (today.getDate() - 1) : today.getMonth()
 
   const chartRef = useRef(null)
   const handleBarHover = (e, i) => {
@@ -59,7 +63,7 @@ export default function ProductionChart({ months = [], title = 'Production mensu
     setTooltip({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
-      month: MOIS_SHORT[i],
+      month: isDaily ? `Jour ${xLabels[i]}` : xLabels[i],
       prod: data[i].prod,
       prodObj: data[i].prodObj,
     })
@@ -150,15 +154,15 @@ export default function ProductionChart({ months = [], title = 'Production mensu
           )
         })}
 
-        {/* Month labels */}
-        {MOIS_SHORT.slice(0, n).map((m, i) => (
+        {/* X labels (months or days) */}
+        {xLabels.map((m, i) => (
           <text
             key={i}
             x={(xFor(i) + barW / 2).toFixed(1)}
             y={H - 4}
             textAnchor="middle"
-            fontSize="8"
-            fontWeight={i === currentMonth ? '700' : '400'}
+            fontSize={isDaily ? '6' : '8'}
+            fontWeight={i === currentIndex ? '700' : '400'}
             fill="#ffffff"
           >
             {m}

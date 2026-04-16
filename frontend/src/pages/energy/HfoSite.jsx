@@ -200,19 +200,19 @@ export default function HfoSite({ site, kpi = {}, enrProd = null, onClick }) {
           </div>
         </div>
 
-        {/* KPI 2: SLOC | SFOC */}
+        {/* KPI 2: SLOC | SFOC — vert si sous objectif, rouge si dessus */}
         <div className="pb-2.5 border-b mb-2.5" style={{ borderColor: allKO ? 'rgba(224,92,92,0.25)' : 'rgba(138,146,171,0.2)' }}>
           <div className="grid grid-cols-2 gap-2">
             <div className="text-center">
               <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>SLOC</div>
-              <div className="text-lg leading-none text-[var(--text)]">
+              <div className="text-lg leading-none" style={{ color: kpi?.sloc == null ? 'var(--text)' : (+kpi.sloc <= 1 ? 'var(--energy)' : 'var(--red)') }}>
                 {kpi?.sloc != null ? parseFloat(kpi.sloc).toFixed(2) : '—'}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">g/kWh</span>
               </div>
             </div>
             <div className="text-center">
               <div className="text-[8px] tracking-widest uppercase mb-1" style={{ color: labelColor }}>SFOC</div>
-              <div className="text-lg leading-none text-[var(--text)]">
+              <div className="text-lg leading-none" style={{ color: kpi?.sfoc == null ? 'var(--text)' : (+kpi.sfoc <= 250 ? 'var(--energy)' : 'var(--red)') }}>
                 {kpi?.sfoc != null ? Math.round(kpi.sfoc).toString() : '—'}
                 <span className="text-[8px] font-normal text-[var(--text-muted)] ml-0.5">g/kWh</span>
               </div>

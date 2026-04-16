@@ -565,17 +565,69 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
   const sPeriodLabel = currentFilter === 'A' ? String(selectedYear)
     : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
     : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
-  const sMonths = useMemo(() => {
-    const months = new Array(12).fill(null).map(() => ({ prod: 0, prodObj: 0 }))
+  // Build chart data based on current filter:
+  //   A           → 12 monthly bars
+  //   Q           → 3 monthly bars (selected quarter)
+  //   M / J-1     → daily bars for the selected month (from dailyTrend)
+  const sChart = useMemo(() => {
     const kpi = s.kpi || {}
+    const isDaily = currentFilter === 'M' || currentFilter === 'J-1'
+
+    if (isDaily) {
+      const mIdx = selectedMonthIndex || 0
+      const daysInMonth = new Date(selectedYear || 2026, mIdx + 1, 0).getDate()
+      // Index dailyTrend by date for O(1) lookup
+      const trend = Array.isArray(s.dailyTrend) ? s.dailyTrend : []
+      const byDate = new Map()
+      trend.forEach(t => {
+        if (t && t.date) byDate.set(t.date, t)
+      })
+      // No prévisionnel shown in daily view (user request)
+      const data = []
+      const labels = []
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${selectedYear || 2026}-${String(mIdx + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+        const row = byDate.get(dateStr)
+        const prod = row ? +(row.net_mwh || row.gross_mwh || 0) : 0
+        data.push({ prod, prodObj: 0 })
+        labels.push(String(d))
+      }
+      return {
+        months: data,
+        labels,
+        isDaily: true,
+        title: `Production journalière — ${s.name} — ${MOIS_FR[mIdx]} ${selectedYear || 2026}`,
+      }
+    }
+
+    const months = new Array(12).fill(null).map(() => ({ prod: 0, prodObj: 0 }))
     for (let m = 1; m <= 12; m++) {
       const k = kpi[`month_${m}`]
       if (!k) continue
       months[m - 1].prod = k.prod || 0
       months[m - 1].prodObj = k.prodObj || 0
     }
-    return months
-  }, [s])
+
+    if (currentFilter === 'Q') {
+      const q = selectedQuarter || 1
+      const start = (q - 1) * 3
+      const slice = months.slice(start, start + 3)
+      const labels = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'].slice(start, start + 3)
+      return {
+        months: slice,
+        labels,
+        isDaily: false,
+        title: `Production mensuelle — ${s.name} — Q${q} ${selectedYear || 2026}`,
+      }
+    }
+
+    return {
+      months,
+      labels: undefined,
+      isDaily: false,
+      title: `Production mensuelle — ${s.name}`,
+    }
+  }, [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
 
   // Update banner + back button when generator is selected
   const { setBackOverride } = usePageTitle()
@@ -666,8 +718,10 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
             />
           )}
           <ProductionChart
-            months={sMonths}
-            title={`Production mensuelle — ${s.name}`}
+            months={sChart.months}
+            labels={sChart.labels}
+            isDaily={sChart.isDaily}
+            title={sChart.title}
           />
 
           {/* Section 2 — Generateurs */}
