@@ -435,8 +435,21 @@ def load_hebdo_planning(xlsx_path):
                 site_entry["totals"]["enelec"] = vals
             continue
 
-        if "enelec + vestop" in lb_low or "enelec tulear" in lb_low or "enelec diego" in lb_low or "vestop antsirabe" in lb_low:
+        if "enelec + vestop" in lb_low:
             site_entry["totals"]["enelecVestop"] = [_f(ws.cell(r, c).value) for (c, _wk) in week_cols]
+            continue
+        # Diego and Tuléar: single grand total row "ENELEC DIEGO" / "ENELEC TULEAR"
+        # (no VESTOP engines). Route to enelec so purple prévisionnel bars render.
+        if "enelec tulear" in lb_low or "enelec diego" in lb_low:
+            vals = [_f(ws.cell(r, c).value) for (c, _wk) in week_cols]
+            site_entry["totals"]["enelec"] = vals
+            site_entry["totals"]["enelecVestop"] = vals
+            continue
+        # Antsirabe: "VESTOP ANTSIRABE" grand total (no ENELEC on this site).
+        if "vestop antsirabe" in lb_low:
+            vals = [_f(ws.cell(r, c).value) for (c, _wk) in week_cols]
+            site_entry["totals"]["vestop"] = vals
+            site_entry["totals"]["enelecVestop"] = vals
             continue
         if lb_low == "peak load":
             site_entry["totals"]["peakLoad"] = [_f(ws.cell(r, c).value) for (c, _wk) in week_cols]
