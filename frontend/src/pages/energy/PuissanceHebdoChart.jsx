@@ -83,8 +83,11 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
   const now = new Date()
   let currentWeekIdx = -1
   if (isDaily) {
-    // If we're in the month this chart represents, highlight today
-    if (data.monthNum === now.getMonth() + 1 && (data.year || now.getFullYear()) === now.getFullYear()) {
+    // Prefer the data-provided cutoff (lastRealizedDay) so that days beyond
+    // the site's latest loaded data render as prévisionnel, not as "today".
+    if (typeof data.lastRealizedDay === 'number' && data.lastRealizedDay > 0) {
+      currentWeekIdx = data.lastRealizedDay - 1
+    } else if (data.monthNum === now.getMonth() + 1 && (data.year || now.getFullYear()) === now.getFullYear()) {
       currentWeekIdx = now.getDate() - 1
     }
   } else {

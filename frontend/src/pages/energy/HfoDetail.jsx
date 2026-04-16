@@ -592,19 +592,21 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
             else enelecDaily[d] += mw
           }
         }
-        // Forecast days — for days without realized data (typically > today),
+        // Forecast days — for days after the site's latest recorded date,
         // reuse the weekly planned values from puissanceHebdo for that week.
         // Week-of-month = ceil(day / 7), matching the existing "YYYY-MM-S{k}" keys.
         const weekByKey = new Map()
         ph.weeks.forEach((w, i) => weekByKey.set(w, i))
-        const today = new Date()
-        const isCurrentCalMonth = targetMonth === today.getMonth() + 1 && year === today.getFullYear()
-        const todayDay = isCurrentCalMonth ? today.getDate() : 0  // 0 means all days potentially future
+        // Cutoff = last day with realized data for this site in the selected month
+        let lastRealizedDay = 0
+        const latestDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.latestDate || '')
+        if (latestDateMatch) {
+          const ly = +latestDateMatch[1], lm = +latestDateMatch[2], ld = +latestDateMatch[3]
+          if (ly === year && lm === targetMonth) lastRealizedDay = ld
+        }
         const mm = String(targetMonth).padStart(2, '0')
         for (let d = 1; d <= daysInMonth; d++) {
-          const hasRealized = enelecDaily[d - 1] > 0 || vestopDaily[d - 1] > 0
-          if (hasRealized) continue
-          if (todayDay && d <= todayDay) continue  // past day with no load → leave 0
+          if (d <= lastRealizedDay) continue  // within realized window — keep what we have (even if 0)
           const wkIdx = weekByKey.get(`${year}-${mm}-S${Math.ceil(d / 7)}`)
           if (wkIdx == null) continue
           enelecDaily[d - 1] = +ph.enelec?.[wkIdx] || 0
@@ -634,6 +636,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
             monthLabel: `${MOIS_FR[targetMonth - 1]} ${year}`,
             monthNum: targetMonth,
             year,
+            lastRealizedDay,
           },
           isDaily: true,
         }
@@ -701,16 +704,14 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       trend.forEach(t => {
         if (t && t.date) byDate.set(t.date, t)
       })
-      // Monthly objective divided evenly across days → daily prévisionnel line
-      const monthKpi = kpi[`month_${mIdx + 1}`] || {}
-      const dailyObj = monthKpi.prodObj ? monthKpi.prodObj / daysInMonth : 0
+      // No prévisionnel on production chart (user request)
       const data = []
       const labels = []
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${selectedYear || 2026}-${String(mIdx + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
         const row = byDate.get(dateStr)
         const prod = row ? +(row.net_mwh || row.gross_mwh || 0) : 0
-        data.push({ prod, prodObj: dailyObj })
+        data.push({ prod, prodObj: 0 })
         labels.push(String(d))
       }
       return {
@@ -726,7 +727,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       const k = kpi[`month_${m}`]
       if (!k) continue
       months[m - 1].prod = k.prod || 0
-      months[m - 1].prodObj = k.prodObj || 0
+      // prodObj intentionally left 0 — no prévisionnel on production chart
     }
 
     if (currentFilter === 'Q') {
