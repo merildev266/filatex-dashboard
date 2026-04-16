@@ -573,91 +573,84 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
     const ph = s.puissanceHebdo
     if (!ph || !Array.isArray(ph.weeks) || ph.weeks.length === 0) return { data: ph, isDaily: false }
 
-    // Daily mode — only reliable for the latest month stored in site data
+    // Daily mode — applied for every month under filter M/J-1.
+    // Per-DG daily data now exists for all months via g.dailyByMonth; the
+    // latest month also has a lastRealizedDay cutoff beyond which we show
+    // prévisionnel bars drawn from the weekly HEBDO values.
     if (currentFilter === 'M' || currentFilter === 'J-1') {
       const targetMonth = (selectedMonthIndex || 0) + 1
       const latestMonth = s.latestMonth || null
       const year = selectedYear || 2026
-      if (latestMonth === targetMonth) {
-        const daysInMonth = new Date(year, targetMonth, 0).getDate()
-        const enelecDaily = new Array(daysInMonth).fill(0)
-        const vestopDaily = new Array(daysInMonth).fill(0)
-        // Realized days — sum per-DG dailyMaxLoad
-        for (const g of (s.groupes || [])) {
-          const dml = g.dailyMaxLoad || []
-          const prov = (g.provider || '').toLowerCase()
-          for (let d = 0; d < daysInMonth && d < dml.length; d++) {
-            const mw = (+dml[d] || 0) / 1000
-            if (prov === 'vestop') vestopDaily[d] += mw
-            else enelecDaily[d] += mw
-          }
+      const daysInMonth = new Date(year, targetMonth, 0).getDate()
+      const enelecDaily = new Array(daysInMonth).fill(0)
+      const vestopDaily = new Array(daysInMonth).fill(0)
+
+      // Realized per-DG daily maxLoad for the selected month
+      for (const g of (s.groupes || [])) {
+        const byMonth = g.dailyByMonth || {}
+        const dmMonth = byMonth[String(targetMonth)] || byMonth[targetMonth]
+        const dml = (dmMonth && dmMonth.dailyMaxLoad) || (latestMonth === targetMonth ? (g.dailyMaxLoad || []) : [])
+        const prov = (g.provider || '').toLowerCase()
+        for (let d = 0; d < daysInMonth && d < dml.length; d++) {
+          const mw = (+dml[d] || 0) / 1000
+          if (prov === 'vestop') vestopDaily[d] += mw
+          else enelecDaily[d] += mw
         }
-        // Forecast days — for days after the site's latest recorded date,
-        // reuse the weekly planned values from puissanceHebdo for that week.
-        // Week-of-month = ceil(day / 7), matching the existing "YYYY-MM-S{k}" keys.
-        const weekByKey = new Map()
-        ph.weeks.forEach((w, i) => weekByKey.set(w, i))
-        // Cutoff = last day with realized data for this site in the selected month
-        let lastRealizedDay = 0
+      }
+
+      // Realized/prévisionnel cutoff — only meaningful for the site's latest month
+      let lastRealizedDay = 0
+      if (latestMonth === targetMonth) {
         const latestDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.latestDate || '')
         if (latestDateMatch) {
           const ly = +latestDateMatch[1], lm = +latestDateMatch[2], ld = +latestDateMatch[3]
           if (ly === year && lm === targetMonth) lastRealizedDay = ld
         }
-        const mm = String(targetMonth).padStart(2, '0')
-        for (let d = 1; d <= daysInMonth; d++) {
-          if (d <= lastRealizedDay) continue  // within realized window — keep what we have (even if 0)
-          const wkIdx = weekByKey.get(`${year}-${mm}-S${Math.ceil(d / 7)}`)
-          if (wkIdx == null) continue
-          enelecDaily[d - 1] = +ph.enelec?.[wkIdx] || 0
-          vestopDaily[d - 1] = +ph.vestop?.[wkIdx] || 0
-        }
-        // Contract reference: pull the most recent non-zero weekly contrat for this month
-        let contratRef = 0
-        for (let i = ph.weeks.length - 1; i >= 0; i--) {
-          const m = /^\d{4}-(\d{2})/.exec(ph.weeks[i] || '')
-          if (m && parseInt(m[1], 10) === targetMonth) {
-            const c = +ph.contrat?.[i] || 0
-            if (c > contratRef) contratRef = c
-          }
-        }
-        const peakRef = +s.peakLoadLatest || 0
-        const labels = []
-        const contratArr = new Array(daysInMonth).fill(contratRef)
-        const peakArr = new Array(daysInMonth).fill(peakRef)
-        for (let d = 1; d <= daysInMonth; d++) labels.push(String(d))
-        return {
-          data: {
-            weeks: labels,
-            enelec: enelecDaily,
-            vestop: vestopDaily,
-            contrat: contratArr,
-            peakLoad: peakArr,
-            monthLabel: `${MOIS_FR[targetMonth - 1]} ${year}`,
-            monthNum: targetMonth,
-            year,
-            lastRealizedDay,
-          },
-          isDaily: true,
+      } else if (latestMonth && targetMonth < latestMonth) {
+        // Past month — everything is realized (no prévisionnel)
+        lastRealizedDay = daysInMonth
+      }
+
+      // Planned bars (prévisionnel) — fill days beyond the realized window
+      // using the weekly HEBDO values for that week-of-month.
+      const weekByKey = new Map()
+      ph.weeks.forEach((w, i) => weekByKey.set(w, i))
+      const mm = String(targetMonth).padStart(2, '0')
+      for (let d = 1; d <= daysInMonth; d++) {
+        if (d <= lastRealizedDay) continue
+        const wkIdx = weekByKey.get(`${year}-${mm}-S${Math.ceil(d / 7)}`)
+        if (wkIdx == null) continue
+        enelecDaily[d - 1] = +ph.enelec?.[wkIdx] || 0
+        vestopDaily[d - 1] = +ph.vestop?.[wkIdx] || 0
+      }
+
+      // Contract reference — highest weekly contrat seen in the target month
+      let contratRef = 0
+      for (let i = ph.weeks.length - 1; i >= 0; i--) {
+        const m = /^\d{4}-(\d{2})/.exec(ph.weeks[i] || '')
+        if (m && parseInt(m[1], 10) === targetMonth) {
+          const c = +ph.contrat?.[i] || 0
+          if (c > contratRef) contratRef = c
         }
       }
-      // Fallback: filter weekly data to that month
-      const keepIdx = []
-      ph.weeks.forEach((w, i) => {
-        const m = /^\d{4}-(\d{2})/.exec(w || '')
-        if (m && parseInt(m[1], 10) === targetMonth) keepIdx.push(i)
-      })
-      const pick = (arr) => Array.isArray(arr) ? keepIdx.map(i => arr[i]) : arr
+      const peakRef = +s.peakLoadLatest || 0
+      const labels = []
+      const contratArr = new Array(daysInMonth).fill(contratRef)
+      const peakArr = new Array(daysInMonth).fill(peakRef)
+      for (let d = 1; d <= daysInMonth; d++) labels.push(String(d))
       return {
-        data: keepIdx.length === 0 ? ph : {
-          ...ph,
-          weeks:    pick(ph.weeks),
-          enelec:   pick(ph.enelec),
-          vestop:   pick(ph.vestop),
-          contrat:  pick(ph.contrat),
-          peakLoad: pick(ph.peakLoad),
+        data: {
+          weeks: labels,
+          enelec: enelecDaily,
+          vestop: vestopDaily,
+          contrat: contratArr,
+          peakLoad: peakArr,
+          monthLabel: `${MOIS_FR[targetMonth - 1]} ${year}`,
+          monthNum: targetMonth,
+          year,
+          lastRealizedDay,
         },
-        isDaily: false,
+        isDaily: true,
       }
     }
 
