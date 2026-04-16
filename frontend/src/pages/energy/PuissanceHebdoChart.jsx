@@ -1,14 +1,17 @@
 import { useState, useRef } from 'react'
 
 /**
- * PuissanceHebdoChart — Weekly power availability chart
+ * PuissanceHebdoChart — Power availability chart (weekly or daily)
  *
  * Props:
  *   data    { weeks[], enelec[], vestop[], contrat[], peakLoad[] }
+ *           — in daily mode, weeks[] holds day numbers ('1'..'31') and data.monthLabel
+ *             carries the month name for display/grouping
  *   title   optional title shown above the chart
  *   height  SVG height in px (default 200)
+ *   isDaily true when items represent days of a single month
  */
-export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomadaire', height = 200 }) {
+export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomadaire', height = 200, isDaily = false }) {
   if (!data || !data.weeks || data.weeks.length === 0) return null
 
   const [tooltip, setTooltip] = useState(null)
@@ -58,33 +61,44 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     y: padT + chartH - f * chartH,
   }))
 
-  // Group weeks by month
+  // Group weeks by month (or single-month group for daily view)
   const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
   const monthGroups = []
-  let prevMonth = null
-  for (let i = 0; i < n; i++) {
-    const m = /^\d{4}-(\d{2})/.exec(weeks[i] || '')
-    const monthNum = m ? parseInt(m[1], 10) : null
-    if (monthNum !== prevMonth && monthNum != null) {
-      if (monthGroups.length > 0) monthGroups[monthGroups.length - 1].endIdx = i - 1
-      monthGroups.push({ monthLabel: MOIS_SHORT[monthNum - 1] || `M${monthNum}`, startIdx: i, endIdx: n - 1 })
-      prevMonth = monthNum
+  if (isDaily) {
+    monthGroups.push({ monthLabel: data.monthLabel || '', startIdx: 0, endIdx: n - 1 })
+  } else {
+    let prevMonth = null
+    for (let i = 0; i < n; i++) {
+      const m = /^\d{4}-(\d{2})/.exec(weeks[i] || '')
+      const monthNum = m ? parseInt(m[1], 10) : null
+      if (monthNum !== prevMonth && monthNum != null) {
+        if (monthGroups.length > 0) monthGroups[monthGroups.length - 1].endIdx = i - 1
+        monthGroups.push({ monthLabel: MOIS_SHORT[monthNum - 1] || `M${monthNum}`, startIdx: i, endIdx: n - 1 })
+        prevMonth = monthNum
+      }
     }
   }
 
-  // Current week detection
+  // Current index detection (week or day)
   const now = new Date()
-  const curMonth = String(now.getMonth() + 1).padStart(2, '0')
-  const curWeekInMonth = Math.ceil(now.getDate() / 7)
-  const curKey = `${now.getFullYear()}-${curMonth}-S${curWeekInMonth}`
   let currentWeekIdx = -1
-  for (let i = 0; i < n; i++) {
-    if (weeks[i] === curKey) { currentWeekIdx = i; break }
-  }
-  if (currentWeekIdx === -1) {
-    const curMonthPrefix = `${now.getFullYear()}-${curMonth}-`
-    for (let i = n - 1; i >= 0; i--) {
-      if ((weeks[i] || '').startsWith(curMonthPrefix)) { currentWeekIdx = i; break }
+  if (isDaily) {
+    // If we're in the month this chart represents, highlight today
+    if (data.monthNum === now.getMonth() + 1 && (data.year || now.getFullYear()) === now.getFullYear()) {
+      currentWeekIdx = now.getDate() - 1
+    }
+  } else {
+    const curMonth = String(now.getMonth() + 1).padStart(2, '0')
+    const curWeekInMonth = Math.ceil(now.getDate() / 7)
+    const curKey = `${now.getFullYear()}-${curMonth}-S${curWeekInMonth}`
+    for (let i = 0; i < n; i++) {
+      if (weeks[i] === curKey) { currentWeekIdx = i; break }
+    }
+    if (currentWeekIdx === -1) {
+      const curMonthPrefix = `${now.getFullYear()}-${curMonth}-`
+      for (let i = n - 1; i >= 0; i--) {
+        if ((weeks[i] || '').startsWith(curMonthPrefix)) { currentWeekIdx = i; break }
+      }
     }
   }
 
@@ -102,9 +116,14 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
     const cv = +contrat[i] || 0
     const pv = +peakLoad[i] || 0
     const isFuture = currentWeekIdx >= 0 && i > currentWeekIdx
-    // Parse week label
-    const wm = /^\d{4}-(\d{2})-S(\d+)/.exec(weeks[i] || '')
-    const weekLabel = wm ? `${MOIS_SHORT[parseInt(wm[1], 10) - 1]} S${wm[2]}` : weeks[i]
+    // Parse week/day label
+    let weekLabel
+    if (isDaily) {
+      weekLabel = `${data.monthLabel || ''} ${weeks[i]}`
+    } else {
+      const wm = /^\d{4}-(\d{2})-S(\d+)/.exec(weeks[i] || '')
+      weekLabel = wm ? `${MOIS_SHORT[parseInt(wm[1], 10) - 1]} S${wm[2]}` : weeks[i]
+    }
     setTooltip({
       x: mouseX, y: mouseY,
       weekLabel,
@@ -249,8 +268,21 @@ export default function PuissanceHebdoChart({ data, title = 'Puissance hebdomada
           )
         })()}
 
-        {/* Month separators + labels */}
-        {monthGroups.map((mg, idx) => {
+        {/* Daily mode: day number per bar */}
+        {isDaily && weeks.map((w, i) => (
+          <text
+            key={`d-${i}`}
+            x={(xFor(i) + barW / 2).toFixed(1)} y={H - 5}
+            textAnchor="middle" fontSize="6"
+            fontWeight={i === currentWeekIdx ? '700' : '400'}
+            fill="#ffffff"
+          >
+            {w}
+          </text>
+        ))}
+
+        {/* Weekly mode: month separators + month labels */}
+        {!isDaily && monthGroups.map((mg, idx) => {
           const xStart = padL + mg.startIdx * slot
           const xEnd = padL + (mg.endIdx + 1) * slot
           const xCenter = (xStart + xEnd) / 2

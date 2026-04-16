@@ -565,41 +565,105 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
   const sPeriodLabel = currentFilter === 'A' ? String(selectedYear)
     : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
     : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
-  // Filter puissance hebdo data based on current filter:
-  //   A → all 52 weeks
-  //   Q → ~13 weeks of selected quarter
-  //   M / J-1 → ~4-5 weeks of selected month
+  // Puissance chart:
+  //   A           → weekly (52 weeks)
+  //   Q           → weekly filtered to 3 months of quarter
+  //   M / J-1     → DAILY for selected month (from per-DG dailyMaxLoad)
   const sPuissanceHebdo = useMemo(() => {
     const ph = s.puissanceHebdo
-    if (!ph || !Array.isArray(ph.weeks) || ph.weeks.length === 0) return ph
-    if (currentFilter === 'A') return ph
+    if (!ph || !Array.isArray(ph.weeks) || ph.weeks.length === 0) return { data: ph, isDaily: false }
 
-    const targetMonths = new Set()
+    // Daily mode — only reliable for the latest month stored in site data
     if (currentFilter === 'M' || currentFilter === 'J-1') {
-      targetMonths.add((selectedMonthIndex || 0) + 1)
-    } else if (currentFilter === 'Q') {
-      const q = selectedQuarter || 1
-      for (let m = (q - 1) * 3 + 1; m <= q * 3; m++) targetMonths.add(m)
-    } else {
-      return ph
+      const targetMonth = (selectedMonthIndex || 0) + 1
+      const latestMonth = s.latestMonth || null
+      const year = selectedYear || 2026
+      if (latestMonth === targetMonth) {
+        const daysInMonth = new Date(year, targetMonth, 0).getDate()
+        const enelecDaily = new Array(daysInMonth).fill(0)
+        const vestopDaily = new Array(daysInMonth).fill(0)
+        for (const g of (s.groupes || [])) {
+          const dml = g.dailyMaxLoad || []
+          const prov = (g.provider || '').toLowerCase()
+          for (let d = 0; d < daysInMonth && d < dml.length; d++) {
+            const mw = (+dml[d] || 0) / 1000
+            if (prov === 'vestop') vestopDaily[d] += mw
+            else enelecDaily[d] += mw
+          }
+        }
+        // Contract reference: pull the most recent non-zero weekly contrat for this month
+        let contratRef = 0
+        for (let i = ph.weeks.length - 1; i >= 0; i--) {
+          const m = /^\d{4}-(\d{2})/.exec(ph.weeks[i] || '')
+          if (m && parseInt(m[1], 10) === targetMonth) {
+            const c = +ph.contrat?.[i] || 0
+            if (c > contratRef) contratRef = c
+          }
+        }
+        const peakRef = +s.peakLoadLatest || 0
+        const labels = []
+        const contratArr = new Array(daysInMonth).fill(contratRef)
+        const peakArr = new Array(daysInMonth).fill(peakRef)
+        for (let d = 1; d <= daysInMonth; d++) labels.push(String(d))
+        return {
+          data: {
+            weeks: labels,
+            enelec: enelecDaily,
+            vestop: vestopDaily,
+            contrat: contratArr,
+            peakLoad: peakArr,
+            monthLabel: `${MOIS_FR[targetMonth - 1]} ${year}`,
+            monthNum: targetMonth,
+            year,
+          },
+          isDaily: true,
+        }
+      }
+      // Fallback: filter weekly data to that month
+      const keepIdx = []
+      ph.weeks.forEach((w, i) => {
+        const m = /^\d{4}-(\d{2})/.exec(w || '')
+        if (m && parseInt(m[1], 10) === targetMonth) keepIdx.push(i)
+      })
+      const pick = (arr) => Array.isArray(arr) ? keepIdx.map(i => arr[i]) : arr
+      return {
+        data: keepIdx.length === 0 ? ph : {
+          ...ph,
+          weeks:    pick(ph.weeks),
+          enelec:   pick(ph.enelec),
+          vestop:   pick(ph.vestop),
+          contrat:  pick(ph.contrat),
+          peakLoad: pick(ph.peakLoad),
+        },
+        isDaily: false,
+      }
     }
 
-    const keepIdx = []
-    ph.weeks.forEach((w, i) => {
-      const m = /^\d{4}-(\d{2})/.exec(w || '')
-      if (m && targetMonths.has(parseInt(m[1], 10))) keepIdx.push(i)
-    })
-    if (keepIdx.length === 0) return ph
-    const pick = (arr) => Array.isArray(arr) ? keepIdx.map(i => arr[i]) : arr
-    return {
-      ...ph,
-      weeks:    pick(ph.weeks),
-      enelec:   pick(ph.enelec),
-      vestop:   pick(ph.vestop),
-      contrat:  pick(ph.contrat),
-      peakLoad: pick(ph.peakLoad),
+    if (currentFilter === 'Q') {
+      const q = selectedQuarter || 1
+      const targetMonths = new Set()
+      for (let m = (q - 1) * 3 + 1; m <= q * 3; m++) targetMonths.add(m)
+      const keepIdx = []
+      ph.weeks.forEach((w, i) => {
+        const m = /^\d{4}-(\d{2})/.exec(w || '')
+        if (m && targetMonths.has(parseInt(m[1], 10))) keepIdx.push(i)
+      })
+      const pick = (arr) => Array.isArray(arr) ? keepIdx.map(i => arr[i]) : arr
+      return {
+        data: keepIdx.length === 0 ? ph : {
+          ...ph,
+          weeks:    pick(ph.weeks),
+          enelec:   pick(ph.enelec),
+          vestop:   pick(ph.vestop),
+          contrat:  pick(ph.contrat),
+          peakLoad: pick(ph.peakLoad),
+        },
+        isDaily: false,
+      }
     }
-  }, [s, currentFilter, selectedMonthIndex, selectedQuarter])
+
+    return { data: ph, isDaily: false }
+  }, [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
 
   // Build chart data based on current filter:
   //   A           → 12 monthly bars
@@ -618,14 +682,16 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       trend.forEach(t => {
         if (t && t.date) byDate.set(t.date, t)
       })
-      // No prévisionnel shown in daily view (user request)
+      // Monthly objective divided evenly across days → daily prévisionnel line
+      const monthKpi = kpi[`month_${mIdx + 1}`] || {}
+      const dailyObj = monthKpi.prodObj ? monthKpi.prodObj / daysInMonth : 0
       const data = []
       const labels = []
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${selectedYear || 2026}-${String(mIdx + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
         const row = byDate.get(dateStr)
         const prod = row ? +(row.net_mwh || row.gross_mwh || 0) : 0
-        data.push({ prod, prodObj: 0 })
+        data.push({ prod, prodObj: dailyObj })
         labels.push(String(d))
       }
       return {
@@ -747,10 +813,11 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
           />
 
           {/* Charts — puissance hebdo + production mensuelle */}
-          {sPuissanceHebdo && sPuissanceHebdo.weeks?.length > 0 && (
+          {sPuissanceHebdo.data && sPuissanceHebdo.data.weeks?.length > 0 && (
             <PuissanceHebdoChart
-              data={sPuissanceHebdo}
-              title={`Puissance disponible hebdomadaire — ${s.name}${currentFilter === 'M' || currentFilter === 'J-1' ? ` — ${MOIS_FR[selectedMonthIndex || 0]} ${selectedYear || 2026}` : currentFilter === 'Q' ? ` — Q${selectedQuarter} ${selectedYear || 2026}` : ''}`}
+              data={sPuissanceHebdo.data}
+              isDaily={sPuissanceHebdo.isDaily}
+              title={`Puissance disponible ${sPuissanceHebdo.isDaily ? 'journalière' : 'hebdomadaire'} — ${s.name}${currentFilter === 'M' || currentFilter === 'J-1' ? ` — ${MOIS_FR[selectedMonthIndex || 0]} ${selectedYear || 2026}` : currentFilter === 'Q' ? ` — Q${selectedQuarter} ${selectedYear || 2026}` : ''}`}
             />
           )}
           <ProductionChart
