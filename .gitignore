@@ -6,6 +6,12 @@ __pycache__/
 venv/
 .env
 
+# SQLite database (user accounts, PINs hashed, chat, notifs)
+dashboard.db
+dashboard.db-wal
+dashboard.db-shm
+backups/
+
 # Node
 node_modules/
 frontend/dist/

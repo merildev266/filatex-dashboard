@@ -36,17 +36,30 @@ export function AuthProvider({ children }) {
       setState({ isAuthenticated: true, user: data.user, token: data.token })
       return { success: true, must_set_pin: data.must_set_pin, token: data.token, user: data.user }
     } catch {
-      // Fallback bypass si serveur inaccessible
-      if (pin === '1979') {
-        const fallbackUser = { username, sections: ['*'], role: 'admin' }
-        sessionStorage.setItem(TOKEN_KEY, 'bypass')
-        sessionStorage.setItem(AUTH_KEY, JSON.stringify(fallbackUser))
-        setState({ isAuthenticated: true, user: fallbackUser, token: 'bypass' })
-        return { success: true }
-      }
       return { success: false, error: 'Serveur inaccessible' }
     }
   }, [])
+
+  const changePin = useCallback(async (oldPin, newPin, newPinConfirm) => {
+    if (newPin !== newPinConfirm) {
+      return { success: false, error: 'Les deux nouveaux PIN ne correspondent pas' }
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/change-pin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${state.token}`,
+        },
+        body: JSON.stringify({ old_pin: oldPin, new_pin: newPin }),
+      })
+      const data = await res.json()
+      if (data.ok) return { success: true }
+      return { success: false, error: data.error || 'Erreur inconnue' }
+    } catch {
+      return { success: false, error: 'Serveur inaccessible' }
+    }
+  }, [state.token])
 
   const setPin = useCallback(async (pin, pinConfirm) => {
     try {

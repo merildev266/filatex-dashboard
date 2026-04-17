@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GroupeFilatexLogo from '../components/GroupeFilatexLogo'
+import ChangePinModal from '../components/ChangePinModal'
 import { useTheme } from '../context/ThemeContext'
 import { useThemedLogo } from '../hooks/useThemedLogo'
 import { useAuth } from '../hooks/useAuth'
@@ -112,6 +113,7 @@ export default function Accueil() {
   const navigate = useNavigate()
   const { theme } = useTheme()
   const { user, logout } = useAuth()
+  const [showChangePin, setShowChangePin] = useState(false)
 
   // Lock scroll on accueil
   useEffect(() => {
@@ -131,8 +133,22 @@ export default function Accueil() {
       {/* ══ HOME ══ */}
       <div id="home" style={{position:'relative',zIndex:1,height:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden',gap:0,width:'100%',boxSizing:'border-box'}}>
 
-        {/* ── TOP RIGHT: Logout ── */}
-        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10}}>
+        {/* ── TOP RIGHT: Change PIN + Logout ── */}
+        <div style={{position:'absolute',top:'16px',right:'16px',zIndex:10,display:'flex',gap:8}}>
+          <button
+            onClick={() => setShowChangePin(true)}
+            style={{
+              background:'rgba(58,57,92,0.15)',border:'1px solid var(--card-border)',
+              borderRadius:'50%',width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',
+              cursor:'pointer',color:'var(--text-muted)',transition:'all 0.2s'
+            }}
+            title="Changer mon PIN"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </button>
           <button
             onClick={logout}
             style={{
@@ -149,6 +165,7 @@ export default function Accueil() {
             </svg>
           </button>
         </div>
+        {showChangePin && <ChangePinModal onClose={() => setShowChangePin(false)} />}
 
         {/* ── BOTTOM LEFT: Admin (PMO only) ── */}
         {(user?.role === 'super_admin' || user?.role === 'admin') && (

@@ -1,0 +1,66 @@
+first_name,last_name,display_name,role,access,email
+# ============================================================================
+# FICHIER DE CREATION DES UTILISATEURS — Filatex PMO Dashboard
+# ============================================================================
+#
+# A REMPLIR puis envoyer au PMO / admin technique pour creation des comptes.
+# Une fois cree, chaque user fixe lui-meme son PIN au 1er login (4 ou 6 chiffres).
+#
+# ----------------------------------------------------------------------------
+# COLONNES
+# ----------------------------------------------------------------------------
+#
+#   first_name    = Prenom (sans guillemets, accents acceptes)
+#   last_name     = Nom
+#   display_name  = Nom affiche dans le dashboard (ex: "DG", "PMO", "Jean DUPONT")
+#                   Laisser vide => genere automatiquement "PRENOM NOM"
+#   role          = super_admin | admin | utilisateur
+#   access        = Niveau d'acces — UN SEUL choix dans la liste ci-dessous
+#   email         = Email Filatex (optionnel pour l'instant, servira plus tard)
+#
+# ----------------------------------------------------------------------------
+# VALEURS POSSIBLES POUR "access"
+# ----------------------------------------------------------------------------
+#
+#   full              = Acces a tout (tous les poles)
+#   energy            = Pole Energy (HFO + EnR)
+#   properties        = Pole Properties
+#   capex             = Pole CAPEX (tous les programmes)
+#   investments       = Pole Investments
+#   reporting         = Pole Reporting
+#   csi               = Pole CSI
+#
+#   (On pourra affiner plus tard par sous-pole : energy.hfo, capex.enr, etc.)
+#
+# ----------------------------------------------------------------------------
+# ROLES — DIFFERENCE
+# ----------------------------------------------------------------------------
+#
+#   super_admin  = DG / PMO — peut tout faire, y compris gerer les comptes
+#   admin        = CPO / responsable — peut gerer utilisateurs de son niveau
+#   utilisateur  = Acces en lecture selon son champ "access"
+#
+# ----------------------------------------------------------------------------
+# USERNAME GENERE AUTOMATIQUEMENT
+# ----------------------------------------------------------------------------
+#
+#   prenom.nom  (minuscules, sans accents, sans espace)
+#     Marie-Claire Lefevre  ->  marie-claire.lefevre
+#     Jean  Dupont          ->  jean.dupont
+#     Herve Rakotoarisoa    ->  herve.rakotoarisoa
+#
+# ----------------------------------------------------------------------------
+# EXEMPLES (a supprimer avant envoi, gardes comme reference)
+# ----------------------------------------------------------------------------
+#
+# Jean,Dupont,DG,super_admin,full,j.dupont@filatex.mg
+# Marie,Lefevre,PMO,super_admin,full,m.lefevre@filatex.mg
+# Paul,Martin,CPO,admin,full,p.martin@filatex.mg
+# Herve,Rakotoarisoa,Resp. Energy,utilisateur,energy,h.rakoto@filatex.mg
+# Sophie,Bernard,Finance,utilisateur,reporting,s.bernard@filatex.mg
+# Alain,Razafy,CAPEX Manager,utilisateur,capex,a.razafy@filatex.mg
+#
+# ============================================================================
+# ==>  REMPLIR CI-DESSOUS (une ligne par utilisateur, sans le #)
+# ============================================================================
+

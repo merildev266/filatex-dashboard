@@ -402,6 +402,20 @@ def api_me():
     return jsonify(request.user)
 
 
+@app.route("/api/auth/change-pin", methods=["POST"])
+@require_auth
+def api_change_pin():
+    """Change PIN for the currently authenticated user. Requires the current PIN."""
+    data = request.get_json() or {}
+    old_pin = str(data.get("old_pin", "")).strip()
+    new_pin = str(data.get("new_pin", "")).strip()
+    try:
+        auth.change_pin(request.user["username"], old_pin, new_pin)
+        return jsonify({"ok": True})
+    except auth.AuthError as e:
+        return jsonify({"ok": False, "error": str(e)}), 400
+
+
 # --- Admin endpoints ---
 
 def _check_hierarchy(actor_role, target_id):

@@ -184,6 +184,40 @@ class TestResetPin:
         assert user["pin_set"] is False
 
 
+class TestChangePin:
+    def test_change_pin_success(self, tmp_db):
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        auth.change_pin("pmo", "2026", "4242")
+        # Old PIN rejected, new PIN accepted
+        assert auth.authenticate("pmo", "2026", "", "")["success"] is False
+        assert auth.authenticate("pmo", "4242", "", "")["success"] is True
+
+    def test_change_pin_wrong_old(self, tmp_db):
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        with pytest.raises(auth.AuthError, match="actuel incorrect"):
+            auth.change_pin("pmo", "9999", "4242")
+
+    def test_change_pin_same_rejected(self, tmp_db):
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        with pytest.raises(auth.AuthError, match="different"):
+            auth.change_pin("pmo", "2026", "2026")
+
+    def test_change_pin_invalid_new(self, tmp_db):
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        with pytest.raises(auth.AuthError, match="4 ou 6 chiffres"):
+            auth.change_pin("pmo", "2026", "12")
+
+    def test_change_pin_empty_old_rejected(self, tmp_db):
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        with pytest.raises(auth.AuthError, match="actuel est requis"):
+            auth.change_pin("pmo", "", "4242")
+
+    def test_change_pin_user_without_pin_rejected(self, tmp_db):
+        auth.create_user("Test", "User", "", "Test User", "utilisateur", ["energy"])
+        with pytest.raises(auth.AuthError, match="PIN non defini"):
+            auth.change_pin("test.user", "2026", "4242")
+
+
 class TestJWT:
     def test_decode_valid_token(self, tmp_db):
         auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])

@@ -10,7 +10,24 @@ import jwt
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.db")
 
-JWT_SECRET = os.environ.get("JWT_SECRET", "filatex-dashboard-secret-change-me")
+def _load_jwt_secret():
+    """Load JWT_SECRET from env. In prod, env var is required.
+    In dev (FLASK_ENV=development or ALLOW_DEV_SECRET=1), a fallback is allowed.
+    """
+    secret = os.environ.get("JWT_SECRET")
+    if secret:
+        return secret
+    if os.environ.get("FLASK_ENV") == "development" or os.environ.get("ALLOW_DEV_SECRET") == "1":
+        import warnings
+        warnings.warn("JWT_SECRET not set — using dev fallback. DO NOT use in production.")
+        return "filatex-dashboard-dev-only-change-me"
+    raise RuntimeError(
+        "JWT_SECRET environment variable is required. "
+        "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(48))\""
+    )
+
+
+JWT_SECRET = _load_jwt_secret()
 JWT_EXPIRATION_HOURS = 8
 
 ROLE_HIERARCHY = {"super_admin": 3, "admin": 2, "utilisateur": 1}
@@ -153,6 +170,28 @@ def set_pin(username, pin):
     conn.execute(
         "UPDATE users SET password_hash = ?, pin_set = 1 WHERE username = ?",
         (generate_password_hash(pin).decode("utf-8"), username)
+    )
+    conn.commit()
+    conn.close()
+
+
+def change_pin(username, old_pin, new_pin):
+    """Change PIN for a user who already has one set. Requires the current PIN."""
+    from flask_bcrypt import check_password_hash, generate_password_hash
+    if not old_pin:
+        raise AuthError("Le code PIN actuel est requis")
+    validate_pin(new_pin)
+    user = get_user_by_username(username)
+    if user is None or not user["pin_set"] or not user["password_hash"]:
+        raise AuthError("Utilisateur introuvable ou PIN non defini")
+    if not check_password_hash(user["password_hash"], str(old_pin)):
+        raise AuthError("Code PIN actuel incorrect")
+    if str(old_pin) == str(new_pin):
+        raise AuthError("Le nouveau PIN doit etre different de l'ancien")
+    conn = _get_conn()
+    conn.execute(
+        "UPDATE users SET password_hash = ?, pin_set = 1 WHERE id = ?",
+        (generate_password_hash(str(new_pin)).decode("utf-8"), user["id"])
     )
     conn.commit()
     conn.close()
