@@ -10,7 +10,12 @@ import jwt
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.db")
 
-JWT_SECRET = os.environ.get("JWT_SECRET", "filatex-dashboard-secret-change-me")
+JWT_SECRET = os.environ.get("JWT_SECRET")
+if not JWT_SECRET:
+    raise RuntimeError(
+        "JWT_SECRET manquant. Definissez la variable d'environnement JWT_SECRET "
+        "(ex. `export JWT_SECRET=$(python -c \"import secrets; print(secrets.token_urlsafe(64))\")`)"
+    )
 JWT_EXPIRATION_HOURS = 8
 
 ROLE_HIERARCHY = {"super_admin": 3, "admin": 2, "utilisateur": 1}
@@ -255,45 +260,36 @@ def toggle_active(user_id):
 def authenticate(username, pin, user_agent="", ip_address=""):
     from flask_bcrypt import check_password_hash
 
+    # Uniform error message for all "login failed" cases to prevent user enumeration.
+    # Exception: a lockout is explicitly announced so the user knows to contact an admin.
+    GENERIC_ERROR = "Identifiants incorrects"
+
     user = get_user_by_username(username)
 
     if user is None:
         _log_login(username, False, user_agent, ip_address)
-        return {"success": False, "error": "Identifiants incorrects"}
+        return {"success": False, "error": GENERIC_ERROR}
 
     if not user["active"]:
         _log_login(username, False, user_agent, ip_address)
-        return {"success": False, "error": "Compte desactive"}
+        return {"success": False, "error": GENERIC_ERROR}
 
     if user["locked"]:
         _log_login(username, False, user_agent, ip_address)
         return {"success": False, "error": "Compte verrouille apres 5 tentatives. Contactez un administrateur."}
 
-    # User has no PIN yet — must set one on first login
+    # Activation (pin_set=0) is no longer automatic on login — a user with no PIN
+    # must go through the dedicated activation flow (admin-generated token).
+    # See /api/auth/activate. Empty-PIN or unknown-PIN attempts fall through to
+    # the generic error message below to avoid leaking account state.
     if not user["pin_set"]:
-        _log_login(username, True, user_agent, ip_address)
-        temp_token = _generate_token(user)
-        return {
-            "success": True,
-            "must_set_pin": True,
-            "token": temp_token,
-            "user": {
-                "username": user["username"],
-                "display_name": user["display_name"],
-                "role": user["role"],
-                "sections": user["sections"],
-            }
-        }
+        _log_login(username, False, user_agent, ip_address)
+        return {"success": False, "error": GENERIC_ERROR}
 
-    # Empty PIN on an activated account → don't count as a failed attempt
-    # (user probably tried to re-activate an already-active account)
-    if not pin:
-        return {"success": False, "error": "Ce compte est deja active. Saisissez votre code PIN."}
-
-    if not check_password_hash(user["password_hash"], pin):
+    if not pin or not check_password_hash(user["password_hash"], pin):
         _increment_failed_attempts(user["id"], user["failed_attempts"])
         _log_login(username, False, user_agent, ip_address)
-        return {"success": False, "error": "Code PIN incorrect"}
+        return {"success": False, "error": GENERIC_ERROR}
 
     # Success
     _reset_failed_attempts(user["id"])

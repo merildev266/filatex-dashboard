@@ -506,7 +506,6 @@ def admin_create_user():
         if not match:
             return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
         username_override = match  # normalize to canonical case
-        return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
     try:
         user_id = auth.create_user(
             data["first_name"], data["last_name"], data.get("email", ""),
