@@ -83,6 +83,7 @@ def _build_groupes_from_situation(situation_list, build_groupes=None):
         "dailyStandby", "dailyArretForce", "dailyArretPlanifie",
         "monthlyProd", "monthlyHours", "monthlyHFO", "monthlyLFO",
         "monthlyOilConso", "monthlyOilTopUp", "monthlyMaxLoad", "monthlyConsLVMV",
+        "dailyByMonth",  # per-mois daily arrays (pour filtres M/S hors mois courant)
     ]
 
     groupes = []

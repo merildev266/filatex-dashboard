@@ -10,8 +10,10 @@ import GeneratorChart from './GeneratorChart'
 import { TAMATAVE_LIVE, DIEGO_LIVE, MAJUNGA_LIVE, TULEAR_LIVE, ANTSIRABE_LIVE, FIHAONANA_LIVE, HFO_GLOBAL } from '../../data/site_data'
 import { HFO_PROJECTS } from '../../data/hfo_projects'
 import { ENR_SITES } from '../../data/enr_site_data'
+import { PRODUCTION_2025 } from '../../data/production_2025'
 import { MOIS_FR, getKpiForSite } from '../../utils/hfoHelpers'
 import { getFilteredEnrSite } from '../../utils/enrHelpers'
+import { isoWeekDays } from '../../utils/weekUtils'
 
 // Map HFO site IDs to ENR site codes
 const ENR_MAP = { tamatave: 'TMM', diego: 'DIE', majunga: 'MJN' }
@@ -121,7 +123,7 @@ function fmtEngineName(g) {
 }
 
 export default function HfoDetail() {
-  const { currentFilter, setFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+  const { currentFilter, setFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear } = useFilters()
   const { setPageTitle, setBackOverride } = usePageTitle()
   const [selectedSite, setSelectedSite] = useState(null)
   const [projectFilter, setProjectFilter] = useState(null) // { type: 'site'|'cat', key: string }
@@ -149,11 +151,11 @@ export default function HfoDetail() {
     SITE_ORDER.forEach(id => {
       const s = siteData[id]
       if (s.status === 'construction' || s.status === 'reconstruction') return
-      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter)
+      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
       active.push({ id, site: s, kpi: k })
     })
     return { activeSites: active }
-  }, [siteData, currentFilter, selectedMonthIndex, selectedQuarter])
+  }, [siteData, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
 
   // Consolidated KPIs — aggregated across all active sites
   const consolidated = useMemo(() => {
@@ -238,6 +240,7 @@ export default function HfoDetail() {
 
   const periodLabel = currentFilter === 'A' ? String(selectedYear)
     : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
+    : currentFilter === 'S' ? `S${selectedWeek} ${selectedWeekYear || selectedYear}`
     : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
 
   // HFO Projects panel
@@ -303,10 +306,10 @@ export default function HfoDetail() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 items-stretch">
         {['tamatave', 'diego', 'tulear', 'majunga', 'antsirabe'].map(id => {
           const site = siteData[id]
-          const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter)
+          const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
           const enrCode = ENR_MAP[id]
           const enrSite = enrCode && (ENR_SITES || []).find(s => s.code === enrCode)
-          const enrProd = enrSite ? getFilteredEnrSite(enrSite, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear).prodKwh / 1000 : null
+          const enrProd = enrSite ? getFilteredEnrSite(enrSite, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear).prodKwh / 1000 : null
           return (
             <HfoSite
               key={id}
@@ -324,7 +327,7 @@ export default function HfoDetail() {
         />
         {['fihaonana'].map(id => {
           const site = siteData[id]
-          const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter)
+          const kpi = getKpiForSite(site, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
           return (
             <HfoSite
               key={id}
@@ -536,13 +539,17 @@ function VestopDetailPanel({ siteData, totalContract = 0, onClose }) {
 
 /** Full site detail panel — replaces main view when a site is selected */
 function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, onNavigate }) {
-  const { selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+  const { selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear } = useFilters()
   const { setPageTitle } = usePageTitle()
   const [selectedGenerator, setSelectedGenerator] = useState(null)
+  // Toggle "Comparatif 2025" — visible uniquement pour les sites avec donnees 2025
+  const [compare2025, setCompare2025] = useState(false)
   const s = siteData[siteId]
+  const prod2025 = PRODUCTION_2025[siteId] || null
+  const has2025 = !!prod2025
 
   // Site KPIs for unified grid
-  const sKpi = useMemo(() => getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter), [s, currentFilter, selectedMonthIndex, selectedQuarter])
+  const sKpi = useMemo(() => getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear), [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
   const sRunning = useMemo(() => (s.groupes || []).filter(g => g.statut === 'ok').length, [s])
   const sTotal = (s.groupes || []).length
   // Per-provider dispo for site-level HfoKpiGrid
@@ -564,20 +571,18 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
   const sBlackouts = (s.blackoutStats && s.blackoutStats.count != null) ? s.blackoutStats.count : null
   const sPeriodLabel = currentFilter === 'A' ? String(selectedYear)
     : currentFilter === 'Q' ? `Q${selectedQuarter} ${selectedYear}`
+    : currentFilter === 'S' ? `S${selectedWeek} ${selectedWeekYear || selectedYear}`
     : `${MOIS_FR[selectedMonthIndex]} ${selectedYear}`
   // Puissance chart:
   //   A           → weekly (52 weeks)
   //   Q           → weekly filtered to 3 months of quarter
-  //   M / J-1     → DAILY for selected month (from per-DG dailyMaxLoad)
+  //   M           → DAILY for selected month (from per-DG dailyMaxLoad)
+  //   S           → DAILY 7 jours de la semaine ISO selectionnee
   const sPuissanceHebdo = useMemo(() => {
     const ph = s.puissanceHebdo
     if (!ph || !Array.isArray(ph.weeks) || ph.weeks.length === 0) return { data: ph, isDaily: false }
 
-    // Daily mode — applied for every month under filter M/J-1.
-    // Per-DG daily data now exists for all months via g.dailyByMonth; the
-    // latest month also has a lastRealizedDay cutoff beyond which we show
-    // prévisionnel bars drawn from the weekly HEBDO values.
-    if (currentFilter === 'M' || currentFilter === 'J-1') {
+    if (currentFilter === 'M') {
       const targetMonth = (selectedMonthIndex || 0) + 1
       const latestMonth = s.latestMonth || null
       const year = selectedYear || 2026
@@ -686,34 +691,149 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       }
     }
 
+    if (currentFilter === 'S') {
+      // Semaine ISO : on reconstruit 7 jours depuis dailyByMonth / puissancePrevDaily
+      // Fallback : quand un jour tombe dans latestMonth, on utilise g.dailyMaxLoad.
+      const wy = selectedWeekYear || selectedYear
+      const weekDays = isoWeekDays(wy, selectedWeek)
+      const enelecDaily = new Array(7).fill(0)
+      const vestopDaily = new Array(7).fill(0)
+      const labels = []
+      const DAYS_FR = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
+      const latestMonth = s.latestMonth || null
+      for (const g of (s.groupes || [])) {
+        const byMonth = g.dailyByMonth || {}
+        const prov = (g.provider || '').toLowerCase()
+        for (let i = 0; i < 7; i++) {
+          const wd = weekDays[i]
+          const dmMonth = byMonth[String(wd.m)] || byMonth[wd.m]
+          const dml = (dmMonth && dmMonth.dailyMaxLoad)
+            || (latestMonth === wd.m ? (g.dailyMaxLoad || []) : [])
+          if (!dml.length) continue
+          const v = (+dml[wd.d - 1] || 0) / 1000
+          if (prov === 'vestop') vestopDaily[i] += v
+          else enelecDaily[i] += v
+        }
+      }
+      for (let i = 0; i < 7; i++) {
+        const wd = weekDays[i]
+        labels.push(`${DAYS_FR[i]} ${wd.d}`)
+      }
+      // Cutoff realise/previsionnel base sur latestDate
+      let lastRealizedIdx = 6
+      const latestDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.latestDate || '')
+      if (latestDateMatch) {
+        const latestStr = `${latestDateMatch[1]}-${latestDateMatch[2]}-${latestDateMatch[3]}`
+        lastRealizedIdx = -1
+        for (let i = 0; i < 7; i++) {
+          if (weekDays[i].date <= latestStr) lastRealizedIdx = i
+        }
+      }
+      // Previsionnel pour les jours apres latestDate
+      for (let i = 0; i < 7; i++) {
+        if (i <= lastRealizedIdx) continue
+        const wd = weekDays[i]
+        const ymKey = `${wd.y}-${String(wd.m).padStart(2, '0')}`
+        const prevDaily = (s.puissancePrevDaily && s.puissancePrevDaily[ymKey]) || null
+        if (prevDaily && prevDaily.enelec && prevDaily.vestop && prevDaily.enelec[wd.d - 1] != null) {
+          enelecDaily[i] = +prevDaily.enelec[wd.d - 1] || 0
+          vestopDaily[i] = +prevDaily.vestop[wd.d - 1] || 0
+        }
+      }
+      let contratRef = 0
+      for (let i = 0; i < ph.weeks.length; i++) {
+        const c = +ph.contrat?.[i] || 0
+        if (c > contratRef) contratRef = c
+      }
+      const peakRef = +s.peakLoadLatest || 0
+      return {
+        data: {
+          weeks: labels,
+          enelec: enelecDaily,
+          vestop: vestopDaily,
+          contrat: new Array(7).fill(contratRef),
+          peakLoad: new Array(7).fill(peakRef),
+          monthLabel: `S${selectedWeek} ${wy}`,
+          year: wy,
+          lastRealizedDay: lastRealizedIdx + 1,
+        },
+        isDaily: true,
+      }
+    }
+
     return { data: ph, isDaily: false }
-  }, [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
+  }, [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
 
   // Build chart data based on current filter:
-  //   A           → 12 monthly bars
-  //   Q           → 3 monthly bars (selected quarter)
-  //   M / J-1     → daily bars for the selected month (from dailyTrend)
+  //   A  → 12 monthly bars
+  //   Q  → 3 monthly bars (selected quarter)
+  //   M  → daily bars for the selected month (from dailyTrend)
+  //   S  → 7 daily bars (semaine ISO) avec comparatif 2025 limite aux jours
+  //        deja ecoules quand la semaine en cours est selectionnee.
   const sChart = useMemo(() => {
     const kpi = s.kpi || {}
-    const isDaily = currentFilter === 'M' || currentFilter === 'J-1'
 
-    if (isDaily) {
+    // Donnees 2025 figees (format compact : monthly=number[12], daily={MM: number[]})
+    const monthly2025 = (prod2025 && Array.isArray(prod2025.monthly)) ? prod2025.monthly : null
+    const daily2025 = (prod2025 && prod2025.daily && typeof prod2025.daily === 'object') ? prod2025.daily : null
+
+    if (currentFilter === 'S') {
+      const wy = selectedWeekYear || selectedYear
+      const weekDays = isoWeekDays(wy, selectedWeek)
+      const trend = Array.isArray(s.dailyTrend) ? s.dailyTrend : []
+      const byDate = new Map()
+      trend.forEach(t => { if (t && t.date) byDate.set(t.date, t) })
+      // Jours deja realises pour 2026 (latestDate)
+      const latestStr = s.latestDate || ''
+      const DAYS_FR = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
+      const data = []
+      const labels = []
+      for (let i = 0; i < 7; i++) {
+        const wd = weekDays[i]
+        const row = byDate.get(wd.date)
+        const prod = row ? +(row.net_mwh || row.gross_mwh || 0) : 0
+        // Comparaison : meme semaine ISO mais en 2025
+        const days2025 = isoWeekDays(2025, selectedWeek)
+        const d25 = days2025[i]
+        let p25 = 0
+        if (daily2025 && d25) {
+          const mm25 = String(d25.m).padStart(2, '0')
+          const arr = daily2025[mm25] || []
+          p25 = +arr[d25.d - 1] || 0
+          // Si on est sur la semaine en cours (>= latestStr), on plafonne 2025
+          // aux jours elapsed (ceux ou 2026 a deja des donnees).
+          if (latestStr && wd.date > latestStr) p25 = 0
+        }
+        data.push({ prod, prodObj: 0, prod2025: p25 })
+        labels.push(`${DAYS_FR[i]} ${wd.d}`)
+      }
+      return {
+        months: data,
+        labels,
+        isDaily: true,
+        title: `Production journalière — ${s.name} — S${selectedWeek} ${wy}`,
+      }
+    }
+
+    if (currentFilter === 'M') {
       const mIdx = selectedMonthIndex || 0
       const daysInMonth = new Date(selectedYear || 2026, mIdx + 1, 0).getDate()
-      // Index dailyTrend by date for O(1) lookup
       const trend = Array.isArray(s.dailyTrend) ? s.dailyTrend : []
       const byDate = new Map()
       trend.forEach(t => {
         if (t && t.date) byDate.set(t.date, t)
       })
-      // No prévisionnel on production chart (user request)
+      const mm = String(mIdx + 1).padStart(2, '0')
+      const arr2025 = daily2025 ? (daily2025[mm] || []) : []
       const data = []
       const labels = []
       for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr = `${selectedYear || 2026}-${String(mIdx + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+        const dd = String(d).padStart(2, '0')
+        const dateStr = `${selectedYear || 2026}-${mm}-${dd}`
         const row = byDate.get(dateStr)
         const prod = row ? +(row.net_mwh || row.gross_mwh || 0) : 0
-        data.push({ prod, prodObj: 0 })
+        const p25 = +arr2025[d - 1] || 0
+        data.push({ prod, prodObj: 0, prod2025: p25 })
         labels.push(String(d))
       }
       return {
@@ -724,7 +844,9 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       }
     }
 
-    const months = new Array(12).fill(null).map(() => ({ prod: 0, prodObj: 0 }))
+    const months = new Array(12).fill(null).map((_, i) => ({
+      prod: 0, prodObj: 0, prod2025: monthly2025 ? +monthly2025[i] || 0 : 0,
+    }))
     for (let m = 1; m <= 12; m++) {
       const k = kpi[`month_${m}`]
       if (!k) continue
@@ -751,7 +873,7 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
       isDaily: false,
       title: `Production mensuelle — ${s.name}`,
     }
-  }, [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
+  }, [s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear, prod2025])
 
   // Update banner + back button when generator is selected
   const { setBackOverride } = usePageTitle()
@@ -839,13 +961,15 @@ function SiteDetailPanel({ siteId, siteData, currentFilter, setFilter, onClose, 
             <PuissanceHebdoChart
               data={sPuissanceHebdo.data}
               isDaily={sPuissanceHebdo.isDaily}
-              title={`Puissance disponible ${sPuissanceHebdo.isDaily ? 'journalière' : 'hebdomadaire'} — ${s.name}${currentFilter === 'M' || currentFilter === 'J-1' ? ` — ${MOIS_FR[selectedMonthIndex || 0]} ${selectedYear || 2026}` : currentFilter === 'Q' ? ` — Q${selectedQuarter} ${selectedYear || 2026}` : ''}`}
+              title={`Puissance disponible ${sPuissanceHebdo.isDaily ? 'journalière' : 'hebdomadaire'} — ${s.name}${currentFilter === 'S' ? ` — S${selectedWeek} ${selectedWeekYear || selectedYear || 2026}` : currentFilter === 'M' ? ` — ${MOIS_FR[selectedMonthIndex || 0]} ${selectedYear || 2026}` : currentFilter === 'Q' ? ` — Q${selectedQuarter} ${selectedYear || 2026}` : ''}`}
             />
           )}
           <ProductionChart
             months={sChart.months}
             labels={sChart.labels}
             isDaily={sChart.isDaily}
+            compare2025={compare2025 && has2025}
+            onToggleCompare2025={has2025 ? setCompare2025 : undefined}
             title={sChart.title}
           />
 
@@ -1028,7 +1152,7 @@ function GeneratorDetailPanel({
   onClose, onNavigateGen,
 }) {
   const s = siteData[siteId]
-  const { currentFilter, selectedMonthIndex, selectedQuarter } = useFilters()
+  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedWeek, selectedWeekYear } = useFilters()
 
   const isContra = g.contradictory === true
   const isKO = g.statut === 'ko' && !isContra
@@ -1168,6 +1292,8 @@ function GeneratorDetailPanel({
         filter={currentFilter}
         monthIndex={selectedMonthIndex}
         quarter={selectedQuarter}
+        week={selectedWeek}
+        weekYear={selectedWeekYear}
         height={200}
       />
 

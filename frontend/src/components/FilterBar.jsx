@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useFilters } from '../hooks/useFilters'
+import { weeksInMonth, currentIsoWeek } from '../utils/weekUtils'
 
 const MOIS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
-const MOIS_FULL = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
 const QUARTERS = [1, 2, 3, 4]
-const YEARS = [2025, 2026]
+const DEFAULT_YEAR = 2026
 
 const FILTER_OPTIONS = [
-  { key: 'J-1', label: 'J-1', full: 'Hier', icon: (
+  { key: 'S', label: 'S', full: 'Semaine', icon: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-      <path d="M3 3v5h5"/>
-      <path d="M12 7v5l4 2"/>
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+      <text x="12" y="18" textAnchor="middle" fill="currentColor" stroke="none" fontSize="7" fontWeight="700">S</text>
     </svg>
   )},
   { key: 'M', label: 'M', full: 'Mois', icon: (
@@ -45,10 +46,14 @@ const FILTER_OPTIONS = [
 
 export default function FilterBar({ current, onChange }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [subOpen, setSubOpen] = useState(null) // 'M' | 'Q' | 'A' | null
+  const [subOpen, setSubOpen] = useState(null) // 'S' | 'M' | 'Q' | null
   const subRef = useRef(null)
   const mobileSubRef = useRef(null)
-  const { selectedMonthIndex, selectedQuarter, selectedYear, setMonth, setQuarter, setYear } = useFilters()
+  const {
+    selectedMonthIndex, selectedQuarter, selectedYear,
+    selectedWeek, selectedWeekYear,
+    setMonth, setQuarter, setYear, setWeek,
+  } = useFilters()
 
   useEffect(() => {
     if (!isOpen) return
@@ -61,7 +66,6 @@ export default function FilterBar({ current, onChange }) {
   useEffect(() => {
     if (!subOpen) return
     const close = (e) => {
-      // Check both desktop ref and mobile portal ref
       const inDesktop = subRef.current && subRef.current.contains(e.target)
       const inMobile = mobileSubRef.current && mobileSubRef.current.contains(e.target)
       if (!inDesktop && !inMobile) setSubOpen(null)
@@ -72,11 +76,13 @@ export default function FilterBar({ current, onChange }) {
 
   const handleSelect = (key) => {
     onChange(key)
-    if (key === 'J-1') {
+    if (key === 'A') {
+      // Annee : pas de sous-menu, on force 2026 automatiquement
+      setYear(DEFAULT_YEAR)
       setSubOpen(null)
       setIsOpen(false)
     } else {
-      // Toggle sub-dropdown for M/Q/A
+      // Toggle sub-dropdown for S/M/Q
       setSubOpen(prev => prev === key ? null : key)
     }
   }
@@ -85,12 +91,18 @@ export default function FilterBar({ current, onChange }) {
     if (key === 'M') { setMonth(value); onChange('M') }
     if (key === 'Q') { setQuarter(value); onChange('Q') }
     if (key === 'A') { setYear(value); onChange('A') }
+    if (key === 'S') {
+      // value = { week, year }
+      setWeek(value.week, value.year)
+      onChange('S')
+    }
     setSubOpen(null)
     setIsOpen(false)
   }
 
   // Sub-label for active filter
   const getSubLabel = (key) => {
+    if (key === 'S') return 'S' + selectedWeek
     if (key === 'M') return MOIS[selectedMonthIndex]
     if (key === 'Q') return 'Q' + selectedQuarter
     if (key === 'A') return selectedYear
@@ -99,9 +111,37 @@ export default function FilterBar({ current, onChange }) {
 
   // Sub-dropdown content
   const renderSubDropdown = (key) => {
+    if (key === 'S') {
+      // Semaines ISO qui recouvrent le mois selectionne
+      const weeks = weeksInMonth(selectedYear, selectedMonthIndex)
+      const cur = currentIsoWeek()
+      const nowYear = new Date().getFullYear()
+      return weeks.map((w) => {
+        // Semaines futures desactivees uniquement pour l'annee en cours
+        const disabled = (selectedYear === nowYear) && (
+          w.year > cur.year || (w.year === cur.year && w.week > cur.week)
+        )
+        const active = (w.week === selectedWeek && w.year === selectedWeekYear)
+        return (
+          <button
+            key={`${w.year}-${w.week}`}
+            className={`filter-sub-item filter-sub-week ${active ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (!disabled) handleSubSelect('S', { week: w.week, year: w.year })
+            }}
+            disabled={disabled}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, padding: '6px 10px' }}
+          >
+            <span style={{ fontWeight: 600 }}>S{w.week}</span>
+            <span style={{ fontSize: 9, opacity: 0.7 }}>{w.rangeLabel}</span>
+          </button>
+        )
+      })
+    }
     if (key === 'M') {
       const now = new Date()
-      const maxMonth = now.getMonth() // 0-based, current month
+      const maxMonth = (selectedYear === now.getFullYear()) ? now.getMonth() : 11
       return MOIS.map((m, i) => (
         <button
           key={i}
@@ -115,7 +155,7 @@ export default function FilterBar({ current, onChange }) {
     }
     if (key === 'Q') {
       const now = new Date()
-      const maxQ = Math.floor(now.getMonth() / 3) + 1
+      const maxQ = (selectedYear === now.getFullYear()) ? Math.floor(now.getMonth() / 3) + 1 : 4
       return QUARTERS.map(q => (
         <button
           key={q}
@@ -124,17 +164,6 @@ export default function FilterBar({ current, onChange }) {
           disabled={q > maxQ}
         >
           Q{q}
-        </button>
-      ))
-    }
-    if (key === 'A') {
-      return YEARS.map(y => (
-        <button
-          key={y}
-          className={`filter-sub-item ${y === selectedYear ? 'active' : ''}`}
-          onClick={(e) => { e.stopPropagation(); handleSubSelect('A', y) }}
-        >
-          {y}
         </button>
       ))
     }
@@ -178,16 +207,14 @@ export default function FilterBar({ current, onChange }) {
                 >
                   <div className="mob-nav-icon">{opt.icon}</div>
                   <span className="mob-nav-label">{opt.full}</span>
-                  {/* Sub-value below the label */}
-                  {active && opt.key !== 'J-1' && (
+                  {active && (
                     <span style={{ fontSize: 10, opacity: 1, color: '#00ab63', marginTop: -2 }}>{getSubLabel(opt.key)}</span>
                   )}
                 </button>
-                {/* Mobile sub-options — grid, positioned relative to this item */}
-                {subOpen === opt.key && opt.key !== 'J-1' && (
+                {subOpen === opt.key && opt.key !== 'A' && (
                   <div
                     ref={mobileSubRef}
-                    className={`filter-sub-mobile ${opt.key === 'Q' ? 'sub-quarters' : opt.key === 'A' ? 'sub-years' : ''}`}
+                    className={`filter-sub-mobile ${opt.key === 'Q' ? 'sub-quarters' : opt.key === 'S' ? 'sub-weeks' : ''}`}
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
@@ -206,7 +233,7 @@ export default function FilterBar({ current, onChange }) {
 
   return (
     <>
-      {/* ── Desktop: icon circles + labels + sub-dropdown ── */}
+      {/* Desktop: icon circles + labels + sub-dropdown */}
       <div className="filter-bar-desktop" ref={subRef}>
         {FILTER_OPTIONS.map((opt) => {
           const active = current === opt.key
@@ -218,12 +245,11 @@ export default function FilterBar({ current, onChange }) {
               >
                 <div className="filter-icon-circle">{opt.icon}</div>
                 <span className="filter-item-label">
-                  {active && opt.key !== 'J-1' ? getSubLabel(opt.key) : opt.label}
+                  {active ? getSubLabel(opt.key) : opt.label}
                 </span>
               </button>
-              {/* Sub-dropdown */}
-              {subOpen === opt.key && opt.key !== 'J-1' && (
-                <div className="filter-sub-dropdown">
+              {subOpen === opt.key && opt.key !== 'A' && (
+                <div className={`filter-sub-dropdown ${opt.key === 'S' ? 'filter-sub-weeks' : ''}`}>
                   {renderSubDropdown(opt.key)}
                 </div>
               )}

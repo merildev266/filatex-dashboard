@@ -1639,7 +1639,7 @@ def build_site_data(site_key):
     for g in groupes:
         dg_id = g["id"]
 
-        # Daily arrays for current month
+        # Daily arrays for current month (retrocompat : alias du mois courant)
         if current_month and current_month in monthly_dg_metrics:
             dm = monthly_dg_metrics[current_month].get(dg_id, {})
             for field, metric_key in _DAILY_MAP.items():
@@ -1658,6 +1658,28 @@ def build_site_data(site_key):
                 else:
                     month_totals.append(0.0)
             g[field] = month_totals
+
+        # Daily arrays pour TOUS les mois (pour filtres M/S hors mois courant).
+        # Structure : g["dailyByMonth"] = { "1": { "dailyMaxLoad": [...], ... }, ... }
+        daily_by_month = {}
+        for m in range(1, 13):
+            if m not in monthly_dg_metrics or dg_id not in monthly_dg_metrics[m]:
+                continue
+            dm = monthly_dg_metrics[m][dg_id]
+            per_month = {}
+            has_data = False
+            for field, metric_key in _DAILY_MAP.items():
+                arr = dm.get(metric_key)
+                if arr is None:
+                    continue
+                # Round pour reduire le bruit flottant et compresser la sortie JSON
+                rounded = [round(float(v), 1) for v in arr]
+                per_month[field] = rounded
+                if any(v > 0 for v in rounded):
+                    has_data = True
+            if has_data:
+                daily_by_month[str(m)] = per_month
+        g["dailyByMonth"] = daily_by_month
 
     # --- Compute KPIs ---
     hfo_is_liters = cfg.get("hfo_is_liters", False)

@@ -1,13 +1,38 @@
 import { MONTH_NAMES } from './projects'
+import { isoWeekDays } from './weekUtils'
 
 /**
- * Filter ENR site data by the global time filter (J-1/M/Q/A).
+ * Filter ENR site data by the global time filter (S/M/Q/A).
  * Returns { prodKwh, deliveredKwh, consumedKwh, peakKw, avgDailyKwh, days, label }
  */
-export function getFilteredEnrSite(site, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear) {
+export function getFilteredEnrSite(site, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear) {
   const result = { prodKwh: 0, deliveredKwh: 0, consumedKwh: 0, peakKw: 0, avgDailyKwh: 0, days: 0, label: '' }
 
-  if (currentFilter === 'M' || currentFilter === 'J-1') {
+  if (currentFilter === 'S') {
+    // Semaine ISO : on agrege les jours disponibles dans site.daily (si expose),
+    // sinon on retombe sur les totaux mensuels proportionnels (approximation).
+    const wy = selectedWeekYear || selectedYear
+    const days = isoWeekDays(wy, selectedWeek)
+    const set = new Set(days.map(d => d.date))
+    const daily = Array.isArray(site.daily) ? site.daily : []
+    if (daily.length) {
+      let prod = 0, del = 0, con = 0, peak = 0, n = 0
+      for (const r of daily) {
+        if (!r?.date || !set.has(r.date)) continue
+        prod += +(r.totalProdKwh || r.prodKwh || 0)
+        del  += +(r.totalDeliveredKwh || r.deliveredKwh || 0)
+        con  += +(r.totalConsumedKwh || r.consumedKwh || 0)
+        if ((r.maxPeakKw || 0) > peak) peak = r.maxPeakKw || 0
+        n++
+      }
+      result.prodKwh = prod; result.deliveredKwh = del; result.consumedKwh = con
+      result.peakKw = peak; result.avgDailyKwh = n > 0 ? prod / n : 0; result.days = n
+    }
+    result.label = `S${selectedWeek} ${wy}`
+    return result
+  }
+
+  if (currentFilter === 'M') {
     const mi = selectedMonthIndex
     const monthStr = selectedYear + '-' + String(mi + 1).padStart(2, '0')
     for (let i = 0; i < site.monthly.length; i++) {

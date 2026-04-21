@@ -53,24 +53,16 @@ function getPhase(p) {
 
 export default function EnergyOverview() {
   const navigate = useNavigate()
-  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
-
-  // Last day with data for all 4 sites (for J-1 display)
-  const lastDayAll = useMemo(() => getLastDayAllSites(), [])
+  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear } = useFilters()
 
   // Date display
   const dateLabel = useMemo(() => {
-    const now = new Date()
-    if (currentFilter === 'J-1') {
-      // Show the actual last day with data for all sites
-      const d = new Date(now.getFullYear(), now.getMonth(), lastDayAll)
-      return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })
-    }
+    if (currentFilter === 'S') return `S${selectedWeek} ${selectedWeekYear || selectedYear}`
     if (currentFilter === 'M') return MOIS_FR[selectedMonthIndex] + ' ' + selectedYear
     if (currentFilter === 'Q') return 'Q' + selectedQuarter + ' ' + selectedYear
     if (currentFilter === 'A') return String(selectedYear)
     return ''
-  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, lastDayAll])
+  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
 
   // HFO aggregates
   const hfo = useMemo(() => {
@@ -106,7 +98,7 @@ export default function EnergyOverview() {
           }
         })
       }
-      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
       totalProd += k.prod || 0
       totalProdObj += k.prodObj || 0
       if (k.sfoc && k.prod) sfocWeighted += k.sfoc * k.prod
@@ -133,6 +125,7 @@ export default function EnergyOverview() {
     // Period label
     const periodLabel = currentFilter === 'A' ? String(selectedYear)
       : currentFilter === 'Q' ? 'Q' + selectedQuarter
+      : currentFilter === 'S' ? `S${selectedWeek}`
       : MOIS_FR[selectedMonthIndex]
 
     return {
@@ -148,7 +141,7 @@ export default function EnergyOverview() {
       enCours: HFO_PROJECTS?.enCours || 0,
       projectCount: HFO_PROJECTS?.total || 0,
     }
-  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
+  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
 
   // ENR aggregates (filtered by time period)
   const enr = useMemo(() => {
@@ -159,7 +152,7 @@ export default function EnergyOverview() {
     let totalCapKwc = 0, totalProdKwh = 0, totalAvgDailyKwh = 0, totalDays = 0
     const siteFiltered = sites.map(s => {
       totalCapKwc += s.capacityKwc || 0
-      const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+      const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
       totalProdKwh += fd.prodKwh
       totalAvgDailyKwh += fd.avgDailyKwh
       totalDays += fd.days
@@ -175,7 +168,7 @@ export default function EnergyOverview() {
     SITE_ORDER.forEach(id => {
       const s = ALL_SITES[id]
       if (!s || s.status === 'construction' || s.status === 'reconstruction') return
-      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+      const k = getKpiForSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
       if (k.prod && totalDays > 0) {
         totalHfoAvgDaily += k.prod / totalDays
       }
@@ -201,7 +194,7 @@ export default function EnergyOverview() {
       totalMwcPipeline, totalCapex,
       grouped, delayCount,
     }
-  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
+  }, [currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
 
   return (
     <div>

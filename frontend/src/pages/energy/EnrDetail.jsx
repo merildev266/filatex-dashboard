@@ -10,7 +10,7 @@ const ENR_RGBS = ['0,171,99', '90,175,175', '74,143,231']
 const ENR_MONTHS = { 1:'Janvier',2:'Février',3:'Mars',4:'Avril',5:'Mai',6:'Juin',7:'Juillet',8:'Août',9:'Septembre',10:'Octobre',11:'Novembre',12:'Décembre' }
 
 export default function EnrDetail() {
-  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear } = useFilters()
+  const { currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear } = useFilters()
   const [selectedSite, setSelectedSite] = useState(null)
   const { setPageTitle, clearTitle } = usePageTitle()
 
@@ -30,18 +30,20 @@ export default function EnrDetail() {
   const { totalProdKwh, totalAvgDaily, totalCapMw, siteFiltered } = useMemo(() => {
     let tp = 0, ta = 0, tc = 0
     const sf = sites.map(s => {
-      const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+      const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
       tp += fd.prodKwh; ta += fd.avgDailyKwh; tc += s.capacityMw
       return fd
     })
     return { totalProdKwh: tp, totalAvgDaily: ta, totalCapMw: tc, siteFiltered: sf }
-  }, [sites, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear])
+  }, [sites, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear])
 
-  const filterLabel = (currentFilter === 'M' || currentFilter === 'J-1')
-    ? MONTH_NAMES[selectedMonthIndex] + ' ' + selectedYear
-    : currentFilter === 'Q'
-      ? 'Q' + selectedQuarter + ' ' + selectedYear
-      : String(selectedYear)
+  const filterLabel = currentFilter === 'S'
+    ? `S${selectedWeek} ${selectedWeekYear || selectedYear}`
+    : currentFilter === 'M'
+      ? MONTH_NAMES[selectedMonthIndex] + ' ' + selectedYear
+      : currentFilter === 'Q'
+        ? 'Q' + selectedQuarter + ' ' + selectedYear
+        : String(selectedYear)
 
   /* ═══ SITE DETAIL VIEW (full page, like HFO) ═══ */
   if (selectedSite !== null && sites[selectedSite]) {
@@ -49,7 +51,7 @@ export default function EnrDetail() {
     const si = selectedSite
     const col = ENR_COLORS[si % ENR_COLORS.length]
     const rgb = ENR_RGBS[si % ENR_RGBS.length]
-    const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear)
+    const fd = getFilteredEnrSite(s, currentFilter, selectedMonthIndex, selectedQuarter, selectedYear, selectedWeek, selectedWeekYear)
 
     return (
       <div style={{ padding: '0 20px 40px' }}>
@@ -117,7 +119,7 @@ export default function EnrDetail() {
         <div style={{ fontSize: 9, fontWeight: 400, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 14 }}>{filterLabel}</div>
 
         {/* MONTH VIEW — sparkline + sub-KPIs */}
-        {(currentFilter === 'M' || currentFilter === 'J-1') && (() => {
+        {currentFilter === 'M' && (() => {
           const mi = selectedMonthIndex
           const monthStr = selectedYear + '-' + String(mi + 1).padStart(2, '0')
           const monthData = s.monthly.find(m => m.month === monthStr)

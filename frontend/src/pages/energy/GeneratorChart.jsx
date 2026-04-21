@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { isoWeekDays } from '../../utils/weekUtils'
 
 /**
  * GeneratorChart — Puissance disponible + Production per generator
@@ -6,34 +7,50 @@ import { useState, useRef } from 'react'
  *
  * Props:
  *   generator    — generator object (with monthlyMaxLoad, monthlyProd, dailyMaxLoad, dailyProd)
- *   filter       — 'A' | 'Q' | 'M' | 'J-1'
+ *   filter       — 'A' | 'Q' | 'M' | 'S'
  *   monthIndex   — 0..11 (selected month index when filter='M')
  *   quarter      — 1..4 (selected quarter when filter='Q')
+ *   week         — ISO week number when filter='S'
+ *   weekYear     — ISO year for the week
  *   height       — SVG height in px per chart (default 180)
  */
 
 const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
+const DAYS_FR    = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
 
-export default function GeneratorChart({ generator: g, filter, monthIndex, quarter, height = 180 }) {
+export default function GeneratorChart({ generator: g, filter, monthIndex, quarter, week, weekYear, height = 180 }) {
   if (!g) return null
 
   const monthlyMaxLoad = g.monthlyMaxLoad || []
   const monthlyProd    = g.monthlyProd || []
   const dailyMaxLoad   = g.dailyMaxLoad || []
   const dailyProd      = g.dailyProd || []
+  const dailyByMonth   = g.dailyByMonth || {}
 
   const hasMonthly = monthlyMaxLoad.some(v => v > 0) || monthlyProd.some(v => v > 0)
   const hasDaily   = dailyMaxLoad.some(v => v > 0) || dailyProd.some(v => v > 0)
   if (!hasMonthly && !hasDaily) return null
 
-  const isDaily = filter === 'M' || filter === 'J-1'
+  const isDaily = filter === 'M' || filter === 'S'
 
   // Build data arrays
   let labels = []
   let maxLoadData = []   // kW → MW
   let prodData = []      // kWh → MWh
 
-  if (isDaily && hasDaily) {
+  if (filter === 'S' && week) {
+    const wy = weekYear || new Date().getFullYear()
+    const days = isoWeekDays(wy, week)
+    for (let i = 0; i < 7; i++) {
+      const wd = days[i]
+      const dmMonth = dailyByMonth[String(wd.m)] || dailyByMonth[wd.m]
+      const dml = (dmMonth && dmMonth.dailyMaxLoad) || []
+      const dp  = (dmMonth && dmMonth.dailyProd) || []
+      labels.push(`${DAYS_FR[i]} ${wd.d}`)
+      maxLoadData.push((+dml[wd.d - 1] || 0) / 1000)
+      prodData.push((+dp[wd.d - 1] || 0) / 1000)
+    }
+  } else if (filter === 'M' && hasDaily) {
     const daysInMonth = new Date(2026, (monthIndex || 0) + 1, 0).getDate()
     for (let d = 0; d < daysInMonth; d++) {
       labels.push(String(d + 1))
@@ -62,7 +79,7 @@ export default function GeneratorChart({ generator: g, filter, monthIndex, quart
   if (!hasLoad && !hasProd) return null
 
   const nominalMw = g.nominal || g.mw || 0
-  const periodLabel = isDaily ? 'Journalier' : 'Mensuel'
+  const periodLabel = filter === 'S' ? 'Semaine' : (isDaily ? 'Journalier' : 'Mensuel')
 
   return (
     <div>
