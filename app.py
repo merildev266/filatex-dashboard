@@ -4,34 +4,74 @@ Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
 """
 import os, re, subprocess, threading, time, openpyxl
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, make_response
 from data_loader import build_tamatave_data
 import auth
 from functools import wraps
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 
-# CORS for Vite dev server
-@app.after_request
-def add_cors(response):
-    origin = request.headers.get("Origin", "")
-    if origin.startswith("http://localhost:"):
+IS_PRODUCTION = os.environ.get("FLASK_ENV", "").lower() == "production"
+
+# CORS — whitelist from env (comma-separated). Dev default: any localhost origin.
+# Example for prod: ALLOWED_ORIGINS="https://dashboard.filatex.mg,https://filatex.github.io"
+_raw_origins = os.environ.get("ALLOWED_ORIGINS", "").strip()
+ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()] if _raw_origins else []
+
+def _is_allowed_origin(origin: str) -> bool:
+    if not origin:
+        return False
+    if ALLOWED_ORIGINS:
+        return origin in ALLOWED_ORIGINS
+    # Dev-only fallback: accept any localhost origin when no explicit whitelist is configured.
+    # In production, ALLOWED_ORIGINS MUST be set — otherwise no browser can reach the API.
+    return (not IS_PRODUCTION) and origin.startswith("http://localhost:")
+
+
+def _apply_cors(response, origin):
+    if _is_allowed_origin(origin):
         response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Vary"] = "Origin"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
     return response
 
+
+@app.after_request
+def add_cors(response):
+    _apply_cors(response, request.headers.get("Origin", ""))
+    # HSTS in production so browsers refuse downgrades to HTTP.
+    if IS_PRODUCTION:
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    return response
+
+
 @app.before_request
-def handle_preflight():
+def _security_gate():
+    # Enforce HTTPS in production: reject any plain-HTTP request.
+    if IS_PRODUCTION and request.headers.get("X-Forwarded-Proto", request.scheme) != "https":
+        return jsonify({"error": "HTTPS requis"}), 400
     if request.method == "OPTIONS":
-        from flask import make_response
-        resp = make_response()
-        origin = request.headers.get("Origin", "")
-        if origin.startswith("http://localhost:"):
-            resp.headers["Access-Control-Allow-Origin"] = origin
-            resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-            resp.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        return resp
+        return _apply_cors(make_response(), request.headers.get("Origin", ""))
+
+
+# Rate-limit auth endpoints per IP to throttle brute-force + enumeration.
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+    limiter = Limiter(get_remote_address, app=app, default_limits=[])
+except ImportError:  # flask-limiter optional — warn but don't crash.
+    limiter = None
+    print("[app] flask-limiter non installe — endpoints d'auth non rate-limites", flush=True)
+
+
+def _auth_rate_limit(rule):
+    """Decorator that applies a flask-limiter rule if the library is available,
+    else returns the function unchanged."""
+    if limiter is None:
+        return lambda f: f
+    return limiter.limit(rule, methods=["POST"], error_message="Trop de tentatives. Reessayez plus tard.")
+
 
 auth.init_db()
 auth.seed_pmo()
@@ -359,6 +399,7 @@ def api_refresh_status():
 # --- Auth endpoints ---
 
 @app.route("/api/auth/login", methods=["POST"])
+@_auth_rate_limit("10 per 5 minutes")
 def api_login():
     data = request.get_json()
     username = data.get("username", "").strip() if data else ""
@@ -377,6 +418,7 @@ def api_login():
 
 
 @app.route("/api/auth/activate", methods=["POST"])
+@_auth_rate_limit("10 per 5 minutes")
 def api_activate():
     """Activate an account using an admin-issued activation token.
 
