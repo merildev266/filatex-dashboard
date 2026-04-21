@@ -417,67 +417,6 @@ def api_login():
     return jsonify(result), 401
 
 
-@app.route("/api/auth/activate", methods=["POST"])
-@_auth_rate_limit("10 per 5 minutes")
-def api_activate():
-    """Activate an account using an admin-issued activation token.
-
-    Public endpoint (no Authorization header required). Rate-limited
-    elsewhere at the webserver level. Expects { username, token, pin, pin_confirm }.
-    """
-    data = request.get_json() or {}
-    username = str(data.get("username", "")).strip()
-    token = str(data.get("token", "")).strip()
-    pin = str(data.get("pin", "")).strip()
-    pin_confirm = str(data.get("pin_confirm", "")).strip()
-    if not username or not token:
-        return jsonify({"success": False, "error": "Lien d'activation invalide ou expire"}), 400
-    if pin != pin_confirm:
-        return jsonify({"success": False, "error": "Les codes PIN ne correspondent pas"}), 400
-    try:
-        user = auth.activate_account(username, token, pin)
-    except auth.AuthError as e:
-        return jsonify({"success": False, "error": str(e)}), 400
-    jwt_token = auth._generate_token(user)
-    return jsonify({
-        "success": True,
-        "token": jwt_token,
-        "user": {
-            "username": user["username"],
-            "display_name": user["display_name"],
-            "role": user["role"],
-            "sections": user["sections"],
-        },
-    })
-
-
-@app.route("/api/auth/set-pin", methods=["POST"])
-@require_auth
-def api_set_pin():
-    """Set PIN on first login or change PIN."""
-    data = request.get_json()
-    pin = data.get("pin", "").strip() if data else ""
-    pin_confirm = data.get("pin_confirm", "").strip() if data else ""
-    if pin != pin_confirm:
-        return jsonify({"error": "Les codes PIN ne correspondent pas"}), 400
-    try:
-        auth.validate_pin(pin)
-    except auth.AuthError as e:
-        return jsonify({"error": str(e)}), 400
-    auth.set_pin(request.user["username"], pin)
-    # Return fresh token with updated user data
-    user = auth.get_user_by_username(request.user["username"])
-    token = auth._generate_token(user)
-    return jsonify({
-        "ok": True,
-        "token": token,
-        "user": {
-            "username": user["username"],
-            "display_name": user["display_name"],
-            "role": user["role"],
-            "sections": user["sections"],
-        }
-    })
 
 
 @app.route("/api/auth/me")
@@ -551,10 +490,6 @@ def admin_list_users():
     users = auth.get_all_users()
     for u in users:
         u.pop("password_hash", None)
-        # Strip activation token from activated accounts — only relevant pre-activation.
-        if u.get("pin_set"):
-            u.pop("activation_token", None)
-            u.pop("activation_expires_at", None)
     # Admins only see utilisateurs; super_admin sees everyone
     if actor_role == "admin":
         users = [u for u in users if u["role"] == "utilisateur"]
@@ -593,8 +528,7 @@ def admin_create_user():
         return jsonify({
             "id": result["id"],
             "username": result["username"],
-            "activation_token": result["activation_token"],
-            "activation_expires_at": result["activation_expires_at"],
+            "default_pin": auth.DEFAULT_PIN,
         }), 201
     except auth.AuthError as e:
         return jsonify({"error": str(e)}), 409
@@ -639,31 +573,14 @@ def admin_delete_user(user_id):
 @app.route("/api/admin/users/<int:user_id>/reset-pin", methods=["PUT"])
 @require_admin
 def admin_reset_pin(user_id):
+    """Reset the user's PIN back to DEFAULT_PIN. must_change_pin is set
+    so the user is forced to pick a new PIN on next login."""
     actor_role = request.user.get("role")
     ok, err = _check_hierarchy(actor_role, user_id)
     if not ok:
         return err
-    info = auth.reset_pin(user_id)
-    return jsonify({"ok": True, **info})
-
-
-@app.route("/api/admin/users/<int:user_id>/regenerate-activation", methods=["PUT"])
-@require_admin
-def admin_regenerate_activation(user_id):
-    """Regenerate activation token for an unactivated account.
-
-    Used when the original token expired or was mislaid. Refuses if the
-    user already activated (use reset-pin instead for a full re-activation).
-    """
-    actor_role = request.user.get("role")
-    ok, err = _check_hierarchy(actor_role, user_id)
-    if not ok:
-        return err
-    try:
-        info = auth.regenerate_activation_token(user_id)
-    except auth.AuthError as e:
-        return jsonify({"error": str(e)}), 400
-    return jsonify({"ok": True, **info})
+    auth.reset_pin(user_id)
+    return jsonify({"ok": True, "default_pin": auth.DEFAULT_PIN})
 
 
 @app.route("/api/admin/users/<int:user_id>/unlock", methods=["PUT"])
