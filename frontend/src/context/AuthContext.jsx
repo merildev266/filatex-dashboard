@@ -34,37 +34,16 @@ export function AuthProvider({ children }) {
       sessionStorage.setItem(TOKEN_KEY, data.token)
       sessionStorage.setItem(AUTH_KEY, JSON.stringify(data.user))
       setState({ isAuthenticated: true, user: data.user, token: data.token })
-      return { success: true, must_set_pin: data.must_set_pin, token: data.token, user: data.user }
+      return {
+        success: true,
+        must_change_pin: !!data.must_change_pin,
+        token: data.token,
+        user: data.user,
+      }
     } catch {
       return { success: false, error: 'Serveur inaccessible, reessayez plus tard.' }
     }
   }, [])
-
-  const setPin = useCallback(async (pin, pinConfirm) => {
-    try {
-      // Read token fresh from sessionStorage — avoids stale-closure issues
-      // when setPin is called immediately after login() (e.g. first-connexion flow)
-      const token = sessionStorage.getItem(TOKEN_KEY) || state.token
-      const res = await fetch(`${API_BASE}/api/auth/set-pin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ pin, pin_confirm: pinConfirm }),
-      })
-      const data = await res.json()
-      if (data.ok) {
-        sessionStorage.setItem(TOKEN_KEY, data.token)
-        sessionStorage.setItem(AUTH_KEY, JSON.stringify(data.user))
-        setState({ isAuthenticated: true, user: data.user, token: data.token })
-        return { success: true }
-      }
-      return { success: false, error: data.error }
-    } catch {
-      return { success: false, error: 'Serveur inaccessible' }
-    }
-  }, [state.token])
 
   const updateDisplayName = useCallback(async (displayName) => {
     try {
@@ -141,14 +120,13 @@ export function AuthProvider({ children }) {
     user: state.user,
     token: state.token,
     login,
-    setPin,
     changePin,
     updateDisplayName,
     logout,
     hasAccess,
     authFetch,
     refreshData,
-  }), [state, login, setPin, changePin, updateDisplayName, logout, hasAccess, authFetch, refreshData])
+  }), [state, login, changePin, updateDisplayName, logout, hasAccess, authFetch, refreshData])
 
   return (
     <AuthContext.Provider value={value}>
