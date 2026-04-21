@@ -2,6 +2,7 @@ import sqlite3
 import json
 import os
 import re
+import secrets
 import unicodedata
 from datetime import datetime, timezone, timedelta
 
@@ -9,14 +10,22 @@ import jwt
 
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.db")
+SEED_USERS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seed_users.json")
+ACTIVATION_TOKEN_TTL_DAYS = 7
 
-JWT_SECRET = os.environ.get("JWT_SECRET", "filatex-dashboard-secret-change-me")
+JWT_SECRET = os.environ.get("JWT_SECRET")
+if not JWT_SECRET:
+    raise RuntimeError(
+        "JWT_SECRET manquant. Definissez la variable d'environnement JWT_SECRET "
+        "(ex. `export JWT_SECRET=$(python -c \"import secrets; print(secrets.token_urlsafe(64))\")`)"
+    )
 JWT_EXPIRATION_HOURS = 8
 
 ROLE_HIERARCHY = {"super_admin": 3, "admin": 2, "utilisateur": 1}
 
 # Comptes spéciaux : username = acronyme, pas prenom.nom
-SPECIAL_USERNAMES = {"pmo", "cpo", "dg"}
+# pmo reste en minuscule, DG et CPO en majuscule
+SPECIAL_USERNAMES = {"pmo", "CPO", "DG"}
 
 
 class AuthError(Exception):
@@ -67,6 +76,8 @@ def init_db():
             locked INTEGER NOT NULL DEFAULT 0,
             failed_attempts INTEGER NOT NULL DEFAULT 0,
             pin_set INTEGER NOT NULL DEFAULT 0,
+            activation_token TEXT NOT NULL DEFAULT '',
+            activation_expires_at TEXT,
             created_at TEXT NOT NULL,
             last_login TEXT
         );
@@ -79,8 +90,21 @@ def init_db():
             ip_address TEXT
         );
     """)
+    # Migration: add activation columns to pre-existing DBs that pre-date this feature.
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(users)").fetchall()}
+    if "activation_token" not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN activation_token TEXT NOT NULL DEFAULT ''")
+    if "activation_expires_at" not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN activation_expires_at TEXT")
     conn.commit()
     conn.close()
+
+
+def _generate_activation_token():
+    """Return (token, expires_at_iso) — fresh 7-day activation token."""
+    token = secrets.token_urlsafe(24)
+    expires = datetime.now(timezone.utc) + timedelta(days=ACTIVATION_TOKEN_TTL_DAYS)
+    return token, expires.isoformat()
 
 
 def _row_to_dict(row):
@@ -91,6 +115,8 @@ def _row_to_dict(row):
     d["active"] = bool(d["active"])
     d["locked"] = bool(d["locked"])
     d["pin_set"] = bool(d.get("pin_set", 0))
+    d.setdefault("activation_token", "")
+    d.setdefault("activation_expires_at", None)
     return d
 
 
@@ -100,22 +126,33 @@ def can_manage(actor_role, target_role):
 
 
 def create_user(first_name, last_name, email, display_name, role, sections, username_override=None):
-    """Create a user account without PIN — user sets PIN on first login.
-    username_override: for special accounts (pmo, cpo, dg) that don't use prenom.nom.
+    """Create a user account without PIN.
+
+    Generates an activation token (7-day TTL). The admin must transmit
+    the activation link out-of-band (the token is NOT stored in plaintext
+    after the user activates — it is cleared on activate).
+
+    Returns a dict: {id, username, activation_token, activation_expires_at}.
     """
     username = username_override if username_override else generate_username(first_name, last_name)
+    token, expires = _generate_activation_token()
     conn = _get_conn()
     try:
         cur = conn.execute(
             """INSERT INTO users (username, password_hash, display_name, first_name, last_name,
-               email, role, sections, pin_set, created_at)
-               VALUES (?, '', ?, ?, ?, ?, ?, ?, 0, ?)""",
+               email, role, sections, pin_set, activation_token, activation_expires_at, created_at)
+               VALUES (?, '', ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)""",
             (username, display_name, first_name.strip(), last_name.strip(),
-             email.strip(), role, json.dumps(sections),
+             email.strip(), role, json.dumps(sections), token, expires,
              datetime.now(timezone.utc).isoformat())
         )
         conn.commit()
-        return cur.lastrowid
+        return {
+            "id": cur.lastrowid,
+            "username": username,
+            "activation_token": token,
+            "activation_expires_at": expires,
+        }
     except sqlite3.IntegrityError:
         raise AuthError(f"Le username '{username}' existe deja")
     finally:
@@ -159,8 +196,9 @@ def set_pin(username, pin):
 
 
 def get_user_by_username(username):
+    """Case-insensitive lookup so users can type 'dg', 'DG' or 'Dg' and succeed."""
     conn = _get_conn()
-    row = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+    row = conn.execute("SELECT * FROM users WHERE username = ? COLLATE NOCASE", (username,)).fetchone()
     conn.close()
     return _row_to_dict(row)
 
@@ -222,14 +260,77 @@ def delete_user(user_id):
 
 
 def reset_pin(user_id):
-    """Reset PIN — forces user to set a new PIN on next login."""
+    """Reset PIN — generates a fresh activation token. User must re-activate."""
+    token, expires = _generate_activation_token()
     conn = _get_conn()
     conn.execute(
-        "UPDATE users SET password_hash = '', pin_set = 0 WHERE id = ?",
-        (user_id,)
+        """UPDATE users SET password_hash = '', pin_set = 0,
+           activation_token = ?, activation_expires_at = ? WHERE id = ?""",
+        (token, expires, user_id)
     )
     conn.commit()
     conn.close()
+    return {"activation_token": token, "activation_expires_at": expires}
+
+
+def regenerate_activation_token(user_id):
+    """Generate a fresh activation token for an unactivated user.
+
+    Refuses to act on users that have already set a PIN — use reset_pin() instead.
+    """
+    user = get_user_by_id(user_id)
+    if user is None:
+        raise AuthError("Utilisateur introuvable")
+    if user["pin_set"]:
+        raise AuthError("Ce compte est deja active. Utilisez reset_pin pour forcer une re-activation.")
+    token, expires = _generate_activation_token()
+    conn = _get_conn()
+    conn.execute(
+        "UPDATE users SET activation_token = ?, activation_expires_at = ? WHERE id = ?",
+        (token, expires, user_id)
+    )
+    conn.commit()
+    conn.close()
+    return {"activation_token": token, "activation_expires_at": expires}
+
+
+def activate_account(username, token, new_pin):
+    """Activate an account using the admin-issued activation token.
+
+    Verifies username + token match and the token hasn't expired, then
+    sets the PIN and clears the activation token.
+    Raises AuthError on any failure with a generic message (no enumeration).
+    """
+    from flask_bcrypt import generate_password_hash
+    GENERIC = "Lien d'activation invalide ou expire"
+    validate_pin(new_pin)  # raises AuthError if PIN is malformed
+
+    user = get_user_by_username(username)
+    if user is None or user["pin_set"] or not user["active"]:
+        raise AuthError(GENERIC)
+    stored = user.get("activation_token") or ""
+    if not stored or not secrets.compare_digest(stored, token or ""):
+        raise AuthError(GENERIC)
+    expires_at = user.get("activation_expires_at")
+    if not expires_at:
+        raise AuthError(GENERIC)
+    try:
+        exp = datetime.fromisoformat(expires_at)
+    except ValueError:
+        raise AuthError(GENERIC)
+    if exp < datetime.now(timezone.utc):
+        raise AuthError(GENERIC)
+
+    conn = _get_conn()
+    conn.execute(
+        """UPDATE users SET password_hash = ?, pin_set = 1,
+           activation_token = '', activation_expires_at = NULL,
+           failed_attempts = 0, locked = 0 WHERE id = ?""",
+        (generate_password_hash(new_pin).decode("utf-8"), user["id"])
+    )
+    conn.commit()
+    conn.close()
+    return get_user_by_id(user["id"])
 
 
 def unlock_user(user_id):
@@ -253,40 +354,36 @@ def toggle_active(user_id):
 def authenticate(username, pin, user_agent="", ip_address=""):
     from flask_bcrypt import check_password_hash
 
+    # Uniform error message for all "login failed" cases to prevent user enumeration.
+    # Exception: a lockout is explicitly announced so the user knows to contact an admin.
+    GENERIC_ERROR = "Identifiants incorrects"
+
     user = get_user_by_username(username)
 
     if user is None:
         _log_login(username, False, user_agent, ip_address)
-        return {"success": False, "error": "Identifiants incorrects"}
+        return {"success": False, "error": GENERIC_ERROR}
 
     if not user["active"]:
         _log_login(username, False, user_agent, ip_address)
-        return {"success": False, "error": "Compte desactive"}
+        return {"success": False, "error": GENERIC_ERROR}
 
     if user["locked"]:
         _log_login(username, False, user_agent, ip_address)
         return {"success": False, "error": "Compte verrouille apres 5 tentatives. Contactez un administrateur."}
 
-    # User has no PIN yet — must set one on first login
+    # Activation (pin_set=0) is no longer automatic on login — a user with no PIN
+    # must go through the dedicated activation flow (admin-generated token).
+    # See /api/auth/activate. Empty-PIN or unknown-PIN attempts fall through to
+    # the generic error message below to avoid leaking account state.
     if not user["pin_set"]:
-        _log_login(username, True, user_agent, ip_address)
-        temp_token = _generate_token(user)
-        return {
-            "success": True,
-            "must_set_pin": True,
-            "token": temp_token,
-            "user": {
-                "username": user["username"],
-                "display_name": user["display_name"],
-                "role": user["role"],
-                "sections": user["sections"],
-            }
-        }
+        _log_login(username, False, user_agent, ip_address)
+        return {"success": False, "error": GENERIC_ERROR}
 
-    if not check_password_hash(user["password_hash"], pin):
+    if not pin or not check_password_hash(user["password_hash"], pin):
         _increment_failed_attempts(user["id"], user["failed_attempts"])
         _log_login(username, False, user_agent, ip_address)
-        return {"success": False, "error": "Code PIN incorrect"}
+        return {"success": False, "error": GENERIC_ERROR}
 
     # Success
     _reset_failed_attempts(user["id"])
@@ -385,21 +482,105 @@ def get_login_history(username=None, limit=100):
     return result
 
 
-def seed_defaults():
-    """Create default accounts if they don't exist: PMO, DG, CPO."""
+def update_display_name(user_id, display_name):
+    """Update a user's display name only (used for self-service settings)."""
     conn = _get_conn()
-    existing = {r[0] for r in conn.execute("SELECT username FROM users").fetchall()}
+    conn.execute("UPDATE users SET display_name = ? WHERE id = ?", (display_name, user_id))
+    conn.commit()
     conn.close()
 
-    defaults = [
-        # (username, pin, display_name, role, sections)
-        ("pmo", "2618", "PMO", "super_admin", ["*"]),
-        ("dg",  "2618", "DG",  "super_admin", ["*"]),
-        ("cpo", "2618", "CPO", "admin",       ["*"]),
-    ]
-    for username, pin, display_name, role, sections in defaults:
-        if username not in existing:
-            create_user_with_pin(username, pin, display_name, role, sections)
+
+def change_pin(user_id, old_pin, new_pin):
+    """Change PIN after verifying the old one. Raises AuthError on failure."""
+    from flask_bcrypt import check_password_hash, generate_password_hash
+    validate_pin(new_pin)
+    user = get_user_by_id(user_id)
+    if user is None:
+        raise AuthError("Utilisateur introuvable")
+    if user["pin_set"] and not check_password_hash(user["password_hash"], old_pin):
+        raise AuthError("Code PIN actuel incorrect")
+    conn = _get_conn()
+    conn.execute(
+        "UPDATE users SET password_hash = ?, pin_set = 1 WHERE id = ?",
+        (generate_password_hash(new_pin).decode("utf-8"), user_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Seed — default accounts (loaded from seed_users.json, gitignored)
+# ---------------------------------------------------------------------------
+
+def _load_seed_users():
+    """Return list of dicts from seed_users.json, or [] if the file is absent.
+
+    Expected schema per entry:
+      {"first_name": str, "last_name": str, "display_name": str,
+       "role": "super_admin"|"admin"|"utilisateur",
+       "sections": ["*"] or ["energy", ...],
+       "username_override": Optional[str],  // for pmo/DG/CPO
+       "email": Optional[str]}
+    """
+    if not os.path.exists(SEED_USERS_PATH):
+        return []
+    try:
+        with open(SEED_USERS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, list):
+            return []
+        return data
+    except (OSError, json.JSONDecodeError):
+        return []
+
+
+def seed_defaults():
+    """Create missing default accounts from seed_users.json.
+
+    Idempotent: existing accounts are left untouched — their role, PIN,
+    display_name, and activity flags are NEVER overwritten by the seed.
+    This prevents the seed from silently rolling back an admin's role change.
+
+    Newly-created accounts are unactivated (no PIN) and receive a 7-day
+    activation token. The token is printed to stdout so an operator running
+    the server on bare metal can copy the activation URL for bootstrap users.
+    """
+    seed_users = _load_seed_users()
+    if not seed_users:
+        return
+
+    conn = _get_conn()
+    existing = {r[0].lower() for r in conn.execute("SELECT username FROM users").fetchall()}
+    conn.close()
+
+    for entry in seed_users:
+        try:
+            first_name = entry["first_name"]
+            last_name = entry["last_name"]
+            display_name = entry.get("display_name") or f"{first_name} {last_name}".strip()
+            role = entry["role"]
+            sections = entry.get("sections") or ["*"]
+            username_override = entry.get("username_override") or None
+            email = entry.get("email", "")
+        except KeyError:
+            continue  # malformed entry — skip silently
+
+        username = username_override or generate_username(first_name, last_name)
+        if username.lower() in existing:
+            continue  # idempotent — never touch existing users
+
+        result = create_user(
+            first_name, last_name, email, display_name, role, sections,
+            username_override=username_override,
+        )
+        # Print activation URL to stdout so an operator can copy it at startup.
+        # Stored token is also retrievable by an admin via /api/admin/users.
+        print(
+            f"[seed] Compte cree: {result['username']} (role={role}) — "
+            f"token d'activation: {result['activation_token']} "
+            f"(expire {result['activation_expires_at']})",
+            flush=True,
+        )
 
 
 # Keep backward compat alias

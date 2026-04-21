@@ -4,34 +4,74 @@ Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
 """
 import os, re, subprocess, threading, time, openpyxl
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, make_response
 from data_loader import build_tamatave_data
 import auth
 from functools import wraps
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 
-# CORS for Vite dev server
-@app.after_request
-def add_cors(response):
-    origin = request.headers.get("Origin", "")
-    if origin.startswith("http://localhost:"):
+IS_PRODUCTION = os.environ.get("FLASK_ENV", "").lower() == "production"
+
+# CORS — whitelist from env (comma-separated). Dev default: any localhost origin.
+# Example for prod: ALLOWED_ORIGINS="https://dashboard.filatex.mg,https://filatex.github.io"
+_raw_origins = os.environ.get("ALLOWED_ORIGINS", "").strip()
+ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()] if _raw_origins else []
+
+def _is_allowed_origin(origin: str) -> bool:
+    if not origin:
+        return False
+    if ALLOWED_ORIGINS:
+        return origin in ALLOWED_ORIGINS
+    # Dev-only fallback: accept any localhost origin when no explicit whitelist is configured.
+    # In production, ALLOWED_ORIGINS MUST be set — otherwise no browser can reach the API.
+    return (not IS_PRODUCTION) and origin.startswith("http://localhost:")
+
+
+def _apply_cors(response, origin):
+    if _is_allowed_origin(origin):
         response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Vary"] = "Origin"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
     return response
 
+
+@app.after_request
+def add_cors(response):
+    _apply_cors(response, request.headers.get("Origin", ""))
+    # HSTS in production so browsers refuse downgrades to HTTP.
+    if IS_PRODUCTION:
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    return response
+
+
 @app.before_request
-def handle_preflight():
+def _security_gate():
+    # Enforce HTTPS in production: reject any plain-HTTP request.
+    if IS_PRODUCTION and request.headers.get("X-Forwarded-Proto", request.scheme) != "https":
+        return jsonify({"error": "HTTPS requis"}), 400
     if request.method == "OPTIONS":
-        from flask import make_response
-        resp = make_response()
-        origin = request.headers.get("Origin", "")
-        if origin.startswith("http://localhost:"):
-            resp.headers["Access-Control-Allow-Origin"] = origin
-            resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-            resp.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        return resp
+        return _apply_cors(make_response(), request.headers.get("Origin", ""))
+
+
+# Rate-limit auth endpoints per IP to throttle brute-force + enumeration.
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+    limiter = Limiter(get_remote_address, app=app, default_limits=[])
+except ImportError:  # flask-limiter optional — warn but don't crash.
+    limiter = None
+    print("[app] flask-limiter non installe — endpoints d'auth non rate-limites", flush=True)
+
+
+def _auth_rate_limit(rule):
+    """Decorator that applies a flask-limiter rule if the library is available,
+    else returns the function unchanged."""
+    if limiter is None:
+        return lambda f: f
+    return limiter.limit(rule, methods=["POST"], error_message="Trop de tentatives. Reessayez plus tard.")
+
 
 auth.init_db()
 auth.seed_pmo()
@@ -252,6 +292,16 @@ def save_inv_comment():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/filatex-dashboard/")
+@app.route("/filatex-dashboard/<path:path>")
+def serve_react_basepath(path=""):
+    """Serve the React build under /filatex-dashboard/ to match Vite's base path."""
+    dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+    if path and os.path.exists(os.path.join(dist_dir, path)):
+        return send_from_directory(dist_dir, path)
+    return send_from_directory(dist_dir, "index.html")
+
+
 @app.route("/<path:path>")
 def serve_react(path):
     """Serve React static assets or fallback to index.html for SPA routing."""
@@ -349,13 +399,13 @@ def api_refresh_status():
 # --- Auth endpoints ---
 
 @app.route("/api/auth/login", methods=["POST"])
+@_auth_rate_limit("10 per 5 minutes")
 def api_login():
     data = request.get_json()
     username = data.get("username", "").strip() if data else ""
     pin = data.get("pin", "").strip() if data else ""
     if not username:
         return jsonify({"success": False, "error": "Identifiant requis"}), 400
-    # Allow login without PIN for users who haven't set one yet
     result = auth.authenticate(
         username,
         pin,
@@ -365,6 +415,40 @@ def api_login():
     if result["success"]:
         return jsonify(result)
     return jsonify(result), 401
+
+
+@app.route("/api/auth/activate", methods=["POST"])
+@_auth_rate_limit("10 per 5 minutes")
+def api_activate():
+    """Activate an account using an admin-issued activation token.
+
+    Public endpoint (no Authorization header required). Rate-limited
+    elsewhere at the webserver level. Expects { username, token, pin, pin_confirm }.
+    """
+    data = request.get_json() or {}
+    username = str(data.get("username", "")).strip()
+    token = str(data.get("token", "")).strip()
+    pin = str(data.get("pin", "")).strip()
+    pin_confirm = str(data.get("pin_confirm", "")).strip()
+    if not username or not token:
+        return jsonify({"success": False, "error": "Lien d'activation invalide ou expire"}), 400
+    if pin != pin_confirm:
+        return jsonify({"success": False, "error": "Les codes PIN ne correspondent pas"}), 400
+    try:
+        user = auth.activate_account(username, token, pin)
+    except auth.AuthError as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+    jwt_token = auth._generate_token(user)
+    return jsonify({
+        "success": True,
+        "token": jwt_token,
+        "user": {
+            "username": user["username"],
+            "display_name": user["display_name"],
+            "role": user["role"],
+            "sections": user["sections"],
+        },
+    })
 
 
 @app.route("/api/auth/set-pin", methods=["POST"])
@@ -402,6 +486,52 @@ def api_me():
     return jsonify(request.user)
 
 
+@app.route("/api/auth/change-pin", methods=["POST"])
+@require_auth
+def api_change_pin():
+    """Change own PIN — requires current PIN."""
+    data = request.get_json() or {}
+    old_pin = str(data.get("old_pin", "")).strip()
+    new_pin = str(data.get("new_pin", "")).strip()
+    new_pin_confirm = str(data.get("new_pin_confirm", "")).strip()
+    if new_pin != new_pin_confirm:
+        return jsonify({"error": "Les nouveaux codes PIN ne correspondent pas"}), 400
+    user = auth.get_user_by_username(request.user["username"])
+    if not user:
+        return jsonify({"error": "Utilisateur introuvable"}), 404
+    try:
+        auth.change_pin(user["id"], old_pin, new_pin)
+    except auth.AuthError as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/update-display-name", methods=["POST"])
+@require_auth
+def api_update_display_name():
+    """Update own display name. Returns a fresh token with the updated name."""
+    data = request.get_json() or {}
+    display_name = str(data.get("display_name", "")).strip()
+    if not display_name:
+        return jsonify({"error": "Nom d'affichage requis"}), 400
+    user = auth.get_user_by_username(request.user["username"])
+    if not user:
+        return jsonify({"error": "Utilisateur introuvable"}), 404
+    auth.update_display_name(user["id"], display_name)
+    fresh = auth.get_user_by_username(request.user["username"])
+    token = auth._generate_token(fresh)
+    return jsonify({
+        "ok": True,
+        "token": token,
+        "user": {
+            "username": fresh["username"],
+            "display_name": fresh["display_name"],
+            "role": fresh["role"],
+            "sections": fresh["sections"],
+        }
+    })
+
+
 # --- Admin endpoints ---
 
 def _check_hierarchy(actor_role, target_id):
@@ -421,6 +551,10 @@ def admin_list_users():
     users = auth.get_all_users()
     for u in users:
         u.pop("password_hash", None)
+        # Strip activation token from activated accounts — only relevant pre-activation.
+        if u.get("pin_set"):
+            u.pop("activation_token", None)
+            u.pop("activation_expires_at", None)
     # Admins only see utilisateurs; super_admin sees everyone
     if actor_role == "admin":
         users = [u for u in users if u["role"] == "utilisateur"]
@@ -443,16 +577,25 @@ def admin_create_user():
     if new_role == "super_admin":
         return jsonify({"error": "Impossible de creer un super administrateur"}), 403
     # Special accounts (pmo, cpo, dg) use explicit username
-    username_override = data.get("username_override", "").strip().lower() or None
-    if username_override and username_override not in auth.SPECIAL_USERNAMES:
-        return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
+    username_override = data.get("username_override", "").strip() or None
+    # SPECIAL_USERNAMES matching is case-insensitive (pmo lowercase, DG/CPO uppercase)
+    if username_override:
+        match = next((s for s in auth.SPECIAL_USERNAMES if s.lower() == username_override.lower()), None)
+        if not match:
+            return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
+        username_override = match  # normalize to canonical case
     try:
-        user_id = auth.create_user(
+        result = auth.create_user(
             data["first_name"], data["last_name"], data.get("email", ""),
             data["display_name"], data["role"], data["sections"],
             username_override=username_override,
         )
-        return jsonify({"id": user_id}), 201
+        return jsonify({
+            "id": result["id"],
+            "username": result["username"],
+            "activation_token": result["activation_token"],
+            "activation_expires_at": result["activation_expires_at"],
+        }), 201
     except auth.AuthError as e:
         return jsonify({"error": str(e)}), 409
 
@@ -500,8 +643,27 @@ def admin_reset_pin(user_id):
     ok, err = _check_hierarchy(actor_role, user_id)
     if not ok:
         return err
-    auth.reset_pin(user_id)
-    return jsonify({"ok": True})
+    info = auth.reset_pin(user_id)
+    return jsonify({"ok": True, **info})
+
+
+@app.route("/api/admin/users/<int:user_id>/regenerate-activation", methods=["PUT"])
+@require_admin
+def admin_regenerate_activation(user_id):
+    """Regenerate activation token for an unactivated account.
+
+    Used when the original token expired or was mislaid. Refuses if the
+    user already activated (use reset-pin instead for a full re-activation).
+    """
+    actor_role = request.user.get("role")
+    ok, err = _check_hierarchy(actor_role, user_id)
+    if not ok:
+        return err
+    try:
+        info = auth.regenerate_activation_token(user_id)
+    except auth.AuthError as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify({"ok": True, **info})
 
 
 @app.route("/api/admin/users/<int:user_id>/unlock", methods=["PUT"])
@@ -527,7 +689,7 @@ def admin_toggle_active(user_id):
 
 
 @app.route("/api/admin/login-history")
-@require_admin
+@require_super_admin
 def admin_login_history():
     username = request.args.get("username")
     limit = int(request.args.get("limit", 100))

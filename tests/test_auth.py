@@ -68,11 +68,14 @@ class TestPinValidation:
 
 
 class TestCreateUser:
-    def test_create_user_returns_id(self, tmp_db):
-        user_id = auth.create_user("Jean", "Rakoto", "j.rakoto@filatex.mg",
-                                   "Jean Rakoto", "utilisateur", ["energy.hfo"])
-        assert isinstance(user_id, int)
-        assert user_id > 0
+    def test_create_user_returns_activation_info(self, tmp_db):
+        result = auth.create_user("Jean", "Rakoto", "j.rakoto@filatex.mg",
+                                  "Jean Rakoto", "utilisateur", ["energy.hfo"])
+        assert isinstance(result, dict)
+        assert isinstance(result["id"], int) and result["id"] > 0
+        assert result["username"] == "jean.rakoto"
+        assert isinstance(result["activation_token"], str) and len(result["activation_token"]) >= 20
+        assert result["activation_expires_at"]  # ISO timestamp
 
     def test_username_generated_correctly(self, tmp_db):
         auth.create_user("Marie", "Rabe", "m.rabe@filatex.mg",
@@ -124,11 +127,12 @@ class TestLogin:
         assert result["must_set_pin"] is False
         assert result["user"]["username"] == "pmo"
 
-    def test_first_login_must_set_pin(self, tmp_db):
+    def test_unactivated_account_login_fails_with_generic_error(self, tmp_db):
+        # Self-service activation via empty-PIN login is disabled — use /activate instead.
         auth.create_user("Test", "User", "", "Test User", "utilisateur", ["energy"])
         result = auth.authenticate("test.user", "", "Mozilla/5.0", "127.0.0.1")
-        assert result["success"] is True
-        assert result["must_set_pin"] is True
+        assert result["success"] is False
+        assert result["error"] == "Identifiants incorrects"
 
     def test_wrong_pin(self, tmp_db):
         auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
@@ -136,9 +140,11 @@ class TestLogin:
         assert result["success"] is False
         assert "token" not in result
 
-    def test_nonexistent_user(self, tmp_db):
+    def test_nonexistent_user_returns_generic_error(self, tmp_db):
+        # User enumeration protection: unknown username must not be distinguishable.
         result = auth.authenticate("ghost", "1234", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is False
+        assert result["error"] == "Identifiants incorrects"
 
     def test_lockout_after_5_failures(self, tmp_db):
         auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
@@ -148,12 +154,50 @@ class TestLogin:
         assert result["success"] is False
         assert "verrouille" in result.get("error", "").lower()
 
-    def test_inactive_user_cannot_login(self, tmp_db):
+    def test_inactive_user_returns_generic_error(self, tmp_db):
+        # Inactive accounts also use the generic error to prevent enumeration.
         uid = auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
         auth.update_user(uid, active=False)
         result = auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is False
-        assert "desactive" in result.get("error", "").lower()
+        assert result["error"] == "Identifiants incorrects"
+
+
+class TestActivateAccount:
+    def test_activate_happy_path(self, tmp_db):
+        info = auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        user = auth.activate_account("jean.rakoto", info["activation_token"], "1234")
+        assert user["pin_set"] is True
+        # Subsequent login with the chosen PIN succeeds
+        result = auth.authenticate("jean.rakoto", "1234", "ua", "1.2.3.4")
+        assert result["success"] is True
+
+    def test_activate_wrong_token_rejected(self, tmp_db):
+        auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        with pytest.raises(auth.AuthError):
+            auth.activate_account("jean.rakoto", "wrong-token", "1234")
+
+    def test_activate_token_cleared_after_use(self, tmp_db):
+        info = auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        auth.activate_account("jean.rakoto", info["activation_token"], "1234")
+        user = auth.get_user_by_username("jean.rakoto")
+        assert user["activation_token"] == ""
+        assert user["activation_expires_at"] is None
+
+    def test_activate_already_activated_rejected(self, tmp_db):
+        info = auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        auth.activate_account("jean.rakoto", info["activation_token"], "1234")
+        with pytest.raises(auth.AuthError):
+            auth.activate_account("jean.rakoto", info["activation_token"], "5678")
+
+    def test_activate_unknown_user_rejected(self, tmp_db):
+        with pytest.raises(auth.AuthError):
+            auth.activate_account("ghost", "anytoken", "1234")
+
+    def test_activate_invalid_pin_rejected(self, tmp_db):
+        info = auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        with pytest.raises(auth.AuthError, match="4 ou 6 chiffres"):
+            auth.activate_account("jean.rakoto", info["activation_token"], "12")
 
 
 class TestRoleHierarchy:
@@ -177,11 +221,27 @@ class TestRoleHierarchy:
 
 
 class TestResetPin:
-    def test_reset_pin(self, tmp_db):
+    def test_reset_pin_returns_activation_info(self, tmp_db):
         uid = auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
-        auth.reset_pin(uid)
+        info = auth.reset_pin(uid)
         user = auth.get_user_by_username("pmo")
         assert user["pin_set"] is False
+        assert info["activation_token"] and len(info["activation_token"]) >= 20
+        assert user["activation_token"] == info["activation_token"]
+
+
+class TestRegenerateActivation:
+    def test_regenerate_for_unactivated(self, tmp_db):
+        initial = auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        fresh = auth.regenerate_activation_token(initial["id"])
+        assert fresh["activation_token"] != initial["activation_token"]
+
+    def test_regenerate_for_activated_rejected(self, tmp_db):
+        info = auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
+        auth.activate_account("jean.rakoto", info["activation_token"], "1234")
+        user = auth.get_user_by_username("jean.rakoto")
+        with pytest.raises(auth.AuthError):
+            auth.regenerate_activation_token(user["id"])
 
 
 class TestJWT:
