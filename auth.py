@@ -16,7 +16,8 @@ JWT_EXPIRATION_HOURS = 8
 ROLE_HIERARCHY = {"super_admin": 3, "admin": 2, "utilisateur": 1}
 
 # Comptes spéciaux : username = acronyme, pas prenom.nom
-SPECIAL_USERNAMES = {"pmo", "cpo", "dg"}
+# pmo reste en minuscule, DG et CPO en majuscule
+SPECIAL_USERNAMES = {"pmo", "CPO", "DG"}
 
 
 class AuthError(Exception):
@@ -159,8 +160,9 @@ def set_pin(username, pin):
 
 
 def get_user_by_username(username):
+    """Case-insensitive lookup so users can type 'dg', 'DG' or 'Dg' and succeed."""
     conn = _get_conn()
-    row = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+    row = conn.execute("SELECT * FROM users WHERE username = ? COLLATE NOCASE", (username,)).fetchone()
     conn.close()
     return _row_to_dict(row)
 
@@ -283,6 +285,11 @@ def authenticate(username, pin, user_agent="", ip_address=""):
             }
         }
 
+    # Empty PIN on an activated account → don't count as a failed attempt
+    # (user probably tried to re-activate an already-active account)
+    if not pin:
+        return {"success": False, "error": "Ce compte est deja active. Saisissez votre code PIN."}
+
     if not check_password_hash(user["password_hash"], pin):
         _increment_failed_attempts(user["id"], user["failed_attempts"])
         _log_login(username, False, user_agent, ip_address)
@@ -385,21 +392,100 @@ def get_login_history(username=None, limit=100):
     return result
 
 
-def seed_defaults():
-    """Create default accounts if they don't exist: PMO, DG, CPO."""
+def update_display_name(user_id, display_name):
+    """Update a user's display name only (used for self-service settings)."""
     conn = _get_conn()
-    existing = {r[0] for r in conn.execute("SELECT username FROM users").fetchall()}
+    conn.execute("UPDATE users SET display_name = ? WHERE id = ?", (display_name, user_id))
+    conn.commit()
     conn.close()
 
-    defaults = [
-        # (username, pin, display_name, role, sections)
-        ("pmo", "2618", "PMO", "super_admin", ["*"]),
-        ("dg",  "2618", "DG",  "super_admin", ["*"]),
-        ("cpo", "2618", "CPO", "admin",       ["*"]),
-    ]
-    for username, pin, display_name, role, sections in defaults:
-        if username not in existing:
-            create_user_with_pin(username, pin, display_name, role, sections)
+
+def change_pin(user_id, old_pin, new_pin):
+    """Change PIN after verifying the old one. Raises AuthError on failure."""
+    from flask_bcrypt import check_password_hash, generate_password_hash
+    validate_pin(new_pin)
+    user = get_user_by_id(user_id)
+    if user is None:
+        raise AuthError("Utilisateur introuvable")
+    if user["pin_set"] and not check_password_hash(user["password_hash"], old_pin):
+        raise AuthError("Code PIN actuel incorrect")
+    conn = _get_conn()
+    conn.execute(
+        "UPDATE users SET password_hash = ?, pin_set = 1 WHERE id = ?",
+        (generate_password_hash(new_pin).decode("utf-8"), user_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Seed — default accounts
+# ---------------------------------------------------------------------------
+
+# (username_override_or_None, first_name, last_name, display_name, role)
+# - username_override set for special accounts (pmo, dg, cpo)
+# - None for regular accounts → prenom.nom auto-generated
+# All get sections = ["*"] (Full)
+SEED_USERS = [
+    ("pmo", "Meril",        "Hinavako",         "Méril",        "super_admin"),
+    (None,  "Naoufel",      "Belkahla",         "Naoufel",      "admin"),
+    ("DG",  "Hasnaine",     "Yavarhoussen",     "Hasnaine",     "utilisateur"),
+    (None,  "Jasveer",      "Loll",             "Jasveer",      "utilisateur"),
+    ("CPO", "CPO",          "CPO",              "CPO",          "utilisateur"),
+    (None,  "Mehzabine",    "Pirbhai",          "Mehzabine",    "utilisateur"),
+    (None,  "Tahina",       "Ramaromandray",    "Tahina",       "utilisateur"),
+    (None,  "Anouar",       "Brour",            "Anouar",       "utilisateur"),
+    (None,  "Mike",         "Theodose",         "Mike",         "utilisateur"),
+    (None,  "Vololomanitra","Rakotondralambo",  "Vololomanitra","utilisateur"),
+    (None,  "Edouard",      "Guillou",          "Edouard",      "utilisateur"),
+    (None,  "Patrick",      "Collard",          "Patrick",      "utilisateur"),
+    (None,  "Vonjy",        "Ramiarantsoa",     "Vonjy",        "utilisateur"),
+    (None,  "Joel",         "Le Gal",           "Joel",         "utilisateur"),
+    # Compte de test utilisateur standard pour Meril (en plus de son compte pmo super_admin)
+    (None,  "Meril",        "Hinavako",         "Meril",        "utilisateur"),
+]
+
+
+def seed_defaults():
+    """Create and sync default accounts.
+
+    - If a user doesn't exist → create without PIN (they set it on first login).
+      Exception: pmo gets a default PIN '2618' so the first super_admin can connect.
+    - If a user exists → sync role, display_name, first_name, last_name, sections
+      (so role changes in this list propagate, e.g. DG/CPO demoted to utilisateur).
+      PIN and active/locked/failed_attempts are left untouched.
+    """
+    conn = _get_conn()
+    # Use case-insensitive keys so "DG" (seed) matches "dg" (legacy row from old seed)
+    existing = {r[0].lower(): r[1] for r in conn.execute("SELECT username, id FROM users").fetchall()}
+    conn.close()
+
+    for username_override, first_name, last_name, display_name, role in SEED_USERS:
+        username = username_override or generate_username(first_name, last_name)
+        sections = ["*"]
+        if username.lower() in existing:
+            # Sync metadata and role — preserve PIN and activity flags
+            user_id = existing[username.lower()]
+            update_user(
+                user_id,
+                display_name=display_name,
+                role=role,
+                sections=sections,
+                first_name=first_name,
+                last_name=last_name,
+            )
+        elif username == "pmo":
+            # Bootstrap super_admin with a default PIN so someone can log in
+            create_user_with_pin(
+                "pmo", "2618", display_name, role, sections,
+                first_name=first_name, last_name=last_name,
+            )
+        else:
+            # Regular seed → no PIN, user sets it on first login
+            create_user(
+                first_name, last_name, "", display_name, role, sections,
+                username_override=username_override,
+            )
 
 
 # Keep backward compat alias

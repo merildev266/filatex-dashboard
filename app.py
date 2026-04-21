@@ -252,6 +252,16 @@ def save_inv_comment():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/filatex-dashboard/")
+@app.route("/filatex-dashboard/<path:path>")
+def serve_react_basepath(path=""):
+    """Serve the React build under /filatex-dashboard/ to match Vite's base path."""
+    dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+    if path and os.path.exists(os.path.join(dist_dir, path)):
+        return send_from_directory(dist_dir, path)
+    return send_from_directory(dist_dir, "index.html")
+
+
 @app.route("/<path:path>")
 def serve_react(path):
     """Serve React static assets or fallback to index.html for SPA routing."""
@@ -402,6 +412,52 @@ def api_me():
     return jsonify(request.user)
 
 
+@app.route("/api/auth/change-pin", methods=["POST"])
+@require_auth
+def api_change_pin():
+    """Change own PIN — requires current PIN."""
+    data = request.get_json() or {}
+    old_pin = str(data.get("old_pin", "")).strip()
+    new_pin = str(data.get("new_pin", "")).strip()
+    new_pin_confirm = str(data.get("new_pin_confirm", "")).strip()
+    if new_pin != new_pin_confirm:
+        return jsonify({"error": "Les nouveaux codes PIN ne correspondent pas"}), 400
+    user = auth.get_user_by_username(request.user["username"])
+    if not user:
+        return jsonify({"error": "Utilisateur introuvable"}), 404
+    try:
+        auth.change_pin(user["id"], old_pin, new_pin)
+    except auth.AuthError as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/update-display-name", methods=["POST"])
+@require_auth
+def api_update_display_name():
+    """Update own display name. Returns a fresh token with the updated name."""
+    data = request.get_json() or {}
+    display_name = str(data.get("display_name", "")).strip()
+    if not display_name:
+        return jsonify({"error": "Nom d'affichage requis"}), 400
+    user = auth.get_user_by_username(request.user["username"])
+    if not user:
+        return jsonify({"error": "Utilisateur introuvable"}), 404
+    auth.update_display_name(user["id"], display_name)
+    fresh = auth.get_user_by_username(request.user["username"])
+    token = auth._generate_token(fresh)
+    return jsonify({
+        "ok": True,
+        "token": token,
+        "user": {
+            "username": fresh["username"],
+            "display_name": fresh["display_name"],
+            "role": fresh["role"],
+            "sections": fresh["sections"],
+        }
+    })
+
+
 # --- Admin endpoints ---
 
 def _check_hierarchy(actor_role, target_id):
@@ -443,8 +499,13 @@ def admin_create_user():
     if new_role == "super_admin":
         return jsonify({"error": "Impossible de creer un super administrateur"}), 403
     # Special accounts (pmo, cpo, dg) use explicit username
-    username_override = data.get("username_override", "").strip().lower() or None
-    if username_override and username_override not in auth.SPECIAL_USERNAMES:
+    username_override = data.get("username_override", "").strip() or None
+    # SPECIAL_USERNAMES matching is case-insensitive (pmo lowercase, DG/CPO uppercase)
+    if username_override:
+        match = next((s for s in auth.SPECIAL_USERNAMES if s.lower() == username_override.lower()), None)
+        if not match:
+            return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
+        username_override = match  # normalize to canonical case
         return jsonify({"error": f"Username special invalide. Autorises: {', '.join(sorted(auth.SPECIAL_USERNAMES))}"}), 400
     try:
         user_id = auth.create_user(
@@ -527,7 +588,7 @@ def admin_toggle_active(user_id):
 
 
 @app.route("/api/admin/login-history")
-@require_admin
+@require_super_admin
 def admin_login_history():
     username = request.args.get("username")
     limit = int(request.args.get("limit", 100))

@@ -50,11 +50,14 @@ export function AuthProvider({ children }) {
 
   const setPin = useCallback(async (pin, pinConfirm) => {
     try {
+      // Read token fresh from sessionStorage — avoids stale-closure issues
+      // when setPin is called immediately after login() (e.g. first-connexion flow)
+      const token = sessionStorage.getItem(TOKEN_KEY) || state.token
       const res = await fetch(`${API_BASE}/api/auth/set-pin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${state.token}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ pin, pin_confirm: pinConfirm }),
       })
@@ -66,6 +69,45 @@ export function AuthProvider({ children }) {
         return { success: true }
       }
       return { success: false, error: data.error }
+    } catch {
+      return { success: false, error: 'Serveur inaccessible' }
+    }
+  }, [state.token])
+
+  const updateDisplayName = useCallback(async (displayName) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/update-display-name`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${state.token}`,
+        },
+        body: JSON.stringify({ display_name: displayName }),
+      })
+      const data = await res.json()
+      if (!data.ok) return { success: false, error: data.error || 'Erreur serveur' }
+      sessionStorage.setItem(TOKEN_KEY, data.token)
+      sessionStorage.setItem(AUTH_KEY, JSON.stringify(data.user))
+      setState(s => ({ ...s, user: data.user, token: data.token }))
+      return { success: true }
+    } catch {
+      return { success: false, error: 'Serveur inaccessible' }
+    }
+  }, [state.token])
+
+  const changePin = useCallback(async (oldPin, newPin, newPinConfirm) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/change-pin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${state.token}`,
+        },
+        body: JSON.stringify({ old_pin: oldPin, new_pin: newPin, new_pin_confirm: newPinConfirm }),
+      })
+      const data = await res.json()
+      if (!data.ok) return { success: false, error: data.error || 'Erreur serveur' }
+      return { success: true }
     } catch {
       return { success: false, error: 'Serveur inaccessible' }
     }
@@ -108,11 +150,13 @@ export function AuthProvider({ children }) {
     token: state.token,
     login,
     setPin,
+    changePin,
+    updateDisplayName,
     logout,
     hasAccess,
     authFetch,
     refreshData,
-  }), [state, login, setPin, logout, hasAccess, authFetch, refreshData])
+  }), [state, login, setPin, changePin, updateDisplayName, logout, hasAccess, authFetch, refreshData])
 
   return (
     <AuthContext.Provider value={value}>
