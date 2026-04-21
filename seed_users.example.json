@@ -1,0 +1,19 @@
+[
+  {
+    "username_override": "pmo",
+    "first_name": "Example",
+    "last_name": "Admin",
+    "display_name": "PMO",
+    "role": "super_admin",
+    "sections": ["*"],
+    "email": "pmo@example.com"
+  },
+  {
+    "first_name": "Jean",
+    "last_name": "Dupont",
+    "display_name": "Jean Dupont",
+    "role": "utilisateur",
+    "sections": ["energy", "properties"],
+    "email": "j.dupont@example.com"
+  }
+]

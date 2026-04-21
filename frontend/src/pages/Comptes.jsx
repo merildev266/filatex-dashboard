@@ -15,6 +15,12 @@ const ROLE_BADGE = {
   utilisateur: 'bg-[#426ab322] text-[#7ba4e0]',
 }
 
+function buildActivationLink(username, token) {
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+  return `${origin}${base}/activer?u=${encodeURIComponent(username)}&token=${encodeURIComponent(token)}`
+}
+
 export default function Comptes() {
   const { user, authFetch } = useAuth()
   const navigate = useNavigate()
@@ -26,6 +32,7 @@ export default function Comptes() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [confirmReset, setConfirmReset] = useState(null)
+  const [copied, setCopied] = useState(null)
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
@@ -81,6 +88,31 @@ export default function Comptes() {
     } catch (err) {
       setError(err.message)
       setConfirmReset(null)
+    }
+  }
+
+  const regenerateActivation = async (userId) => {
+    try {
+      const res = await authFetch(`/api/admin/users/${userId}/regenerate-activation`, { method: 'PUT' })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        throw new Error(d.error || 'Erreur')
+      }
+      fetchUsers()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const copyLink = async (userId, username, token) => {
+    const link = buildActivationLink(username, token)
+    try {
+      await navigator.clipboard.writeText(link)
+      setCopied(userId)
+      setTimeout(() => setCopied(c => (c === userId ? null : c)), 2000)
+    } catch {
+      // Fallback: show a prompt so the admin can copy manually
+      window.prompt('Copiez le lien d\'activation :', link)
     }
   }
 
@@ -154,15 +186,38 @@ export default function Comptes() {
                           className="inline-flex items-center gap-1 px-2 py-1 rounded-md
                                      bg-[#FDB82322] border border-[#FDB82344] text-[#FDB823] text-xs
                                      hover:bg-[#FDB82333] transition-colors cursor-pointer"
-                          title="Réinitialiser le PIN — l'utilisateur devra le redéfinir à la prochaine connexion"
+                          title="Réinitialiser le PIN — l'utilisateur devra en définir un nouveau avec un lien d'activation"
                         >
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:12,height:12}}>
                             <path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
                           </svg>
                           Réinitialiser
                         </button>
+                      ) : u.activation_token ? (
+                        <div className="flex flex-col items-center gap-1">
+                          <button
+                            onClick={() => copyLink(u.id, u.username, u.activation_token)}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-md
+                                       bg-[#426ab322] border border-[#426ab344] text-[#7ba4e0] text-xs
+                                       hover:bg-[#426ab333] transition-colors cursor-pointer"
+                            title={`Expire ${u.activation_expires_at ? new Date(u.activation_expires_at).toLocaleString() : ''}`}
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:12,height:12}}>
+                              <rect x="9" y="9" width="13" height="13" rx="2"/>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            {copied === u.id ? 'Copié !' : 'Copier le lien'}
+                          </button>
+                          <button
+                            onClick={() => regenerateActivation(u.id)}
+                            className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer"
+                            title="Générer un nouveau lien (l'ancien sera invalidé)"
+                          >
+                            Regénérer
+                          </button>
+                        </div>
                       ) : (
-                        <span className="inline-block px-2 py-0.5 rounded text-xs bg-[#FDB82322] text-[#FDB823]" title="Compte non activé">
+                        <span className="inline-block px-2 py-0.5 rounded text-xs bg-[#FDB82322] text-[#FDB823]" title="Lien d'activation manquant">
                           En attente
                         </span>
                       )}
@@ -226,7 +281,7 @@ export default function Comptes() {
             <h3 className="text-center text-lg text-[var(--text)] mb-2">Réinitialiser le PIN ?</h3>
             <div className="mb-5 text-center text-sm text-[var(--text-muted)]">
               Le PIN de <span className="text-[var(--text)]">{confirmReset.display_name}</span> sera effacé.
-              L'utilisateur devra en définir un nouveau via "Activer mon compte".
+              Un nouveau lien d'activation sera généré — vous pourrez le copier et le transmettre.
             </div>
             <div className="flex gap-3">
               <button

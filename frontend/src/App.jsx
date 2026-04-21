@@ -5,6 +5,7 @@ import { FilterProvider } from './context/FilterContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { PageTitleProvider } from './context/PageTitleContext'
 import Login from './components/Login'
+import Activer from './components/Activer'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import ScrollToTop from './components/ScrollToTop'
@@ -112,6 +113,7 @@ function App() {
           <Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/activer" element={<Activer />} />
               <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                 <Route index element={<Accueil />} />
                 <Route path="energy" element={<Energy />}>

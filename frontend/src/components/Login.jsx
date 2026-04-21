@@ -8,17 +8,12 @@ import { prefetchAllPages } from '../App'
 
 const MOTIF_BASE = import.meta.env.BASE_URL + 'logos'
 
-const PIN_LENGTH = [4, 6]
-
 export default function Login() {
-  const [step, setStep] = useState('login') // login | set_pin | activate
   const [username, setUsername] = useState('')
   const [pin, setPin] = useState('')
-  const [newPin, setNewPin] = useState('')
-  const [confirmPin, setConfirmPin] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login, setPin: apiSetPin, refreshData } = useAuth()
+  const { login, refreshData } = useAuth()
   const navigate = useNavigate()
   const { theme } = useTheme()
   const motifSrc = theme === 'dark' ? `${MOTIF_BASE}/motif-dark.svg` : `${MOTIF_BASE}/motif-light.svg`
@@ -35,242 +30,14 @@ export default function Login() {
       setPin('')
       return
     }
-    if (result.must_set_pin) {
-      setStep('set_pin')
-      setPin('')
-      return
-    }
     // Trigger data refresh from Excel in background (non-blocking)
     refreshData(result.token)
     prefetchAllPages()
     navigate('/')
   }
 
-  const handleSetPin = async (e) => {
-    e.preventDefault()
-    if (!PIN_LENGTH.includes(newPin.length)) {
-      setError('Le code PIN doit contenir 4 ou 6 chiffres')
-      return
-    }
-    if (newPin !== confirmPin) {
-      setError('Les codes PIN ne correspondent pas')
-      return
-    }
-    setLoading(true)
-    setError('')
-    const result = await apiSetPin(newPin, confirmPin)
-    setLoading(false)
-    if (!result.success) {
-      setError(result.error)
-      return
-    }
-    refreshData()
-    prefetchAllPages()
-    navigate('/')
-  }
-
-  const handleActivate = async (e) => {
-    e.preventDefault()
-    if (!username.trim()) { setError('Identifiant requis'); return }
-    if (!PIN_LENGTH.includes(newPin.length)) {
-      setError('Le code PIN doit contenir 4 ou 6 chiffres')
-      return
-    }
-    if (newPin !== confirmPin) {
-      setError('Les codes PIN ne correspondent pas')
-      return
-    }
-    setLoading(true)
-    setError('')
-    // Étape 1 : login sans PIN — renvoie must_set_pin si compte non activé
-    const result = await login(username.trim().toLowerCase(), '')
-    if (!result.success) {
-      setLoading(false)
-      setError(result.error || 'Identifiant introuvable')
-      return
-    }
-    if (!result.must_set_pin) {
-      setLoading(false)
-      setError('Ce compte est déjà activé — utilisez votre code PIN')
-      return
-    }
-    // Étape 2 : set-pin avec le token temporaire reçu
-    const setRes = await apiSetPin(newPin, confirmPin)
-    setLoading(false)
-    if (!setRes.success) {
-      setError(setRes.error || 'Erreur lors de l\'activation')
-      return
-    }
-    refreshData()
-    prefetchAllPages()
-    navigate('/')
-  }
-
-  if (step === 'activate') {
-    return (
-      <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
-        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-          <div style={{
-            width: '100%', height: '100%',
-            backgroundImage: `url(${motifSrc})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 1,
-          }} />
-        </div>
-        <div className="relative z-10 flex flex-col items-center w-[88%] max-w-[400px] login-layout">
-          <div className="flex flex-col items-center login-logo-block">
-            <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
-            <div
-              className="login-label uppercase mt-2"
-              style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 11, fontWeight: 400, letterSpacing: '0.35em' }}
-            >
-              Activer mon compte
-            </div>
-          </div>
-
-          <form onSubmit={handleActivate} className="w-full text-center login-form-block">
-            <div className="text-sm text-[rgba(255,255,255,0.4)] mb-5" style={{ fontFamily: "'Aeonik', sans-serif" }}>
-              Saisissez votre identifiant puis choisissez un code PIN (4 ou 6 chiffres)
-            </div>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Identifiant"
-              autoFocus
-              autoComplete="username"
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
-                         transition-colors mb-3"
-            />
-            <input
-              type="password"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              value={newPin}
-              onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="Nouveau code PIN"
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
-                         tracking-[0.5em] transition-colors mb-3"
-              style={{ fontFamily: "'Aeonik', sans-serif" }}
-            />
-            <input
-              type="password"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              value={confirmPin}
-              onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="Confirmer le PIN"
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
-                         tracking-[0.5em] transition-colors mb-4"
-              style={{ fontFamily: "'Aeonik', sans-serif" }}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-sm uppercase tracking-wider
-                         transition-colors cursor-pointer disabled:opacity-50"
-              style={{ fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.2em' }}
-            >
-              {loading ? 'Activation...' : 'Activer'}
-            </button>
-            {error && (
-              <div className="mt-4 text-[#ff5a5a] text-sm">{error}</div>
-            )}
-            <button
-              type="button"
-              onClick={() => { setStep('login'); setError(''); setNewPin(''); setConfirmPin('') }}
-              className="mt-4 text-xs text-[rgba(255,255,255,0.4)] hover:text-[var(--text)] transition-colors cursor-pointer"
-              style={{ fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.15em', textTransform: 'uppercase' }}
-            >
-              ← Retour à la connexion
-            </button>
-          </form>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === 'set_pin') {
-    return (
-      <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
-        {/* Motif — identique à l'accueil */}
-        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-          <div style={{
-            width: '100%', height: '100%',
-            backgroundImage: `url(${motifSrc})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 1,
-          }} />
-        </div>
-        <div className="relative z-10 flex flex-col items-center w-[88%] max-w-[400px] login-layout">
-          {/* Logo block — top */}
-          <div className="flex flex-col items-center login-logo-block">
-            <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
-            <div
-              className="login-label uppercase mt-2"
-              style={{ fontFamily: "'Aeonik', sans-serif", fontSize: 11, fontWeight: 400, letterSpacing: '0.35em' }}
-            >
-              Premiere connexion
-            </div>
-          </div>
-
-          {/* Form block — vertically centered in remaining space */}
-          <form onSubmit={handleSetPin} className="w-full text-center login-form-block">
-            <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6" style={{ fontFamily: "'Aeonik', sans-serif" }}>
-              Definissez votre code PIN (4 ou 6 chiffres)
-            </div>
-            <input
-              type="password"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              value={newPin}
-              onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="Code PIN"
-              autoFocus
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
-                         tracking-[0.5em] transition-colors mb-3"
-              style={{ fontFamily: "'Aeonik', sans-serif" }}
-            />
-            <input
-              type="password"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              value={confirmPin}
-              onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="Confirmer le PIN"
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-base text-center outline-none
-                         tracking-[0.5em] transition-colors mb-4"
-              style={{ fontFamily: "'Aeonik', sans-serif" }}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="login-card w-full rounded-2xl px-5 py-4 text-[var(--text)] text-sm uppercase tracking-wider
-                         transition-colors cursor-pointer disabled:opacity-50"
-              style={{ fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.2em' }}
-            >
-              {loading ? 'Enregistrement...' : 'Valider'}
-            </button>
-            {error && (
-              <div className="mt-4 text-[#ff5a5a] text-sm">{error}</div>
-            )}
-          </form>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="fixed inset-0 z-[99999] bg-dark flex items-center justify-center overflow-hidden">
-      {/* Motif — identique à l'accueil */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
         <div style={{
           width: '100%', height: '100%',
@@ -282,7 +49,6 @@ export default function Login() {
         }} />
       </div>
       <div className="relative z-10 flex flex-col items-center w-[88%] max-w-[400px] login-layout">
-        {/* Logo block — top */}
         <div className="flex flex-col items-center login-logo-block">
           <GroupeFilatexLogo style={{ width: '420px', maxWidth: '85vw', height: 'auto' }} />
           <div
@@ -293,7 +59,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Form block — vertically centered in remaining space */}
         <form onSubmit={handleLogin} className="w-full text-center login-form-block">
           <input
             type="text"
@@ -330,17 +95,14 @@ export default function Login() {
           {error && (
             <div className="mt-4 text-[#ff5a5a] text-sm">{error}</div>
           )}
-          <button
-            type="button"
-            onClick={() => { setStep('activate'); setError(''); setPin(''); setNewPin(''); setConfirmPin('') }}
-            className="mt-5 text-xs text-[rgba(255,255,255,0.55)] hover:text-[var(--text)] transition-colors cursor-pointer"
-            style={{ fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.18em', textTransform: 'uppercase' }}
+          <div
+            className="mt-5 text-[10px] text-[rgba(255,255,255,0.4)]"
+            style={{ fontFamily: "'Aeonik', sans-serif", letterSpacing: '0.15em', textTransform: 'uppercase' }}
           >
-            Activer mon compte
-          </button>
+            Premiere connexion ? Demandez un lien d'activation a votre administrateur.
+          </div>
         </form>
       </div>
-      {/* Theme toggle — fixed bottom right like dashboard */}
       <div style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 100 }}>
         <ThemeToggle />
       </div>
