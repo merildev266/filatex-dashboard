@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -31,13 +32,6 @@ class TestInitDb:
         assert cur.fetchone() is not None
         conn.close()
 
-    def test_must_change_pin_column_exists(self, tmp_db):
-        import sqlite3
-        conn = sqlite3.connect(tmp_db)
-        cols = {r[1] for r in conn.execute("PRAGMA table_info(users)").fetchall()}
-        assert "must_change_pin" in cols
-        conn.close()
-
 
 class TestUsernameGeneration:
     def test_simple_name(self):
@@ -53,7 +47,7 @@ class TestUsernameGeneration:
         assert auth.generate_username("Jean Pierre", "De La Croix") == "jeanpierre.delacroix"
 
 
-class TestPinFormatValidation:
+class TestPinValidation:
     def test_valid_4_digits(self):
         auth.validate_pin("1234")  # should not raise
 
@@ -73,137 +67,101 @@ class TestPinFormatValidation:
             auth.validate_pin("")
 
 
-class TestPinStrength:
-    @pytest.mark.parametrize("weak", [
-        "0000", "1111", "9999", "2222",
-        "1234", "4321", "0123", "9876",
-        "000000", "111111", "123456", "654321",
-        "1212", "2580", "1979",
-    ])
-    def test_weak_pins_rejected(self, weak):
-        assert auth._is_weak_pin(weak) is True
-        with pytest.raises(auth.AuthError, match="facile a deviner"):
-            auth.validate_pin_strength(weak)
-
-    @pytest.mark.parametrize("strong", [
-        "7319", "8427", "1593", "3847",
-        "427519", "816352", "945708",
-    ])
-    def test_strong_pins_accepted(self, strong):
-        assert auth._is_weak_pin(strong) is False
-        auth.validate_pin_strength(strong)  # should not raise
-
-
 class TestCreateUser:
-    def test_create_user_returns_id_and_username(self, tmp_db):
-        result = auth.create_user("Jean", "Rakoto", "j.rakoto@filatex.mg",
-                                  "Jean Rakoto", "utilisateur", ["energy.hfo"])
-        assert isinstance(result, dict)
-        assert isinstance(result["id"], int) and result["id"] > 0
-        assert result["username"] == "jean.rakoto"
+    def test_create_user_returns_id(self, tmp_db):
+        user_id = auth.create_user("Jean", "Rakoto", "j.rakoto@filatex.mg",
+                                   "Jean Rakoto", "utilisateur", ["energy.hfo"])
+        assert isinstance(user_id, int)
+        assert user_id > 0
 
-    def test_created_user_has_default_pin_and_must_change(self, tmp_db):
+    def test_username_generated_correctly(self, tmp_db):
         auth.create_user("Marie", "Rabe", "m.rabe@filatex.mg",
                          "Marie Rabe", "utilisateur", ["energy"])
         user = auth.get_user_by_username("marie.rabe")
         assert user is not None
-        assert user["pin_set"] is True
-        assert user["must_change_pin"] is True
-        # And logging in with the default PIN succeeds
-        result = auth.authenticate("marie.rabe", auth.DEFAULT_PIN, "ua", "1.2.3.4")
-        assert result["success"] is True
-        assert result["must_change_pin"] is True
+        assert user["first_name"] == "Marie"
+        assert user["last_name"] == "Rabe"
+        assert user["email"] == "m.rabe@filatex.mg"
+        assert user["pin_set"] is False
 
     def test_create_duplicate_username_raises(self, tmp_db):
         auth.create_user("Jean", "Rakoto", "", "Jean Rakoto", "utilisateur", ["energy"])
         with pytest.raises(auth.AuthError, match="existe deja"):
             auth.create_user("Jean", "Rakoto", "", "Jean R.", "utilisateur", ["properties"])
 
+    def test_create_user_with_pin(self, tmp_db):
+        uid = auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        user = auth.get_user_by_username("pmo")
+        assert user["pin_set"] is True
+        assert user["role"] == "super_admin"
+
+    def test_get_nonexistent_user_returns_none(self, tmp_db):
+        assert auth.get_user_by_username("ghost") is None
+
+
+class TestSetPin:
+    def test_set_pin_on_new_user(self, tmp_db):
+        auth.create_user("Test", "User", "", "Test User", "utilisateur", ["energy"])
+        user = auth.get_user_by_username("test.user")
+        assert user["pin_set"] is False
+
+        auth.set_pin("test.user", "1234")
+        user = auth.get_user_by_username("test.user")
+        assert user["pin_set"] is True
+
+    def test_set_pin_invalid_rejected(self, tmp_db):
+        auth.create_user("Test", "User", "", "Test User", "utilisateur", ["energy"])
+        with pytest.raises(auth.AuthError, match="4 ou 6 chiffres"):
+            auth.set_pin("test.user", "123")
+
 
 class TestLogin:
     def test_successful_login_with_pin(self, tmp_db):
-        auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
-        result = auth.authenticate("pmo", "7319", "Mozilla/5.0", "127.0.0.1")
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        result = auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is True
         assert "token" in result
-        assert result["must_change_pin"] is False
+        assert result["must_set_pin"] is False
         assert result["user"]["username"] == "pmo"
 
-    def test_login_with_default_pin_flags_must_change(self, tmp_db):
-        auth.create_user("Marie", "Rabe", "", "Marie Rabe", "utilisateur", ["*"])
-        result = auth.authenticate("marie.rabe", auth.DEFAULT_PIN, "ua", "1.2.3.4")
+    def test_first_login_must_set_pin(self, tmp_db):
+        auth.create_user("Test", "User", "", "Test User", "utilisateur", ["energy"])
+        result = auth.authenticate("test.user", "", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is True
-        assert result["must_change_pin"] is True
+        assert result["must_set_pin"] is True
 
     def test_wrong_pin(self, tmp_db):
-        auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
         result = auth.authenticate("pmo", "9999", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is False
         assert "token" not in result
 
-    def test_nonexistent_user_returns_generic_error(self, tmp_db):
+    def test_nonexistent_user(self, tmp_db):
         result = auth.authenticate("ghost", "1234", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is False
-        assert result["error"] == "Identifiants incorrects"
 
     def test_lockout_after_5_failures(self, tmp_db):
-        auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
         for _ in range(5):
             auth.authenticate("pmo", "0000", "Mozilla/5.0", "127.0.0.1")
-        result = auth.authenticate("pmo", "7319", "Mozilla/5.0", "127.0.0.1")
+        result = auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is False
         assert "verrouille" in result.get("error", "").lower()
 
-    def test_inactive_user_returns_generic_error(self, tmp_db):
-        uid = auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
+    def test_inactive_user_cannot_login(self, tmp_db):
+        uid = auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
         auth.update_user(uid, active=False)
-        result = auth.authenticate("pmo", "7319", "Mozilla/5.0", "127.0.0.1")
+        result = auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
         assert result["success"] is False
-        assert result["error"] == "Identifiants incorrects"
-
-
-class TestChangePin:
-    def test_change_pin_clears_must_change(self, tmp_db):
-        result = auth.create_user("Marie", "Rabe", "", "Marie Rabe", "utilisateur", ["*"])
-        auth.change_pin(result["id"], auth.DEFAULT_PIN, "8427")
-        user = auth.get_user_by_id(result["id"])
-        assert user["must_change_pin"] is False
-        # And new PIN works
-        login = auth.authenticate("marie.rabe", "8427", "ua", "1.2.3.4")
-        assert login["success"] is True
-        assert login["must_change_pin"] is False
-
-    def test_change_pin_rejects_weak(self, tmp_db):
-        result = auth.create_user("Marie", "Rabe", "", "Marie Rabe", "utilisateur", ["*"])
-        with pytest.raises(auth.AuthError, match="facile a deviner"):
-            auth.change_pin(result["id"], auth.DEFAULT_PIN, "1234")
-
-    def test_change_pin_rejects_same_as_current(self, tmp_db):
-        result = auth.create_user("Marie", "Rabe", "", "Marie Rabe", "utilisateur", ["*"])
-        # Attempting to change 0000 -> 0000 fails on the strength check first
-        with pytest.raises(auth.AuthError):
-            auth.change_pin(result["id"], auth.DEFAULT_PIN, auth.DEFAULT_PIN)
-
-    def test_change_pin_wrong_old_rejected(self, tmp_db):
-        result = auth.create_user("Marie", "Rabe", "", "Marie Rabe", "utilisateur", ["*"])
-        with pytest.raises(auth.AuthError, match="PIN actuel incorrect"):
-            auth.change_pin(result["id"], "9999", "8427")
-
-    def test_change_pin_invalid_format_rejected(self, tmp_db):
-        result = auth.create_user("Marie", "Rabe", "", "Marie Rabe", "utilisateur", ["*"])
-        with pytest.raises(auth.AuthError, match="4 ou 6 chiffres"):
-            auth.change_pin(result["id"], auth.DEFAULT_PIN, "12")
-
-    def test_change_pin_rejects_reusing_previous(self, tmp_db):
-        # Covers the case where old != weak but equals the current hash
-        uid = auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
-        with pytest.raises(auth.AuthError, match="different de l'actuel"):
-            auth.change_pin(uid, "7319", "7319")
+        assert "desactive" in result.get("error", "").lower()
 
 
 class TestRoleHierarchy:
     def test_super_admin_can_manage_admin(self):
         assert auth.can_manage("super_admin", "admin") is True
+
+    def test_super_admin_can_manage_utilisateur(self):
+        assert auth.can_manage("super_admin", "utilisateur") is True
 
     def test_admin_can_manage_utilisateur(self):
         assert auth.can_manage("admin", "utilisateur") is True
@@ -214,24 +172,22 @@ class TestRoleHierarchy:
     def test_admin_cannot_manage_super_admin(self):
         assert auth.can_manage("admin", "super_admin") is False
 
+    def test_utilisateur_cannot_manage_anyone(self):
+        assert auth.can_manage("utilisateur", "utilisateur") is False
+
 
 class TestResetPin:
-    def test_reset_pin_sets_default_and_must_change(self, tmp_db):
-        uid = auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
+    def test_reset_pin(self, tmp_db):
+        uid = auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
         auth.reset_pin(uid)
-        user = auth.get_user_by_id(uid)
-        assert user["pin_set"] is True
-        assert user["must_change_pin"] is True
-        # Can log in with 0000 after reset
-        result = auth.authenticate("pmo", auth.DEFAULT_PIN, "ua", "1.2.3.4")
-        assert result["success"] is True
-        assert result["must_change_pin"] is True
+        user = auth.get_user_by_username("pmo")
+        assert user["pin_set"] is False
 
 
 class TestJWT:
     def test_decode_valid_token(self, tmp_db):
-        auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
-        result = auth.authenticate("pmo", "7319", "Mozilla/5.0", "127.0.0.1")
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        result = auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
         payload = auth.decode_token(result["token"])
         assert payload["username"] == "pmo"
         assert payload["role"] == "super_admin"
@@ -243,17 +199,18 @@ class TestJWT:
 
 class TestLoginHistory:
     def test_login_recorded_in_history(self, tmp_db):
-        auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
-        auth.authenticate("pmo", "7319", "Mozilla/5.0", "127.0.0.1")
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
         auth.authenticate("pmo", "0000", "Mozilla/5.0", "127.0.0.1")
         history = auth.get_login_history()
         assert len(history) == 2
+        assert history[0]["success"] is True or history[1]["success"] is True
 
     def test_history_filter_by_username(self, tmp_db):
-        auth.create_user_with_pin("pmo", "7319", "PMO", "super_admin", ["*"])
-        auth.create_user_with_pin("admin1", "8427", "Admin", "admin", ["energy"])
-        auth.authenticate("pmo", "7319", "Mozilla/5.0", "127.0.0.1")
-        auth.authenticate("admin1", "8427", "Mozilla/5.0", "127.0.0.1")
+        auth.create_user_with_pin("pmo", "2026", "PMO", "super_admin", ["*"])
+        auth.create_user_with_pin("admin1", "1234", "Admin", "admin", ["energy"])
+        auth.authenticate("pmo", "2026", "Mozilla/5.0", "127.0.0.1")
+        auth.authenticate("admin1", "1234", "Mozilla/5.0", "127.0.0.1")
         history = auth.get_login_history(username="pmo")
         assert len(history) == 1
         assert history[0]["username"] == "pmo"

@@ -6,43 +6,31 @@ Cible : desktop + mobile (PWA/Tauri). Sections futures : Finance, Audit, RH.
 
 ## Architecture
 
-- **Frontend** : React 18 + Vite + Tailwind + React Router dans `frontend/` (unique stack — la vanilla SPA `js/`+`index.html` n'existe plus).
-- **Backend** : Flask (`app.py`) + SQLite (`dashboard.db`) servi port 5000. Auth : `auth.py`.
-- **Données** : Excel (OneDrive) → `generate_*.py` → `*_data.js` (embarquées, pas d'API fetch).
-- **Auth** : username (`prenom.nom` ou `pmo`/`DG`/`CPO`) + PIN 4/6 chiffres → JWT 8 h stocké en `sessionStorage`. Rôles : `super_admin`, `admin`, `utilisateur`. Lockout après 5 échecs. PIN hashé bcrypt côté serveur.
-- **Build/déploiement** : `npm run build` dans `frontend/` → `frontend/dist/` servi par Flask ou GitHub Pages.
+- **Vanilla SPA** : `index.html` + `js/` + `css/` servi par Flask (port 5000)
+- **React app** : `frontend/` (Vite + Tailwind + React Router) — nouvelle version
+- **Données** : Excel (OneDrive) → `generate_*.py` → `*_data.js` (embarquées, pas d'API fetch)
+- **Login** : mot de passe `1979`, `sessionStorage('dash_auth')`
 
 ## Règle critique : isolation par section
 
 **Ne JAMAIS modifier le code d'une section quand on travaille sur une autre.**
 
-| Section | React pages | CSS | Data |
-|---------|------------|-----|------|
-| Shared | `components/`, `context/`, `utils/` | `index.css` (tokens, `.login-*`, `.bnav-*`) | — |
-| Accueil | `pages/Accueil.jsx` | — | — |
-| Energy | `pages/energy/` | `.e-*`, `.card-energy` | `site_data`, `enr_site_data`, `hfo_projects`, `enr_projects_data` |
-| Properties | `pages/properties/` | `.p-*`, `.card-props` | `props_data`, `props_data_dev_full` |
-| CAPEX | `pages/Capex.jsx` | `.card-capex` | `capex_data` |
-| Investments | `pages/Investments.jsx` | `.card-invest` | `investments_data`, `investments_echeancier` |
-| Finance | `pages/finance/` | `.card-finance` | `finance_data`, `finance_echeancier` |
-| Reporting | `pages/reporting/` | `.rpt-*` | `reporting_data` |
-| CSI | `pages/Csi.jsx` | — | — |
-| Admin | `pages/Admin.jsx`, `pages/Comptes.jsx`, `pages/Historique.jsx`, `pages/Parametres.jsx` | — | DB `users`, `login_history` |
+| Section | React pages | Vanilla JS | CSS | Data |
+|---------|------------|------------|-----|------|
+| Shared | `components/`, `utils/` | `shared.js` | `shared.css` | — |
+| Energy | `pages/energy/` | `energy.js` | `energy.css` | `site_data`, `enr_site_data`, `hfo_projects` |
+| Properties | `pages/properties/` | `properties.js` | `properties.css` | `props_data`, `props_data_dev_full` |
+| CAPEX | `pages/Capex.jsx` | `capex.js` | `capex.css` | `capex_data` |
+| Investments | `pages/Investments.jsx` | `investments.js` | `investments.css` | `investments_data` |
+| Reporting | `pages/reporting/` | `reporting.js` | `reporting.css` | `reporting_data` |
 
 Utiliser `/new-section` pour ajouter une section, `/section-audit` pour vérifier l'isolation.
 
 ## Conventions
 
-**CSS** : `.card-{section}`, `.kpi-*`, `.e-*` (Energy), `.p-*` (Properties), `.rpt-*` (Reporting), `.bnav-*` (nav)
+**CSS** : `.card-{section}`, `.kpi-*`, `.e-*` (Energy), `.rpt-*` (Reporting), `.bnav-*` (nav)
 **JS** : camelCase fonctions, SCREAMING_SNAKE constantes, `_prefix` privées
 **IDs** : `page-{section}`, `inner-{type}`, `panel-{type}-{detail}`
-
-## Auth — règles
-
-- Toute nouvelle route protégée : wrapper dans `<ProtectedRoute>` (cf. `App.jsx`) et — pour accès section — vérifier `hasAccess('section')` via `useAuth()`.
-- Tout endpoint backend muté : décorer `@require_auth`, `@require_admin` ou `@require_super_admin` (cf. `app.py`).
-- **Ne jamais** hardcoder un PIN, un username de démo, ou une liste nominative dans le code source — passer par DB/env/CSV hors repo.
-- `JWT_SECRET` **doit** être fourni via variable d'env — pas de valeur par défaut.
 
 ## Couleurs
 

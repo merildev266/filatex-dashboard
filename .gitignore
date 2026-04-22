@@ -35,6 +35,3 @@ liste_moteur_tmp.xlsx
 
 # Claude worktrees
 .claude/worktrees/
-
-# Seed users — contains PII, keep local only. Use seed_users.example.json as template.
-seed_users.json

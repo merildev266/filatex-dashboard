@@ -2,12 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
-const TABS_SUPER_ADMIN = [
+const TABS = [
   { id: 'users', label: 'Utilisateurs' },
   { id: 'history', label: 'Historique' },
-]
-const TABS_ADMIN = [
-  { id: 'users', label: 'Utilisateurs' },
 ]
 
 const ROLES = [
@@ -60,8 +57,6 @@ export default function Admin() {
   const [lockedPopup, setLockedPopup] = useState(null)
 
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin'
-  const isSuperAdmin = user?.role === 'super_admin'
-  const TABS = isSuperAdmin ? TABS_SUPER_ADMIN : TABS_ADMIN
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
