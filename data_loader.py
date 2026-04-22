@@ -1645,6 +1645,17 @@ def build_site_data(site_key):
             for field, metric_key in _DAILY_MAP.items():
                 g[field] = dm.get(metric_key, [0.0] * 31)
 
+        # Per-month daily arrays for ALL months (so the puissance chart can
+        # show daily realized bars for Jan/Feb/Mar, not just the current month)
+        daily_by_month = {}
+        for m, dg_metrics_for_month in monthly_dg_metrics.items():
+            dm_m = dg_metrics_for_month.get(dg_id, {})
+            daily_by_month[str(m)] = {
+                field: dm_m.get(metric_key, [0.0] * 31)
+                for field, metric_key in _DAILY_MAP.items()
+            }
+        g["dailyByMonth"] = daily_by_month
+
         # Monthly totals for the year (sum or max of daily values per month)
         for field, metric_key in _MONTHLY_MAP.items():
             month_totals = []

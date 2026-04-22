@@ -97,7 +97,7 @@ const Loading = () => (
 
 function App() {
   return (
-    <BrowserRouter basename="/filatex-dashboard">
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <ScrollToTop />
       <ThemeProvider>
       <PageTitleProvider>

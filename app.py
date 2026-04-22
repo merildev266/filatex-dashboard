@@ -4,12 +4,14 @@ Reads Tamatave xlsx data and provides it via JSON API.
 Supports DG comment writing back to Excel files.
 """
 import os, re, subprocess, threading, time, openpyxl
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask, jsonify, request, send_from_directory
 from data_loader import build_tamatave_data
 import auth
 from functools import wraps
 
-app = Flask(__name__, static_folder=".", static_url_path="")
+app = Flask(__name__, static_folder="frontend/dist", static_url_path="")
 
 # CORS for Vite dev server
 @app.after_request
