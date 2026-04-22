@@ -37,9 +37,23 @@ Utiliser `/new-section` pour ajouter une section, `/section-audit` pour vérifie
 `--dark:#080b18` `--energy:#00ab63` `--props:#FDB823` `--capex:#5e4c9f` `--invest:#f37056`
 Secondaires : `#5aafaf` (teal), `#E05C5C` (rouge/retard), `#426ab3` (bleu/dev)
 
-## Helpers partagés (React)
+## Helpers React
 
-`frontend/src/utils/helpers.js` : `hexToRgb()`, `parseDollar()`
+**Partagés** (`frontend/src/utils/`) — réutilisables entre sections :
+- `helpers.js` : `hexToRgb()`, `parseDollar()`
+- `hfoHelpers.js` : `getKpiForSite()`, `MOIS_FR` (spécifique Energy HFO)
+- `enrHelpers.js` : `getFilteredEnrSite()` (spécifique Energy ENR)
+
+**Locaux à une section** (même règle d'isolation que le reste) :
+- `pages/finance/financeHelpers.jsx` : `fmtMga()`, `aggregate()`, KPI Finance
+
+Règle : un helper utilisé par 2+ sections → `utils/`. Sinon → à côté des pages de la section.
+
+## Pipeline de données
+
+Tous les `generate_*.py` écrivent **directement** dans `frontend/src/data/` en **ES modules** (`export const X`). Pas de copie, pas de `window.X`.
+
+Lancer le pipeline complet : `python generate_data.py` (orchestrateur qui enchaîne HFO, ENR, projets, CAPEX, reporting, COM).
 
 ## Règles métier
 

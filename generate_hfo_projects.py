@@ -2,8 +2,11 @@
 Reads HFO projects xlsx and generates JS data file for the dashboard.
 """
 import json
+import os
 import pandas as pd
 from datetime import datetime
+
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend", "src", "data", "hfo_projects.js")
 
 BASE = (
     r"C:\Users\Meril\OneDrive - GROUPE FILATEX"
@@ -138,12 +141,13 @@ def generate():
         "projects": projects,
     }
 
-    js = f"// Auto-generated from HFO projects xlsx\nconst HFO_PROJECTS = {json.dumps(data, ensure_ascii=False, default=str)};\n"
+    js = f"// Auto-generated from HFO projects xlsx\nexport const HFO_PROJECTS = {json.dumps(data, ensure_ascii=False, default=str)};\n"
 
-    with open("hfo_projects.js", "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    with open(OUT, "w", encoding="utf-8") as f:
         f.write(js)
 
-    print(f"Generated hfo_projects.js ({len(js)} bytes)")
+    print(f"Generated {OUT} ({len(js)} bytes)")
     print(f"  {total} projects, {overhauls} overhauls, {urgents} urgent, {en_cours} en cours, {termines} terminés")
     print(f"  Sites: {', '.join(sites)}")
     for s, v in by_site.items():

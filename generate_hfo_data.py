@@ -280,17 +280,12 @@ def generate():
     }
     all_js += f"export const HFO_GLOBAL = {json.dumps(hfo_global, default=str, ensure_ascii=False)};\n"
 
-    # Write to both the legacy root location AND the frontend source folder
-    # so the React dev server picks it up without a manual copy.
     import os as _os
-    targets = [
-        "site_data.js",
-        _os.path.join("frontend", "src", "data", "site_data.js"),
-    ]
-    for tgt in targets:
-        with open(tgt, "w", encoding="utf-8") as f:
-            f.write(all_js)
-        print(f"Wrote {tgt} ({len(all_js)} bytes)")
+    tgt = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "frontend", "src", "data", "site_data.js")
+    _os.makedirs(_os.path.dirname(tgt), exist_ok=True)
+    with open(tgt, "w", encoding="utf-8") as f:
+        f.write(all_js)
+    print(f"Wrote {tgt} ({len(all_js)} bytes)")
 
 
 if __name__ == "__main__":

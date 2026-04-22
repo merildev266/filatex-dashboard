@@ -269,62 +269,27 @@ def serve_react(path):
 _refresh_lock = threading.Lock()
 _refresh_status = {"running": False, "last_run": None, "last_error": None}
 
-GENERATE_SCRIPTS = [
-    "generate_data.py",          # HFO + ENR production (calls both)
-    "generate_enr_projects.py",  # ENR projects
-    "generate_hfo_projects.py",  # HFO projects
-    "generate_capex.py",
-    "generate_reporting.py",
-    "generate_com_reporting.py",
-]
-
-
-import shutil
-
-# Map generated files at root → frontend/src/data/ destination
-_JS_COPY_MAP = {
-    "site_data.js": "frontend/src/data/site_data.js",
-    "enr_site_data.js": "frontend/src/data/enr_site_data.js",
-    "enr_projects_data.js": "frontend/src/data/enr_projects_data.js",
-    "hfo_projects.js": "frontend/src/data/hfo_projects.js",
-    "capex_generated.js": "frontend/src/data/capex_data.js",
-    "reporting_data.js": "frontend/src/data/reporting_data.js",
-}
-
-
 def _run_refresh():
-    """Run all generate_*.py scripts sequentially, then copy JS to frontend."""
+    """Run the unified pipeline. All generators write directly to frontend/src/data/."""
     root = os.path.dirname(os.path.abspath(__file__))
-    errors = []
-    for script in GENERATE_SCRIPTS:
-        path = os.path.join(root, script)
-        if not os.path.exists(path):
-            continue
-        try:
-            result = subprocess.run(
-                ["python", path],
-                cwd=root,
-                capture_output=True,
-                text=True,
-                timeout=120,
-            )
-            if result.returncode != 0:
-                errors.append(f"{script}: {result.stderr[:200]}")
-        except Exception as e:
-            errors.append(f"{script}: {e}")
-
-    # Copy generated JS files into frontend/src/data/
-    for src_name, dst_rel in _JS_COPY_MAP.items():
-        src = os.path.join(root, src_name)
-        dst = os.path.join(root, dst_rel)
-        if os.path.exists(src):
-            os.makedirs(os.path.dirname(dst), exist_ok=True)
-            shutil.copy2(src, dst)
+    error = None
+    try:
+        result = subprocess.run(
+            ["python", os.path.join(root, "generate_data.py")],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        if result.returncode != 0:
+            error = f"generate_data.py: {result.stderr[:500]}"
+    except Exception as e:
+        error = f"generate_data.py: {e}"
 
     with _refresh_lock:
         _refresh_status["running"] = False
         _refresh_status["last_run"] = time.strftime("%Y-%m-%d %H:%M:%S")
-        _refresh_status["last_error"] = "; ".join(errors) if errors else None
+        _refresh_status["last_error"] = error
 
 
 @app.route("/api/refresh-data", methods=["POST"])

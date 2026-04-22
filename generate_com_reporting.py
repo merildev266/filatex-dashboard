@@ -14,7 +14,7 @@ EXCEL_PATH = os.path.join(
     'Fichiers de DOSSIER DASHBOARD - Data_Dashbords',
     '02_Properties', 'Reporting', 'COM_Reporting.xlsx'
 )
-OUTPUT_PATH = os.path.join(os.path.dirname(__file__), 'js', 'com_reporting_data.js')
+OUTPUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend', 'src', 'data', 'com_reporting_data.js')
 
 
 def read_sheet(wb, sheet_name, has_phase=True):
@@ -107,7 +107,7 @@ def build_js():
 
     for key, label in [('venteProjet', 'venteProjet'), ('venteTerrain', 'venteTerrain'), ('location', 'location')]:
         data = result.get(key, [])
-        js += f'var comReport_{label} = [\n'
+        js += f'export const comReport_{label} = [\n'
         for item in data:
             js += '  {\n'
             js += f'    name: {json.dumps(item["name"], ensure_ascii=False)},\n'
@@ -123,6 +123,7 @@ def build_js():
             js += '  },\n'
         js += '];\n\n'
 
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
         f.write(js)
 
